@@ -18,17 +18,7 @@ package models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
 import models.UserAnswers
-import play.api.data.Form
-import play.api.libs.json.{Reads, Writes}
-import queries.{Gettable, Settable}
-
-import scala.concurrent.Future
 
 case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
 
-case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request) {
-
-  def asForm[B](page: Gettable[B], form: Form[B])(implicit rds: Reads[B]): Form[B] = userAnswers.get(page).fold(form)(form.fill)
-
-  def update[B](page: Settable[B], value: B)(implicit wr: Writes[B]): Future[UserAnswers] = Future.fromTry(userAnswers.set(page, value))
-}
+case class DataRequest[A](request: Request[A], userId: String, userAnswers: UserAnswers) extends WrappedRequest[A](request)

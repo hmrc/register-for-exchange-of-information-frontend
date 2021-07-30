@@ -18,5 +18,6 @@ GET         /unauthorised                                controllers.auth.Unauth
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
 
-GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
+GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
 
+GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
