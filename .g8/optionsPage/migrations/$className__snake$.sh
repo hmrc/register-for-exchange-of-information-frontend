@@ -6,11 +6,11 @@ echo "Applying migration $className;format="snake"$"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /$className;format="decap"$                        controllers.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.routes
-echo "POST       /$className;format="decap"$                        controllers.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.routes
+echo "GET        /$className;format="decap"$                        controllers.$className$Controller.onPageLoad(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
+echo "POST       /$className;format="decap"$                        controllers.$className$Controller.onSubmit(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
 
-echo "GET        /change$className$                  controllers.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.routes
-echo "POST       /change$className$                  controllers.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.routes
+echo "GET        /change$className$                  controllers.$className$Controller.onPageLoad(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
+echo "POST       /change$className$                  controllers.$className$Controller.onSubmit(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
@@ -20,13 +20,12 @@ echo "$className;format="decap"$.$option1key;format="decap"$ = $option1msg$" >> 
 echo "$className;format="decap"$.$option2key;format="decap"$ = $option2msg$" >> ../conf/messages.en
 echo "$className;format="decap"$.checkYourAnswersLabel = $title$" >> ../conf/messages.en
 echo "$className;format="decap"$.error.required = Select $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.change.hidden = $className$" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\
+    print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[(pages.$className$Page.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
     print "        page  <- arbitrary[$className$Page.type]";\
@@ -39,7 +38,7 @@ echo "Adding to PageGenerators"
 awk '/trait PageGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$className$Page: Arbitrary[$className$Page.type] =";\
+    print "  implicit lazy val arbitrary$className$Page: Arbitrary[pages.$className$Page.type] =";\
     print "    Arbitrary($className$Page)";\
     next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
 
@@ -58,5 +57,25 @@ awk '/val generators/ {\
     print;\
     print "    arbitrary[($className$Page.type, JsValue)] ::";\
     next }1' ../test/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test/generators/UserAnswersGenerator.scala
+
+echo "Adding helper method to CheckYourAnswersHelper"
+awk '/class CheckYourAnswersHelper/ {\
+     print;\
+     print "";\
+     print "  def $className;format="decap"$: Option[Row] = userAnswers.get(pages.$className$Page) map {";\
+     print "    answer =>";\
+     print "      Row(";\
+     print "        key     = Key(msg\"$className;format="decap"$.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
+     print "        value   = Value(msg\"$className;format="decap"$.\$answer\"),";\
+     print "        actions = List(";\
+     print "          Action(";\
+     print "            content            = msg\"site.edit\",";\
+     print "            href               = routes.$className$Controller.onPageLoad(CheckMode).url,";\
+     print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"$className;format="decap"$.checkYourAnswersLabel\"))";\
+     print "          )";\
+     print "        )";\
+     print "      )";\
+     print "  }";\
+     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Migration $className;format="snake"$ completed"
