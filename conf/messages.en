@@ -1,8 +1,10 @@
 service.name = register-for-exchange-of-information-frontend
 
 site.back = Back
-site.remove = Remove
-site.change = Change
+site.delete = Remove
+site.edit = Change
+site.delete.hidden = Change {0}
+site.edit.hidden = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Continue
@@ -10,6 +12,27 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.saveAndContinue = Save and continue
+site.getHelpWithThisPage = Get help with this page (opens in a new tab)
+site.confirmAndSend= Confirm and send
+site.service_name = Send a country-by-country report
+site.textarea.char_limit = (Limit is {0} characters)
+site.title.suffix = - GOV.UK
+site.homePageLink.text = Back to register for exchange of information
+
+# overrides info to hide the message:
+global.error.pageNotFound404.info = Page not found
+
+global.error.InternalServerError500.heading = Sorry, there is a problem with this service
+global.error.InternalServerError500.info = If you entered any information, your answers will be saved.
+global.error.InternalServerError500.message = Try again later.
+
+global.error.badRequest400.info = If you entered any information, your answers will be saved.
+
+global.error.entityTooLarge413.heading = Sorry, there is a problem with this service
+global.error.entityTooLarge413.message = If you entered any information, your answers will be saved.
+global.error.entityTooLarge413.info = Try again later.
+global.error.entityTooLarge413.title = Sorry, there is a problem with this service
 
 date.day = Day
 date.month = Month
@@ -35,9 +58,9 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = register-for-exchange-of-information-frontend
-index.heading = register-for-exchange-of-information-frontend
-index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
+index.title = Register for exchange of information
+index.heading = Register for exchange of information
+index.guidance = Register for exchange of information.
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
@@ -55,3 +78,31 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+unauthorised.guidance = TODO
+
+needContactDetails.title = We need your contact details
+needContactDetails.heading = We need your contact details
+needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
+needContactDetails.p2 = We need these before you can send a country-by-country report.
+
+phaseBanner.1 = This is a new service – your
+phaseBanner.2 = feedback
+phaseBanner.3 = will help us to improve it.
+
+footer.links.support_links = Help contacts
+footer.links.help = Help using GOV.UK
+footer.links.cookies = Cookies
+footer.links.accessibility = Accessibility
+footer.links.privacy = Privacy policy
+footer.links.terms = Terms and conditions
+
+signedOut.title = For your security, we signed you out
+signedOut.heading = For your security, we signed you out
+signedOut.guidance = We did not save your answers.
+
+unauthorised.title = You can’t access this service with this account
+unauthorised.heading = You can’t access this service with this account
+
+sessionExpired.title = For your security, we signed you out
+sessionExpired.heading = For your security, we signed you out
+sessionExpired.guidance = The details you entered will be saved for 28 days from when you last made changes.

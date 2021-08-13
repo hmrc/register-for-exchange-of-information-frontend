@@ -1,0 +1,38 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+
+{% block pageTitle %}
+  {{ title(messages("needContactDetails.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+          {{ messages("needContactDetails.heading") }}
+        </h1>
+
+        <p class="govuk-body">
+          {{ messages("needContactDetails.p1") }}
+        </p>
+
+        <p class="govuk-body">
+          {{ messages("needContactDetails.p2") }}
+        </p>
+
+        {{ govukButton({
+          text: messages("site.continue"),
+          href: "",
+          attributes: {id:"submit"}
+        }) }}
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

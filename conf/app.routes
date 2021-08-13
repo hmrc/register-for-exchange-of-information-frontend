@@ -7,16 +7,15 @@ GET         /                                            controllers.IndexContro
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
+GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
-GET         /refresh-session                            controllers.KeepAliveController.keepAlive
-
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
-
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
+GET         /session-expired                             controllers.SessionExpiredController.onPageLoad
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
+GET         /unauthorised                                controllers.auth.UnauthorisedController.onPageLoad
 
-GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
+GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
+
+GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
