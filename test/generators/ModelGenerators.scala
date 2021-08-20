@@ -16,9 +16,10 @@
 
 package generators
 
-
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  // TODO remove comment after first generator
 
 }

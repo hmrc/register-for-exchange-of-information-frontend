@@ -20,4 +20,6 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  // TODO remove comment after first generator
+
 }

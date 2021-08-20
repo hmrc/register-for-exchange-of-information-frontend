@@ -5,10 +5,10 @@ object AppDependencies {
 
   val compile = Seq(
     play.sbt.PlayImport.ws,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"            % "0.71.0-play-28", //0.58.0-play-28
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"            % "0.71.0-play-28",
 
     "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.9.0-play-28",
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"    % "5.8.0", //5.3.0
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"    % "5.8.0",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-27"            % "0.52.0",
 
     "uk.gov.hmrc"       %% "logback-json-logger"           % "5.1.0",
@@ -16,7 +16,7 @@ object AppDependencies {
 
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.29.0-play-27",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.14.0-play-27",
-    "org.webjars.npm"   %  "govuk-frontend"                % "3.12.0",
+    "org.webjars.npm"   %  "govuk-frontend"                % "3.13.0",
     "org.webjars.npm"   %  "hmrc-frontend"                 % "1.35.0"
   )
 
