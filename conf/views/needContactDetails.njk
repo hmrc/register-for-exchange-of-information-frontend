@@ -1,18 +1,23 @@
 {% extends "includes/layout.njk" %}
 
 {% from "macros/title.njk"                         import title %}
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 
 {% block pageTitle %}
   {{ title(messages("needContactDetails.title")) }}
 {% endblock %}
 
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+{% endblock %}
+
 {% block mainContent %}
-
-  <div class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div>
         <h1 class="govuk-heading-xl">
           {{ messages("needContactDetails.heading") }}
         </h1>
@@ -30,9 +35,7 @@
           href: "",
           attributes: {id:"submit"}
         }) }}
-
       </div>
     </div>
   </div>
-
 {% endblock %}
