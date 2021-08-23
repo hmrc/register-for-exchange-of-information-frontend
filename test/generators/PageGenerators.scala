@@ -20,6 +20,9 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryTest1Page: Arbitrary[pages.Test1Page.type] =
+    Arbitrary(pages.Test1Page)
+
   // TODO remove comment after first generator
 
 }

@@ -20,6 +20,11 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryTest1: Arbitrary[Test1] =
+    Arbitrary {
+      Gen.oneOf(models.Test1.values.toSeq)
+    }
+
   // TODO remove comment after first generator
 
 }

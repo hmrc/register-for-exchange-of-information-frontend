@@ -109,21 +109,7 @@
         </div>
         {% endif %}
 
-        {# START additional block #}
-        {% if params.phaseBanner.show or params.languageToggle.inBody %}
-        <div class="govuk-width-container">
-            {% if params.phaseBanner.show %}
-                {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
-                {{ govukPhaseBanner({
-                    tag: {
-                        text: params.phaseBanner.text
-                    },
-                    html: params.phaseBanner.html
-                }) }}
-            {% endif %}
-        </div>
-        {% endif %}
-        {# END additional block #}
+
     </header>
 
 
