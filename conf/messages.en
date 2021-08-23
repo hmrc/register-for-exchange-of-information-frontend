@@ -106,3 +106,51 @@ unauthorised.heading = You can’t access this service with this account
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out
 sessionExpired.guidance = The details you entered will be saved for 28 days from when you last made changes.
+
+test2.title = est 2
+test2.heading = est 2
+test2.hint = est 2
+test2.key1 = Key 1
+test2.key2 = Key 2
+test2.checkYourAnswersLabel = est 2
+test2.error.required = Select test2
+
+test3.title = test 3
+test3.heading = test 3
+test3.hint = test 3
+test3.key1 = Option 1
+test3.key2 = Option 2
+test3.checkYourAnswersLabel = test 3
+test3.error.required = Select test3
+
+test4.title = Test 4
+test4.heading = Test 4
+test4.hint = Test 4
+test4.key1 = Option 1
+test4.key2 = Option 2
+test4.checkYourAnswersLabel = Test 4
+test4.error.required = Select test4
+
+test4.title = Test 4
+test4.heading = Test 4
+test4.hint = Test 4
+test4.key1 = Option 1
+test4.key2 = Option 2
+test4.checkYourAnswersLabel = Test 4
+test4.error.required = Select test4
+
+test6.title = test6
+test6.heading = test6
+test6.hint = test6
+test6.option1 = Option 1
+test6.option2 = Option 2
+test6.checkYourAnswersLabel = test6
+test6.error.required = Select test6
+
+test7.title = test7
+test7.heading = test7
+test7.hint = test7
+test7.option1 = Option 1
+test7.option2 = Option 2
+test7.checkYourAnswersLabel = test7
+test7.error.required = Select test7
