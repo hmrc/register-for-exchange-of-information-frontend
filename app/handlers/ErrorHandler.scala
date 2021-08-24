@@ -45,9 +45,9 @@ class ErrorHandler @Inject() (
 
     statusCode match {
       case BAD_REQUEST =>
-        renderer.render("error/badRequest.njk").map(BadRequest(_))
+        renderer.render("badRequest.njk").map(BadRequest(_))
       case NOT_FOUND =>
-        renderer.render("error/notFound.njk", Json.obj()).map(NotFound(_))
+        renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
       case _ =>
         // TODO create Problem with service page
         Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
