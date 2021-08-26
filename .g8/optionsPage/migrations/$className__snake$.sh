@@ -59,23 +59,24 @@ awk '/val generators/ {\
     next }1' ../test/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test/generators/UserAnswersGenerator.scala
 
 echo "Adding helper method to CheckYourAnswersHelper"
-awk '/class CheckYourAnswersHelper/ {\
+awk '/extends RowBuilder/ {\
      print;\
      print "";\
      print "  def $className;format="decap"$: Option[Row] = userAnswers.get(pages.$className$Page) map {";\
-     print "    answer =>";\
-     print "      Row(";\
-     print "        key     = Key(msg\"$className;format="decap"$.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
-     print "        value   = Value(msg\"$className;format="decap"$.\$answer\"),";\
-     print "        actions = List(";\
-     print "          Action(";\
-     print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.$className$Controller.onPageLoad(CheckMode).url,";\
-     print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"$className;format="decap"$.checkYourAnswersLabel\"))";\
-     print "          )";\
+     print "      answer =>";\
+     print "        toRow(";\
+     print "          msgKey = \"$className;format="decap"$\",";\
+     print "          content = msg\"site.edit\",";\
+     print "          href = routes.$className$Controller.onPageLoad(CheckMode).url,";\
      print "        )";\
-     print "      )";\
-     print "  }";\
+     print "    }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
+
+echo "Moving tests"
+mv ../generated-test/controllers/$className$ControllerSpec.scala ../test/controllers/
+mv ../generated-test/forms/$className$FormProviderSpec.scala ../test/forms/
+mv ../generated-test/models/$className$Spec.scala ../test/models/
+mv ../generated-test/pages/$className$PageSpec.scala ../test/pages/
+
 
 echo "Migration $className;format="snake"$ completed"

@@ -29,7 +29,7 @@ awk '/trait UserAnswersEntryGenerators/ {\
     print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[(pages.$className$Page.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
-    print "        page  <- arbitrary[$className$Page.type]";\
+    print "        page  <- arbitrary[pages.$className$Page.type]";\
     print "        value <- arbitrary[Int].map(Json.toJson(_))";\
     print "      } yield (page, value)";\
     print "    }";\
@@ -40,33 +40,32 @@ awk '/trait PageGenerators/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$Page: Arbitrary[pages.$className$Page.type] =";\
-    print "    Arbitrary($className$Page)";\
+    print "    Arbitrary(pages.$className$Page)";\
     next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
 
 echo "Adding to UserAnswersGenerator"
 awk '/val generators/ {\
     print;\
-    print "    arbitrary[($className$Page.type, JsValue)] ::";\
+    print "    arbitrary[(pages.$className$Page.type, JsValue)] ::";\
     next }1' ../test/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test/generators/UserAnswersGenerator.scala
 
 echo "Adding helper method to CheckYourAnswersHelper"
-awk '/class CheckYourAnswersHelper/ {\
+awk '/extends RowBuilder/ {\
      print;\
      print "";\
      print "  def $className;format="decap"$: Option[Row] = userAnswers.get(pages.$className$Page) map {";\
-     print "    answer =>";\
-     print "      Row(";\
-     print "        key     = Key(msg\"$className;format="decap"$.checkYourAnswersLabel\", classes = Seq(\"govuk-!-width-one-half\")),";\
-     print "        value   = Value(Literal(answer.toString)),";\
-     print "        actions = List(";\
-     print "          Action(";\
-     print "            content            = msg\"site.edit\",";\
-     print "            href               = routes.$className$Controller.onPageLoad(CheckMode).url,";\
-     print "            visuallyHiddenText = Some(msg\"site.edit.hidden\".withArgs(msg\"$className;format="decap"$.checkYourAnswersLabel\"))";\
-     print "          )";\
+     print "      answer =>";\
+     print "        toRow(";\
+     print "          msgKey = \"$className;format="decap"$\",";\
+     print "          content = msg\"site.edit\",";\
+     print "          href = routes.$className$Controller.onPageLoad(CheckMode).url,";\
      print "        )";\
-     print "      )";\
-     print "  }";\
+     print "    }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
+
+echo "Moving tests"
+mv ../generated-test/controllers/$className$ControllerSpec.scala ../test/controllers/
+mv ../generated-test/forms/$className$FormProviderSpec.scala ../test/forms/
+mv ../generated-test/pages/$className$PageSpec.scala ../test/pages/
 
 echo "Migration $className;format="snake"$ completed"

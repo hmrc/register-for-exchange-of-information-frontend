@@ -30,11 +30,14 @@
           {{ messages("needContactDetails.p2") }}
         </p>
 
-        {{ govukButton({
-          text: messages("site.continue"),
-          href: "",
-          attributes: {id:"submit"}
-        }) }}
+        <div class="govuk-!-padding-top-4">
+          {{ govukButton({
+            text: messages("site.continue"),
+            href: "",
+            attributes: {id:"submit"}
+          }) }}
+        </div>
+
       </div>
     </div>
   </div>

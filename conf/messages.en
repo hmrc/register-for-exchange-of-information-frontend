@@ -19,6 +19,9 @@ site.service_name = Send a country-by-country report
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
 site.homePageLink.text = Back to register for exchange of information
+site.day.capitalized = Day
+site.month.capitalized = Month
+site.year.capitalized = Year
 
 # overrides info to hide the message:
 global.error.pageNotFound404.info = Page not found

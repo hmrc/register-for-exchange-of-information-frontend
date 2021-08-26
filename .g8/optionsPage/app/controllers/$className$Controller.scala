@@ -34,7 +34,7 @@ class $className$Controller @Inject()(
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Set[$className$]])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[$className$])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"       -> form,
       "action"     -> routes.$className$Controller.onSubmit(mode).url,

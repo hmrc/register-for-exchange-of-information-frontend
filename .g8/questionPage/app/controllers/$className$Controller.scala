@@ -4,7 +4,7 @@ import controllers.actions._
 import forms.$className$FormProvider
 
 import javax.inject.Inject
-import models.Mode
+import models.{NormalMode, $className$, UserAnswers}
 import models.requests.DataRequest
 import navigation.{DefaultJourney, Navigator}
 import pages.$className$Page
@@ -34,7 +34,7 @@ class $className$Controller @Inject()(
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Set[$className$]])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[$className$])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"       -> form,
       "action"     -> routes.$className$Controller.onSubmit(mode).url

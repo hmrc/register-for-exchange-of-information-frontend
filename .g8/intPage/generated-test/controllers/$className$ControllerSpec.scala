@@ -1,34 +1,25 @@
 package controllers
 
-import base.SpecBase
-import forms.$className$FormProvider
-import matchers.JsonMatchers
-import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import base.ControllerSpecBase
+import models.{NormalMode, $className$, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.$className$Page
-import play.api.inject.bind
-import play.api.libs.json.{JsNumber, JsObject, Json}
-import play.api.mvc.Call
+import pages.$className$
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends SpecBase with NunjucksSupport with JsonMatchers {
+class $className$ControllerSpec extends ControllerSpecBase {
 
-  val formProvider = new $className$FormProvider()
-  val form = formProvider()
+  lazy val loadRoute   = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.$className$Controller.onSubmit(NormalMode).url
 
-  def onwardRoute = Call("GET", "/foo")
+  private def form = new forms.$className$FormProvider().apply()
 
   val validAnswer = $minimum$
-
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
 
   "$className$ Controller" - {
 
@@ -38,7 +29,7 @@ class $className$ControllerSpec extends SpecBase with NunjucksSupport with JsonM
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, $className;format="decap"$Route)
+      val request = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -64,7 +55,7 @@ class $className$ControllerSpec extends SpecBase with NunjucksSupport with JsonM
 
       val userAnswers = UserAnswers(userAnswersId).set($className$Page, validAnswer).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-      val request = FakeRequest(GET, $className;format="decap"$Route)
+      val request = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -100,7 +91,7 @@ class $className$ControllerSpec extends SpecBase with NunjucksSupport with JsonM
           .build()
 
       val request =
-        FakeRequest(POST, $className;format="decap"$Route)
+        FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", validAnswer.toString))
 
       val result = route(app, request).value
@@ -116,7 +107,7 @@ class $className$ControllerSpec extends SpecBase with NunjucksSupport with JsonM
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, $className;format="decap"$Route).withFormUrlEncodedBody(("value", "invalid value"))
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -134,33 +125,6 @@ class $className$ControllerSpec extends SpecBase with NunjucksSupport with JsonM
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request = FakeRequest(GET, $className;format="decap"$Route)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val request =
-        FakeRequest(POST, $className;format="decap"$Route)
-          .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
     }
   }
 }

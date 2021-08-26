@@ -17,17 +17,15 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import matchers.JsonMatchers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class NeedContactDetailsControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class NeedContactDetailsControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "NeedContactDetails Controller" - {
 

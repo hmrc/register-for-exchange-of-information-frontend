@@ -17,12 +17,12 @@
 package base
 
 import controllers.actions._
+import matchers.JsonMatchers
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.{Mockito, MockitoSugar}
-import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{BeforeAndAfterEach, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
@@ -32,11 +32,12 @@ import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.FakeRequest
 import repositories.SessionRepository
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-trait ControllerMockFixtures extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
-  self: TestSuite =>
+trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with NunjucksSupport with JsonMatchers {
+  self: SpecBase =>
 
-  def onwardRoute                                        = Call("GET", "/foo")
+  def onwardRoute: Call                                  = Call("GET", "/foo")
   final val mockRenderer: NunjucksRenderer               = mock[NunjucksRenderer]
   final val mockDataRetrievalAction: DataRetrievalAction = mock[DataRetrievalAction]
   final val mockSessionRepository: SessionRepository     = mock[SessionRepository]
@@ -46,7 +47,7 @@ trait ControllerMockFixtures extends AnyFreeSpec with Matchers with GuiceOneAppP
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
 
-  override def beforeEach {
+  override def beforeEach: Unit = {
     Mockito.reset(
       mockRenderer,
       mockSessionRepository,
@@ -86,5 +87,4 @@ trait ControllerMockFixtures extends AnyFreeSpec with Matchers with GuiceOneAppP
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalActionProvider(userAnswers)),
         bind[NunjucksRenderer].toInstance(mockRenderer)
       )
-
 }

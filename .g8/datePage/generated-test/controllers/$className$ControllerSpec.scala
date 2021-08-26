@@ -1,25 +1,20 @@
 package controllers
 
-import java.time.{LocalDate, ZoneOffset}
-import forms.$className$FormProvider
-import models.{NormalMode, UserAnswers}
+import base.ControllerSpecBase
+import models.{NormalMode, $className$, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.$className$Page
+import pages.$className$
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
-import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class $className$ControllerSpec extends ControllerSpecBase {
 
-  val formProvider = new $className$FormProvider()
-  private def form = formProvider()
+  private def form = new forms.$className$FormProvider().apply()
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
@@ -151,27 +146,6 @@ class $className$ControllerSpec extends SpecBase with ControllerMockFixtures wit
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must redirect to Session Expired for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val result = route(app, getRequest).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      val result = route(app, postRequest).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
     }
   }
 }

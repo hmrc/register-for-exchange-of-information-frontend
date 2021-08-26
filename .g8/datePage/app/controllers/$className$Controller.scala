@@ -18,6 +18,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
 
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class $className$Controller @Inject()(
@@ -34,7 +35,7 @@ class $className$Controller @Inject()(
 
   val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Set[$className$]])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[LocalDate])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"       -> form,
       "action"     -> routes.$className$Controller.onSubmit(mode).url,

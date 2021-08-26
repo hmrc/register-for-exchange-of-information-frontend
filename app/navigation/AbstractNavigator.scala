@@ -23,8 +23,6 @@ abstract class AbstractNavigator {
 
   val nextPage: Page => Journey => Option[Any] => Call
 
-  val nextIndexPage: Page => Journey => Option[Any] => Int => Call = altNextPage
-
   val altNextPage: Page => Journey => Option[Any] => Int => Call = _ => _ => _ => _ => Call("GET", "/")
 
   private[navigation] def jumpOrCheckYourAnswers(jumpTo: Call, journey: Journey): Call =

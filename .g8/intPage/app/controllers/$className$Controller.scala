@@ -34,7 +34,7 @@ class $className$Controller @Inject()(
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Set[$className$]])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Int])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"       -> form,
       "action"     -> routes.$className$Controller.onSubmit(mode).url
@@ -52,7 +52,7 @@ class $className$Controller @Inject()(
     implicit request =>
 
       form.bindFromRequest().fold(
-        formWithErrors => render(mode, formWithErrors).map(BadRequest(_),
+        formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
         value =>
           for {
             updatedAnswers <- request.update($className;format="cap"$Page, value)
