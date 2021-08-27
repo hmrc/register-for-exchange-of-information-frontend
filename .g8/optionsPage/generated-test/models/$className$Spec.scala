@@ -8,7 +8,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.{JsError, JsString, Json}
 
-class $className$Spec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class $className$Spec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   "$className$" - {
 

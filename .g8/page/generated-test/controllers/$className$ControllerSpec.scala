@@ -1,6 +1,6 @@
 package controllers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -9,7 +9,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends SpecBase {
+class $className$ControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "$className$ Controller" - {
 

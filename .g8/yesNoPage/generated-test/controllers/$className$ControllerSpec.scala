@@ -40,7 +40,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form"   -> form,
-        "mode"   -> NormalMode,
+        "action"   -> loadRoute,
         "radios" -> Radios.yesNo(form("value"))
       )
 
@@ -69,7 +69,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
-        "mode"   -> NormalMode,
+        "action"   -> loadRoute,
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
@@ -112,7 +112,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form"   -> boundForm,
-        "mode"   -> NormalMode,
+        "action"   -> loadRoute,
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 

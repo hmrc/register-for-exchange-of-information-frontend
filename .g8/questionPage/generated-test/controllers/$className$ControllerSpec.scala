@@ -1,10 +1,10 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, $className$, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.$className$
+import pages.$className$Page
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -123,13 +123,11 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form"   -> boundForm,
-        "mode"   -> NormalMode
+        "action"   -> loadRoute
       )
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-      
-       application.stop()
     }
   }
 }
