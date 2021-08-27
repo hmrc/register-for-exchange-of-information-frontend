@@ -4,7 +4,7 @@ import controllers.actions._
 import forms.$className$FormProvider
 
 import javax.inject.Inject
-import models.{Mode, models.$className$}
+import models.{Mode, $className$}
 import models.requests.DataRequest
 import navigation.{DefaultJourney, Navigator}
 import pages.$className$Page
