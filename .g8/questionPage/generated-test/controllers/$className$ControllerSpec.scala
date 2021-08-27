@@ -12,7 +12,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends extends ControllerSpecBase {
+class $className$ControllerSpec extends ControllerSpecBase {
 
   lazy val loadRoute   = routes.$className$Controller.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.$className$Controller.onSubmit(NormalMode).url
@@ -49,7 +49,7 @@ class $className$ControllerSpec extends extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mode" -> NormalMode
+        "action" -> submitRoute
       )
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
@@ -61,7 +61,7 @@ class $className$ControllerSpec extends extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -81,7 +81,7 @@ class $className$ControllerSpec extends extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode
+        "action" -> submitRoute
       )
 
       templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
@@ -90,19 +90,9 @@ class $className$ControllerSpec extends extends ControllerSpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-
+      retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("$field1Name$", "value 1"), ("$field2Name$", "value 2"))

@@ -1,32 +1,36 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, $className$, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.$className$
+import pages.$className$Page
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import uk.gov.hmrc.viewmodels.DateInput
 
+import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
 class $className$ControllerSpec extends ControllerSpecBase {
+
+  lazy val loadRoute   = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.$className$Controller.onSubmit(NormalMode).url
 
   private def form = new forms.$className$FormProvider().apply()
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
-
   override val emptyUserAnswers = UserAnswers(userAnswersId)
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, $className;format="decap"$Route)
+    FakeRequest(GET, loadRoute)
 
   def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest(POST, $className;format="decap"$Route)
+    FakeRequest(POST, submitRoute)
       .withFormUrlEncodedBody(
         "value.day"   -> validAnswer.getDayOfMonth.toString,
         "value.month" -> validAnswer.getMonthValue.toString,
@@ -54,7 +58,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form" -> form,
-        "mode" -> NormalMode,
+        "action" -> submitRoute,
         "date" -> viewModel
       )
 
@@ -68,7 +72,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
         .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId).set($className$Page, validAnswer).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -90,7 +94,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form" -> filledForm,
-        "mode" -> NormalMode,
+        "action" -> submitRoute,
         "date" -> viewModel
       )
 
@@ -100,18 +104,9 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
+      retrieveUserAnswersData(emptyUserAnswers)
       val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
@@ -125,7 +120,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, $className;format="decap"$Route).withFormUrlEncodedBody(("value", "invalid value"))
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
@@ -140,7 +135,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form" -> boundForm,
-        "mode" -> NormalMode,
+        "action" -> submitRoute,
         "date" -> viewModel
       )
 

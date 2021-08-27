@@ -31,8 +31,8 @@ awk '/trait UserAnswersEntryGenerators/ {\
     print "  implicit lazy val arbitrary$className$UserAnswersEntry: Arbitrary[(pages.$className$Page.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
-    print "        page  <- arbitrary[$className$Page.type]";\
-    print "        value <- arbitrary[$className$].map(Json.toJson(_))";\
+    print "        page  <- arbitrary[pages.$className$Page.type]";\
+    print "        value <- arbitrary[models.$className$].map(Json.toJson(_))";\
     print "      } yield (page, value)";\
     print "    }";\
     next }1' ../test/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test/generators/UserAnswersEntryGenerators.scala
@@ -42,19 +42,19 @@ awk '/trait PageGenerators/ {\
     print;\
     print "";\
     print "  implicit lazy val arbitrary$className$Page: Arbitrary[pages.$className$Page.type] =";\
-    print "    Arbitrary($className$Page)";\
+    print "    Arbitrary(pages.$className$Page)";\
     next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
 
 echo "Adding to ModelGenerators"
 awk '/trait ModelGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$className$: Arbitrary[$className$] =";\
+    print "  implicit lazy val arbitrary$className$: Arbitrary[models.$className$] =";\
     print "    Arbitrary {";\
     print "      for {";\
     print "        $field1Name$ <- arbitrary[String]";\
     print "        $field2Name$ <- arbitrary[String]";\
-    print "      } yield $className$($field1Name$, $field2Name$)";\
+    print "      } yield models.$className$($field1Name$, $field2Name$)";\
     print "    }";\
     next }1' ../test/generators/ModelGenerators.scala > tmp && mv tmp ../test/generators/ModelGenerators.scala
 

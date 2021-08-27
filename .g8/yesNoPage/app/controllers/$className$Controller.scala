@@ -4,8 +4,10 @@ import controllers.actions._
 import forms.$className$FormProvider
 import javax.inject.Inject
 import models.Mode
+import models.requests.DataRequest
 import navigation.{DefaultJourney, Navigator}
 import pages.$className$Page
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,10 +32,11 @@ class $className;format="cap"$Controller @Inject()(
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Set[$className$]])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"       -> form,
-      "action"     -> routes.$className$Controller.onSubmit(mode).url
+      "action"     -> routes.$className$Controller.onSubmit(mode).url,
+      "radios"     -> Radios.yesNo(form("value"))
     )
     renderer.render("$className;format="decap"$.njk", data)
   }
