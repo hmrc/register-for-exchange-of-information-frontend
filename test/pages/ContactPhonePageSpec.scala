@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
+class ContactPhonePageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryContactPhonePage: Arbitrary[pages.ContactPhonePage.type] =
-    Arbitrary(pages.ContactPhonePage)
+  "ContactPhonePage" - {
 
-  implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
-    Arbitrary(pages.ContactNamePage)
+    beRetrievable[String](ContactPhonePage)
 
-  implicit lazy val arbitraryContactEmailPage: Arbitrary[pages.ContactEmailPage.type] =
-    Arbitrary(pages.ContactEmailPage)
+    beSettable[String](ContactPhonePage)
 
+    beRemovable[String](ContactPhonePage)
+  }
 }

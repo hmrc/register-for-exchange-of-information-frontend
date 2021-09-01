@@ -124,3 +124,10 @@ contactEmail.error.required = Please, enter contact email
 contactEmail.error.invalid = Please, enter a valid contact email
 contactEmail.error.length = Contact email must be 400 characters or less
 
+contactPhone.title = What is the telephone number for {0}?
+contactPhone.heading = What is the telephone number for {0}?
+contactPhone.hint = For international numbers include the country code
+contactPhone.checkYourAnswersLabel = Telephone number
+contactPhone.error.required = Enter contact phone
+contactPhone.error.invalid = Please, enter a valid contact phone
+contactPhone.error.length = Contact phone must be 100 characters or less
