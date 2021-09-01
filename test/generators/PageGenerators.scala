@@ -20,6 +20,9 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryIsContactTelephonePage: Arbitrary[pages.IsContactTelephonePage.type] =
+    Arbitrary(pages.IsContactTelephonePage)
+
   implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
     Arbitrary(pages.ContactNamePage)
 

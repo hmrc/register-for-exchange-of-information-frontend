@@ -122,3 +122,7 @@ contactEmail.hint = We will use this to send confirmation emails and to contact 
 contactEmail.error.required = Please, enter contact email
 contactEmail.error.length = Contact email must be 1000 characters or less
 
+isContactTelephone.title = isContactTelephone
+isContactTelephone.heading = isContactTelephone
+isContactTelephone.checkYourAnswersLabel = isContactTelephone
+isContactTelephone.error.required = Select yes if isContactTelephone
