@@ -88,6 +88,10 @@ needContactDetails.heading = We need your contact details
 needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
 needContactDetails.p2 = We need these before you can send a country-by-country report.
 
+contactName.title = Who can we contact?
+contactName.heading = Who can we contact if we have any questions about the reports?
+contactName.p1 = For example, 'Tax team' or 'Ashley Smith'
+
 phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
 phaseBanner.3 = will help us to improve it.
