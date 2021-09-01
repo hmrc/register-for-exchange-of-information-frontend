@@ -20,3 +20,4 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 
 GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
 
+GET         /contact-name                                controllers.ContactNameController.onPageLoad()
