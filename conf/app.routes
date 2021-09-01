@@ -22,4 +22,13 @@ GET         /check-your-answers                          controllers.CheckYourAn
 
 GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
 
-GET         /contact-name                                controllers.ContactNameController.onPageLoad()
+GET        /contact/contact-name                         controllers.ContactNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /contact/contact-name                         controllers.ContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /contact/change-contact-name                  controllers.ContactNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /contact/change-contact-name                  controllers.ContactNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /contact/email                                controllers.ContactEmailController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /contact/email                                controllers.ContactEmailController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /contact/change-email                         controllers.ContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /contact/change-email                         controllers.ContactEmailController.onSubmit(mode: models.Mode = models.CheckMode)
+

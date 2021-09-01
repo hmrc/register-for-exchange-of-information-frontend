@@ -90,7 +90,9 @@ needContactDetails.p2 = We need these before you can send a country-by-country r
 
 contactName.title = Who can we contact?
 contactName.heading = Who can we contact if we have any questions about the reports?
-contactName.p1 = For example, 'Tax team' or 'Ashley Smith'
+contactName.hint = For example, 'Tax team' or 'Ashley Smith'
+contactName.error.required = Enter contactName
+contactName.error.length = ContactName must be 1000 characters or less
 
 phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
@@ -113,3 +115,10 @@ unauthorised.heading = You can’t access this service with this account
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out
 sessionExpired.guidance = The details you entered will be saved for 28 days from when you last made changes.
+
+contactEmail.title = What is the email address for {0}?
+contactEmail.heading = What is the email address for {0}?
+contactEmail.hint = We will use this to send confirmation emails and to contact you if we have questions about the reports.
+contactEmail.error.required = Please, enter contact email
+contactEmail.error.length = Contact email must be 1000 characters or less
+

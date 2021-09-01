@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
+import forms.behaviours.StringFieldBehaviours
+import play.api.data.FormError
 
-trait PageGenerators {
+class ContactEmailFormProviderSpec extends StringFieldBehaviours {
 
-  implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
-    Arbitrary(pages.ContactNamePage)
+  val requiredKey = "contactEmail.error.required"
 
-  implicit lazy val arbitraryContactEmailPage: Arbitrary[pages.ContactEmailPage.type] =
-    Arbitrary(pages.ContactEmailPage)
+  val form = new ContactEmailFormProvider()()
 
+  ".value" - {
+
+    val fieldName = "email"
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }
