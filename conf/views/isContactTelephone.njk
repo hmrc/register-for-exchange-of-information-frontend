@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isContactTelephone.title"), form.errors) }}
+  {{ title(messages("isContactTelephone.title", name), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -38,7 +38,7 @@
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('isContactTelephone.title'),
+                text: messages('isContactTelephone.heading'),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--xl"
               }
@@ -48,7 +48,7 @@
           }) }}
 
           {{ govukButton({
-            text: messages("site.continue"),
+            text: messages("site.saveAndContinue"),
             attributes: {
               "id": "submit"
             }

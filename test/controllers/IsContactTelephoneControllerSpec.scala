@@ -1,10 +1,27 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers
 
 import base.ControllerSpecBase
+import exceptions.SomeInformationIsMissingException
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.IsContactTelephonePage
+import pages.{ContactNamePage, IsContactTelephonePage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -20,6 +37,8 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.IsContactTelephoneFormProvider().apply()
 
+  val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
+
   "IsContactTelephone Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -27,10 +46,10 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, loadRoute)
+      retrieveUserAnswersData(userAnswers)
+      val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -40,7 +59,7 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form"   -> form,
-        "action"   -> loadRoute,
+        "action" -> loadRoute,
         "radios" -> Radios.yesNo(form("value"))
       )
 
@@ -53,11 +72,17 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsContactTelephonePage, true).success.value
-      retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, loadRoute)
+      val userAnswers2 = UserAnswers(userAnswersId)
+        .set(ContactNamePage, "Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, true)
+        .success
+        .value
+      retrieveUserAnswersData(userAnswers2)
+      val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -69,7 +94,7 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
-        "action"   -> loadRoute,
+        "action" -> loadRoute,
         "radios" -> Radios.yesNo(filledForm("value"))
       )
 
@@ -98,11 +123,11 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
+      retrieveUserAnswersData(userAnswers)
+      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -112,12 +137,27 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
       val expectedJson = Json.obj(
         "form"   -> boundForm,
-        "action"   -> loadRoute,
+        "action" -> loadRoute,
         "radios" -> Radios.yesNo(boundForm("value"))
       )
 
       templateCaptor.getValue mustEqual "isContactTelephone.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+    }
+
+    "must throw 'SomeInformationIsMissingException' when data is missing" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+
+      val result = route(app, request).value
+
+      an[SomeInformationIsMissingException] mustBe thrownBy {
+        status(result) mustEqual OK
+      }
     }
   }
 }
