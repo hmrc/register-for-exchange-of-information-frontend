@@ -16,33 +16,33 @@
 
 package controllers
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import navigation.Navigator
+import controllers.actions.{DataInitializeAction, DataRetrievalAction, IdentifierAction}
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class NeedContactDetailsController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  navigator: Navigator,
-  sessionRepository: SessionRepository,
-  renderer: Renderer
+                                               override val messagesApi: MessagesApi,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataInitializeAction,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      renderer.render("needContactDetails.njk").map(Ok(_))
+      val data = Json.obj(
+        "action" -> routes.ContactNameController.onPageLoad(NormalMode).url
+      )
+      renderer.render("needContactDetails.njk", data).map(Ok(_))
   }
-
 }
