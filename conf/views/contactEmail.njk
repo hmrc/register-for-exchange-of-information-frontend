@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("contactName.title"), form.errors) }}
+  {{ title(messages("contactEmail.title", name), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -29,27 +29,30 @@
           }) }}
         {% endif %}
 
-        <form action="{{ action }}" method="post">
+        <form action="{{ action }}" method="post" novalidate>
 
           {{ csrf() | safe }}
 
           {{ govukInput({
             label: {
-              text: messages('contactName.heading'),
+              text: messages('contactEmail.heading', name),
               isPageHeading: true,
-              classes: "govuk-label--xl"
+              classes: "govuk-label--xl text-overflow"
             },
-            id: "value",
-            name: "value",
+            id: "email",
+            name: "email",
+            type: "email",
+            autocomplete: "email",
             hint: {
-              text: messages('contactName.hint')
+              text: messages('contactEmail.hint')
             },
+            spellcheck: false,
             value: form.value.value,
             errorMessage: form.value.error
           }) }}
 
           {{ govukButton({
-            text: messages("site.saveAndContinue"),
+            text: messages("site.continue"),
             attributes: {
               "id": "submit"
             }

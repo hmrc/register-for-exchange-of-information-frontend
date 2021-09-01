@@ -17,11 +17,14 @@
 package controllers
 
 import controllers.actions._
-import forms.ContactNameFormProvider
+import exceptions.SomeInformationIsMissingException
+import forms.ContactEmailFormProvider
+
+import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.ContactNamePage
+import pages.{ContactEmailPage, ContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -32,17 +35,16 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactNameController @Inject() (
+class ContactEmailController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction,
-  formProvider: ContactNameFormProvider,
+  requireData: DataRequiredAction,
+  formProvider: ContactEmailFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -55,14 +57,15 @@ class ContactNameController @Inject() (
   private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "action" -> routes.ContactNameController.onSubmit(mode).url
+      "name"   -> request.userAnswers.get(ContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
+      "action" -> routes.ContactEmailController.onSubmit(mode).url
     )
-    renderer.render("contactName.njk", data)
+    renderer.render("contactEmail.njk", data)
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(ContactNamePage).fold(form)(form.fill)).map(Ok(_))
+      render(mode, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill)).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -73,9 +76,9 @@ class ContactNameController @Inject() (
           formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNamePage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ContactNamePage, mode, request.userAnswers))
+            } yield Redirect(navigator.nextPage(ContactEmailPage, mode, request.userAnswers))
         )
   }
 }

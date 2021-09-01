@@ -27,13 +27,13 @@ import models._
 class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case ContactNamePage => _ => routes.IndexController.onPageLoad() // todo update with Email page
-    case _ => _ => routes.IndexController.onPageLoad()
+    case ContactNamePage => _ => routes.ContactEmailController.onPageLoad(NormalMode)
+    case _               => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case ContactNamePage => _ => routes.CheckYourAnswersController.onPageLoad() // todo update with Email page
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad()
+    case ContactNamePage => _ => routes.ContactEmailController.onPageLoad(CheckMode)
+    case _               => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
