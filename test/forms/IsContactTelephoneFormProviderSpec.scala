@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-trait PageGenerators {
+class IsContactTelephoneFormProviderSpec extends BooleanFieldBehaviours {
 
-  implicit lazy val arbitraryIsContactTelephonePage: Arbitrary[pages.IsContactTelephonePage.type] =
-    Arbitrary(pages.IsContactTelephonePage)
+  val requiredKey = "isContactTelephone.error.required"
+  val invalidKey  = "error.boolean"
 
-  implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
-    Arbitrary(pages.ContactNamePage)
+  val form = new IsContactTelephoneFormProvider()()
 
-  implicit lazy val arbitraryContactEmailPage: Arbitrary[pages.ContactEmailPage.type] =
-    Arbitrary(pages.ContactEmailPage)
+  ".value" - {
 
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

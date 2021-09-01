@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package generators
+package exceptions
 
-import org.scalacheck.Arbitrary
+class SomeInformationIsMissingException(val optMsg: Option[String] = None) extends RuntimeException {
 
-trait PageGenerators {
+  def this(msg: String) = this(Some(msg))
 
-  implicit lazy val arbitraryIsContactTelephonePage: Arbitrary[pages.IsContactTelephonePage.type] =
-    Arbitrary(pages.IsContactTelephonePage)
-
-  implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
-    Arbitrary(pages.ContactNamePage)
-
-  implicit lazy val arbitraryContactEmailPage: Arbitrary[pages.ContactEmailPage.type] =
-    Arbitrary(pages.ContactEmailPage)
-
+  override def getMessage: String = optMsg.getOrElse(super.getMessage)
 }
