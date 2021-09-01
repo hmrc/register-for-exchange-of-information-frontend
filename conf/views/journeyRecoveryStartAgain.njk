@@ -1,0 +1,31 @@
+{% extends "includes/layout.njk" %}
+
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("journeyRecovery.startAgain.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">{{ messages("journeyRecovery.startAgain.heading") }}</h1>
+
+        <p class="govuk-body">{{ messages("journeyRecovery.startAgain.guidance") }}</p>
+
+        <p class="govuk-body">
+          {{ govukButton({
+            text: messages("site.startAgain"),
+            href: "{{ routes.IndexController.onPageLoad().url }}",
+            attributes: {id:"submit"}
+          }) }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
