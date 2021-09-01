@@ -21,3 +21,5 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
 
 GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
+
+GET         /contact-name                                controllers.ContactNameController.onPageLoad()
