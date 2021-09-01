@@ -70,7 +70,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers2 = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(ContactEmailPage, "answer").success.value
+      val userAnswers2 = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(ContactEmailPage, "some@email.com").success.value
       retrieveUserAnswersData(userAnswers2)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -82,7 +82,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("email" -> "answer"))
+      val filledForm = form.bind(Map("email" -> "some@email.com"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
@@ -100,7 +100,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("email", "answer"))
+          .withFormUrlEncodedBody(("email", "some@email.com"))
 
       val result = route(app, request).value
 

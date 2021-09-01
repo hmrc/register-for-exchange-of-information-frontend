@@ -62,11 +62,6 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.errors must contain(FormError("value", "error.required"))
     }
 
-    "must not bind a string of whitespace only" in {
-      val result = testForm.bind(Map("value" -> " \t"))
-      result.errors must contain(FormError("value", "error.required"))
-    }
-
     "must not bind an empty map" in {
       val result = testForm.bind(Map.empty[String, String])
       result.errors must contain(FormError("value", "error.required"))
