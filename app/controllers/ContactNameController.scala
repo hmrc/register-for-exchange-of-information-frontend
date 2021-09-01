@@ -63,7 +63,7 @@ class ContactNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.asForm(pages.ContactNamePage, form)).map(Ok(_))
+      render(mode, request.userAnswers.get(ContactNamePage).fold(form)(form.fill)).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -74,9 +74,9 @@ class ContactNameController @Inject() (
           formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
-              updatedAnswers <- request.update(ContactNamePage, value)
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ContactNamePage)(DefaultJourney(mode))(Option(value)))
+            } yield Redirect(navigator.nextPage(ContactNamePage, mode, request.userAnswers))
         )
   }
 }
