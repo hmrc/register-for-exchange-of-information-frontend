@@ -6,7 +6,7 @@ import models.requests.DataRequest
 
 import javax.inject.Inject
 import models.{$className$, Mode}
-import navigation.{DefaultJourney, Navigator}
+import navigation.Navigator
 import pages.$className$Page
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -46,7 +46,7 @@ class $className$Controller @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
 
-      render(mode, request.asForm(pages.$className;format="cap"$Page, form)).map(Ok(_))
+      render(mode, request.userAnswers.get($className;format="cap"$Page).fold(form)(form.fill)).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -56,9 +56,9 @@ class $className$Controller @Inject()(
         formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
         value =>
           for {
-            updatedAnswers <- request.update($className;format="cap"$Page, value)
+            updatedAnswers <- Future.fromTry(request.userAnswers.set($className;format="cap"$Page, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage($className;format="cap"$Page)(DefaultJourney(mode))(Option(value)))
+          } yield Redirect(navigator.nextPage($className;format="cap"$Page, mode, request.userAnswers))
       )
   }
 }
