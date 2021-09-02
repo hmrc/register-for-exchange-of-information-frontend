@@ -1,14 +1,5 @@
-// prevent resubmit warning
-if (window.history && window.history.replaceState && typeof window.history.replaceState === 'function') {
-  window.history.replaceState(null, null, window.location.href);
-}
-
-// handle back click
-document.querySelector('.govuk-back-link').addEventListener('click', function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  window.history.back();
-});
+// initialise GovUK lib
+GOVUKFrontend.initAll();
 
 // =====================================================
 // Back link mimics browser back functionality
@@ -22,7 +13,7 @@ if (window.history && window.history.replaceState && typeof window.history.repla
 
 // back click handle, dependent upon presence of referrer & no host change
 var backLink = document.querySelector('.govuk-back-link');
-if(backLink){
+if(backLink && backLink.getAttribute('href') === '#'){
   backLink.addEventListener('click', function(e){
     e.preventDefault();
     if (window.history && window.history.back && typeof window.history.back === 'function' &&
