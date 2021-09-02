@@ -53,6 +53,7 @@ class ContactNameController @Inject() (
   private val form = formProvider()
 
   private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+    println("FORM " + form)
     val data = Json.obj(
       "form"   -> form,
       "action" -> routes.ContactNameController.onSubmit(mode).url
