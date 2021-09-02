@@ -124,3 +124,6 @@ contactEmail.error.required = Enter an email address
 contactEmail.error.invalid = Enter an email address in the correct format, like name@example.com.
 contactEmail.error.length = Contact email must be 400 characters or less
 
+isContactTelephone.title = Can we contact {0} by telephone?
+isContactTelephone.heading = Can we contact CBC team by telephone?
+isContactTelephone.error.required = Select yes if can contact by telephone
