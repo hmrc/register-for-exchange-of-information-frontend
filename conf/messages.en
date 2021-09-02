@@ -125,3 +125,8 @@ contactEmail.error.length = Contact email must be 1000 characters or less
 isContactTelephone.title = Can we contact {0} by telephone?
 isContactTelephone.heading = Can we contact CBC team by telephone?
 isContactTelephone.error.required = Select yes if can contact by telephone
+
+secondContact.title = Is there someone else we can contact?
+secondContact.heading = Is there someone else we can contact if CBC team is not available?
+secondContact.checkYourAnswersLabel = secondContact
+secondContact.error.required = Select yes if we can contact someone else

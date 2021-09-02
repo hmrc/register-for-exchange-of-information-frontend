@@ -37,3 +37,8 @@ GET        /register/is-contact-telephone                        controllers.IsC
 POST       /register/is-contact-telephone                        controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-is-contact-telephone                 controllers.IsContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-is-contact-telephone                 controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/have-second-contact                         controllers.SecondContactController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-second-contact                         controllers.SecondContactController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-second-contact                  controllers.SecondContactController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-second-contact                  controllers.SecondContactController.onSubmit(mode: models.Mode = models.CheckMode)

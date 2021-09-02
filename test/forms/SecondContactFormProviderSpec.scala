@@ -14,22 +14,32 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-trait PageGenerators {
+class SecondContactFormProviderSpec extends BooleanFieldBehaviours {
 
-  implicit lazy val arbitrarySecondContactPage: Arbitrary[pages.SecondContactPage.type] =
-    Arbitrary(pages.SecondContactPage)
+  val requiredKey = "secondContact.error.required"
+  val invalidKey  = "error.boolean"
 
-  implicit lazy val arbitraryIsContactTelephonePage: Arbitrary[pages.IsContactTelephonePage.type] =
-    Arbitrary(pages.IsContactTelephonePage)
+  val form = new SecondContactFormProvider()()
 
-  implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
-    Arbitrary(pages.ContactNamePage)
+  ".value" - {
 
-  implicit lazy val arbitraryContactEmailPage: Arbitrary[pages.ContactEmailPage.type] =
-    Arbitrary(pages.ContactEmailPage)
+    val fieldName = "value"
 
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

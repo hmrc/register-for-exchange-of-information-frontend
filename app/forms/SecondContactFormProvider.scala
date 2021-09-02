@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
+import javax.inject.Inject
 
-trait PageGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  implicit lazy val arbitrarySecondContactPage: Arbitrary[pages.SecondContactPage.type] =
-    Arbitrary(pages.SecondContactPage)
+class SecondContactFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryIsContactTelephonePage: Arbitrary[pages.IsContactTelephonePage.type] =
-    Arbitrary(pages.IsContactTelephonePage)
-
-  implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
-    Arbitrary(pages.ContactNamePage)
-
-  implicit lazy val arbitraryContactEmailPage: Arbitrary[pages.ContactEmailPage.type] =
-    Arbitrary(pages.ContactEmailPage)
-
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("secondContact.error.required")
+    )
 }
