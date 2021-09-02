@@ -139,3 +139,10 @@ secondContact.title = Is there someone else we can contact?
 secondContact.heading = Is there someone else we can contact if CBC team is not available?
 secondContact.checkYourAnswersLabel = secondContact
 secondContact.error.required = Select yes if we can contact someone else
+
+sndContactName.title = Who else could we contact?
+sndContactName.heading = Who else could we contact?
+sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''
+sndContactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your disclosures
+sndContactName.error.invalid = Contact name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+sndContactName.error.length = Contact name must be 200 characters or less

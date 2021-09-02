@@ -47,3 +47,8 @@ GET        /register/have-second-contact                         controllers.Sec
 POST       /register/have-second-contact                         controllers.SecondContactController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-have-second-contact                  controllers.SecondContactController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-have-second-contact                  controllers.SecondContactController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/second-contact-name                        controllers.SndContactNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/second-contact-name                        controllers.SndContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-second-contact-name                  controllers.SndContactNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-second-contact-name                  controllers.SndContactNameController.onSubmit(mode: models.Mode = models.CheckMode)

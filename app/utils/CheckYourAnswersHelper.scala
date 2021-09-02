@@ -24,6 +24,15 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
+  def sndContactName: Option[Row] = userAnswers.get(pages.SndContactNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "sndContactName",
+        content = msg"site.edit",
+        href = routes.SndContactNameController.onPageLoad(CheckMode).url
+      )
+  }
+
   def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) map {
     answer =>
       toRow(
