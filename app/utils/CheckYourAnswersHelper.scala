@@ -33,6 +33,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def secondContact: Option[Row] = userAnswers.get(pages.SecondContactPage) map {
+    answer =>
+      toRow(
+        msgKey = "secondContact",
+        content = msg"site.edit",
+        href = routes.SecondContactController.onPageLoad(CheckMode).url
+      )
+  }
+
   def isContactTelephone: Option[Row] = userAnswers.get(pages.IsContactTelephonePage) map {
     answer =>
       toRow(

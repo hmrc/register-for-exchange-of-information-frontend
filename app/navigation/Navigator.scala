@@ -30,6 +30,7 @@ class Navigator @Inject() () {
     case ContactNamePage        => _ => routes.ContactNameController.onPageLoad(NormalMode)
     case ContactEmailPage       => _ => routes.ContactEmailController.onPageLoad(NormalMode)
     case IsContactTelephonePage => _ => routes.IsContactTelephoneController.onPageLoad(NormalMode)
+    case SecondContactPage      => _ => routes.SecondContactController.onPageLoad(NormalMode)
     case _                      => _ => routes.IndexController.onPageLoad()
   }
 
@@ -37,6 +38,7 @@ class Navigator @Inject() () {
     case ContactNamePage        => _ => routes.ContactNameController.onPageLoad(CheckMode)
     case ContactEmailPage       => _ => routes.ContactEmailController.onPageLoad(CheckMode)
     case IsContactTelephonePage => _ => routes.IsContactTelephoneController.onPageLoad(CheckMode)
+    case SecondContactPage      => _ => routes.SecondContactController.onPageLoad(CheckMode)
     case _                      => _ => routes.CheckYourAnswersController.onPageLoad()
   }
 
