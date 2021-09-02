@@ -146,3 +146,9 @@ sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''
 sndContactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your disclosures
 sndContactName.error.invalid = Contact name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 sndContactName.error.length = Contact name must be 200 characters or less
+
+sndEmail.title = sndEmail
+sndEmail.heading = sndEmail
+sndEmail.checkYourAnswersLabel = sndEmail
+sndEmail.error.required = Enter sndEmail
+sndEmail.error.length = SndEmail must be 400 characters or less

@@ -52,3 +52,8 @@ GET        /register/second-contact-name                        controllers.SndC
 POST       /register/second-contact-name                        controllers.SndContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-second-contact-name                  controllers.SndContactNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-second-contact-name                  controllers.SndContactNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /sndEmail                        controllers.SndEmailController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /sndEmail                        controllers.SndEmailController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /changeSndEmail                  controllers.SndEmailController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /changeSndEmail                  controllers.SndEmailController.onSubmit(mode: models.Mode = models.CheckMode)
