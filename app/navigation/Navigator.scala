@@ -27,13 +27,15 @@ import models._
 class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case ContactNamePage        => _ => routes.ContactEmailController.onPageLoad(NormalMode)
+    case ContactNamePage        => _ => routes.ContactNameController.onPageLoad(NormalMode)
+    case ContactEmailPage       => _ => routes.ContactEmailController.onPageLoad(NormalMode)
     case IsContactTelephonePage => _ => routes.IsContactTelephoneController.onPageLoad(NormalMode)
     case _                      => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case ContactNamePage        => _ => routes.ContactEmailController.onPageLoad(CheckMode)
+    case ContactNamePage        => _ => routes.ContactNameController.onPageLoad(CheckMode)
+    case ContactEmailPage       => _ => routes.ContactEmailController.onPageLoad(CheckMode)
     case IsContactTelephonePage => _ => routes.IsContactTelephoneController.onPageLoad(CheckMode)
     case _                      => _ => routes.CheckYourAnswersController.onPageLoad()
   }
