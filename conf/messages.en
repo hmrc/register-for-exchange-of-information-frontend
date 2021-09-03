@@ -93,7 +93,7 @@ contactName.heading = Who can we contact if we have any questions about the repo
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your disclosures
 contactName.error.invalid = Contact name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-contactName.error.length = Contact name must be 200 characters or less
+contactName.error.length = Contact name must be 35 characters or less
 
 phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
@@ -120,8 +120,9 @@ sessionExpired.guidance = The details you entered will be saved for 28 days from
 contactEmail.title = What is the email address for {0}?
 contactEmail.heading = What is the email address for {0}?
 contactEmail.hint = We will use this to send confirmation emails and to contact you if we have questions about the reports.
-contactEmail.error.required = Please, enter contact email
-contactEmail.error.length = Contact email must be 1000 characters or less
+contactEmail.error.required = Enter an email address
+contactEmail.error.length = Email address must be 254 characters or less
+contactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
 
 isContactTelephone.title = Can we contact {0} by telephone?
 isContactTelephone.heading = Can we contact {0} by telephone?
@@ -131,9 +132,9 @@ contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
 contactPhone.hint = For international numbers include the country code
 contactPhone.checkYourAnswersLabel = Telephone number
-contactPhone.error.required = Enter contact phone
-contactPhone.error.invalid = Please, enter a valid contact phone
-contactPhone.error.length = Contact phone must be 100 characters or less
+contactPhone.error.required = Enter a telephone number
+contactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+contactPhone.error.length = Contact phone must be 17 characters or less
 
 secondContact.title = Is there someone else we can contact?
 secondContact.heading = Is there someone else we can contact if {0} is not available?
