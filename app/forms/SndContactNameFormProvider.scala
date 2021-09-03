@@ -25,6 +25,6 @@ class SndContactNameFormProvider @Inject() extends Mappings with RegexConstants 
 
   def apply(): Form[String] =
     Form(
-      "value" -> validatedText("sndContactName.error.required", "sndContactName.error.invalid", "sndContactName.error.length", orgNameRegex, 200)
+      "value" -> validatedText("sndContactName.error.required", "sndContactName.error.invalid", "sndContactName.error.length", phoneRegex, 200)
     )
 }

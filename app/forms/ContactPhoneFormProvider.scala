@@ -17,15 +17,14 @@
 package forms
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+import utils.RegexConstants
 
-class ContactPhoneFormProvider @Inject() extends Mappings {
+class ContactPhoneFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("contactPhone.error.required")
-        .verifying(maxLength(100, "contactPhone.error.length"))
+      validatedText("contactPhone.error.required", "contactPhone.error.invalid", "contactPhone.error.length", phoneRegex, 200)
     )
 }
