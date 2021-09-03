@@ -17,12 +17,14 @@
 package controllers
 
 import controllers.actions._
+import exceptions.SomeInformationIsMissingException
 import forms.SecondContactFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.SecondContactPage
+import pages.{ContactNamePage, SecondContactPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -56,6 +58,7 @@ class SecondContactController @Inject() (
     val data = Json.obj(
       "form"   -> form,
       "action" -> routes.SecondContactController.onSubmit(mode).url,
+      "name"   -> request.userAnswers.get(ContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
       "radios" -> Radios.yesNo(form("value"))
     )
     renderer.render("secondContact.njk", data)

@@ -124,7 +124,7 @@ contactEmail.error.required = Please, enter contact email
 contactEmail.error.length = Contact email must be 1000 characters or less
 
 isContactTelephone.title = Can we contact {0} by telephone?
-isContactTelephone.heading = Can we contact CBC team by telephone?
+isContactTelephone.heading = Can we contact {0} by telephone?
 isContactTelephone.error.required = Select yes if can contact by telephone
 
 contactPhone.title = What is the telephone number for {0}?
@@ -136,7 +136,7 @@ contactPhone.error.invalid = Please, enter a valid contact phone
 contactPhone.error.length = Contact phone must be 100 characters or less
 
 secondContact.title = Is there someone else we can contact?
-secondContact.heading = Is there someone else we can contact if CBC team is not available?
+secondContact.heading = Is there someone else we can contact if {0} is not available?
 secondContact.checkYourAnswersLabel = secondContact
 secondContact.error.required = Select yes if we can contact someone else
 
