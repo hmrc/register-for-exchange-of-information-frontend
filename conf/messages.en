@@ -146,4 +146,4 @@ sndContactName.heading = Who else could we contact?
 sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''
 sndContactName.error.required = Enter the name of the individual or team we should contact
 sndContactName.error.invalid = Name of the individual or team must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-sndContactName.error.length = Contact name must be 200 characters or less
+sndContactName.error.length = Contact name must be 35 characters or less

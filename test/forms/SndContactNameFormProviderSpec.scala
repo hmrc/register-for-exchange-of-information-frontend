@@ -24,7 +24,7 @@ class SndContactNameFormProviderSpec extends StringFieldBehaviours {
   val requiredKey = "sndContactName.error.required"
   val lengthKey   = "sndContactName.error.length"
   val invalidKey  = "sndContactName.error.invalid"
-  val maxLength   = 200
+  val maxLength   = 35
 
   val form = new SndContactNameFormProvider()()
 

@@ -25,7 +25,7 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
   val lengthKey   = "contactName.error.length"
   val invalidKey  = "contactName.error.invalid"
 
-  val maxLength = 200
+  val maxLength = 35
 
   val form = new ContactNameFormProvider()()
 

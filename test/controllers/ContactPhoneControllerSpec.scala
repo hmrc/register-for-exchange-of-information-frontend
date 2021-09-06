@@ -69,7 +69,7 @@ class ContactPhoneControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(ContactPhonePage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(ContactPhonePage, "01234 5678").success.value
       retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -81,10 +81,11 @@ class ContactPhoneControllerSpec extends ControllerSpecBase {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "01234 5678"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
+        "name"   -> "Name",
         "action" -> submitRoute
       )
 
@@ -99,7 +100,7 @@ class ContactPhoneControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("value", "01234 5678"))
 
       val result = route(app, request).value
 

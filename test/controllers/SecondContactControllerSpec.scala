@@ -20,7 +20,7 @@ import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.SecondContactPage
+import pages.{ContactNamePage, SecondContactPage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,6 +36,8 @@ class SecondContactControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.SecondContactFormProvider().apply()
 
+  val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
+
   "SecondContact Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -43,7 +45,7 @@ class SecondContactControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -69,8 +71,8 @@ class SecondContactControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(SecondContactPage, true).success.value
-      retrieveUserAnswersData(userAnswers)
+      val userAnswers2 = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(SecondContactPage, true).success.value
+      retrieveUserAnswersData(userAnswers2)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -97,7 +99,7 @@ class SecondContactControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", "true"))
@@ -114,7 +116,7 @@ class SecondContactControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
