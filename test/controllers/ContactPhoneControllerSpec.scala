@@ -20,7 +20,7 @@ import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{ContactEmailPage, ContactNamePage, ContactPhonePage}
+import pages.{ContactNamePage, ContactPhonePage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

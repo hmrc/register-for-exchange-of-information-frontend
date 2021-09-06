@@ -21,7 +21,6 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 
 import scala.util.control.Exception.nonFatalCatch
-import scala.util.matching.Regex
 
 trait Formatters {
 
