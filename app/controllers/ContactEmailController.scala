@@ -78,7 +78,7 @@ class ContactEmailController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ContactEmailPage, mode, request.userAnswers))
+            } yield Redirect(navigator.nextPage(ContactEmailPage, mode, updatedAnswers))
         )
   }
 }

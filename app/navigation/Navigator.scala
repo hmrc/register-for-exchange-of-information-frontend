@@ -30,10 +30,14 @@ class Navigator @Inject() () {
     case ContactNamePage        => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case ContactEmailPage       => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode))
     case IsContactTelephonePage => isContactTelephoneRoutes(NormalMode)
-    case ContactPhonePage       => _ => Some(routes.SecondContactController.onPageLoad(NormalMode))
-    case SecondContactPage      => _ => Some(routes.SndContactNameController.onPageLoad(NormalMode))
-    case SndContactNamePage     => _ => Some(routes.SndContactNameController.onPageLoad(NormalMode))
-    case _                      => _ => Some(routes.IndexController.onPageLoad())
+    case ContactPhonePage =>
+      _ => {
+        println("\n\nHEY")
+        Some(routes.SecondContactController.onPageLoad(NormalMode))
+      }
+    case SecondContactPage  => _ => Some(routes.SndContactNameController.onPageLoad(NormalMode))
+    case SndContactNamePage => _ => Some(routes.SndContactNameController.onPageLoad(NormalMode))
+    case _                  => _ => Some(routes.IndexController.onPageLoad())
   }
 
   private val checkRouteMap: Page => UserAnswers => Option[Call] = {
@@ -57,11 +61,11 @@ class Navigator @Inject() () {
       normalRoutes(page)(userAnswers) match {
         case Some(call) => call
         case None       => routes.SessionExpiredController.onPageLoad()
-    }
+      }
     case CheckMode =>
       checkRouteMap(page)(userAnswers) match {
         case Some(call) => call
         case None       => routes.SessionExpiredController.onPageLoad()
-    }
+      }
   }
 }

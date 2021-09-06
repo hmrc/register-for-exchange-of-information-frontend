@@ -79,7 +79,7 @@ class IsContactTelephoneController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, request.userAnswers))
+            } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, updatedAnswers))
         )
   }
 }
