@@ -20,7 +20,7 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
 
-GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
+GET         /register/need-contact-details               controllers.NeedContactDetailsController.onPageLoad()
 
 GET        /register/contact-name                        controllers.ContactNameController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/contact-name                        controllers.ContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
