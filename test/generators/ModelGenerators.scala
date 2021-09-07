@@ -18,6 +18,4 @@ package generators
 
 trait ModelGenerators {
 
-  // TODO remove comment after first generator
-
 }

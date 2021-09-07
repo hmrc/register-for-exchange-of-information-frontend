@@ -30,11 +30,7 @@ class Navigator @Inject() () {
     case ContactNamePage        => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case ContactEmailPage       => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode))
     case IsContactTelephonePage => isContactTelephoneRoutes(NormalMode)
-    case ContactPhonePage =>
-      _ => {
-        println("\n\nHEY")
-        Some(routes.SecondContactController.onPageLoad(NormalMode))
-      }
+    case ContactPhonePage   => _ => Some(routes.SecondContactController.onPageLoad(NormalMode))
     case SecondContactPage  => _ => Some(routes.SndContactNameController.onPageLoad(NormalMode))
     case SndContactNamePage => _ => Some(routes.SndContactNameController.onPageLoad(NormalMode))
     case _                  => _ => Some(routes.IndexController.onPageLoad())
