@@ -20,6 +20,22 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
-  // TODO remove comment after first generator
+  implicit lazy val arbitrarySndContactNamePage: Arbitrary[pages.SndContactNamePage.type] =
+    Arbitrary(pages.SndContactNamePage)
+
+  implicit lazy val arbitrarySecondContactPage: Arbitrary[pages.SecondContactPage.type] =
+    Arbitrary(pages.SecondContactPage)
+
+  implicit lazy val arbitraryIsContactTelephonePage: Arbitrary[pages.IsContactTelephonePage.type] =
+    Arbitrary(pages.IsContactTelephonePage)
+
+  implicit lazy val arbitraryContactPhonePage: Arbitrary[pages.ContactPhonePage.type] =
+    Arbitrary(pages.ContactPhonePage)
+
+  implicit lazy val arbitraryContactNamePage: Arbitrary[pages.ContactNamePage.type] =
+    Arbitrary(pages.ContactNamePage)
+
+  implicit lazy val arbitraryContactEmailPage: Arbitrary[pages.ContactEmailPage.type] =
+    Arbitrary(pages.ContactEmailPage)
 
 }

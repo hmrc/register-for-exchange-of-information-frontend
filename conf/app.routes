@@ -20,4 +20,34 @@ GET         /there-is-a-problem                          controllers.JourneyReco
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
 
-GET         /need-contact-details                        controllers.NeedContactDetailsController.onPageLoad()
+GET         /register/need-contact-details               controllers.NeedContactDetailsController.onPageLoad()
+
+GET        /register/contact-name                        controllers.ContactNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/contact-name                        controllers.ContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-contact-name                 controllers.ContactNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-contact-name                 controllers.ContactNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/email                               controllers.ContactEmailController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/email                               controllers.ContactEmailController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-email                        controllers.ContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-email                        controllers.ContactEmailController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/have-phone                          controllers.IsContactTelephoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-phone                          controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-phone                   controllers.IsContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-phone                   controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/phone                               controllers.ContactPhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/phone                               controllers.ContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-phone                        controllers.ContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-phone                        controllers.ContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/have-second-contact                 controllers.SecondContactController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-second-contact                 controllers.SecondContactController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-second-contact          controllers.SecondContactController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-second-contact          controllers.SecondContactController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/second-contact-name                 controllers.SndContactNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/second-contact-name                 controllers.SndContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-second-contact-name          controllers.SndContactNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-second-contact-name          controllers.SndContactNameController.onSubmit(mode: models.Mode = models.CheckMode)

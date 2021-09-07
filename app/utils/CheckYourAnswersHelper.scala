@@ -24,6 +24,58 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
-  // TODO remove after first method is merged
+  def sndContactName: Option[Row] = userAnswers.get(pages.SndContactNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "sndContactName",
+        content = msg"site.edit",
+        href = routes.SndContactNameController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) map {
+    answer =>
+      toRow(
+        msgKey = "contactPhone",
+        content = msg"site.edit",
+        href = routes.ContactPhoneController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def secondContact: Option[Row] = userAnswers.get(pages.SecondContactPage) map {
+    answer =>
+      toRow(
+        msgKey = "secondContact",
+        content = msg"site.edit",
+        href = routes.SecondContactController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def isContactTelephone: Option[Row] = userAnswers.get(pages.IsContactTelephonePage) map {
+    answer =>
+      toRow(
+        msgKey = "isContactTelephone",
+        content = msg"site.edit",
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def contactName: Option[Row] = userAnswers.get(pages.ContactNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "contactName",
+        content = msg"site.edit",
+        href = routes.ContactNameController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def contactEmail: Option[Row] = userAnswers.get(pages.ContactEmailPage) map {
+    answer =>
+      toRow(
+        msgKey = "contactEmail",
+        content = msg"site.edit",
+        href = routes.ContactEmailController.onPageLoad(CheckMode).url
+      )
+  }
 
 }
