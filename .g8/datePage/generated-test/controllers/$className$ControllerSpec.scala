@@ -1,42 +1,36 @@
 package controllers
 
-import java.time.{LocalDate, ZoneOffset}
-
-import base.SpecBase
-import forms.$className$FormProvider
+import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 import pages.$className$Page
-import play.api.inject.bind
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
-import views.html.$className$View
+import play.twirl.api.Html
+import uk.gov.hmrc.viewmodels.DateInput
 
+import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends SpecBase with MockitoSugar {
+class $className$ControllerSpec extends ControllerSpecBase {
 
-  val formProvider = new $className$FormProvider()
-  private def form = formProvider()
+  lazy val loadRoute   = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.$className$Controller.onSubmit(NormalMode).url
 
-  def onwardRoute = Call("GET", "/foo")
+  private def form = new forms.$className$FormProvider().apply()
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
-
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
 
   override val emptyUserAnswers = UserAnswers(userAnswersId)
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, $className;format="decap"$Route)
+    FakeRequest(GET, loadRoute)
 
   def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest(POST, $className;format="decap"$Route)
+    FakeRequest(POST, submitRoute)
       .withFormUrlEncodedBody(
         "value.day"   -> validAnswer.getDayOfMonth.toString,
         "value.month" -> validAnswer.getMonthValue.toString,
@@ -47,98 +41,106 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
-      running(application) {
-        val result = route(application, getRequest).value
+      retrieveUserAnswersData(emptyUserAnswers)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-        val view = application.injector.instanceOf[$className$View]
+      val result = route(app, getRequest).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(getRequest, messages(application)).toString
-      }
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val viewModel = DateInput.localDate(form("value"))
+
+      val expectedJson = Json.obj(
+        "form" -> form,
+        "action" -> submitRoute,
+        "date" -> viewModel
+      )
+
+      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
       val userAnswers = UserAnswers(userAnswersId).set($className$Page, validAnswer).success.value
+      retrieveUserAnswersData(userAnswers)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val result = route(app, getRequest).value
 
-      running(application) {
-        val view = application.injector.instanceOf[$className$View]
+      status(result) mustEqual OK
 
-        val result = route(application, getRequest).value
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(getRequest, messages(application)).toString
-      }
+      val filledForm = form.bind(
+        Map(
+          "value.day"   -> validAnswer.getDayOfMonth.toString,
+          "value.month" -> validAnswer.getMonthValue.toString,
+          "value.year"  -> validAnswer.getYear.toString
+        )
+      )
+
+      val viewModel = DateInput.localDate(filledForm("value"))
+
+      val expectedJson = Json.obj(
+        "form" -> filledForm,
+        "action" -> submitRoute,
+        "date" -> viewModel
+      )
+
+      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
+      val result = route(app, postRequest).value
 
-      running(application) {
-        val result = route(application, postRequest).value
+      status(result) mustEqual SEE_OTHER
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      redirectLocation(result).value mustEqual onwardRoute.url
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
-      val request =
-        FakeRequest(POST, $className;format="decap"$Route)
-          .withFormUrlEncodedBody(("value", "invalid value"))
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
-      running(application) {
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+      val result = route(app, request).value
 
-        val view = application.injector.instanceOf[$className$View]
+      status(result) mustEqual BAD_REQUEST
 
-        val result = route(application, request).value
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
-    }
+      val viewModel = DateInput.localDate(boundForm("value"))
 
-    "must redirect to Session Expired for a GET if no existing data is found" in {
+      val expectedJson = Json.obj(
+        "form" -> boundForm,
+        "action" -> submitRoute,
+        "date" -> viewModel
+      )
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val result = route(application, getRequest).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Session Expired for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val result = route(application, postRequest).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
+      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
   }
 }

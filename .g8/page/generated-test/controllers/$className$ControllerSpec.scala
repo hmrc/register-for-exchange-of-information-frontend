@@ -1,28 +1,35 @@
 package controllers
 
-import base.SpecBase
+import base.{ControllerMockFixtures, SpecBase}
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.$className$View
+import play.twirl.api.Html
 
-class $className$ControllerSpec extends SpecBase {
+import scala.concurrent.Future
+
+class $className$ControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "$className$ Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
-      running(application) {
-        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-        val result = route(application, request).value
+      val result = route(app, request).value
 
-        val view = application.injector.instanceOf[$className$View]
+      status(result) mustEqual OK
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
-      }
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
     }
   }
 }
