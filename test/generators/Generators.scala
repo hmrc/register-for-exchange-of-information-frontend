@@ -146,6 +146,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     chars     <- listOfN(length, arbitrary[Char])
   } yield chars.mkString
 
+  def phoneLongerThan(ln: Int): Gen[String] = for {
+    length <- Gen.chooseNum(ln, 24)
+    chars  <- listOfN(length, Gen.chooseNum(0, 9))
+  } yield "+" + chars.mkString
+
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
     nonEmptyString suchThat (!excluded.contains(_))
 

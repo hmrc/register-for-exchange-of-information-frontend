@@ -34,13 +34,13 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
-            classes: "govuk-radios--inline",
+            classes: "govuk-radios__inline",
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('secondContact.title'),
+                text: messages('secondContact.heading', name),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--xl text-overflow"
               }
             },
             items: radios,

@@ -53,7 +53,6 @@ class ContactNameController @Inject() (
   private val form = formProvider()
 
   private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    println("FORM " + form)
     val data = Json.obj(
       "form"   -> form,
       "action" -> routes.ContactNameController.onSubmit(mode).url
@@ -76,7 +75,7 @@ class ContactNameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ContactNamePage, mode, request.userAnswers))
+            } yield Redirect(navigator.nextPage(ContactNamePage, mode, updatedAnswers))
         )
   }
 }

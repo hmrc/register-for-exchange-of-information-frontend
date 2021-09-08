@@ -82,10 +82,11 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("email" -> "some@email.com"))
+      val filledForm = form.bind(Map("value" -> "some@email.com"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
+        "name"   -> "Name",
         "action" -> submitRoute
       )
 
@@ -100,7 +101,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("email", "some@email.com"))
+          .withFormUrlEncodedBody(("value", "some@email.com"))
 
       val result = route(app, request).value
 

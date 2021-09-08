@@ -19,8 +19,6 @@ package controllers
 import controllers.actions._
 import exceptions.SomeInformationIsMissingException
 import forms.ContactPhoneFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
@@ -35,6 +33,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactPhoneController @Inject() (
@@ -78,7 +77,7 @@ class ContactPhoneController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactPhonePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ContactPhonePage, mode, request.userAnswers))
+            } yield Redirect(navigator.nextPage(ContactPhonePage, mode, updatedAnswers))
         )
   }
 }

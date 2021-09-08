@@ -18,49 +18,47 @@
 
 {% block mainContent %}
 
-  <div class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
-        {% if form.errors.length > 0 %}
-          {{ govukErrorSummary({
-            "titleText": messages("error.summary.title"),
-            "errorList": form.errors
-          }) }}
-        {% endif %}
+      {% if form.errors.length > 0 %}
+        {{ govukErrorSummary({
+          "titleText": messages("error.summary.title"),
+          "errorList": form.errors
+        }) }}
+      {% endif %}
 
-        <form action="{{ action }}" method="post" novalidate>
+      <form action="{{ action }}" method="post" novalidate>
 
-          {{ csrf() | safe }}
+        {{ csrf() | safe }}
 
-          {{ govukInput({
-            label: {
-              text: messages('contactEmail.heading', name),
-              isPageHeading: true,
-              classes: "govuk-label--xl text-overflow"
-            },
-            id: "email",
-            name: "email",
-            type: "email",
-            autocomplete: "email",
-            hint: {
-              text: messages('contactEmail.hint')
-            },
-            spellcheck: false,
-            value: form.value.value,
-            errorMessage: form.value.error
-          }) }}
+        {{ govukInput({
+          label: {
+            text: messages('contactEmail.heading', name),
+            isPageHeading: true,
+            classes: "govuk-label--xl text-overflow"
+          },
+          id: "email",
+          name: "value",
+          type: "email",
+          autocomplete: "email",
+          hint: {
+            text: messages('contactEmail.hint')
+          },
+          spellcheck: false,
+          value: form.value.value,
+          errorMessage: form.value.error
+        }) }}
 
-          {{ govukButton({
-            text: messages("site.continue"),
-            attributes: {
-              "id": "submit"
-            }
-          }) }}
+        {{ govukButton({
+          text: messages("site.continue"),
+          attributes: {
+            "id": "submit"
+          }
+        }) }}
 
-        </form>
+      </form>
 
-      </div>
     </div>
   </div>
 

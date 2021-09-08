@@ -16,15 +16,18 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import utils.RegexConstants
 
+import javax.inject.Inject
+
 class SndContactNameFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 35
 
   def apply(): Form[String] =
     Form(
-      "value" -> validatedText("sndContactName.error.required", "sndContactName.error.invalid", "sndContactName.error.length", orgNameRegex, 200)
+      "value" -> validatedText("sndContactName.error.required", "sndContactName.error.invalid", "sndContactName.error.length", orgNameRegex, maxLength)
     )
 }
