@@ -1,5 +1,7 @@
 package pages
 
+import pages.behaviours.PageBehaviours
+
 class $className$PageSpec extends PageBehaviours {
 
   "$className$Page" - {

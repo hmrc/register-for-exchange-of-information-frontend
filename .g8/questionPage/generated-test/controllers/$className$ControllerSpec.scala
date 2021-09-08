@@ -1,23 +1,31 @@
 package controllers
 
-import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
+import base.SpecBase
+import forms.$className$FormProvider
+import models.{NormalMode, $className$, UserAnswers}
+import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import pages.$className$Page
-import play.api.libs.json.{JsObject, Json}
+import play.api.inject.bind
+import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import repositories.SessionRepository
+import views.html.$className$View
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends ControllerSpecBase {
+class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
-  lazy val loadRoute   = routes.$className$Controller.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.$className$Controller.onSubmit(NormalMode).url
+  def onwardRoute = Call("GET", "/foo")
 
-  private def form = new forms.$className$FormProvider().apply()
+  val formProvider = new $className$FormProvider()
+  val form = formProvider()
+
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
 
   val userAnswers = UserAnswers(
     userAnswersId,
@@ -33,101 +41,110 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      running(application) {
+        val request = FakeRequest(GET, $className;format="decap"$Route)
 
-      val result = route(app, request).value
+        val view = application.injector.instanceOf[$className$View]
 
-      status(result) mustEqual OK
+        val result = route(application, request).value
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form" -> form,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+      }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      running(application) {
+        val request = FakeRequest(GET, $className;format="decap"$Route)
 
-      val result = route(app, request).value
+        val view = application.injector.instanceOf[$className$View]
 
-      status(result) mustEqual OK
+        val result = route(application, request).value
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(
-        Map(
-          "$field1Name$" -> "value 1",
-          "$field2Name$" -> "value 2"
-        )
-      )
-
-      val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill($className$("value 1", "value 2")), NormalMode)(request, messages(application)).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
+      val mockSessionRepository = mock[SessionRepository]
+
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("$field1Name$", "value 1"), ("$field2Name$", "value 2"))
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
 
-      val result = route(app, request).value
+      running(application) {
+        val request =
+          FakeRequest(POST, $className;format="decap"$Route)
+            .withFormUrlEncodedBody(("$field1Name$", "value 1"), ("$field2Name$", "value 2"))
 
-      status(result) mustEqual SEE_OTHER
+        val result = route(application, request).value
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      running(application) {
+        val request =
+          FakeRequest(POST, $className;format="decap"$Route)
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
-      val result = route(app, request).value
+        val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      status(result) mustEqual BAD_REQUEST
+        val view = application.injector.instanceOf[$className$View]
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(application, request).value
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action"   -> loadRoute
-      )
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
 
-      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+    "must redirect to Session Expired for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, $className;format="decap"$Route)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Session Expired for a POST if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, $className;format="decap"$Route)
+            .withFormUrlEncodedBody(("$field1Name$", "value 1"), ("$field2Name$", "value 2"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
     }
   }
 }

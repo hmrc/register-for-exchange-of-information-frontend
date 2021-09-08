@@ -2,6 +2,9 @@ package pages
 
 import java.time.LocalDate
 
+import org.scalacheck.Arbitrary
+import pages.behaviours.PageBehaviours
+
 class $className$PageSpec extends PageBehaviours {
 
   "$className$Page" - {

@@ -1,30 +1,28 @@
 package controllers
 
-import play.twirl.api.Html
+import base.SpecBase
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import views.html.$className$View
 
-import scala.concurrent.Future
-
-class $className$ControllerSpec extends SpecBase with ControllerMockFixtures {
+class $className$ControllerSpec extends SpecBase {
 
   "$className$ Controller" - {
 
-    "return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      running(application) {
+        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
 
-      val result = route(app, request).value
+        val result = route(application, request).value
 
-      status(result) mustEqual OK
+        val view = application.injector.instanceOf[$className$View]
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "$className;format="decap"$.njk"
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, messages(application)).toString
+      }
     }
   }
 }
