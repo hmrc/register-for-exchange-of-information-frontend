@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-trait ModelGenerators {}
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import utils.RegexConstants
+
+class SndContactEmailFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 254
+
+  def apply(): Form[String] =
+    Form(
+      "value" -> validatedText("sndContactEmail.error.required", "sndContactEmail.error.invalid", "sndContactEmail.error.length", emailRegex, maxLength)
+    )
+}

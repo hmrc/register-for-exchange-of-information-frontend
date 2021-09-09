@@ -147,3 +147,10 @@ sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''
 sndContactName.error.required = Enter the name of the individual or team we should contact
 sndContactName.error.invalid = Name of the individual or team must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 sndContactName.error.length = Contact name must be 35 characters or less
+
+sndContactEmail.title = What is the email address for {0}?
+sndContactEmail.heading = What is the email address for {0}?
+sndContactEmail.hint = We will use this to send confirmation emails and to contact you if we have questions about the reports.
+sndContactEmail.error.required = Enter an email address
+sndContactEmail.error.length = Email address must be 254 characters or less
+sndContactEmail.error.invalid = Enter an email address in the correct format, like name@example.com

@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-trait ModelGenerators {}
+import pages.behaviours.PageBehaviours
+
+class SndContactEmailPageSpec extends PageBehaviours {
+
+  "SndContactEmailPage" - {
+
+    beRetrievable[String](SndContactEmailPage)
+
+    beSettable[String](SndContactEmailPage)
+
+    beRemovable[String](SndContactEmailPage)
+  }
+}
