@@ -21,7 +21,7 @@ import exceptions.SomeInformationIsMissingException
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{ContactNamePage, SndContactEmailPage}
+import pages.{SndContactEmailPage, SndContactNamePage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,7 +36,7 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.SndContactEmailFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
+  val userAnswers = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value
 
   "SndContactEmail Controller" - {
 
@@ -70,7 +70,7 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers2 = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(SndContactEmailPage, "some@email.com").success.value
+      val userAnswers2 = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value.set(SndContactEmailPage, "some@email.com").success.value
       retrieveUserAnswersData(userAnswers2)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
