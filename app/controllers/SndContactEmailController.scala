@@ -24,7 +24,7 @@ import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.{ContactNamePage, SndContactEmailPage}
+import pages.{ContactNamePage, SndContactEmailPage, SndContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -57,7 +57,7 @@ class SndContactEmailController @Inject() (
   private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "name"   -> request.userAnswers.get(ContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
+      "name"   -> request.userAnswers.get(SndContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
       "action" -> routes.SndContactEmailController.onSubmit(mode).url
     )
     renderer.render("sndContactEmail.njk", data)

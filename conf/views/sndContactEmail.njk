@@ -28,7 +28,7 @@
           }) }}
         {% endif %}
 
-        <form action="{{ action }}" method="post">
+        <form action="{{ action }}" method="post" novalidate>
 
           {{ csrf() | safe }}
 
