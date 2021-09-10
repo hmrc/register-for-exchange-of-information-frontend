@@ -157,4 +157,4 @@ sndContactEmail.error.invalid = Enter an email address in the correct format, li
 
 sndConHavePhone.title = Can we contact {0} by telephone?
 sndConHavePhone.heading = Can we contact {0} by telephone?
-sndConHavePhone.error.required = Select yes if there is a telephone number
+sndConHavePhone.error.required = Select yes if your second contact has a telephone number
