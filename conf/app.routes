@@ -56,3 +56,8 @@ GET        /register/second-contact-email                controllers.SndContactE
 POST       /register/second-contact-email                controllers.SndContactEmailController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-second-contact-email         controllers.SndContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-second-contact-email         controllers.SndContactEmailController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/second-contact-have-phone           controllers.SndConHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/second-contact-have-phone           controllers.SndConHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-second-contact-have-phone    controllers.SndConHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-second-contact-have-phone    controllers.SndConHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)

@@ -154,3 +154,7 @@ sndContactEmail.hint = We will use this to send confirmation emails and to conta
 sndContactEmail.error.required = Enter an email address
 sndContactEmail.error.length = Email address must be 254 characters or less
 sndContactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
+
+sndConHavePhone.title = Can we contact {0} by telephone?
+sndConHavePhone.heading = Can we contact {0} by telephone?
+sndConHavePhone.error.required = Select yes if there is a telephone number
