@@ -23,6 +23,9 @@ trait PageGenerators {
   implicit lazy val arbitrarySndConHavePhonePage: Arbitrary[pages.SndConHavePhonePage.type] =
     Arbitrary(pages.SndConHavePhonePage)
 
+  implicit lazy val arbitrarySndContactPhonePage: Arbitrary[pages.SndContactPhonePage.type] =
+    Arbitrary(pages.SndContactPhonePage)
+
   implicit lazy val arbitrarySndContactEmailPage: Arbitrary[pages.SndContactEmailPage.type] =
     Arbitrary(pages.SndContactEmailPage)
 
