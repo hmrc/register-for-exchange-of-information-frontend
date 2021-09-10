@@ -33,7 +33,8 @@ class Navigator @Inject() () {
     case ContactPhonePage       => _ => Some(routes.SecondContactController.onPageLoad(NormalMode))
     case SecondContactPage      => isSecondContact(NormalMode)
     case SndContactNamePage     => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode))
-    case SndContactEmailPage    => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode))
+    case SndContactEmailPage    => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode))
+    case SndConHavePhonePage    => haveSecondPhone(NormalMode)
     case _                      => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -44,7 +45,8 @@ class Navigator @Inject() () {
     case ContactPhonePage       => _ => Some(routes.SecondContactController.onPageLoad(CheckMode))
     case SecondContactPage      => isSecondContact(CheckMode)
     case SndContactNamePage     => _ => Some(routes.SndContactEmailController.onPageLoad(CheckMode))
-    case SndContactEmailPage    => _ => Some(routes.SndContactEmailController.onPageLoad(CheckMode))
+    case SndContactEmailPage    => _ => Some(routes.SndConHavePhoneController.onPageLoad(CheckMode))
+    case SndConHavePhonePage    => haveSecondPhone(CheckMode)
     case _                      => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
@@ -58,6 +60,12 @@ class Navigator @Inject() () {
     ua.get(SecondContactPage) map {
       case true  => routes.SndContactNameController.onPageLoad(mode)
       case false => routes.IndexController.onPageLoad() // todo once CheckAnswers is impl replace
+    }
+
+  private def haveSecondPhone(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsContactTelephonePage) map {
+      case true  => routes.SndConHavePhoneController.onPageLoad(mode) // todo replace once impl
+      case false => routes.SndConHavePhoneController.onPageLoad(mode) // todo replace once impl
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
