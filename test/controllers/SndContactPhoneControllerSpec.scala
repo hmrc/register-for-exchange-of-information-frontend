@@ -20,7 +20,7 @@ import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.SndContactPhonePage
+import pages.{SndContactNamePage, SndContactPhonePage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,6 +35,8 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.SndContactPhoneFormProvider().apply()
 
+  val userAnswers = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value
+
   "SndContactPhone Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -42,7 +44,7 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -67,8 +69,8 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(SndContactPhonePage, "answer").success.value
-      retrieveUserAnswersData(userAnswers)
+      val userAnswers2 = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value.set(SndContactPhonePage, "01234 5678").success.value
+      retrieveUserAnswersData(userAnswers2)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -79,10 +81,11 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "answer"))
+      val filledForm = form.bind(Map("value" -> "01234 5678"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
+        "name"   -> "Name",
         "action" -> submitRoute
       )
 
@@ -94,10 +97,10 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+          .withFormUrlEncodedBody(("value", "01234 5678"))
 
       val result = route(app, request).value
 
@@ -110,7 +113,7 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
