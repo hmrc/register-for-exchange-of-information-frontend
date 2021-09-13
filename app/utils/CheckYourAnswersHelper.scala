@@ -33,6 +33,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndContactPhonePage) map {
+    answer =>
+      toRow(
+        msgKey = "sndContactPhone",
+        content = msg"site.edit",
+        href = routes.SndContactPhoneController.onPageLoad(CheckMode).url
+      )
+  }
+
   def sndContactEmail: Option[Row] = userAnswers.get(pages.SndContactEmailPage) map {
     answer =>
       toRow(
