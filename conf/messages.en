@@ -165,3 +165,9 @@ sndContactPhone.hint = For international numbers include the country code
 sndContactPhone.error.required = Enter a telephone number
 sndContactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
 sndContactPhone.error.length = Contact phone must be 17 characters or less
+
+checkYourAnswers.title = checkYourAnswers
+checkYourAnswers.heading = checkYourAnswers
+checkYourAnswers.checkYourAnswersLabel = checkYourAnswers
+checkYourAnswers.error.required = Enter checkYourAnswers
+checkYourAnswers.error.length = CheckYourAnswers must be 100 characters or less
