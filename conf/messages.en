@@ -166,8 +166,13 @@ sndContactPhone.error.required = Enter a telephone number
 sndContactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
 sndContactPhone.error.length = Contact phone must be 17 characters or less
 
-checkYourAnswers.title = checkYourAnswers
-checkYourAnswers.heading = checkYourAnswers
-checkYourAnswers.checkYourAnswersLabel = checkYourAnswers
+checkYourAnswers.title = Check your answers
+checkYourAnswers.heading = Check your answers
+checkYourAnswers.firstContact.h2 = First contact
+checkYourAnswers.secondContact.h2 = Second contact
+checkYourAnswers.information.h2 = Now send the contact details
+checkYourAnswers.information.p = By sending these contact details, you are confirming that the information is correct and complete to the best of your knowledge.
+checkYourAnswers.button = Accept and send
+
 checkYourAnswers.error.required = Enter checkYourAnswers
 checkYourAnswers.error.length = CheckYourAnswers must be 100 characters or less

@@ -17,16 +17,20 @@
 package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{NormalMode, UserAnswers}
 import navigation.Navigator
+import pages.ContactNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
+import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -44,7 +48,79 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      renderer.render("index.njk").map(Ok(_)) // TODO create CYA page
+      val helper                              = new CheckYourAnswersHelper(request.userAnswers)
+      val firstContact: Seq[SummaryList.Row]  = buildFirstContact(helper)
+      val secondContact: Seq[SummaryList.Row] = buildSecondContact(helper)
+
+      //println("\n\nNJINJNJIN I\n\n") todo del
+
+      renderer
+        .render(
+          "checkYouAnswers.njk",
+          Json.obj(
+            "firstContactList"  -> firstContact,
+            "secondContactList" -> secondContact,
+            "action"            -> "routes.CheckYourAnswersController.onSubmit().url"
+          )
+        )
+        .map(Ok(_))
   }
 
+  private def buildFirstContact(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+
+    val pagesToCheck = Tuple3(
+      helper.contactName,
+      helper.contactEmail,
+      helper.contactPhone
+    )
+
+    pagesToCheck match {
+      case (Some(_), Some(_), None) =>
+        //No contact telephone
+        Seq(
+          helper.contactName,
+          helper.contactEmail
+        ).flatten
+      case _ =>
+        //All pages
+        Seq(
+          helper.contactName,
+          helper.contactEmail,
+          helper.contactPhone
+        ).flatten
+    }
+  }
+
+  private def buildSecondContact(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+
+    val pagesToCheck = Tuple4(
+      helper.secondContact,
+      helper.sndContactName,
+      helper.sndContactEmail,
+      helper.sndContactPhone
+    )
+
+    pagesToCheck match {
+      case (Some(_), None, None, None) =>
+        //No second contact
+        Seq(
+          helper.secondContact
+        ).flatten
+      case (Some(_), Some(_), Some(_), None) =>
+        //No second contact phone
+        Seq(
+          helper.secondContact,
+          helper.sndContactName,
+          helper.sndContactEmail
+        ).flatten
+      case _ =>
+        //All pages
+        Seq(
+          helper.secondContact,
+          helper.sndContactName,
+          helper.sndContactEmail,
+          helper.sndContactPhone
+        ).flatten
+    }
+  }
 }

@@ -35,7 +35,7 @@ class Navigator @Inject() () {
     case SndContactNamePage     => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode))
     case SndContactEmailPage    => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode))
     case SndConHavePhonePage    => haveSecondPhone(NormalMode)
-    case SndContactPhonePage    => _ => Some(routes.SndContactPhoneController.onPageLoad(NormalMode)) // todo replace once CheckASnwers is impl
+    case SndContactPhonePage    => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case _                      => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -48,8 +48,8 @@ class Navigator @Inject() () {
     case SndContactNamePage     => _ => Some(routes.SndContactEmailController.onPageLoad(CheckMode))
     case SndContactEmailPage    => _ => Some(routes.SndConHavePhoneController.onPageLoad(CheckMode))
     case SndConHavePhonePage    => haveSecondPhone(CheckMode)
-    case SndContactPhonePage    => _ => Some(routes.SndContactPhoneController.onPageLoad(CheckMode)) // todo replace once CheckASnwers is impl
-    case _                      => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SndContactPhonePage    => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case _                      => _ => Some(routes.IndexController.onPageLoad())
   }
 
   private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -61,13 +61,13 @@ class Navigator @Inject() () {
   private def isSecondContact(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(SecondContactPage) map {
       case true  => routes.SndContactNameController.onPageLoad(mode)
-      case false => routes.IndexController.onPageLoad() // todo once CheckAnswers is impl replace
+      case false => routes.CheckYourAnswersController.onPageLoad()
     }
 
   private def haveSecondPhone(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(SndConHavePhonePage) map {
       case true  => routes.SndContactPhoneController.onPageLoad(mode)
-      case false => routes.SndConHavePhoneController.onPageLoad(mode) // todo replace once CheckASnwers is impl
+      case false => routes.CheckYourAnswersController.onPageLoad()
     }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

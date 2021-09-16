@@ -67,7 +67,7 @@ POST       /register/second-contact-phone                         controllers.Sn
 GET        /register/change-second-contact-phone                  controllers.SndContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-second-contact-phone                  controllers.SndContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /checkYourAnswers                        controllers.CheckYourAnswersController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /checkYourAnswers                        controllers.CheckYourAnswersController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /changeCheckYourAnswers                  controllers.CheckYourAnswersController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /changeCheckYourAnswers                  controllers.CheckYourAnswersController.onSubmit(mode: models.Mode = models.CheckMode)
+#GET        /checkYourAnswers                        controllers.CheckYourAnswersController.onPageLoad(mode: models.Mode = models.NormalMode)
+#POST       /checkYourAnswers                        controllers.CheckYourAnswersController.onSubmit(mode: models.Mode = models.NormalMode)
+#GET        /changeCheckYourAnswers                  controllers.CheckYourAnswersController.onPageLoad(mode: models.Mode = models.CheckMode)
+#POST       /changeCheckYourAnswers                  controllers.CheckYourAnswersController.onSubmit(mode: models.Mode = models.CheckMode)
