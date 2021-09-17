@@ -42,5 +42,7 @@ trait Navigator {
 }
 
 object Navigator {
+
+  val missingInformation: Call = controllers.routes.SomeInformationIsMissingController.onPageLoad()
   val checkYourAnswers: Call = controllers.routes.CheckYourAnswersController.onPageLoad()
 }

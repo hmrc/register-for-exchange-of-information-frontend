@@ -17,10 +17,11 @@
 package controllers
 
 import controllers.actions._
-import exceptions.SomeInformationIsMissingException
 import forms.ContactPhoneFormProvider
 import models.Mode
 import models.requests.DataRequest
+import navigation.Navigator
+import pages.ContactPhonePage
 import navigation.CBCRNavigator
 import pages.{ContactNamePage, ContactPhonePage}
 import play.api.data.Form
@@ -53,10 +54,10 @@ class ContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "name"   -> request.userAnswers.get(ContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
+      "name"   -> name,
       "action" -> routes.ContactPhoneController.onSubmit(mode).url
     )
     renderer.render("contactPhone.njk", data)
@@ -64,7 +65,9 @@ class ContactPhoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(ContactPhonePage).fold(form)(form.fill)).map(Ok(_))
+      SomeInformationIsMissing.isMissingContactName {
+        render(mode, request.userAnswers.get(ContactPhonePage).fold(form)(form.fill), _).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -72,7 +75,10 @@ class ContactPhoneController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors =>
+            SomeInformationIsMissing.isMissingContactName {
+              render(mode, request.userAnswers.get(ContactPhonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
+            },
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactPhonePage, value))

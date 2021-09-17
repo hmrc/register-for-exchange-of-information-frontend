@@ -17,10 +17,11 @@
 package controllers
 
 import controllers.actions._
-import exceptions.SomeInformationIsMissingException
 import forms.SecondContactFormProvider
 import models.Mode
 import models.requests.DataRequest
+import navigation.Navigator
+import pages.SecondContactPage
 import navigation.CBCRNavigator
 import pages.{ContactNamePage, SecondContactPage}
 import play.api.data.Form
@@ -53,11 +54,11 @@ class SecondContactController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
       "action" -> routes.SecondContactController.onSubmit(mode).url,
-      "name"   -> request.userAnswers.get(ContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
+      "name"   -> name,
       "radios" -> Radios.yesNo(form("value"))
     )
     renderer.render("secondContact.njk", data)
@@ -65,7 +66,9 @@ class SecondContactController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(SecondContactPage).fold(form)(form.fill)).map(Ok(_))
+      SomeInformationIsMissing.isMissingContactName {
+        render(mode, request.userAnswers.get(SecondContactPage).fold(form)(form.fill), _).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -73,7 +76,10 @@ class SecondContactController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors =>
+            SomeInformationIsMissing.isMissingContactName {
+              render(mode, request.userAnswers.get(SecondContactPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
+            },
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactPage, value))

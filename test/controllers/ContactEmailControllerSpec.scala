@@ -19,6 +19,7 @@ package controllers
 import base.ControllerSpecBase
 import exceptions.SomeInformationIsMissingException
 import models.{NormalMode, UserAnswers}
+import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{ContactEmailPage, ContactNamePage}
@@ -135,7 +136,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
-    "must throw 'SomeInformationIsMissingException' when data is missing" in {
+    "must redirect to 'SomeInformationIsMissing' when data is missing" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -145,9 +146,8 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
       val result = route(app, request).value
 
-      an[SomeInformationIsMissingException] mustBe thrownBy {
-        status(result) mustEqual OK
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
     }
   }
 }
