@@ -65,9 +65,6 @@ index.title = Register for exchange of information
 index.heading = Register for exchange of information
 index.guidance = Register for exchange of information.
 
-checkYourAnswers.title = Check Your Answers
-checkYourAnswers.heading = Check Your Answers
-
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
 journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
@@ -173,6 +170,3 @@ checkYourAnswers.secondContact.h2 = Second contact
 checkYourAnswers.information.h2 = Now send the contact details
 checkYourAnswers.information.p = By sending these contact details, you are confirming that the information is correct and complete to the best of your knowledge.
 checkYourAnswers.button = Accept and send
-
-checkYourAnswers.error.required = Enter checkYourAnswers
-checkYourAnswers.error.length = CheckYourAnswers must be 100 characters or less

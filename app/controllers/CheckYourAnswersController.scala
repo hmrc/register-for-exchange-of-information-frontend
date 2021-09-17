@@ -19,6 +19,7 @@ package controllers
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
+import org.slf4j.LoggerFactory
 import pages.ContactNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -46,13 +47,24 @@ class CheckYourAnswersController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       val helper                              = new CheckYourAnswersHelper(request.userAnswers)
       val firstContact: Seq[SummaryList.Row]  = buildFirstContact(helper)
       val secondContact: Seq[SummaryList.Row] = buildSecondContact(helper)
 
-      //println("\n\nNJINJNJIN I\n\n") todo del
+      // todo del
+      println("\n\nNJINJNJIN I\n\n")
+      firstContact.foreach(
+        x => println(x.toString)
+      )
+      println("\n\nNJINJNJIN I\n\n")
+      secondContact.foreach(
+        x => println(x.toString)
+      )
+      println("\n\nNJINJNJIN I\n\n")
 
       renderer
         .render(
