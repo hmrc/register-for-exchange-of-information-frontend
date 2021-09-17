@@ -28,7 +28,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       Row(
         key = Key(msg"sndConHavePhone.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        value = Value(yesOrNo(answer)),
         actions = List(
           Action(
             content = msg"site.edit",
@@ -88,6 +88,22 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def secondContact: Option[Row] = userAnswers.get(pages.SecondContactPage) map {
+    answer =>
+      Row(
+        key = Key(msg"secondContact.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(yesOrNo(answer)),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.SecondContactController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondContact.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-second-contact")
+          )
+        )
+      )
+  }
+
   def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) map {
     answer =>
       Row(
@@ -104,27 +120,11 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
-  def secondContact: Option[Row] = userAnswers.get(pages.SecondContactPage) map {
-    answer =>
-      Row(
-        key = Key(msg"secondContact.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
-        actions = List(
-          Action(
-            content = msg"site.edit",
-            href = routes.SecondContactController.onPageLoad(CheckMode).url,
-            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondContact.checkYourAnswersLabel")),
-            attributes = Map("id" -> "change-second-contact")
-          )
-        )
-      )
-  }
-
   def isContactTelephone: Option[Row] = userAnswers.get(pages.IsContactTelephonePage) map {
     answer =>
       Row(
         key = Key(msg"isContactTelephone.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
-        value = Value(lit"$answer"),
+        value = Value(yesOrNo(answer)),
         actions = List(
           Action(
             content = msg"site.edit",
@@ -168,4 +168,10 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  private def yesOrNo(answer: Boolean): Content =
+    if (answer) {
+      msg"site.yes"
+    } else {
+      msg"site.no"
+    }
 }
