@@ -53,13 +53,15 @@ class ContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "name"   -> request.userAnswers.get(ContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
-      "action" -> routes.ContactEmailController.onSubmit(mode).url
-    )
-    renderer.render("contactEmail.njk", data)
+  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Option[Html]] = {
+    request.userAnswers.get(ContactNamePage).map { action =>
+      val data = Json.obj(
+        "form"   -> form,
+        "name"   -> action,
+        "action" -> routes.ContactEmailController.onSubmit(mode).url
+      )
+      renderer.render("contactEmail.njk", data)
+    }
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {

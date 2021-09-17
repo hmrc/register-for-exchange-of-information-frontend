@@ -67,6 +67,8 @@ POST       /register/second-contact-phone                controllers.SndContactP
 GET        /register/change-second-contact-phone         controllers.SndContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-second-contact-phone         controllers.SndContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
+GET        /some-information-is-missing                  controllers.SomeInformationIsMissingController.onPageLoad()
+
 GET        /register/have-utr                            controllers.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/have-utr                            controllers.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-have-utr                     controllers.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode: models.Mode = models.CheckMode)
