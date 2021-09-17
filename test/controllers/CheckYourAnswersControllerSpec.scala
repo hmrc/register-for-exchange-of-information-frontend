@@ -16,124 +16,294 @@
 
 package controllers
 
-import base.ControllerSpecBase
+import base.{ControllerMockFixtures, ControllerSpecBase, SpecBase}
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.ContactNamePage
+import pages.{
+  ContactEmailPage,
+  ContactNamePage,
+  ContactPhonePage,
+  IsContactTelephonePage,
+  SecondContactPage,
+  SndContactEmailPage,
+  SndContactNamePage,
+  SndContactPhonePage
+}
+import play.api.inject.bind
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import repositories.SessionRepository
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends ControllerSpecBase {
+class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures {
 
   lazy val loadRoute   = routes.CheckYourAnswersController.onPageLoad().url
-  lazy val submitRoute = routes.CheckYourAnswersController.onPageLoad().url
-  //lazy val submitRoute = routes.CheckYourAnswersController.onSubmit().url
+  lazy val submitRoute = routes.CheckYourAnswersController.onPageLoad().url // todo del
+  //lazy val submitRoute = routes.CheckYourAnswersController.onSubmit().url // todo once submit is implemented
 
-  //private def form = new forms.CheckYourAnswersFormProvider().apply()
+  // first contact
+  val firstContactName    = "first-contact-name"
+  val firstContactEmail   = "first-contact-email"
+  val isFirstContactPhone = true
+  val firstContactPhone   = "+44 0808 157 0192"
+
+  // second contact
+  val isSecondContact      = true
+  val secondContactName    = "second-contact-name"
+  val secondContactEmail   = "second-contact-email"
+  val isSecondContactPhone = true
+  val secondContactPhone   = "+44 0808 157 0193"
 
   "CheckYourAnswers Controller" - {
 
-    "must return OK and the correct view for a GET" in {
-      /*
+    "must return OK and the correct view for a GET - First Contact with phone" in {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(ContactNamePage, firstContactName)
+        .success
+        .value
+        .set(ContactEmailPage, firstContactEmail)
+        .success
+        .value
+        .set(ContactPhonePage, firstContactPhone)
+        .success
+        .value
 
-      val result = route(app, request).value
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+      val result = route(application, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-       */
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-      /*
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-      // todo incorrect page in UserAnswers
-      val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "answer").success.value
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val json                = jsonCaptor.getValue
+      val firstContactDetails = (json \ "firstContactList").toString
+
+      templateCaptor.getValue mustEqual "checkYourAnswers.njk"
+      firstContactDetails.contains("Contact name") mustBe true
+      firstContactDetails.contains("Email address") mustBe true
+      firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
+
+      application.stop()
+    }
+
+    "must return OK and the correct view for a GET - First Contact without phone" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(ContactNamePage, firstContactName)
+        .success
+        .value
+        .set(ContactEmailPage, firstContactEmail)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+      val result = route(application, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "answer"))
-
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-       */
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-      /*
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
-       */
-    }
-
-    "must return a Bad Request and errors when invalid data is submitted" in {
-      /*
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      status(result) mustEqual BAD_REQUEST
+      val json                = jsonCaptor.getValue
+      val firstContactDetails = (json \ "firstContactList").toString
+
+      templateCaptor.getValue mustEqual "checkYourAnswers.njk"
+      firstContactDetails.contains("Contact name") mustBe true
+      firstContactDetails.contains("Email address") mustBe true
+      firstContactDetails.contains("Telephone number") mustBe !isFirstContactPhone
+
+      application.stop()
+    }
+
+    "must return OK and the correct view for a GET - Without Second Contact" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(ContactNamePage, firstContactName)
+        .success
+        .value
+        .set(ContactEmailPage, firstContactEmail)
+        .success
+        .value
+        .set(ContactPhonePage, firstContactPhone)
+        .success
+        .value
+        .set(SecondContactPage, !isSecondContact)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> submitRoute
-      )
+      val json                 = jsonCaptor.getValue
+      val firstContactDetails  = (json \ "firstContactList").toString
+      val secondContactDetails = (json \ "secondContactList").toString
 
       templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-       */
+      firstContactDetails.contains("Contact name") mustBe true
+      firstContactDetails.contains("Email address") mustBe true
+      firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
+      secondContactDetails.contains("Second contact name") mustBe !isSecondContact
+
+      application.stop()
+    }
+
+    "must return OK and the correct view for a GET - With Second Contact with phone" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(ContactNamePage, firstContactName)
+        .success
+        .value
+        .set(ContactEmailPage, firstContactEmail)
+        .success
+        .value
+        .set(ContactPhonePage, firstContactPhone)
+        .success
+        .value
+        .set(SecondContactPage, isSecondContact)
+        .success
+        .value
+        .set(SndContactNamePage, secondContactName)
+        .success
+        .value
+        .set(SndContactEmailPage, secondContactEmail)
+        .success
+        .value
+        .set(SndContactPhonePage, secondContactPhone)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val json                 = jsonCaptor.getValue
+      val firstContactDetails  = (json \ "firstContactList").toString
+      val secondContactDetails = (json \ "secondContactList").toString
+
+      templateCaptor.getValue mustEqual "checkYourAnswers.njk"
+      firstContactDetails.contains("Contact name") mustBe true
+      firstContactDetails.contains("Email address") mustBe true
+      firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
+      secondContactDetails.contains("Second contact name") mustBe true
+      secondContactDetails.contains("Second contact email address") mustBe true
+      secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
+
+      application.stop()
+    }
+
+    "must return OK and the correct view for a GET - With Second Contact without phone" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(ContactNamePage, firstContactName)
+        .success
+        .value
+        .set(ContactEmailPage, firstContactEmail)
+        .success
+        .value
+        .set(ContactPhonePage, firstContactPhone)
+        .success
+        .value
+        .set(SecondContactPage, isSecondContact)
+        .success
+        .value
+        .set(SndContactNamePage, secondContactName)
+        .success
+        .value
+        .set(SndContactEmailPage, secondContactEmail)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+      val result = route(application, request).value
+
+      status(result) mustEqual OK
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val json                 = jsonCaptor.getValue
+      val firstContactDetails  = (json \ "firstContactList").toString
+      val secondContactDetails = (json \ "secondContactList").toString
+
+      templateCaptor.getValue mustEqual "checkYourAnswers.njk"
+      firstContactDetails.contains("Contact name") mustBe true
+      firstContactDetails.contains("Email address") mustBe true
+      firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
+      secondContactDetails.contains("Second contact name") mustBe true
+      secondContactDetails.contains("Second contact email address") mustBe true
+      secondContactDetails.contains("Second contact telephone number") mustBe !isSecondContactPhone
+
+      application.stop()
     }
   }
 }

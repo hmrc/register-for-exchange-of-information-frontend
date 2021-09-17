@@ -26,82 +26,145 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
 
   def sndConHavePhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
     answer =>
-      toRow(
-        msgKey = "sndConHavePhone",
-        content = msg"site.edit",
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"sndConHavePhone.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sndConHavePhone.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-second-contact-have-phone")
+          )
+        )
       )
   }
 
   def sndContactPhone: Option[Row] = userAnswers.get(pages.SndContactPhonePage) map {
     answer =>
-      toRow(
-        msgKey = "sndContactPhone",
-        content = msg"site.edit",
-        href = routes.SndContactPhoneController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"sndContactPhone.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.SndContactPhoneController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sndContactPhone.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-second-contact-phone")
+          )
+        )
       )
   }
 
   def sndContactEmail: Option[Row] = userAnswers.get(pages.SndContactEmailPage) map {
     answer =>
-      toRow(
-        msgKey = "sndContactEmail",
-        content = msg"site.edit",
-        href = routes.SndContactEmailController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"sndContactEmail.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.SndContactEmailController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sndContactEmail.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-second-contact-email")
+          )
+        )
       )
   }
 
   def sndContactName: Option[Row] = userAnswers.get(pages.SndContactNamePage) map {
     answer =>
-      toRow(
-        msgKey = "sndContactName",
-        content = msg"site.edit",
-        href = routes.SndContactNameController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"sndContactName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.SndContactNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"sndContactName.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-second-contact-name")
+          )
+        )
       )
   }
 
   def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) map {
     answer =>
-      toRow(
-        msgKey = "contactPhone",
-        content = msg"site.edit",
-        href = routes.ContactPhoneController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"contactPhone.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.ContactPhoneController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactPhone.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-contact-phone")
+          )
+        )
       )
   }
 
   def secondContact: Option[Row] = userAnswers.get(pages.SecondContactPage) map {
     answer =>
-      toRow(
-        msgKey = "secondContact",
-        content = msg"site.edit",
-        href = routes.SecondContactController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"secondContact.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.SecondContactController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"secondContact.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-second-contact")
+          )
+        )
       )
   }
 
   def isContactTelephone: Option[Row] = userAnswers.get(pages.IsContactTelephonePage) map {
     answer =>
-      toRow(
-        msgKey = "isContactTelephone",
-        content = msg"site.edit",
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"isContactTelephone.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"isContactTelephone.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-is-contact-telephone")
+          )
+        )
       )
   }
 
   def contactName: Option[Row] = userAnswers.get(pages.ContactNamePage) map {
     answer =>
-      toRow(
-        msgKey = "contactName",
-        content = msg"site.edit",
-        href = routes.ContactNameController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"contactName.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.ContactNameController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactName.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-contact-name")
+          )
+        )
       )
   }
 
   def contactEmail: Option[Row] = userAnswers.get(pages.ContactEmailPage) map {
     answer =>
-      toRow(
-        msgKey = "contactEmail",
-        content = msg"site.edit",
-        href = routes.ContactEmailController.onPageLoad(CheckMode).url
+      Row(
+        key = Key(msg"contactEmail.checkYourAnswersLabel", classes = Seq("govuk-!-width-one-half")),
+        value = Value(lit"$answer"),
+        actions = List(
+          Action(
+            content = msg"site.edit",
+            href = routes.ContactEmailController.onPageLoad(CheckMode).url,
+            visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(msg"contactEmail.checkYourAnswersLabel")),
+            attributes = Map("id" -> "change-contact-email")
+          )
+        )
       )
   }
 

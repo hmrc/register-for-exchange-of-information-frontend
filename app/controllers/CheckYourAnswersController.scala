@@ -47,28 +47,15 @@ class CheckYourAnswersController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  private val logger = LoggerFactory.getLogger(getClass)
-
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       val helper                              = new CheckYourAnswersHelper(request.userAnswers)
       val firstContact: Seq[SummaryList.Row]  = buildFirstContact(helper)
       val secondContact: Seq[SummaryList.Row] = buildSecondContact(helper)
 
-      // todo del
-      println("\n\nNJINJNJIN I\n\n")
-      firstContact.foreach(
-        x => println(x.toString)
-      )
-      println("\n\nNJINJNJIN I\n\n")
-      secondContact.foreach(
-        x => println(x.toString)
-      )
-      println("\n\nNJINJNJIN I\n\n")
-
       renderer
         .render(
-          "checkYouAnswers.njk",
+          "checkYourAnswers.njk",
           Json.obj(
             "firstContactList"  -> firstContact,
             "secondContactList" -> secondContact,
