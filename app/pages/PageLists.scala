@@ -17,16 +17,20 @@
 package pages
 
 import models.UserAnswers
-import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object IsContactTelephonePage extends QuestionPage[Boolean] {
+object PageLists {
 
-  override def path: JsPath = JsPath \ toString
+  val removePage: (Try[UserAnswers], QuestionPage[_]) => Try[UserAnswers] =
+    (ua: Try[UserAnswers], page: QuestionPage[_]) =>
+      ua.flatMap(
+        x => x.remove(page)
+      )
 
-  override def toString: String = "isContactTelephone"
+  val allAfterIsContactTelephonePages = List(ContactPhonePage)
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allAfterIsContactTelephonePages.foldLeft(Try(userAnswers))(PageLists.removePage)
+  val allAfterSecondContactPages = List(SndContactNamePage, SndContactEmailPage, SndConHavePhonePage, SndContactPhonePage)
+
+  val afterAllSndConHavePhonePages = List(SndContactPhonePage)
 }

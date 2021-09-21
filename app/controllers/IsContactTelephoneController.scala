@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import exceptions.SomeInformationIsMissingException
 import forms.IsContactTelephoneFormProvider
-import models.Mode
+import models.{CheckMode, Mode}
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.{ContactNamePage, IsContactTelephonePage}
@@ -78,7 +78,10 @@ class IsContactTelephoneController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, updatedAnswers))
+            } yield updatedAnswers.get(IsContactTelephonePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")) match {
+              case false if mode == CheckMode => Redirect(routes.CheckYourAnswersController.onPageLoad())
+              case _                          => Redirect(navigator.nextPage(IsContactTelephonePage, mode, updatedAnswers))
+            }
         )
   }
 }

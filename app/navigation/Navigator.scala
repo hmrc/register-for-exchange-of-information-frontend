@@ -40,16 +40,16 @@ class Navigator @Inject() () {
   }
 
   private val checkRouteMap: Page => UserAnswers => Option[Call] = {
-    case ContactNamePage        => _ => Some(routes.ContactEmailController.onPageLoad(CheckMode))
-    case ContactEmailPage       => _ => Some(routes.IsContactTelephoneController.onPageLoad(CheckMode))
+    case ContactNamePage        => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case ContactEmailPage       => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case IsContactTelephonePage => isContactTelephoneRoutes(CheckMode)
-    case ContactPhonePage       => _ => Some(routes.SecondContactController.onPageLoad(CheckMode))
+    case ContactPhonePage       => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case SecondContactPage      => isSecondContact(CheckMode)
-    case SndContactNamePage     => _ => Some(routes.SndContactEmailController.onPageLoad(CheckMode))
-    case SndContactEmailPage    => _ => Some(routes.SndConHavePhoneController.onPageLoad(CheckMode))
+    case SndContactNamePage     => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SndContactEmailPage    => _ => Some(routes.CheckYourAnswersController.onPageLoad())
     case SndConHavePhonePage    => haveSecondPhone(CheckMode)
-    case SndContactPhonePage => _ => Some(routes.CheckYourAnswersController.onPageLoad())
-    case _ => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SndContactPhonePage    => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case _                      => _ => Some(routes.CheckYourAnswersController.onPageLoad())
   }
 
   private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -60,8 +60,10 @@ class Navigator @Inject() () {
 
   private def isSecondContact(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(SecondContactPage) map {
-      case true  => routes.SndContactNameController.onPageLoad(mode)
-      case false => routes.CheckYourAnswersController.onPageLoad()
+      // optimization works only for last sub-journey
+      case true if mode == CheckMode => routes.SndContactNameController.onPageLoad(NormalMode)
+      case true                      => routes.SndContactNameController.onPageLoad(mode)
+      case false                     => routes.CheckYourAnswersController.onPageLoad()
     }
 
   private def haveSecondPhone(mode: Mode)(ua: UserAnswers): Option[Call] =
