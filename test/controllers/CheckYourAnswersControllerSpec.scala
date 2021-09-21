@@ -138,7 +138,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       templateCaptor.getValue mustEqual "checkYourAnswers.njk"
       firstContactDetails.contains("Contact name") mustBe true
       firstContactDetails.contains("Email address") mustBe true
-      firstContactDetails.contains("Telephone number") mustBe !isFirstContactPhone
+      firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
+      ((json \ "firstContactList")(2) \ "value" \ "text").get.as[String] mustEqual "None"
 
       application.stop()
     }
@@ -301,7 +302,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
       secondContactDetails.contains("Second contact name") mustBe true
       secondContactDetails.contains("Second contact email address") mustBe true
-      secondContactDetails.contains("Second contact telephone number") mustBe !isSecondContactPhone
+      secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
+      ((json \ "secondContactList")(3) \ "value" \ "text").get.as[String] mustEqual "None"
 
       application.stop()
     }
