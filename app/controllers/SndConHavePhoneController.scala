@@ -79,10 +79,8 @@ class SndConHavePhoneController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SndConHavePhonePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield updatedAnswers.get(SndConHavePhonePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")) match {
-              case false if mode == CheckMode => Redirect(routes.CheckYourAnswersController.onPageLoad())
-              case _                          => Redirect(navigator.nextPage(SndConHavePhonePage, mode, updatedAnswers))
             }
+            yield Redirect(navigator.nextPage(SndConHavePhonePage, mode, updatedAnswers))
         )
   }
 }
