@@ -17,26 +17,20 @@
 package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{NormalMode, UserAnswers}
 import navigation.Navigator
-import org.slf4j.LoggerFactory
-import pages.ContactNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -57,7 +51,7 @@ class CheckYourAnswersController @Inject() (
           Json.obj(
             "firstContactList"  -> helper.buildFirstContact,
             "secondContactList" -> helper.buildSecondContact,
-            "action"            -> Navigator.checkYourAnswer.url // todo change once backend for onSubmit is implemented
+            "action"            -> Navigator.checkYourAnswers.url // todo change once backend for onSubmit is implemented
           )
         )
         .map(Ok(_))

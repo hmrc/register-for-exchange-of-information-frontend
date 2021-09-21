@@ -75,15 +75,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -99,8 +95,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       firstContactDetails.contains("Contact name") mustBe true
       firstContactDetails.contains("Email address") mustBe true
       firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
-
-      application.stop()
     }
 
     "must return OK and the correct view for a GET - First Contact without phone" in {
@@ -115,15 +109,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -140,8 +130,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       firstContactDetails.contains("Email address") mustBe true
       firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
       ((json \ "firstContactList")(2) \ "value" \ "text").get.as[String] mustEqual "None"
-
-      application.stop()
     }
 
     "must return OK and the correct view for a GET - Without Second Contact" in {
@@ -162,15 +150,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -188,8 +172,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       firstContactDetails.contains("Email address") mustBe true
       firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
       secondContactDetails.contains("Second contact name") mustBe !isSecondContact
-
-      application.stop()
     }
 
     "must return OK and the correct view for a GET - With Second Contact with phone" in {
@@ -219,15 +201,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -247,8 +225,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       secondContactDetails.contains("Second contact name") mustBe true
       secondContactDetails.contains("Second contact email address") mustBe true
       secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
-
-      application.stop()
     }
 
     "must return OK and the correct view for a GET - With Second Contact without phone" in {
@@ -275,15 +251,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+      retrieveUserAnswersData(userAnswers)
 
       val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
-      val result = route(application, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -304,8 +276,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       secondContactDetails.contains("Second contact email address") mustBe true
       secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
       ((json \ "secondContactList")(3) \ "value" \ "text").get.as[String] mustEqual "None"
-
-      application.stop()
     }
   }
 }
