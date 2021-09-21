@@ -43,7 +43,7 @@ class Navigator @Inject() () {
     case IsContactTelephonePage => isContactTelephoneRoutes(CheckMode)
     case SecondContactPage      => isSecondContact(CheckMode)
     case SndConHavePhonePage    => haveSecondPhone(CheckMode)
-    case _                      => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case _                      => _ => Some(Navigator.checkYourAnswers)
   }
 
   private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -81,5 +81,5 @@ class Navigator @Inject() () {
 }
 
 object Navigator {
-  val checkYourAnswer: Call = controllers.routes.CheckYourAnswersController.onPageLoad()
+  val checkYourAnswers: Call = controllers.routes.CheckYourAnswersController.onPageLoad()
 }
