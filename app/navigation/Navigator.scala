@@ -85,3 +85,7 @@ class Navigator @Inject() () {
       }
   }
 }
+
+object Navigator {
+  val checkYourAnswer: Call = controllers.routes.CheckYourAnswersController.onPageLoad()
+}
