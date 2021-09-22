@@ -16,11 +16,17 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object SndConHavePhonePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "sndConHavePhone"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    PageLists.afterAllSndConHavePhonePages.foldLeft(Try(userAnswers))(PageLists.removePage)
 }

@@ -24,29 +24,93 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
+  def buildFirstContact: Seq[SummaryList.Row] = {
+
+    val pagesToCheck = Tuple3(
+      contactName,
+      contactEmail,
+      contactPhone
+    )
+
+    pagesToCheck match {
+      case (Some(_), Some(_), None) =>
+        //No contact telephone
+        Seq(
+          contactName,
+          contactEmail
+        ).flatten
+      case _ =>
+        //All pages
+        Seq(
+          contactName,
+          contactEmail,
+          contactPhone
+        ).flatten
+    }
+  }
+
+  def buildSecondContact: Seq[SummaryList.Row] = {
+
+    val pagesToCheck = Tuple4(
+      secondContact,
+      sndContactName,
+      sndContactEmail,
+      sndContactPhone
+    )
+
+    pagesToCheck match {
+      case (Some(_), None, None, None) =>
+        //No second contact
+        Seq(
+          secondContact
+        ).flatten
+      case (Some(_), Some(_), Some(_), None) =>
+        //No second contact phone
+        Seq(
+          secondContact,
+          sndContactName,
+          sndContactEmail
+        ).flatten
+      case _ =>
+        //All pages
+        Seq(
+          secondContact,
+          sndContactName,
+          sndContactEmail,
+          sndContactPhone
+        ).flatten
+    }
+  }
+
   def sndConHavePhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
     answer =>
       toRow(
         msgKey = "sndConHavePhone",
-        content = msg"site.edit",
+        value = yesOrNo(answer),
         href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 
-  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndContactPhonePage) map {
-    answer =>
+  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndContactPhonePage) match {
+    case Some(answer)                                                      => buildSndContactPhoneRow(answer)
+    case None if userAnswers.get(pages.SecondContactPage).getOrElse(false) => buildSndContactPhoneRow("None")
+    case _                                                                 => None
+  }
+
+  private def buildSndContactPhoneRow(value: String): Option[Row] =
+    Some(
       toRow(
         msgKey = "sndContactPhone",
-        content = msg"site.edit",
-        href = routes.SndContactPhoneController.onPageLoad(CheckMode).url
+        value = lit"$value",
+        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
-  }
+    )
 
   def sndContactEmail: Option[Row] = userAnswers.get(pages.SndContactEmailPage) map {
     answer =>
       toRow(
         msgKey = "sndContactEmail",
-        content = msg"site.edit",
+        value = lit"$answer",
         href = routes.SndContactEmailController.onPageLoad(CheckMode).url
       )
   }
@@ -55,17 +119,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "sndContactName",
-        content = msg"site.edit",
+        value = lit"$answer",
         href = routes.SndContactNameController.onPageLoad(CheckMode).url
-      )
-  }
-
-  def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) map {
-    answer =>
-      toRow(
-        msgKey = "contactPhone",
-        content = msg"site.edit",
-        href = routes.ContactPhoneController.onPageLoad(CheckMode).url
       )
   }
 
@@ -73,16 +128,30 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "secondContact",
-        content = msg"site.edit",
+        value = yesOrNo(answer),
         href = routes.SecondContactController.onPageLoad(CheckMode).url
       )
   }
+
+  def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) match {
+    case Some(answer) => buildContactPhoneRow(answer)
+    case None         => buildContactPhoneRow("None")
+  }
+
+  private def buildContactPhoneRow(value: String): Option[Row] =
+    Some(
+      toRow(
+        msgKey = "contactPhone",
+        value = lit"$value",
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+      )
+    )
 
   def isContactTelephone: Option[Row] = userAnswers.get(pages.IsContactTelephonePage) map {
     answer =>
       toRow(
         msgKey = "isContactTelephone",
-        content = msg"site.edit",
+        value = yesOrNo(answer),
         href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
       )
   }
@@ -91,7 +160,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "contactName",
-        content = msg"site.edit",
+        value = lit"$answer",
         href = routes.ContactNameController.onPageLoad(CheckMode).url
       )
   }
@@ -100,9 +169,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "contactEmail",
-        content = msg"site.edit",
+        value = lit"$answer",
         href = routes.ContactEmailController.onPageLoad(CheckMode).url
       )
   }
-
 }

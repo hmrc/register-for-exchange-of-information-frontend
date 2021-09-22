@@ -19,19 +19,18 @@ package controllers
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import navigation.Navigator
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
-  navigator: Navigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -44,7 +43,17 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      renderer.render("index.njk").map(Ok(_)) // TODO create CYA page
-  }
+      val helper = new CheckYourAnswersHelper(request.userAnswers)
 
+      renderer
+        .render(
+          "checkYourAnswers.njk",
+          Json.obj(
+            "firstContactList"  -> helper.buildFirstContact,
+            "secondContactList" -> helper.buildSecondContact,
+            "action"            -> Navigator.checkYourAnswers.url // todo change once backend for onSubmit is implemented
+          )
+        )
+        .map(Ok(_))
+  }
 }
