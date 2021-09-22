@@ -48,8 +48,9 @@ class Navigator @Inject() () {
 
   private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsContactTelephonePage) map {
-      case true  => routes.ContactPhoneController.onPageLoad(mode)
-      case false => routes.SecondContactController.onPageLoad(mode)
+      case true                       => routes.ContactPhoneController.onPageLoad(mode)
+      case false if mode == CheckMode => routes.CheckYourAnswersController.onPageLoad()
+      case false                      => routes.SecondContactController.onPageLoad(mode)
     }
 
   private def isSecondContact(mode: Mode)(ua: UserAnswers): Option[Call] =
