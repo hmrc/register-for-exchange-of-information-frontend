@@ -175,3 +175,8 @@ checkYourAnswers.secondContact.h2 = Second contact
 checkYourAnswers.information.h2 = Now send the contact details
 checkYourAnswers.information.p = By sending these contact details, you are confirming that the information is correct and complete to the best of your knowledge.
 checkYourAnswers.button = Accept and send
+
+doYouHaveUniqueTaxPayerReference.title = Do you have a UK Unique Taxpayer Reference (UTR)?
+doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
+doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax.
+doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique Taxpayer Reference

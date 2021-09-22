@@ -24,6 +24,15 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
+  def doYouHaveUniqueTaxPayerReference: Option[Row] = userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage) map {
+    answer =>
+      toRow(
+        msgKey = "doYouHaveUniqueTaxPayerReference",
+        value = msg"site.edit",
+        href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
+      )
+  }
+
   def buildFirstContact: Seq[SummaryList.Row] = {
 
     val pagesToCheck = Tuple3(

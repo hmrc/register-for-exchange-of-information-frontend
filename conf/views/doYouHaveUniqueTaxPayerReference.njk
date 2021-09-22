@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("$className;format="decap"$.title"), form.errors) }}
+  {{ title(messages("doYouHaveUniqueTaxPayerReference.title"), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -34,13 +34,17 @@
           {{ csrf() | safe }}
 
           {{ govukRadios({
+            classes: "govuk-radios__inline",
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('$className;format="decap"$.title'),
+                text: messages('doYouHaveUniqueTaxPayerReference.title'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--l text-overflow"
               }
+            },
+            hint: {
+              text: messages('doYouHaveUniqueTaxPayerReference.hint')
             },
             items: radios,
             errorMessage: form.value.error
