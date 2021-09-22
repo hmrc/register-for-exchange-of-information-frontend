@@ -20,6 +20,9 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryDoYouHaveUniqueTaxPayerReferencePage: Arbitrary[pages.DoYouHaveUniqueTaxPayerReferencePage.type] =
+    Arbitrary(pages.DoYouHaveUniqueTaxPayerReferencePage)
+
   implicit lazy val arbitrarySndConHavePhonePage: Arbitrary[pages.SndConHavePhonePage.type] =
     Arbitrary(pages.SndConHavePhonePage)
 

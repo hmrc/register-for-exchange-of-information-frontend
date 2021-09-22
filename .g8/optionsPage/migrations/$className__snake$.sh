@@ -66,7 +66,7 @@ awk '/extends RowBuilder/ {\
      print "      answer =>";\
      print "        toRow(";\
      print "          msgKey = \"$className;format="decap"$\",";\
-     print "          content = msg\"site.edit\",";\
+     print "          value = msg\"site.edit\",";\
      print "          href = routes.$className$Controller.onPageLoad(CheckMode).url,";\
      print "        )";\
      print "    }";\
