@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.{Arbitrary, Gen}
+import models.WhatAreYouRegisteringAs
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class WhatAreYouRegisteringAsSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
-    Arbitrary {
-      Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
-    }
+  "WhatAreYouRegisteringAsPage" - {
+
+    beRetrievable[WhatAreYouRegisteringAs](WhatAreYouRegisteringAsPage)
+
+    beSettable[WhatAreYouRegisteringAs](WhatAreYouRegisteringAsPage)
+
+    beRemovable[WhatAreYouRegisteringAs](WhatAreYouRegisteringAsPage)
+  }
 }

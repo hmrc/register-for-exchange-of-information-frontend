@@ -33,6 +33,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def whatAreYouRegisteringAs: Option[Row] = userAnswers.get(pages.WhatAreYouRegisteringAsPage) map {
+    answer =>
+      toRow(
+        msgKey = "whatAreYouRegisteringAs",
+        value = msg"site.edit",
+        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode).url
+      )
+  }
+
   def buildFirstContact: Seq[SummaryList.Row] = {
 
     val pagesToCheck = Tuple3(

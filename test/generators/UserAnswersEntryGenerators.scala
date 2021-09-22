@@ -30,6 +30,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryWhatAreYouRegisteringAsUserAnswersEntry: Arbitrary[(pages.WhatAreYouRegisteringAsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.WhatAreYouRegisteringAsPage.type]
+        value <- arbitrary[models.WhatAreYouRegisteringAs].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitrarySndConHavePhoneUserAnswersEntry: Arbitrary[(pages.SndConHavePhonePage.type, JsValue)] =
     Arbitrary {
       for {
