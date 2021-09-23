@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.ControllerSpecBase
+import base.ControllerNoDataSpecBase
 import exceptions.SomeInformationIsMissingException
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -135,21 +135,6 @@ class DoYouHaveNINControllerSpec extends ControllerNoDataSpecBase { // TODO repl
 
       templateCaptor.getValue mustEqual "doYouHaveNIN.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must throw 'SomeInformationIsMissingException' when data is missing" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-
-      val result = route(app, request).value
-
-      an[SomeInformationIsMissingException] mustBe thrownBy {
-        status(result) mustEqual OK
-      }
     }
   }
 }

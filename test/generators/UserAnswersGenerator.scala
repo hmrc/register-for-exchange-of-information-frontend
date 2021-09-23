@@ -30,7 +30,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
       arbitrary[(DoYouHaveUniqueTaxPayerReferencePage.type, JsValue)] ::
       arbitrary[(SndConHavePhonePage.type, JsValue)] ::
-    arbitrary[(DoYouHaveNINPage.type, JsValue)] ::
+      arbitrary[(DoYouHaveNINPage.type, JsValue)] ::
       arbitrary[(SndConHavePhonePage.type, JsValue)] ::
       arbitrary[(SndContactEmailPage.type, JsValue)] ::
       arbitrary[(SndContactPhonePage.type, JsValue)] ::

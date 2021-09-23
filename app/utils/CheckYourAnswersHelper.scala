@@ -42,29 +42,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
-  def buildFirstContact: Seq[SummaryList.Row] = {
-
-    val pagesToCheck = Tuple3(
-      contactName,
-      contactEmail,
-      contactPhone
-    )
-
-    pagesToCheck match {
-      case (Some(_), Some(_), None) =>
-        //No contact telephone
-        Seq(
-          contactName,
-          contactEmail
-        ).flatten
-      case _ =>
-        //All pages
-        Seq(
-          contactName,
-          contactEmail,
-          contactPhone
-        ).flatten
-    }
   def doYouHaveNIN: Option[Row] = userAnswers.get(pages.DoYouHaveNINPage) map {
     answer =>
       toRow(
