@@ -37,12 +37,11 @@ class SomeInformationIsMissingController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val data = Json.obj(
-    "continue" -> routes.NeedContactDetailsController.onPageLoad().url
-  )
-
   def onPageLoad: Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
+      val data = Json.obj(
+        "continue" -> routes.NeedContactDetailsController.onPageLoad().url
+      )
       renderer.render("someInformationIsMissing.njk", data).map(Ok(_))
   }
 }
