@@ -69,6 +69,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def whatIsYourDateOfBirth: Option[Row] = userAnswers.get(pages.WhatIsYourDateOfBirthPage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsYourDateOfBirth",
+        value = msg"site.edit",
+        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode).url
+      )
+  }
+
   def doYouHaveUniqueTaxPayerReference: Option[Row] = userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage) map {
     answer =>
       toRow(
