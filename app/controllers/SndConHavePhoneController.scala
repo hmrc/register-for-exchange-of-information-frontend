@@ -21,7 +21,7 @@ import exceptions.SomeInformationIsMissingException
 import forms.SndConHavePhoneFormProvider
 import models.Mode
 import models.requests.DataRequest
-import navigation.Navigator
+import navigation.CBCRNavigator
 import pages.{SndConHavePhonePage, SndContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SndConHavePhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: CBCRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,

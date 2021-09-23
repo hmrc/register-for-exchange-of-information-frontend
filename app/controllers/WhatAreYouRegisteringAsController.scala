@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.WhatAreYouRegisteringAsFormProvider
 import models.requests.DataRequest
 import models.{Mode, WhatAreYouRegisteringAs}
-import navigation.Navigator
+import navigation.MDRNavigator
 import pages.WhatAreYouRegisteringAsPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class WhatAreYouRegisteringAsController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: MDRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataInitializeAction, // TODO replace with DataRequiredAction when actual flow is ready
