@@ -81,10 +81,25 @@ POST       /register/change-registration-type            controllers.WhatAreYouR
 
 GET        /register/could-not-confirm-identity          controllers.WeCouldNotConfirmController.onPageLoad(mode: models.Mode = models.CheckMode)
 
-GET        /register/have-ni-number                     controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/have-ni-number                     controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-have-ni-number              controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-have-ni-number              controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.CheckMode)
+GET        /register/have-ni-number                      controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-ni-number                      controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-ni-number               controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-ni-number               controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/ni-number                           controllers.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/ni-number                           controllers.WhatIsYourNationalInsuranceNumberController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-ni-number                    controllers.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-ni-number                    controllers.WhatIsYourNationalInsuranceNumberController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/name                                controllers.WhatIsYourNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/name                                controllers.WhatIsYourNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-name                         controllers.WhatIsYourNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-name                         controllers.WhatIsYourNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/date-of-birth                       controllers.WhatIsYourDateOfBirthController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/date-of-birth                       controllers.WhatIsYourDateOfBirthController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/without-id/address                  controllers.AddressWithoutIdController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/without-id/address                  controllers.AddressWithoutIdController.onSubmit(mode: models.Mode = models.NormalMode)
@@ -95,3 +110,5 @@ GET        /register/without-id/address-uk                       controllers.Add
 POST       /register/without-id/address-uk                     controllers.AddressUKController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/without-id/change-address-uk              controllers.AddressUKController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/change-address-uk        controllers.AddressUKController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad()

@@ -17,6 +17,7 @@
 package navigation
 
 import controllers.routes
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
 import play.api.mvc.Call
@@ -27,10 +28,35 @@ import javax.inject.{Inject, Singleton}
 class MDRNavigator @Inject() () extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Option[Call] = {
-    case _ => _ => Some(routes.IndexController.onPageLoad())
+    case DoYouHaveUniqueTaxPayerReferencePage  => doYouHaveUniqueTaxPayerReference(NormalMode)
+    case WhatAreYouRegisteringAsPage           => whatAreYouRegisteringAs(NormalMode)
+    case DoYouHaveNINPage                      => doYouHaveNINPage(NormalMode)
+    case WhatIsYourNationalInsuranceNumberPage => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
+    case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
+    case WhatIsYourDateOfBirthPage             => _ => Some(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
+    case _                                     => _ => Some(routes.IndexController.onPageLoad())
   }
 
   override val checkRouteMap: Page => UserAnswers => Option[Call] = {
     case _ => _ => Some(Navigator.checkYourAnswers)
   }
+
+  private def doYouHaveUniqueTaxPayerReference(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
+      case true  => routes.WhatAreYouRegisteringAsController.onPageLoad(mode) // TODO replace with not yet implemented route
+      case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode)
+    }
+
+  private def whatAreYouRegisteringAs(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(WhatAreYouRegisteringAsPage) map {
+      case RegistrationTypeBusiness   => routes.DoYouHaveNINController.onPageLoad(mode) // TODO replace with not yet implemented route
+      case RegistrationTypeIndividual => routes.DoYouHaveNINController.onPageLoad(mode)
+    }
+
+  private def doYouHaveNINPage(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveNINPage) map {
+      case true  => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode) // TODO replace with not yet implemented route
+      case false => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode)
+    }
+
 }

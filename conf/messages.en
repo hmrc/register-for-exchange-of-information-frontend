@@ -205,6 +205,7 @@ weCouldNotConfirm.button = Try again
 
 whatAreYouRegisteringAs.title = What are you registering as?
 whatAreYouRegisteringAs.heading = What are you registering as?
+whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
 whatAreYouRegisteringAs.registrationTypeBusiness = A business
 whatAreYouRegisteringAs.registrationTypeIndividual = An Individual
 whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
@@ -215,9 +216,42 @@ doYouHaveNIN.heading = Do you have a National Insurance number?
 doYouHaveNIN.checkYourAnswersLabel = National Insurance number
 doYouHaveNIN.error.required = Select yes if you have National Insurance number
 
+whatIsYourNationalInsuranceNumber.title = What is your National Insurance number?
+whatIsYourNationalInsuranceNumber.heading = What is your National Insurance number?
+whatIsYourNationalInsuranceNumber.hint = It is on your National Insurance card, benefit letter, payslip or P60.  For example, ''QQ 12 34 56 C''
+whatIsYourNationalInsuranceNumber.error.required = Enter your National Insurance number
+whatIsYourNationalInsuranceNumber.error.invalid = Enter your National Insurance number in the correct format
+whatIsYourNationalInsuranceNumber.error.length = Your National Insurance Number must be 9 characters or less
+
+whatIsYourName.title = What is your name?
+whatIsYourName.heading = What is your name?
+whatIsYourName.firstName = First Name
+whatIsYourName.lastName = Last Name
+whatIsYourName.checkYourAnswersLabel = What is your name
+whatIsYourName.error.firstName.required = Enter your first name
+whatIsYourName.error.firstName.invalid = First name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+whatIsYourName.error.firstName.length = First name must be 35 characters or less
+whatIsYourName.error.lastName.required = Enter your last name
+whatIsYourName.error.lastName.invalid = Last name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+whatIsYourName.error.lastName.length = Last name must be 35 characters or less
+
+whatIsYourDateOfBirth.title = What is your date of birth?
+whatIsYourDateOfBirth.heading = What is your date of birth?
+whatIsYourDateOfBirth.hint = For example, 12 11 2007
+whatIsYourDateOfBirth.checkYourAnswersLabel = What is your date of birth?
+whatIsYourDateOfBirth.error.required.all = Enter your date of birth
+whatIsYourDateOfBirth.error.required.two = Date of birth must include {0} and {1}
+whatIsYourDateOfBirth.error.required = Your date of birth must include {0}
+whatIsYourDateOfBirth.error.invalid = Enter a valid date of birth
+whatIsYourDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1903
+individualDateOfBirth.error.futureDate = Date of birth must be before {0}
+
 someInformationIsMissing.title = Some information is missing
 someInformationIsMissing.heading = Some information is missing
 someInformationIsMissing.guidance = You must provide this information to register.
+
+weHaveConfirmedYourIdentity.title = We have confirmed your identity
+weHaveConfirmedYourIdentity.heading = We have confirmed your identity
 
 addressWithoutId.individual.title = What is your home address?
 addressWithoutId.individual.heading = What is your home address?

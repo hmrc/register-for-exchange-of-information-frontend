@@ -42,6 +42,33 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def whatIsYourDateOfBirth: Option[Row] = userAnswers.get(pages.WhatIsYourDateOfBirthPage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsYourDateOfBirth",
+        value = msg"site.edit",
+        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def whatIsYourName: Option[Row] = userAnswers.get(pages.WhatIsYourNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsYourName",
+        value = msg"site.edit",
+        href = routes.WhatIsYourNameController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def whatIsYourNationalInsuranceNumber: Option[Row] = userAnswers.get(pages.WhatIsYourNationalInsuranceNumberPage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsYourNationalInsuranceNumber",
+        value = msg"site.edit",
+        href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode).url
+      )
+  }
+
   def doYouHaveUniqueTaxPayerReference: Option[Row] = userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage) map {
     answer =>
       toRow(
