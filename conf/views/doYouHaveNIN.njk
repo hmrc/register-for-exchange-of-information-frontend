@@ -10,9 +10,11 @@
   {{ title(messages("doYouHaveNIN.title"), form.errors) }}
 {% endblock %}
 
- {{ govukBackLink({
+{% block beforeContent %}
+  {{ govukBackLink({
     text: messages("site.back")
   }) }}
+{% endblock %}
 
 {% block mainContent %}
 
