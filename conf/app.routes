@@ -72,4 +72,9 @@ POST       /register/have-utr                            controllers.DoYouHaveUn
 GET        /register/change-have-utr                     controllers.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-have-utr                     controllers.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode: models.Mode = models.CheckMode)
 
+GET        /register/registration-type                   controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/registration-type                   controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.CheckMode)
+
 GET        /register/could-not-confirm-identity          controllers.WeCouldNotConfirmController.onPageLoad(mode: models.Mode = models.CheckMode)
