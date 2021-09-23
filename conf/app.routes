@@ -85,3 +85,8 @@ GET        /register/have-ni-number                     controllers.DoYouHaveNIN
 POST       /register/have-ni-number                     controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-have-ni-number              controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-have-ni-number              controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/without-id/address                  controllers.AddressWithoutIdController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/without-id/address                  controllers.AddressWithoutIdController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/without-id/change-address           controllers.AddressWithoutIdController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/without-id/change-address           controllers.AddressWithoutIdController.onSubmit(mode: models.Mode = models.CheckMode)

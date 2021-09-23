@@ -16,9 +16,32 @@
 
 package generators
 
+import models.{Address, Country}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryCountry: Arbitrary[Country] =
+    Arbitrary {
+      for {
+        state <- Gen.oneOf(Seq("Valid", "Invalid"))
+        code  <- Gen.pick(2, 'A' to 'Z')
+        name  <- arbitrary[String]
+      } yield Country(state, code.mkString, name)
+    }
+
+  implicit lazy val arbitraryAddressWithoutId: Arbitrary[models.Address] =
+    Arbitrary {
+      for {
+        addressLine1 <- arbitrary[String]
+        addressLine2 <- arbitrary[Option[String]]
+        addressLine3 <- arbitrary[String]
+        addressLine4 <- arbitrary[Option[String]]
+        postCode     <- arbitrary[Option[String]]
+        country      <- arbitrary[Country]
+      } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, country)
+    }
 
   implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
     Arbitrary {

@@ -9,3 +9,6 @@ $hmrc-assets-path: "/disclose-cross-border-arrangements/upload/assets/lib/hmrc-f
 @import "partials/overflow";
 @import "partials/timeout-dialog.scss";
 
+svg.autocomplete__dropdown-arrow-down {
+  pointer-events: none;
+}

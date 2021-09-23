@@ -22,7 +22,7 @@ import play.api.data.format.Formatter
 
 import scala.util.control.Exception.nonFatalCatch
 
-trait Formatters {
+trait Formatters extends Transforms {
 
   private[mappings] def stringFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
 
@@ -233,4 +233,26 @@ trait Formatters {
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
   }
+
+  private[mappings] def optionalPostcodeFormatter(requiredKey: String, lengthKey: String, countryFieldName: String): Formatter[Option[String]] =
+    new Formatter[Option[String]] {
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+        val postCode          = postCodeDataTransform(data.get(key))
+        val country           = countryDataTransform(data.get(countryFieldName))
+        val maxLengthPostcode = 10
+        (postCode, country) match {
+          case (None, Some("JE"))                                          => Left(Seq(FormError(key, requiredKey)))
+          case (None, Some("GG"))                                          => Left(Seq(FormError(key, requiredKey)))
+          case (None, Some("IM"))                                          => Left(Seq(FormError(key, requiredKey)))
+          case (Some(postcode), _) if postcode.length <= maxLengthPostcode => Right(Some(postcode))
+          case (Some(_), _)                                                => Left(Seq(FormError(key, lengthKey)))
+          case _                                                           => Right(None)
+        }
+      }
+
+      override def unbind(key: String, value: Option[String]): Map[String, String] =
+        Map(key -> value.getOrElse(""))
+    }
+
 }

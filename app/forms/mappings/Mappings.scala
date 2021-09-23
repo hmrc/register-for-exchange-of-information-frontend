@@ -67,4 +67,7 @@ trait Mappings extends Formatters with Constraints {
 
   protected def requiredRegexOnlyText(requiredKey: String, invalidKey: String, regex: String): FieldMapping[String] =
     of(requiredRegexOnly(requiredKey, invalidKey, regex))
+
+  protected def optionalPostcode(requiredKey: String, lengthKey: String, countryFieldName: String): FieldMapping[Option[String]] =
+    of(optionalPostcodeFormatter(requiredKey, lengthKey, countryFieldName))
 }
