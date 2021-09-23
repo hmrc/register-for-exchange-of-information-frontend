@@ -65,7 +65,19 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
           contactPhone
         ).flatten
     }
+  def doYouHaveNIN: Option[Row] = userAnswers.get(pages.DoYouHaveNINPage) map {
+    answer =>
+      toRow(
+        msgKey = "doYouHaveNIN",
+        value = msg"site.edit",
+        href = routes.DoYouHaveNINController.onPageLoad(CheckMode).url
+      )
   }
+
+  /** *************
+    *    Second contact
+    * *************
+    */
 
   def buildSecondContact: Seq[SummaryList.Row] = {
 
@@ -149,6 +161,36 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         value = yesOrNo(answer),
         href = routes.SecondContactController.onPageLoad(CheckMode).url
       )
+  }
+
+  /** *************
+    *    First contact
+    * *************
+    */
+
+  def buildFirstContact: Seq[SummaryList.Row] = {
+
+    val pagesToCheck = Tuple3(
+      contactName,
+      contactEmail,
+      contactPhone
+    )
+
+    pagesToCheck match {
+      case (Some(_), Some(_), None) =>
+        //No contact telephone
+        Seq(
+          contactName,
+          contactEmail
+        ).flatten
+      case _ =>
+        //All pages
+        Seq(
+          contactName,
+          contactEmail,
+          contactPhone
+        ).flatten
+    }
   }
 
   def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) match {

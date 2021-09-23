@@ -26,6 +26,9 @@ trait PageGenerators {
   implicit lazy val arbitraryWhatAreYouRegisteringAsPage: Arbitrary[pages.WhatAreYouRegisteringAsPage.type] =
     Arbitrary(pages.WhatAreYouRegisteringAsPage)
 
+  implicit lazy val arbitraryDoYouHaveNINPage: Arbitrary[pages.DoYouHaveNINPage.type] =
+    Arbitrary(pages.DoYouHaveNINPage)
+
   implicit lazy val arbitrarySndConHavePhonePage: Arbitrary[pages.SndConHavePhonePage.type] =
     Arbitrary(pages.SndConHavePhonePage)
 
