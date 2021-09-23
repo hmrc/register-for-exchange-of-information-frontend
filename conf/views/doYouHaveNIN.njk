@@ -10,11 +10,11 @@
   {{ title(messages("doYouHaveNIN.title"), form.errors) }}
 {% endblock %}
 
-{% block mainContent %}
-
-  {{ govukBackLink({
+ {{ govukBackLink({
     text: messages("site.back")
   }) }}
+
+{% block mainContent %}
 
   <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
@@ -38,7 +38,7 @@
               legend: {
                 text: messages('doYouHaveNIN.title'),
                 isPageHeading: true,
-                classes: "govuk-fieldset__legend--xl"
+                classes: "govuk-fieldset__legend--l"
               }
             },
             items: radios,
