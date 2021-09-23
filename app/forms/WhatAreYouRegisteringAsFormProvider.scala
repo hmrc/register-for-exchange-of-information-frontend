@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.{Arbitrary, Gen}
+import javax.inject.Inject
 
-trait ModelGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.WhatAreYouRegisteringAs
 
-  implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
-    Arbitrary {
-      Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
-    }
+class WhatAreYouRegisteringAsFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[WhatAreYouRegisteringAs] =
+    Form(
+      "value" -> enumerable[WhatAreYouRegisteringAs]("whatAreYouRegisteringAs.error.required")
+    )
 }

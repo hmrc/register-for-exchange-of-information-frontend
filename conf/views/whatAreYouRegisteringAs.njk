@@ -1,13 +1,13 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/checkboxes/macro.njk"    import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk"        import govukRadios %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("$className;format="decap"$.title"), form.errors) }}
+  {{ title(messages("whatAreYouRegisteringAs.title"), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -33,19 +33,17 @@
 
           {{ csrf() | safe }}
 
-          {{ govukCheckboxes({
+          {{ govukRadios({
+            classes: "govuk-radios__inline",
             name: 'value',
-            hint: {
-              text: messages('$className;format="decap"$.hint')
-            },
             fieldset: {
               legend: {
-                text: messages('$className;format="decap"$.title'),
+                text: messages('whatAreYouRegisteringAs.title'),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--l text-overflow"
               }
             },
-            items: checkboxes,
+            items: radios,
             errorMessage: form.value.error
           }) }}
 
