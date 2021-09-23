@@ -16,12 +16,21 @@
 
 package navigation
 
-import models.{Mode, UserAnswers}
+import controllers.routes
+import models._
 import pages._
 import play.api.mvc.Call
 
-class FakeNavigator(desiredRoute: Call) extends Navigator {
+import javax.inject.{Inject, Singleton}
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
+@Singleton
+class MDRNavigator @Inject() () extends Navigator {
+
+  override val normalRoutes: Page => UserAnswers => Option[Call] = {
+    case _ => _ => Some(routes.IndexController.onPageLoad())
+  }
+
+  override val checkRouteMap: Page => UserAnswers => Option[Call] = {
+    case _ => _ => Some(Navigator.checkYourAnswers)
+  }
 }

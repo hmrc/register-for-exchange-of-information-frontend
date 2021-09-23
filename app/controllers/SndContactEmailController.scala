@@ -19,12 +19,10 @@ package controllers
 import controllers.actions._
 import exceptions.SomeInformationIsMissingException
 import forms.SndContactEmailFormProvider
-
-import javax.inject.Inject
 import models.Mode
 import models.requests.DataRequest
-import navigation.Navigator
-import pages.{ContactNamePage, SndContactEmailPage, SndContactNamePage}
+import navigation.CBCRNavigator
+import pages.{SndContactEmailPage, SndContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -35,12 +33,13 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SndContactEmailController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: CBCRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,

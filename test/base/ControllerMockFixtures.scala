@@ -19,7 +19,7 @@ package base
 import controllers.actions._
 import matchers.JsonMatchers
 import models.UserAnswers
-import navigation.{FakeNavigator, Navigator}
+import navigation.{CBCRFakeNavigator, CBCRNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.{Mockito, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
@@ -41,7 +41,8 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
   final val mockRenderer: NunjucksRenderer               = mock[NunjucksRenderer]
   final val mockDataRetrievalAction: DataRetrievalAction = mock[DataRetrievalAction]
   final val mockSessionRepository: SessionRepository     = mock[SessionRepository]
-  protected val fakeNavigator: Navigator                 = new FakeNavigator(onwardRoute)
+  protected val cbcrFakeNavigator: CBCRNavigator         = new CBCRFakeNavigator(onwardRoute)
+  protected val mdrFakeNavigator: MDRNavigator           = new MDRFakeNavigator(onwardRoute)
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
@@ -75,7 +76,8 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
         bind[DataRetrievalAction].toInstance(mockDataRetrievalAction),
         bind[NunjucksRenderer].toInstance(mockRenderer),
         bind[SessionRepository].toInstance(mockSessionRepository),
-        bind[Navigator].toInstance(fakeNavigator)
+        bind[CBCRNavigator].toInstance(cbcrFakeNavigator),
+        bind[MDRNavigator].toInstance(mdrFakeNavigator)
       )
 
   //@deprecated("Use guiceApplicationBuilder() instead", "")
