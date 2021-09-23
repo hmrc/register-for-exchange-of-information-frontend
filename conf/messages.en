@@ -181,9 +181,18 @@ doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Refe
 doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax.
 doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique Taxpayer Reference
 
+
+weCouldNotConfirm.title = We could not {0}
+weCouldNotConfirm.heading = We could not {0}
+weCouldNotConfirm.business = find your business
+weCouldNotConfirm.identity = confirm your identity
+weCouldNotConfirm.guidance = The information you entered does not match our records.
+weCouldNotConfirm.button = Try again
+
 whatAreYouRegisteringAs.title = What are you registering as?
 whatAreYouRegisteringAs.heading = What are you registering as?
 whatAreYouRegisteringAs.registrationTypeBusiness = A business
 whatAreYouRegisteringAs.registrationTypeIndividual = An Individual
 whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
 whatAreYouRegisteringAs.error.required = Select registration as a business or as an individual
+
