@@ -65,6 +65,9 @@ index.title = Register for exchange of information
 index.heading = Register for exchange of information
 index.guidance = Register for exchange of information.
 
+checkYourAnswers.title = Check Your Answers
+checkYourAnswers.heading = Check Your Answers
+
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
 journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
@@ -79,6 +82,18 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 unauthorised.guidance = TODO
+
+needContactDetails.title = We need your contact details
+needContactDetails.heading = We need your contact details
+needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
+needContactDetails.p2 = We need these before you can send a country-by-country report.
+
+contactName.title = Who can we contact?
+contactName.heading = Who can we contact if we have any questions about the reports?
+contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
+contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
+contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+contactName.error.length = Name of the individual or team must be 35 characters or less
 
 phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
@@ -199,3 +214,7 @@ doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
 doYouHaveNIN.checkYourAnswersLabel = National Insurance number
 doYouHaveNIN.error.required = Select yes if you have National Insurance number
+
+someInformationIsMissing.title = Some information is missing
+someInformationIsMissing.heading = Some information is missing
+someInformationIsMissing.guidance = You must provide this information to register.

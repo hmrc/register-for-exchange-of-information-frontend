@@ -17,12 +17,11 @@
 package controllers
 
 import controllers.actions._
-import exceptions.SomeInformationIsMissingException
 import forms.SndContactEmailFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.CBCRNavigator
-import pages.{SndContactEmailPage, SndContactNamePage}
+import pages.SndContactEmailPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -53,10 +52,10 @@ class SndContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "name"   -> request.userAnswers.get(SndContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
+      "name"   -> name,
       "action" -> routes.SndContactEmailController.onSubmit(mode).url
     )
     renderer.render("sndContactEmail.njk", data)
@@ -64,7 +63,9 @@ class SndContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(SndContactEmailPage).fold(form)(form.fill)).map(Ok(_))
+      SomeInformationIsMissing.isMissingSecondContactName {
+        render(mode, request.userAnswers.get(SndContactEmailPage).fold(form)(form.fill), _).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -72,7 +73,10 @@ class SndContactEmailController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors =>
+            SomeInformationIsMissing.isMissingSecondContactName {
+              render(mode, request.userAnswers.get(SndContactEmailPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
+            },
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactEmailPage, value))

@@ -17,12 +17,11 @@
 package controllers
 
 import controllers.actions._
-import exceptions.SomeInformationIsMissingException
 import forms.ContactEmailFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.CBCRNavigator
-import pages.{ContactEmailPage, ContactNamePage}
+import pages.ContactEmailPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -53,10 +52,10 @@ class ContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "name"   -> request.userAnswers.get(ContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
+      "name"   -> name,
       "action" -> routes.ContactEmailController.onSubmit(mode).url
     )
     renderer.render("contactEmail.njk", data)
@@ -64,7 +63,9 @@ class ContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill)).map(Ok(_))
+      SomeInformationIsMissing.isMissingContactName {
+        render(mode, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill), _).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -72,7 +73,10 @@ class ContactEmailController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors =>
+            SomeInformationIsMissing.isMissingContactName {
+              render(mode, request.userAnswers.get(ContactEmailPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
+            },
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))

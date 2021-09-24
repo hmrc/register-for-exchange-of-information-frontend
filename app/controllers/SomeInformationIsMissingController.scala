@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.actions._
-import models.Mode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,23 +26,22 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class WeCouldNotConfirmController @Inject() (
+class SomeInformationIsMissingController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction, // TODO replace with DataRequireAction when actual flow is ready
+  requireData: DataInitializeAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       val data = Json.obj(
-        "affinity" -> "[placeholder]", // TODO replace with dinamic property when actual flow is ready
-        "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode).url
+        "continue" -> routes.NeedContactDetailsController.onPageLoad().url
       )
-      renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
+      renderer.render("someInformationIsMissing.njk", data).map(Ok(_))
   }
 }
