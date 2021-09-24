@@ -14,8 +14,8 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "logback-json-logger"           % "5.1.0",
     "uk.gov.hmrc"       %% "bootstrap-health-play-28"      % "5.3.0",
 
-    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.28.0-play-27",
-    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.14.0-play-27",
+    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.32.0-play-28",
+    "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.15.0-play-28",
     "org.webjars.npm"   %  "govuk-frontend"                % "3.13.0",
     "org.webjars.npm"   %  "hmrc-frontend"                 % "1.35.0"
   )
