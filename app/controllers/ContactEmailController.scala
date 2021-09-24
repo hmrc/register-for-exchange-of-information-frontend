@@ -17,18 +17,15 @@
 package controllers
 
 import controllers.actions._
-import exceptions.SomeInformationIsMissingException
 import forms.ContactEmailFormProvider
 import models.Mode
 import models.requests.DataRequest
-import navigation.Navigator
-import pages.{ContactEmailPage, ContactNamePage, Page, QuestionPage}
 import navigation.CBCRNavigator
-import pages.{ContactEmailPage, ContactNamePage}
+import pages.ContactEmailPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository

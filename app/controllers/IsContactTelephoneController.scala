@@ -20,10 +20,8 @@ import controllers.actions._
 import forms.IsContactTelephoneFormProvider
 import models.Mode
 import models.requests.DataRequest
-import navigation.Navigator
-import pages.IsContactTelephonePage
 import navigation.CBCRNavigator
-import pages.{ContactNamePage, IsContactTelephonePage}
+import pages.IsContactTelephonePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json

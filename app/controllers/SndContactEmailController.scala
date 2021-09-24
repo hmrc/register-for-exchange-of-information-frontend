@@ -21,8 +21,6 @@ import forms.SndContactEmailFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.CBCRNavigator
-import pages.{SndContactEmailPage, SndContactNamePage}
-import navigation.Navigator
 import pages.SndContactEmailPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
