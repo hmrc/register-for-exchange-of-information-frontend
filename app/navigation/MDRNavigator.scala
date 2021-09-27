@@ -30,6 +30,7 @@ class MDRNavigator @Inject() () extends Navigator {
   override val normalRoutes: Page => UserAnswers => Option[Call] = {
     case DoYouHaveUniqueTaxPayerReferencePage  => doYouHaveUniqueTaxPayerReference(NormalMode)
     case WhatAreYouRegisteringAsPage           => whatAreYouRegisteringAs(NormalMode)
+    case DoYouHaveNINPage                      => doYouHaveNINPage(NormalMode)
     case WhatIsYourNationalInsuranceNumberPage => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
     case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
     case WhatIsYourDateOfBirthPage             => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
@@ -48,8 +49,14 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def whatAreYouRegisteringAs(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(WhatAreYouRegisteringAsPage) map {
-      case RegistrationTypeBusiness   => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode) // TODO replace with not yet implemented route
-      case RegistrationTypeIndividual => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode)
+      case RegistrationTypeBusiness   => routes.DoYouHaveNINController.onPageLoad(mode) // TODO replace with not yet implemented route
+      case RegistrationTypeIndividual => routes.DoYouHaveNINController.onPageLoad(mode)
+    }
+
+  private def doYouHaveNINPage(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveNINPage) map {
+      case true  => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode) // TODO replace with not yet implemented route
+      case false => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode)
     }
 
 }
