@@ -78,102 +78,10 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode))
+              .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode)) //TODO - change this when page built
         }
       }
 
-//      "must go from IsContactTelephone page to Second Contact Phone page if NO is selected" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            val updatedAnswers =
-//              answers
-//                .set(IsContactTelephonePage, false)
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
-//              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
-//        }
-//      }
-//
-//      "must go from Second Contact page to Second Contact Name page if YES is selected" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            val updatedAnswers =
-//              answers
-//                .set(SecondContactPage, true)
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
-//              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode))
-//        }
-//      }
-//
-//      "must go from Second Contact page to CheckYourAnswers page if NO is selected" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            val updatedAnswers =
-//              answers
-//                .set(SecondContactPage, false)
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
-//              .mustBe(routes.CheckYourAnswersController.onPageLoad())
-//        }
-//      }
-//
-//      "must go from Second Contact Name page to Second Contact Email page" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            navigator
-//              .nextPage(SndContactNamePage, NormalMode, answers)
-//              .mustBe(routes.SndContactEmailController.onPageLoad(NormalMode))
-//        }
-//      }
-//
-//      "must go from Second Contact Email page to Second Contact Have Phone page" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            navigator
-//              .nextPage(SndContactEmailPage, NormalMode, answers)
-//              .mustBe(routes.SndConHavePhoneController.onPageLoad(NormalMode))
-//        }
-//      }
-//
-//      "must go from Second Contact Have Phone page to Second Contact Phone page if YES is selected" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            val updatedAnswers =
-//              answers
-//                .set(SndConHavePhonePage, true)
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
-//              .mustBe(routes.SndContactPhoneController.onPageLoad(NormalMode))
-//        }
-//      }
-//
-//      "must go from Second Contact Have Phone page to CheckYourAnswers page if NO is selected" in {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            val updatedAnswers =
-//              answers
-//                .set(SndConHavePhonePage, false)
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
-//              .mustBe(routes.CheckYourAnswersController.onPageLoad())
-//        }
-//      }
     }
   }
 }
