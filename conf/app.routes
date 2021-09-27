@@ -81,10 +81,10 @@ POST       /register/change-registration-type            controllers.WhatAreYouR
 
 GET        /register/could-not-confirm-identity          controllers.WeCouldNotConfirmController.onPageLoad(mode: models.Mode = models.CheckMode)
 
-GET        /register/have-ni-number                      controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/have-ni-number                      controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-have-ni-number               controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-have-ni-number               controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.CheckMode)
+GET        /register/have-ni-number                     controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-ni-number                     controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-ni-number              controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-ni-number              controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/ni-number                           controllers.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/ni-number                           controllers.WhatIsYourNationalInsuranceNumberController.onSubmit(mode: models.Mode = models.NormalMode)
@@ -112,3 +112,18 @@ GET        /register/without-id/change-address-uk              controllers.Addre
 POST       /register/without-id/change-address-uk        controllers.AddressUKController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad()
+
+GET        /register/bussiness-type                     controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/bussiness-type                     controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-bussiness-type              controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-bussiness-type              controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/utr                                controllers.UTRController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/utr                                controllers.UTRController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-utr                         controllers.UTRController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-utr                         controllers.UTRController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/business-name                      controllers.BusinessNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/business-name                      controllers.BusinessNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-business-name               controllers.BusinessNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-business-name               controllers.BusinessNameController.onSubmit(mode: models.Mode = models.CheckMode)

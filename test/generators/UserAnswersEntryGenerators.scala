@@ -62,6 +62,30 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryBusinessNameUserAnswersEntry: Arbitrary[(pages.BusinessNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.BusinessNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryUTRUserAnswersEntry: Arbitrary[(pages.UTRPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.UTRPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryBussinessTypeUserAnswersEntry: Arbitrary[(pages.BusinessTypePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.BusinessTypePage.type]
+        value <- arbitrary[models.BusinessType].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryDoYouHaveUniqueTaxPayerReferenceUserAnswersEntry: Arbitrary[(pages.DoYouHaveUniqueTaxPayerReferencePage.type, JsValue)] =
     Arbitrary {
       for {

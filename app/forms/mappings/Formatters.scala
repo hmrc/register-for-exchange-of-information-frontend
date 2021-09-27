@@ -275,4 +275,22 @@ trait Formatters extends Transforms {
         Map(key -> value.getOrElse(""))
     }
 
+
+  protected def validatedFixedLengthTextFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int) =
+    new Formatter[String] {
+      private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        dataFormatter
+          .bind(key, data)
+          .right
+          .flatMap {
+            case str if !str.matches(regex)  => Left(Seq(FormError(key, invalidKey)))
+            case str if str.length != length => Left(Seq(FormError(key, lengthKey)))
+            case str                         => Right(str)
+          }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    }
 }

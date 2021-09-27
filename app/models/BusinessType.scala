@@ -24,29 +24,29 @@ sealed trait BusinessType
 
 object BusinessType extends Enumerable.Implicits {
 
-  case object Partnership extends WithName("partnerShip") with BusinessType
-  case object LimitedLiability extends WithName("limitedLiability") with BusinessType
-  case object CorporateBody extends WithName("corporateBody") with BusinessType
-  case object UnIncorporatedBody extends WithName("unIncorporatedBody") with BusinessType
-  case object NotSpecified extends WithName("notSpecified") with BusinessType
+  case object LimitedCompany extends WithName("limited") with BusinessType
+  case object Sole extends WithName("sole") with BusinessType
+  case object Partnership extends WithName("partnership") with BusinessType
+  case object LimitedPartnership extends WithName("limitedPartnership") with BusinessType
+  case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with BusinessType
 
   val values: Seq[BusinessType] = Seq(
-    CorporateBody,
-    NotSpecified,
+    LimitedCompany,
+    Sole,
     Partnership,
-    LimitedLiability,
-    UnIncorporatedBody
+    LimitedPartnership,
+    UnincorporatedAssociation
   )
 
   def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
 
     val field = form("value")
     val items = Seq(
-      Radios.Radio(msg"businessType.corporateBody", CorporateBody.toString),
-      Radios.Radio(msg"businessType.notSpecified", NotSpecified.toString),
-      Radios.Radio(msg"businessType.partnerShip", Partnership.toString),
-      Radios.Radio(msg"businessType.limitedLiability", LimitedLiability.toString),
-      Radios.Radio(msg"businessType.unIncorporatedBody", UnIncorporatedBody.toString)
+      Radios.Radio(msg"businessType.limited", LimitedCompany.toString),
+      Radios.Radio(msg"businessType.sole", Sole.toString),
+      Radios.Radio(msg"businessType.partnership", Partnership.toString),
+      Radios.Radio(msg"businessType.limitedPartnership", LimitedPartnership.toString),
+      Radios.Radio(msg"businessType.unincorporatedAssociation", UnincorporatedAssociation.toString)
     )
 
     Radios(field, items)

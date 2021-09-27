@@ -77,4 +77,7 @@ trait Mappings extends Formatters with Constraints {
   ): FieldMapping[Option[String]] =
     of(addressPostcodeFormatter(invalidKey, regex, requiredKey))
 
+
+  protected def validatedFixedLengthText(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int): FieldMapping[String] =
+    of(validatedFixedLengthTextFormatter(requiredKey, invalidKey, lengthKey, regex, length))
 }
