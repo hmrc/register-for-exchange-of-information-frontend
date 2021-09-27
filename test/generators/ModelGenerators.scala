@@ -21,6 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+  4
 
   implicit lazy val arbitraryCountry: Arbitrary[Country] =
     Arbitrary {

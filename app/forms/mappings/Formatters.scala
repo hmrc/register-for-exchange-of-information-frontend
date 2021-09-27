@@ -234,6 +234,26 @@ trait Formatters extends Transforms {
       Map(key -> value)
   }
 
+  protected def addressPostcodeFormatter(invalidKey: String, regex: String, emptyKey: String = "postCode.error.required"): Formatter[Option[String]] =
+    new Formatter[Option[String]] {
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+        val keydata = data.get(key)
+        keydata match {
+          case Some(s) if s.trim == "" =>
+            Left(Seq(FormError(key, emptyKey)))
+          case Some(s) if !stripSpaces(s).matches(regex) =>
+            Left(Seq(FormError(key, invalidKey)))
+          case Some(s) if stripSpaces(s).matches(regex) =>
+            Right(Some(validPostCodeFormat(stripSpaces(s))))
+          case _ => Left(Seq(FormError(key, emptyKey)))
+        }
+      }
+
+      override def unbind(key: String, value: Option[String]): Map[String, String] =
+        Map(key -> value.getOrElse(""))
+    }
+
   private[mappings] def optionalPostcodeFormatter(requiredKey: String, lengthKey: String, countryFieldName: String): Formatter[Option[String]] =
     new Formatter[Option[String]] {
 

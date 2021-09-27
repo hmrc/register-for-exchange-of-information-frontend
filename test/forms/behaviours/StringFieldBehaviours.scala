@@ -66,4 +66,15 @@ trait StringFieldBehaviours extends FieldBehaviours {
           result.errors.head mustEqual invalidError
       }
     }
+
+  def fieldWithValidatedRegex(form: Form[_], fieldName: String, maxLength: Int, invalidError: FormError): Unit =
+    s"must not bind strings longer than $maxLength characters" in {
+
+      forAll(stringsLongerThan(maxLength) -> "longString") {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors mustEqual Seq(invalidError)
+      }
+    }
+
 }

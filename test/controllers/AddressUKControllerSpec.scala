@@ -17,11 +17,11 @@
 package controllers
 
 import base.{ControllerNoDataSpecBase, ControllerSpecBase}
-import forms.AddressWithoutIdFormProvider
+import forms.{AddressUKFormProvider, AddressWithoutIdFormProvider}
 import models.{Address, Country, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.AddressWithoutIdPage
+import pages.AddressUKPage
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -30,16 +30,15 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AddressWithoutIdControllerSpec extends ControllerNoDataSpecBase { // TODO replace with ControllerSpecBase when actual flow is ready
+class AddressUKControllerSpec extends ControllerNoDataSpecBase {
+  lazy val loadRoute   = routes.AddressUKController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.AddressUKController.onSubmit(NormalMode).url
 
-  lazy val loadRoute   = routes.AddressWithoutIdController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.AddressWithoutIdController.onSubmit(NormalMode).url
-
-  val formProvider        = new AddressWithoutIdFormProvider()
+  val formProvider        = new AddressUKFormProvider()
   val form: Form[Address] = formProvider(Seq(Country("valid", "GB", "United Kingdom")))
   val address: Address    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GB", "United Kingdom"))
 
-  val userAnswers = UserAnswers(userAnswersId).set(AddressWithoutIdPage, address).success.value
+  val userAnswers = UserAnswers(userAnswersId).set(AddressUKPage, address).success.value
 
   "AddressWithoutId Controller" - {
 
@@ -64,7 +63,7 @@ class AddressWithoutIdControllerSpec extends ControllerNoDataSpecBase { // TODO 
         "action" -> submitRoute
       )
 
-      templateCaptor.getValue mustEqual "addressWithoutId.njk"
+      templateCaptor.getValue mustEqual "addressUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -99,7 +98,7 @@ class AddressWithoutIdControllerSpec extends ControllerNoDataSpecBase { // TODO 
         "action" -> submitRoute
       )
 
-      templateCaptor.getValue mustEqual "addressWithoutId.njk"
+      templateCaptor.getValue mustEqual "addressUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -131,8 +130,8 @@ class AddressWithoutIdControllerSpec extends ControllerNoDataSpecBase { // TODO 
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm      = form.bind(Map("value" -> "invalid value"))
+      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("field1", ""))
+      val boundForm      = form.bind(Map("field1" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -147,8 +146,9 @@ class AddressWithoutIdControllerSpec extends ControllerNoDataSpecBase { // TODO 
         "action" -> submitRoute
       )
 
-      templateCaptor.getValue mustEqual "addressWithoutId.njk"
+      templateCaptor.getValue mustEqual "addressUK.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
     }
   }
 }

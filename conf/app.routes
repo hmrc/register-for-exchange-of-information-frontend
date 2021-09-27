@@ -90,3 +90,8 @@ GET        /register/without-id/address                  controllers.AddressWith
 POST       /register/without-id/address                  controllers.AddressWithoutIdController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/without-id/change-address           controllers.AddressWithoutIdController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/change-address           controllers.AddressWithoutIdController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/without-id/address-uk                       controllers.AddressUKController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/without-id/address-uk                     controllers.AddressUKController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/without-id/change-address-uk              controllers.AddressUKController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/without-id/change-address-uk        controllers.AddressUKController.onSubmit(mode: models.Mode = models.CheckMode)
