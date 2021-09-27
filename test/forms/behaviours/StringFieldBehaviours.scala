@@ -97,4 +97,14 @@ trait StringFieldBehaviours extends FieldBehaviours {
           result.errors shouldEqual Seq(invalidError, lengthError)
       }
     }
+
+  def fieldWithMaxLengthAndInvalid(form: Form[_], fieldName: String, maxLength: Int, invalidError: FormError, lengthError: FormError): Unit =
+    s"must not bind strings longer than $maxLength characters" in {
+
+      forAll(stringsLongerThan(maxLength) -> "longString") {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors shouldEqual Seq(invalidError, lengthError)
+      }
+    }
 }
