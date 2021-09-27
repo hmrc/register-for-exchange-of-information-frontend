@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.{Arbitrary, Gen}
+import models.BusinessType
+import pages.behaviours.PageBehaviours
 
-trait ModelGenerators {
+class BusinessTypeSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryBussinessType: Arbitrary[models.BusinessType] =
-    Arbitrary {
-      Gen.oneOf(models.BusinessType.values.toSeq)
-    }
+  "BussinessTypePage" - {
 
-  implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
-    Arbitrary {
-      Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
-    }
+    beRetrievable[BusinessType](BusinessTypePage)
+
+    beSettable[BusinessType](BusinessTypePage)
+
+    beRemovable[BusinessType](BusinessTypePage)
+  }
 }

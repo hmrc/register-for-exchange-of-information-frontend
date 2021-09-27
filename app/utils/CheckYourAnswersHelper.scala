@@ -24,6 +24,33 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
+  def businessName: Option[Row] = userAnswers.get(pages.BusinessNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "businessName",
+        value = msg"site.edit",
+        href = routes.BusinessNameController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def uTR: Option[Row] = userAnswers.get(pages.UTRPage) map {
+    answer =>
+      toRow(
+        msgKey = "uTR",
+        value = msg"site.edit",
+        href = routes.UTRController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def bussinessType: Option[Row] = userAnswers.get(pages.BusinessTypePage) map {
+    answer =>
+      toRow(
+        msgKey = "bussinessType",
+        value = msg"site.edit",
+        href = routes.BusinessTypeController.onPageLoad(CheckMode).url
+      )
+  }
+
   def doYouHaveUniqueTaxPayerReference: Option[Row] = userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage) map {
     answer =>
       toRow(

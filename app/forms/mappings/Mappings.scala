@@ -67,4 +67,7 @@ trait Mappings extends Formatters with Constraints {
 
   protected def requiredRegexOnlyText(requiredKey: String, invalidKey: String, regex: String): FieldMapping[String] =
     of(requiredRegexOnly(requiredKey, invalidKey, regex))
+
+  protected def validatedFixedLengthText(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int): FieldMapping[String] =
+    of(validatedFixedLengthTextFormatter(requiredKey, invalidKey, lengthKey, regex, length))
 }

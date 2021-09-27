@@ -56,4 +56,14 @@ trait StringFieldBehaviours extends FieldBehaviours {
       val result = form.bind(Map(fieldName -> " ")).apply(fieldName)
       result.errors mustEqual Seq(requiredError)
     }
+
+  def fieldWithFixedLengthNumeric(form: Form[_], fieldName: String, length: Int, lengthError: FormError): Unit =
+    s"must not bind strings that are not $length characters" in {
+
+      forAll(stringsNotOfFixedLengthNumeric(length) -> "longString") {
+        string =>
+          val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+          result.errors mustEqual Seq(lengthError)
+      }
+    }
 }

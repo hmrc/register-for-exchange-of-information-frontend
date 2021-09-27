@@ -27,10 +27,25 @@ import javax.inject.{Inject, Singleton}
 class MDRNavigator @Inject() () extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Option[Call] = {
-    case _ => _ => Some(routes.IndexController.onPageLoad())
+    case DoYouHaveUniqueTaxPayerReferencePage => isUTR(NormalMode)
+    case BusinessTypePage                     => _ => Some(routes.UTRController.onPageLoad(NormalMode))
+    case UTRPage                              => isSoleProprietor(NormalMode)
+    case _                                    => _ => Some(routes.IndexController.onPageLoad())
   }
 
   override val checkRouteMap: Page => UserAnswers => Option[Call] = {
     case _ => _ => Some(Navigator.checkYourAnswers)
   }
+
+  private def isUTR(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
+      case true  => routes.BusinessTypeController.onPageLoad(mode)
+      case false => routes.IndexController.onPageLoad() // todo change once implemented
+    }
+
+  private def isSoleProprietor(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(BusinessTypePage) map {
+      case BusinessType.Sole => routes.IndexController.onPageLoad() // todo your-name
+      case _                 => routes.BusinessNameController.onPageLoad(mode)
+    }
 }

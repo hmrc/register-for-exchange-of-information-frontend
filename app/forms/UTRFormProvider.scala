@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.{Arbitrary, Gen}
+import javax.inject.Inject
+import forms.mappings.Mappings
+import play.api.data.Form
+import utils.RegexConstants
 
-trait ModelGenerators {
+class UTRFormProvider @Inject() extends Mappings with RegexConstants {
 
-  implicit lazy val arbitraryBussinessType: Arbitrary[models.BusinessType] =
-    Arbitrary {
-      Gen.oneOf(models.BusinessType.values.toSeq)
-    }
+  private val maxLength = 10
 
-  implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
-    Arbitrary {
-      Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
-    }
+  def apply(): Form[String] =
+    Form(
+      "value" -> validatedFixedLengthText("utr.error.required", "utr.error.invalid", "utr.error.length", utrRegex, maxLength)
+    )
 }

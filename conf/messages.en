@@ -199,3 +199,29 @@ doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
 doYouHaveNIN.checkYourAnswersLabel = National Insurance number
 doYouHaveNIN.error.required = Select yes if you have National Insurance number
+
+businessType.title = What type of business do you have?
+businessType.heading = What type of business do you have?
+businessType.limited = Limited company
+businessType.sole = Sole proprietor
+businessType.partnership = Partnership
+businessType.limitedPartnership = Limited partnership or limited liability partnership
+businessType.unincorporatedAssociation = Unincorporated association or trust
+businessType.checkYourAnswersLabel = What type of business do you have?
+businessType.error.required = Select businessType
+
+utr.title = What is your {0} Unique Taxpayer Reference?
+utr.heading = What is {0} Unique Taxpayer Reference?
+utr.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about {0}. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can find a lost UTR number (opens in new tab)
+utr.checkYourAnswersLabel = What is your Corporation Tax Unique Taxpayer Reference?
+utr.error.required = Enter your Corporation Tax Unique Taxpayer Reference
+utr.error.length = Corporation Tax Unique Taxpayer Reference must be 10 numbers
+utr.error.invalid = Corporation Tax Unique Taxpayer Reference must only include numbers 0 to 9
+
+businessName.title = What is the {0}?
+businessName.heading = What is the {0}?
+businessName.hint = {0}
+businessName.checkYourAnswersLabel = businessName
+businessName.error.required = Enter businessName
+contactName.error.invalid = Name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+businessName.error.length = BusinessName must be 100 characters or less
