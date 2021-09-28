@@ -33,7 +33,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case DoYouHaveNINPage                      => doYouHaveNINPage(NormalMode)
     case WhatIsYourNationalInsuranceNumberPage => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
     case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
-    case WhatIsYourDateOfBirthPage             => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
+    case WhatIsYourDateOfBirthPage             => _ => Some(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
     case _                                     => _ => Some(routes.IndexController.onPageLoad())
   }
 

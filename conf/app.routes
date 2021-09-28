@@ -117,3 +117,5 @@ GET        /register/date-of-birth                       controllers.WhatIsYourD
 POST       /register/date-of-birth                       controllers.WhatIsYourDateOfBirthController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad()
