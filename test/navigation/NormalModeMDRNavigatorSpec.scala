@@ -131,6 +131,38 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
               .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode))
         }
       }
+
+      "must go from 'Do You Live in the UK?' page to 'What is your postcode?' page selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouLiveInTheUKPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourPostcodeController.onPageLoad(NormalMode))
+        }
+      }
+
+      //TODO - add this test once SelectAddressController is built
+//      "must go from 'What is your postcode?' page to 'What is your address?' page selected" ignore {
+//        forAll(arbitrary[UserAnswers]) {
+//          answers =>
+//            val updatedAnswers =
+//              answers
+//                .set(WhatIsYourPostcodePage, "AA1 1AA")
+//                .success
+//                .value
+//
+//            navigator
+//              .nextPage(WhatIsYourPostcodePage, NormalMode, updatedAnswers)
+//              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
+//        }
+//      }
+
     }
   }
 }

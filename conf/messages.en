@@ -321,3 +321,13 @@ nonUkName.error.givenName.length = Given name must be 35 characters or less
 nonUkName.error.familyName.required = Enter your family name
 nonUkName.error.familyName.invalid = Family name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 nonUkName.error.familyName.length = Family name must be 35 characters or less
+
+whatIsYourPostcode.title = What is your postcode?
+whatIsYourPostcode.heading = What is your postcode?
+whatIsYourPostcode.checkYourAnswersLabel = What is your postcode?
+whatIsYourPostcode.button = Find address
+whatIsYourPostcode.manualLink = Or enter the address manually
+whatIsYourPostcode.error.required = Enter your postcode
+whatIsYourPostcode.error.length = Your postcode must be 8 characters or less
+whatIsYourPostcode.error.invalid = Enter a postcode, like AA1 1AA
+whatIsYourPostcode.error.notFound = Address not found - enter a different postcode or enter the address manually

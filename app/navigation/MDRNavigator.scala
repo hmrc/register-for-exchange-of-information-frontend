@@ -69,7 +69,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def doYouLiveInTheUkRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouLiveInTheUKPage) map {
-      case true  => ??? // TODO - redirect to enter postcode page
+      case true  => routes.WhatIsYourPostcodeController.onPageLoad(mode)
       case false => routes.AddressWithoutIdController.onPageLoad(mode)
     }
 
