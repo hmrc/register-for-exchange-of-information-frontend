@@ -44,6 +44,14 @@ trait ModelGenerators {
       } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, country)
     }
 
+  implicit lazy val arbitraryWhatIsYourName: Arbitrary[models.WhatIsYourName] =
+    Arbitrary {
+      for {
+        firstName <- arbitrary[String]
+        lastName  <- arbitrary[String]
+      } yield models.WhatIsYourName(firstName, lastName)
+    }
+
   implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
     Arbitrary {
       Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)

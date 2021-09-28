@@ -41,7 +41,7 @@ class WhatAreYouRegisteringAsController @Inject() (
   navigator: MDRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction, // TODO replace with DataRequiredAction when actual flow is ready
+  requireData: DataRequiredAction,
   formProvider: WhatAreYouRegisteringAsFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer

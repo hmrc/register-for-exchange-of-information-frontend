@@ -38,6 +38,30 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryWhatIsYourDateOfBirthUserAnswersEntry: Arbitrary[(pages.WhatIsYourDateOfBirthPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.WhatIsYourDateOfBirthPage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhatIsYourNameUserAnswersEntry: Arbitrary[(pages.WhatIsYourNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.WhatIsYourNamePage.type]
+        value <- arbitrary[models.WhatIsYourName].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryWhatIsYourNationalInsuranceNumberUserAnswersEntry: Arbitrary[(pages.WhatIsYourNationalInsuranceNumberPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.WhatIsYourNationalInsuranceNumberPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryDoYouHaveUniqueTaxPayerReferenceUserAnswersEntry: Arbitrary[(pages.DoYouHaveUniqueTaxPayerReferencePage.type, JsValue)] =
     Arbitrary {
       for {
