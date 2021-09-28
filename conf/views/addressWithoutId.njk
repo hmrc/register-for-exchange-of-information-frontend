@@ -5,7 +5,15 @@
 {% from "govuk/components/input/macro.njk"         import govukInput %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% from "macros/title.njk"                         import title %}
+
+{% if registeringAsBusiness %}
+ {% set heading1 = messages("addressWithoutId.business.heading") %}
+{% else %}
+   {% set heading1 = messages("addressWithoutId.individual.heading") %}
+{% endif %}
+
 
 {% block pageTitle %}
    {% if registeringAsBusiness %}
@@ -22,7 +30,6 @@
  {% endblock %}
 
 {% block mainContent %}
-  <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
@@ -37,13 +44,13 @@
 
           {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-xl">
-           {% if registeringAsBusiness %}
-             {{ messages("addressWithoutId.business.heading") }}
-           {% else %}
-             {{ messages("addressWithoutId.individual.heading") }}
-           {% endif %}
-        </h1>
+         {% call govukFieldset({
+           legend: {
+             text: heading1,
+             classes: "govuk-fieldset__legend--xl",
+             isPageHeading: true
+           }
+         }) %}
 
           {{ govukInput({
             label: {
@@ -121,10 +128,10 @@
             attributes:{"id": "submit"}
           }) }}
 
+    {% endcall %}
         </form>
 
       </div>
     </div>
-  </div>
 
 {% endblock %}
