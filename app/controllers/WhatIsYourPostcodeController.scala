@@ -57,8 +57,8 @@ class WhatIsYourPostcodeController @Inject() (
   private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"             -> form,
-      "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode).url,
-      "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode).url
+      "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode).url,
+      "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode).url
     )
     renderer.render("whatIsYourPostcode.njk", data)
   }
@@ -78,7 +78,7 @@ class WhatIsYourPostcodeController @Inject() (
           postCode =>
             addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
               case Nil =>
-                val formError = formReturned.withError(FormError("postCode", List("individualUKPostcode.error.notFound")))
+                val formError = formReturned.withError(FormError("postCode", List("whatIsYourPostcode.error.notFound")))
                 render(mode, formError).map(BadRequest(_))
 
               case addresses =>

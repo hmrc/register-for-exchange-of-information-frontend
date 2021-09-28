@@ -16,7 +16,7 @@ object AppDependencies {
 
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.32.0-play-28",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.15.0-play-28",
-    "org.webjars.npm"   %  "govuk-frontend"                % "3.13.0",
+    "org.webjars.npm"   %  "govuk-frontend"                % "3.12.0",
     "org.webjars.npm"   %  "hmrc-frontend"                 % "1.35.0"
   )
 
