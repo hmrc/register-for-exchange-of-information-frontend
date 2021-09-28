@@ -22,7 +22,7 @@ import forms.BusinessNameFormProvider
 import models.BusinessType._
 
 import javax.inject.Inject
-import models.Mode
+import models.{BusinessType, Mode}
 import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.{BusinessNamePage, BusinessTypePage}
@@ -64,20 +64,20 @@ class BusinessNameController @Inject() (
   val unincorporatedHeading = "name of your organisation"
   val unincorporatedHint    = "This is the name on your governing document."
 
-  private def pageHeadingAndHint()(implicit request: DataRequest[AnyContent]): (String, String) =
-    request.userAnswers.get(BusinessTypePage).getOrElse(throw new SomeInformationIsMissingException("Missing business type")) match {
+  private def pageHeadingAndHint(businessType: BusinessType): (String, String) =
+    businessType match {
       case LimitedPartnership | LimitedCompany => (llpHeading, llpHint)
       case Partnership                         => (partnershipHint, partnershipHint)
       case UnincorporatedAssociation           => (unincorporatedHeading, unincorporatedHint)
     }
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val (heading, hint) = pageHeadingAndHint
+  private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val (heading, hint) = pageHeadingAndHint(businessType)
 
     val data = Json.obj(
       "form"    -> form,
       "heading" -> heading,
-      "hinr"    -> hint,
+      "hint"    -> hint,
       "action"  -> routes.BusinessNameController.onSubmit(mode).url
     )
     renderer.render("businessName.njk", data)
@@ -85,7 +85,9 @@ class BusinessNameController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill)).map(Ok(_))
+      SomeInformationIsMissing.isMissingBusinessType {
+        render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), _).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -93,7 +95,10 @@ class BusinessNameController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors =>
+            SomeInformationIsMissing.isMissingBusinessType {
+              render(mode, formWithErrors, _).map(BadRequest(_))
+            },
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))

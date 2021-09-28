@@ -16,9 +16,10 @@
 
 package controllers
 
+import models.BusinessType
 import models.requests.DataRequest
 import navigation.Navigator
-import pages.{ContactNamePage, SndContactNamePage}
+import pages.{BusinessTypePage, ContactNamePage, SndContactNamePage}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 
@@ -38,6 +39,13 @@ object SomeInformationIsMissing {
   def isMissingSecondContactName(f: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
     request.userAnswers
       .get(SndContactNamePage)
+      .fold(missingInformationResult) {
+        name => f(name)
+      }
+
+  def isMissingBusinessType(f: BusinessType => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
+    request.userAnswers
+      .get(BusinessTypePage)
       .fold(missingInformationResult) {
         name => f(name)
       }

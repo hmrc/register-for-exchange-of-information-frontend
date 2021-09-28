@@ -16,12 +16,17 @@
 
 package pages
 
-import models.BusinessType
+import models.{BusinessType, UserAnswers}
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object BusinessTypePage extends QuestionPage[BusinessType] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "bussinessType"
+
+  override def cleanup(value: Option[BusinessType], userAnswers: UserAnswers): Try[UserAnswers] =
+    PageLists.allAfterBusinessTypePage.foldLeft(Try(userAnswers))(PageLists.removePage)
 }

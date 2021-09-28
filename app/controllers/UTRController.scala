@@ -22,7 +22,7 @@ import forms.UTRFormProvider
 import models.BusinessType._
 
 import javax.inject.Inject
-import models.Mode
+import models.{BusinessType, Mode}
 import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.{BusinessTypePage, UTRPage}
@@ -57,8 +57,8 @@ class UTRController @Inject() (
   private val ct   = "Corporation Tax"
   private val sa   = "Self Assessment"
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val taxType = request.userAnswers.get(BusinessTypePage).getOrElse(throw new SomeInformationIsMissingException("Missing business type")) match {
+  private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val taxType = businessType match {
       case Partnership => sa
       case Sole        => sa
       // todo self employed ????
@@ -75,7 +75,9 @@ class UTRController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill)).map(Ok(_))
+      SomeInformationIsMissing.isMissingBusinessType {
+        render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill), _).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -83,7 +85,10 @@ class UTRController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors =>
+            SomeInformationIsMissing.isMissingBusinessType {
+              render(mode, formWithErrors, _).map(BadRequest(_))
+            },
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
