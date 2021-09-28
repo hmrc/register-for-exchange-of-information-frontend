@@ -43,8 +43,11 @@
             },
             id: "givenName",
             name: "givenName",
+            autocomplete: "given-name",
+            spellcheck: false,
             value: form.givenName.value,
-            errorMessage: form.givenName.error
+            errorMessage: form.givenName.error,
+            classes: "govuk-!-width-three-quarters"
           }) }}
 
           {{ govukInput({
@@ -53,8 +56,11 @@
             },
             id: "familyName",
             name: "familyName",
+            autocomplete: "family-name",
+            spellcheck: false,
             value: form.familyName.value,
-            errorMessage: form.familyName.error
+            errorMessage: form.familyName.error,
+            classes: "govuk-!-width-three-quarters"
           }) }}
 
           {{ govukButton({

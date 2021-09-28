@@ -60,6 +60,7 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
 
       templateCaptor.getValue mustEqual "whatIsYourPostcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -88,6 +89,7 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
 
       templateCaptor.getValue mustEqual "whatIsYourPostcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -113,8 +115,6 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
       redirectLocation(result).value mustEqual onwardRoute.url
       verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any())(any(), any())
 
-      reset(mockAddressLookupConnector)
-      app.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -141,6 +141,7 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
 
       templateCaptor.getValue mustEqual "whatIsYourPostcode.njk"
       jsonCaptor.getValue must containJson(expectedJson)
+
     }
   }
 }

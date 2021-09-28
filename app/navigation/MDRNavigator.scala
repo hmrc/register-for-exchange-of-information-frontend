@@ -36,7 +36,10 @@ class MDRNavigator @Inject() () extends Navigator {
     case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
     case NonUkNamePage                         => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
     case DoYouLiveInTheUKPage                  => doYouLiveInTheUkRoutes(NormalMode)
+    case AddressUKPage                         => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case AddressWithoutIdPage                  => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
+    case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
+    case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case _                                     => _ => Some(routes.IndexController.onPageLoad())
   }
 

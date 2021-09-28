@@ -132,7 +132,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'What is your home address' page to 'What is your email address' page when valid address entered" in {
+      "must go from 'What is your home address?'(NON-UK) page to 'What is your email address' page when valid address entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -162,21 +162,50 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      //TODO - add this test once SelectAddressController is built
-//      "must go from 'What is your postcode?' page to 'What is your address?' page selected" ignore {
-//        forAll(arbitrary[UserAnswers]) {
-//          answers =>
-//            val updatedAnswers =
-//              answers
-//                .set(WhatIsYourPostcodePage, "AA1 1AA")
-//                .success
-//                .value
-//
-//            navigator
-//              .nextPage(WhatIsYourPostcodePage, NormalMode, updatedAnswers)
-//              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
-//        }
-//      }
+      "must go from 'What is your postcode?' page to 'What is your address?' page when valid postCode entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhatIsYourPostcodePage, "AA1 1AA")
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatIsYourPostcodePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is your address?' page to 'What is your email address' page when address is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(SelectAddressPage, "Some Address")
+                .success
+                .value
+
+            navigator
+              .nextPage(SelectAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is your home address?'(UK) page to 'What is your email address' page when address is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(AddressUKPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
+                .success
+                .value
+
+            navigator
+              .nextPage(AddressUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode))
+        }
+      }
 
     }
   }

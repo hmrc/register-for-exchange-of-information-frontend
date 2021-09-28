@@ -127,3 +127,8 @@ GET        /register/without-id/uk-postcode                         controllers.
 POST       /register/without-id/uk-postcode                         controllers.WhatIsYourPostcodeController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/without-id/change-uk-postcode                  controllers.WhatIsYourPostcodeController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/change-uk-postcode                  controllers.WhatIsYourPostcodeController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/select-address                        controllers.SelectAddressController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/select-address                        controllers.SelectAddressController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-select-address                 controllers.SelectAddressController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-select-address                 controllers.SelectAddressController.onSubmit(mode: models.Mode = models.CheckMode)
