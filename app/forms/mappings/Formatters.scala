@@ -275,7 +275,6 @@ trait Formatters extends Transforms {
         Map(key -> value.getOrElse(""))
     }
 
-
   protected def validatedFixedLengthTextFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int) =
     new Formatter[String] {
       private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)

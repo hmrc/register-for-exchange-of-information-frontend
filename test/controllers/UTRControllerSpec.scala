@@ -132,5 +132,19 @@ class UTRControllerSpec extends ControllerSpecBase {
       templateCaptor.getValue mustEqual "utr.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
+
+    "must redirect to 'SomeInformationIsMissing' when data is missing" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
+    }
   }
 }

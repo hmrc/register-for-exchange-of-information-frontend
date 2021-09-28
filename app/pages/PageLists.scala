@@ -34,5 +34,5 @@ object PageLists {
 
   val afterAllSndConHavePhonePages = List(SndContactPhonePage)
 
-  val allAfterBusinessTypePage = List(UTRPage, BusinessNamePage) // todo add other sole prop branch
+  val allAfterBusinessTypePage = List(UTRPage, BusinessNamePage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
 }
