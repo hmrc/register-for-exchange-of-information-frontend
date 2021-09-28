@@ -84,7 +84,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'What Is Your Name?' page to 'What Is Your DOB?' page selected" in {
+      "must go from 'What Is Your Name?' page to 'What Is Your DOB?' page when valid name is entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -99,7 +99,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'What Is Your DOB?' page to 'Do You Live in the UK?' page selected" in {
+      "must go from 'What Is Your DOB?' page to 'Do You Live in the UK?' page when valid DOB is entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -117,7 +117,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'Do You Live in the UK?' page to 'What is your home address (Non UK)' page selected" in {
+      "must go from 'Do You Live in the UK?' page to 'What is your home address (Non UK)' page when NO is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -132,7 +132,22 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'Do You Live in the UK?' page to 'What is your postcode?' page selected" in {
+      "must go from 'What is your home address' page to 'What is your email address' page when valid address entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(AddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
+                .success
+                .value
+
+            navigator
+              .nextPage(AddressWithoutIdPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Do You Live in the UK?' page to 'What is your postcode?' page selected when YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
