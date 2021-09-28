@@ -16,13 +16,14 @@
 
 package controllers
 
+import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.WhatIsYourPostcodeFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.MDRNavigator
-import pages.WhatIsYourPostcodePage
-import play.api.data.Form
+import pages.{AddressLookupPage, WhatIsYourPostcodePage}
+import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,6 +45,7 @@ class WhatIsYourPostcodeController @Inject() (
   requireData: DataRequiredAction,
   formProvider: WhatIsYourPostcodeFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  addressLookupConnector: AddressLookupConnector,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -51,8 +53,6 @@ class WhatIsYourPostcodeController @Inject() (
     with NunjucksSupport {
 
   private val form = formProvider()
-
-  //TODO - add AddressLookUpConnector
 
   private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
@@ -70,15 +70,24 @@ class WhatIsYourPostcodeController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
+      val formReturned = form.bindFromRequest()
+
+      formReturned
         .fold(
           formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourPostcodePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatIsYourPostcodePage, mode, updatedAnswers))
+          postCode =>
+            addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
+              case Nil =>
+                val formError = formReturned.withError(FormError("postCode", List("individualUKPostcode.error.notFound")))
+                render(mode, formError).map(BadRequest(_))
+
+              case addresses =>
+                for {
+                  updatedAnswers            <- Future.fromTry(request.userAnswers.set(WhatIsYourPostcodePage, postCode))
+                  updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
+                  _                         <- sessionRepository.set(updatedAnswersWithAddress)
+                } yield Redirect(navigator.nextPage(WhatIsYourPostcodePage, mode, updatedAnswersWithAddress))
+            }
         )
   }
 }

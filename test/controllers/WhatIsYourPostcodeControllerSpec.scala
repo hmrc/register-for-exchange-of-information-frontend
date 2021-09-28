@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourPostcodePage
@@ -90,22 +90,31 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
-    "must redirect to the next page when valid data is submitted" ignore {
+    "must redirect to the next page when valid data is submitted" in {
 
-      //TODO - add AddressLookUpConnector & mock here
+      val addresses: Seq[AddressLookup] = Seq(
+        AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
+        AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
+      )
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+        .thenReturn(Future.successful(addresses))
 
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("field1", "value 1"), ("field2", "value 2"))
+          .withFormUrlEncodedBody(("postCode", "AA1 1AA"))
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+      verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any())(any(), any())
+
+      reset(mockAddressLookupConnector)
+      app.stop()
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
