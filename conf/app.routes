@@ -122,3 +122,8 @@ GET        /register/live-in-uk                        controllers.DoYouLiveInTh
 POST       /register/live-in-uk                        controllers.DoYouLiveInTheUKController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-live-in-uk                  controllers.DoYouLiveInTheUKController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-live-in-uk                  controllers.DoYouLiveInTheUKController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /nonUkName                        controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /nonUkName                        controllers.NonUkNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /changeNonUkName                  controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /changeNonUkName                  controllers.NonUkNameController.onSubmit(mode: models.Mode = models.CheckMode)

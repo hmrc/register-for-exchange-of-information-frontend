@@ -309,3 +309,15 @@ doYouLiveInTheUK.title = Do you live in the United Kingdom?
 doYouLiveInTheUK.heading = Do you live in the United Kingdom?
 doYouLiveInTheUK.checkYourAnswersLabel = Do you live in the United Kingdom?
 doYouLiveInTheUK.error.required = Select yes if you live in the United Kingdom
+
+nonUkName.title = What is your name?
+nonUkName.heading = What is your name?
+nonUkName.givenName = Given name
+nonUkName.familyName = Family name
+nonUkName.checkYourAnswersLabel = What is your name?
+nonUkName.error.givenName.required = Enter your given name
+nonUkName.error.givenName.invalid = Given name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.givenName.length = Given name must be 35 characters or less
+nonUkName.error.familyName.required = Enter your family name
+nonUkName.error.familyName.invalid = Family name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.familyName.length = Family name must be 35 characters or less

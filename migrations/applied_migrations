@@ -1,0 +1,86 @@
+#!/bin/bash
+
+echo ""
+echo "Applying migration NonUkName"
+
+echo "Adding routes to conf/app.routes"
+
+echo "" >> ../conf/app.routes
+echo "GET        /nonUkName                        controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
+echo "POST       /nonUkName                        controllers.NonUkNameController.onSubmit(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
+
+echo "GET        /changeNonUkName                  controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
+echo "POST       /changeNonUkName                  controllers.NonUkNameController.onSubmit(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
+
+echo "Adding messages to conf.messages"
+echo "" >> ../conf/messages.en
+echo "nonUkName.title = nonUkName" >> ../conf/messages.en
+echo "nonUkName.heading = nonUkName" >> ../conf/messages.en
+echo "nonUkName.givenName = givenName" >> ../conf/messages.en
+echo "nonUkName.familyName = familyName" >> ../conf/messages.en
+echo "nonUkName.checkYourAnswersLabel = nonUkName" >> ../conf/messages.en
+echo "nonUkName.error.givenName.required = Enter givenName" >> ../conf/messages.en
+echo "nonUkName.error.familyName.required = Enter familyName" >> ../conf/messages.en
+echo "nonUkName.error.givenName.length = givenName must be 35 characters or less" >> ../conf/messages.en
+echo "nonUkName.error.familyName.length = familyName must be 35 characters or less" >> ../conf/messages.en
+
+echo "Adding to UserAnswersEntryGenerators"
+awk '/trait UserAnswersEntryGenerators/ {\
+    print;\
+    print "";\
+    print "  implicit lazy val arbitraryNonUkNameUserAnswersEntry: Arbitrary[(pages.NonUkNamePage.type, JsValue)] =";\
+    print "    Arbitrary {";\
+    print "      for {";\
+    print "        page  <- arbitrary[pages.NonUkNamePage.type]";\
+    print "        value <- arbitrary[models.NonUkName].map(Json.toJson(_))";\
+    print "      } yield (page, value)";\
+    print "    }";\
+    next }1' ../test/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test/generators/UserAnswersEntryGenerators.scala
+
+echo "Adding to PageGenerators"
+awk '/trait PageGenerators/ {\
+    print;\
+    print "";\
+    print "  implicit lazy val arbitraryNonUkNamePage: Arbitrary[pages.NonUkNamePage.type] =";\
+    print "    Arbitrary(pages.NonUkNamePage)";\
+    next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
+
+echo "Adding to ModelGenerators"
+awk '/trait ModelGenerators/ {\
+    print;\
+    print "";\
+    print "  implicit lazy val arbitraryNonUkName: Arbitrary[models.NonUkName] =";\
+    print "    Arbitrary {";\
+    print "      for {";\
+    print "        givenName <- arbitrary[String]";\
+    print "        familyName <- arbitrary[String]";\
+    print "      } yield models.NonUkName(givenName, familyName)";\
+    print "    }";\
+    next }1' ../test/generators/ModelGenerators.scala > tmp && mv tmp ../test/generators/ModelGenerators.scala
+
+echo "Adding to UserAnswersGenerator"
+awk '/val generators/ {\
+    print;\
+    print "    arbitrary[(NonUkNamePage.type, JsValue)] ::";\
+    next }1' ../test/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test/generators/UserAnswersGenerator.scala
+
+echo "Adding helper method to CheckYourAnswersHelper"
+awk '/extends RowBuilder/ {\
+     print;\
+     print "";\
+     print "  def nonUkName: Option[Row] = userAnswers.get(pages.NonUkNamePage) map {";\
+     print "      answer =>";\
+     print "        toRow(";\
+     print "          msgKey = \"nonUkName\",";\
+     print "          value = msg\"site.edit\",";\
+     print "          href = routes.NonUkNameController.onPageLoad(CheckMode).url,";\
+     print "        )";\
+     print "    }";\
+     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
+
+echo "Moving tests"
+mv ../generated-test/controllers/NonUkNameControllerSpec.scala ../test/controllers/
+mv ../generated-test/forms/NonUkNameFormProviderSpec.scala ../test/forms/
+mv ../generated-test/pages/NonUkNamePageSpec.scala ../test/pages/
+
+echo "Migration NonUkName completed"
