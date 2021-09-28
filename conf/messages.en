@@ -305,3 +305,7 @@ addressUK.error.postcode.required = Enter a postcode
 addressUK.error.postcode.length = Postcode must be 8 characters or less
 addressUK.error.postcode.invalid = Enter a postcode, like AA1 1AA
 
+doYouLiveInTheUK.title = Do you live in the United Kingdom?
+doYouLiveInTheUK.heading = Do you live in the United Kingdom?
+doYouLiveInTheUK.checkYourAnswersLabel = Do you live in the United Kingdom?
+doYouLiveInTheUK.error.required = Select yes if you live in the United Kingdom

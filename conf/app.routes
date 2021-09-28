@@ -113,9 +113,12 @@ POST       /register/without-id/change-address-uk        controllers.AddressUKCo
 
 GET        /register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad()
 
-GET        /register/date-of-birth                       controllers.WhatIsYourDateOfBirthController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/date-of-birth                       controllers.WhatIsYourDateOfBirthController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode)
+GET         /register/nonUkName                        controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST        /register/nonUkName                        controllers.NonUkNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET         /register/changeNonUkName                 controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST        /register/changeNonUkName                controllers.NonUkNameController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad()
+GET        /register/live-in-uk                        controllers.DoYouLiveInTheUKController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/live-in-uk                        controllers.DoYouLiveInTheUKController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-live-in-uk                  controllers.DoYouLiveInTheUKController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-live-in-uk                  controllers.DoYouLiveInTheUKController.onSubmit(mode: models.Mode = models.CheckMode)

@@ -24,6 +24,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 
+import java.time.LocalDate
+
 class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val navigator: MDRNavigator = new MDRNavigator
 
@@ -78,10 +80,42 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode)) //TODO - change this when page built
+              .mustBe(routes.NonUkNameController.onPageLoad(NormalMode))
         }
       }
 
+      "must go from 'What Is Your Name?' page to 'What Is Your DOB?' page selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(NonUkNamePage, NonUkName("FirstName", "Surname"))
+                .success
+                .value
+
+            navigator
+              .nextPage(NonUkNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What Is Your DOB?' page to 'Do You Live in the UK?' page selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveNINPage, false)
+                .success
+                .value
+                .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
+              .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }
