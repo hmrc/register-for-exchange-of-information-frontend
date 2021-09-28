@@ -218,3 +218,56 @@ doYouHaveNIN.error.required = Select yes if you have National Insurance number
 someInformationIsMissing.title = Some information is missing
 someInformationIsMissing.heading = Some information is missing
 someInformationIsMissing.guidance = You must provide this information to register.
+
+addressWithoutId.individual.title = What is your home address?
+addressWithoutId.individual.heading = What is your home address?
+addressWithoutId.business.title = What is the main address of your business?
+addressWithoutId.business.heading = What is the main address of your business?
+addressWithoutId.addressLine1 = Address line 1
+addressWithoutId.addressLine2 = Address line 2 (optional)
+addressWithoutId.addressLine3 = City
+addressWithoutId.addressLine4 = Region (optional)
+addressWithoutId.postCode = Postcode (if applicable)
+addressWithoutId.countryCode = Country
+
+
+addressWithoutId.checkYourAnswersLabel = Your home address
+addressWithoutId.error.addressLine1.required = Enter address line 1
+addressWithoutId.error.addressLine3.required = Enter City
+addressWithoutId.error.country.required = Enter Country
+addressWithoutId.error.addressLine1.length = Address line 1 must be 35 characters or less
+addressWithoutId.error.addressLine2.length = Address line 2 must be 35 characters or less
+addressWithoutId.error.addressLine3.length = City must be must be 35 characters or less
+addressWithoutId.error.addressLine4.length = Region (optional) must be 35 characters or less
+addressWithoutId.error.addressLine1.invalid = Address line 1 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressWithoutId.error.addressLine2.invalid = Address line 2 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressWithoutId.error.addressLine3.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressWithoutId.error.addressLine4.invalid = Region (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressWithoutId.error.postcode.required = If the address is in Jersey, Guernsey or the Isle of Man, enter postcode
+addressWithoutId.error.postcode.length = Postcode (if applicable) must be 10 characters or less
+
+addressUK.title = What is your home address?
+addressUK.heading = What is your home address?
+addressUK.addressLine1 = Address line 1
+addressUK.addressLine2 = Address line 2 (optional)
+addressUK.addressLine3 = City
+addressUK.addressLine4 = County (optional)
+addressUK.postCode = Postcode
+addressUK.countryCode = Country
+
+addressUK.checkYourAnswersLabel = Your home address
+addressUK.error.addressLine1.required = Enter address line 1
+addressUK.error.addressLine3.required = Enter City
+addressUK.error.country.required = Enter Country
+addressUK.error.addressLine1.length = Address line 1 must be 35 characters or less
+addressUK.error.addressLine2.length = Address line 2 must be 35 characters or less
+addressUK.error.addressLine3.length = City must be must be 35 characters or less
+addressUK.error.addressLine4.length = County (optional) must be 35 characters or less
+addressUK.error.addressLine1.invalid = Address line 1 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressUK.error.addressLine2.invalid = Address line 2 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressUK.error.addressLine3.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressUK.error.addressLine4.invalid = County (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
+addressUK.error.postcode.required = Enter a postcode
+addressUK.error.postcode.length = Postcode must be 8 characters or less
+addressUK.error.postcode.invalid = Enter a postcode, like AA1 1AA
+
