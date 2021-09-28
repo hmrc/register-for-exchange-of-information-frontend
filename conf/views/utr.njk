@@ -33,6 +33,7 @@
 
           {{ csrf() | safe }}
 
+{#
           {{ govukInput({
             label: {
               text: messages('utr.heading', taxType),
@@ -47,6 +48,27 @@
             value: form.value.value,
             errorMessage: form.value.error
           }) }}
+#}
+
+        <h1 class="govuk-heading-l text-overflow" id="heading">
+            {{ messages("utr.heading", taxType) }}
+        </h1>
+
+        <div>
+            <p class="govuk-hint text-overflow" id="hint-text">{{ messages("utr.hint", taxType) }}
+            <a href="{{lostUTRUrl}}" class="govuk-link text-overflow" rel="noreferrer noopener" target="_blank">{{messages("utr.hint.link")}}</a></p>
+        </div>
+
+            {{ govukInput({
+                id: "value",
+                name: "value",
+                value: form.value.value,
+                errorMessage: form.value.error,
+                attributes: {
+                    "aria-labelledby" : "heading",
+                    "aria-describedby": "hint-text"
+                }
+            }) }}
 
           {{ govukButton({
             text: messages("site.continue"),

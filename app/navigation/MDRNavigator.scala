@@ -71,7 +71,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsThisYourBusinessPage) map {
-      case true  => routes.IndexController.onPageLoad() // todo contact-details
+      case true  => routes.NeedContactDetailsController.onPageLoad()
       case false => routes.WeCouldNotConfirmController.onPageLoad()
     }
 }

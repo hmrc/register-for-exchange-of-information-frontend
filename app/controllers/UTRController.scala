@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
 import exceptions.SomeInformationIsMissingException
 import forms.UTRFormProvider
@@ -40,6 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class UTRController @Inject() (
   override val messagesApi: MessagesApi,
+  appConfig: FrontendAppConfig,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
   identify: IdentifierAction,
@@ -61,14 +63,14 @@ class UTRController @Inject() (
     val taxType = businessType match {
       case Partnership => sa
       case Sole        => sa
-      // todo self employed ????
-      case _ => ct
+      case _           => ct
     }
 
     val data = Json.obj(
-      "form"    -> form,
-      "taxType" -> taxType,
-      "action"  -> routes.UTRController.onSubmit(mode).url
+      "form"       -> form,
+      "taxType"    -> taxType,
+      "lostUTRUrl" -> appConfig.lostUTRUrl,
+      "action"     -> routes.UTRController.onSubmit(mode).url
     )
     renderer.render("utr.njk", data)
   }

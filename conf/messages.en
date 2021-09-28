@@ -264,7 +264,6 @@ addressWithoutId.addressLine4 = Region (optional)
 addressWithoutId.postCode = Postcode (if applicable)
 addressWithoutId.countryCode = Country
 
-
 addressWithoutId.checkYourAnswersLabel = Your home address
 addressWithoutId.error.addressLine1.required = Enter address line 1
 addressWithoutId.error.addressLine3.required = Enter City
@@ -305,7 +304,6 @@ addressUK.error.postcode.required = Enter a postcode
 addressUK.error.postcode.length = Postcode must be 8 characters or less
 addressUK.error.postcode.invalid = Enter a postcode, like AA1 1AA
 
-
 businessType.title = What type of business do you have?
 businessType.heading = What type of business do you have?
 businessType.limited = Limited company
@@ -318,7 +316,8 @@ businessType.error.required = Select businessType
 
 utr.title = What is your {0} Unique Taxpayer Reference?
 utr.heading = What is {0} Unique Taxpayer Reference?
-utr.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about {0}. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can find a lost UTR number (opens in new tab)
+utr.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about {0}. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can
+utr.hint.link = find a lost UTR number (opens in new tab)
 utr.checkYourAnswersLabel = What is your Corporation Tax Unique Taxpayer Reference?
 utr.error.required = Enter your Corporation Tax Unique Taxpayer Reference
 utr.error.length = Corporation Tax Unique Taxpayer Reference must be 10 numbers
