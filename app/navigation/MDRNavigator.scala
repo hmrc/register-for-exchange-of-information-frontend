@@ -40,6 +40,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case AddressWithoutIdPage                  => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
+    case BusinessWithoutIDNamePage             => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode))
     case _                                     => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -55,7 +56,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def whatAreYouRegisteringAs(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(WhatAreYouRegisteringAsPage) map {
-      case RegistrationTypeBusiness   => ??? // TODO - Change to Business Journey when built
+      case RegistrationTypeBusiness   => routes.BusinessWithoutIDNameController.onPageLoad(mode)
       case RegistrationTypeIndividual => routes.DoYouHaveNINController.onPageLoad(mode)
     }
 

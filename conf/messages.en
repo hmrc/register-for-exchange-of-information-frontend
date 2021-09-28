@@ -338,3 +338,11 @@ selectAddress.checkYourAnswersLabel = Your home address
 selectAddress.error.required = Select your address
 selectAddress.hint.part1 = Select from the list or
 selectAddress.hint.part2 = enter your address manually
+
+
+businessWithoutIDName.title = What is the name of your business?
+businessWithoutIDName.heading = What is the name of your business?
+businessWithoutIDName.checkYourAnswersLabel = Legal name of business
+businessWithoutIDName.error.businessName.required = Enter the name of your business
+businessWithoutIDName.error.businessName.length = Business name must be 105 characters or less
+businessWithoutIDName.error.businessName.invalid = Business name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
