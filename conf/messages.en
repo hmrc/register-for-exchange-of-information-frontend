@@ -331,3 +331,8 @@ businessName.checkYourAnswersLabel = businessName
 businessName.error.required = Enter businessName
 contactName.error.invalid = Name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 businessName.error.length = BusinessName must be 100 characters or less
+
+isThisYourBusiness.title = Is this your business?
+isThisYourBusiness.heading = Is this your business?
+isThisYourBusiness.checkYourAnswersLabel = isThisYourBusiness
+isThisYourBusiness.error.required = Select yes if this is your business

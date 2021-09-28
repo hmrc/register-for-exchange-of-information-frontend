@@ -35,6 +35,9 @@ trait PageGenerators {
   implicit lazy val arbitraryWhatIsYourNationalInsuranceNumberPage: Arbitrary[pages.WhatIsYourNationalInsuranceNumberPage.type] =
     Arbitrary(pages.WhatIsYourNationalInsuranceNumberPage)
 
+  implicit lazy val arbitraryIsThisYourBusinessPage: Arbitrary[pages.IsThisYourBusinessPage.type] =
+    Arbitrary(pages.IsThisYourBusinessPage)
+
   implicit lazy val arbitraryBusinessNamePage: Arbitrary[pages.BusinessNamePage.type] =
     Arbitrary(pages.BusinessNamePage)
 

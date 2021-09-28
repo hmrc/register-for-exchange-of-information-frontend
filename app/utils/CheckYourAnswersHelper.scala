@@ -69,6 +69,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def isThisYourBusiness: Option[Row] = userAnswers.get(pages.IsThisYourBusinessPage) map {
+    answer =>
+      toRow(
+        msgKey = "isThisYourBusiness",
+        value = msg"site.edit",
+        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
+      )
+  }
+
   def businessName: Option[Row] = userAnswers.get(pages.BusinessNamePage) map {
     answer =>
       toRow(

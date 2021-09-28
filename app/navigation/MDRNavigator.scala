@@ -37,6 +37,8 @@ class MDRNavigator @Inject() () extends Navigator {
     case DoYouHaveUniqueTaxPayerReferencePage => isUTR(NormalMode)
     case BusinessTypePage                     => _ => Some(routes.UTRController.onPageLoad(NormalMode))
     case UTRPage                              => isSoleProprietor(NormalMode)
+    case BusinessNamePage                     => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+    case IsThisYourBusinessPage               => isThisYourBusiness(NormalMode)
     case _                                    => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -73,5 +75,11 @@ class MDRNavigator @Inject() () extends Navigator {
     ua.get(BusinessTypePage) map {
       case BusinessType.Sole => routes.IndexController.onPageLoad() // todo your-name
       case _                 => routes.BusinessNameController.onPageLoad(mode)
+    }
+
+  private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsThisYourBusinessPage) map {
+      case true   => routes.IndexController.onPageLoad() // todo contact-details
+      case false  => routes.WeCouldNotConfirmController.onPageLoad(mode)
     }
 }
