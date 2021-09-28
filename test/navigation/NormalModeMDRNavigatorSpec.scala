@@ -84,7 +84,52 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'What Is Your Name?' page to 'What Is Your DOB?' page when valid name is entered" in {
+      "must go from 'Do You Have NINO?' page to 'What Is Your NINO?' page if YES is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveNINPage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What Is Your NINO?' page to 'What is your name?' page if valid NINO is entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhatIsYourNationalInsuranceNumberPage, "QQ123456C")
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatIsYourNationalInsuranceNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is your name?'(UK) page to 'What is your DOB?' page if valid NINO is entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhatIsYourNamePage, WhatIsYourName("Little", "Comets"))
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatIsYourNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What Is Your Name?'(NON-UK) page to 'What Is Your DOB?' page when valid name is entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -116,6 +161,46 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
               .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode))
         }
       }
+
+      //TODO - add this test when logic is added for individual matching
+      "must go from 'What Is Your DOB?' page to 'We have confirmed your identity' page when valid DOB is entered " +
+        "and individual could be matched" ignore {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveNINPage, true)
+                  .success
+                  .value
+                  .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+                  .success
+                  .value
+
+              navigator
+                .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
+                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
+          }
+        }
+
+      //TODO - add this test when logic is added for individual matching
+      "must go from 'What Is Your DOB?' page to 'We could not confirm your identity' page when valid DOB is entered " +
+        "but individual could not be matched" ignore {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveNINPage, true)
+                  .success
+                  .value
+                  .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+                  .success
+                  .value
+
+              navigator
+                .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
+                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
+          }
+        }
 
       "must go from 'Do You Live in the UK?' page to 'What is your home address (Non UK)' page when NO is selected" in {
         forAll(arbitrary[UserAnswers]) {
