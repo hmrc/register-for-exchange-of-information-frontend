@@ -57,6 +57,11 @@ trait ModelGenerators {
       Gen.oneOf(models.BusinessType.values.toSeq)
     }
 
+  implicit lazy val arbitraryBussinessType: Arbitrary[models.BusinessType] =
+    Arbitrary {
+      Gen.oneOf(models.BusinessType.values.toSeq)
+    }
+
   implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
     Arbitrary {
       Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
