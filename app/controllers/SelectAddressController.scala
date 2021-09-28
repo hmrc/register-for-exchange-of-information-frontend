@@ -70,7 +70,7 @@ class SelectAddressController @Inject() (
           val json = Json.obj(
             "form"             -> preparedForm,
             "mode"             -> mode,
-            "manualAddressURL" -> manualAddressURL,
+            "manualAddressUrl" -> manualAddressURL,
             "radios"           -> radios
           )
 
@@ -100,7 +100,7 @@ class SelectAddressController @Inject() (
                 val json = Json.obj(
                   "form"             -> formWithErrors,
                   "mode"             -> mode,
-                  "manualAddressURL" -> manualAddressURL,
+                  "manualAddressUrl" -> manualAddressURL,
                   "radios"           -> radios
                 )
 
