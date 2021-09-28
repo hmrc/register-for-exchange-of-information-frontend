@@ -116,6 +116,21 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
               .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode))
         }
       }
+
+      "must go from 'Do You Live in the UK?' page to 'What is your home address (Non UK)' page selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouLiveInTheUKPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }

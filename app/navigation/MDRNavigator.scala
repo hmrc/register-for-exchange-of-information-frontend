@@ -35,6 +35,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
     case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
     case NonUkNamePage                         => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
+    case DoYouLiveInTheUKPage                  => doYouLiveInTheUkRoutes(NormalMode)
     case _                                     => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -64,6 +65,12 @@ class MDRNavigator @Inject() () extends Navigator {
     ua.get(DoYouHaveNINPage) map {
       case true  => ??? // TODO - redirect to individualMatched
       case false => routes.DoYouLiveInTheUKController.onPageLoad(mode)
+    }
+
+  private def doYouLiveInTheUkRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouLiveInTheUKPage) map {
+      case true  => ??? // TODO - redirect to enter postcode page
+      case false => routes.AddressWithoutIdController.onPageLoad(mode)
     }
 
 }
