@@ -29,7 +29,9 @@
             }) }}
           {% endif %}
 
-          <form action="{{ routes.controllers.SelectAddressController.onSubmit(mode).url }}" method="post">
+          <form action="{{ action }}" method="post" novalidate>
+
+          {{ csrf() | safe }}
 
           <h1 class="govuk-heading-l">
               {{ messages("selectAddress.heading") }}

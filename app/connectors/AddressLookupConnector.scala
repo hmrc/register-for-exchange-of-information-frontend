@@ -36,11 +36,10 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     implicit val reads: Reads[Seq[AddressLookup]] = AddressLookup.addressesLookupReads
 
-    //TODO - header may change
     http.GET[HttpResponse](
       url = addressLookupUrl,
       queryParams = urlParams,
-      headers = Seq("X-Hmrc-Origin" -> "MDR")
+      headers = Seq("X-Hmrc-Origin" -> "DAC")
     ) flatMap {
       case response if response.status equals OK =>
         Future.successful(

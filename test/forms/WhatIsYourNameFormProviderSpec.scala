@@ -27,7 +27,6 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName   = "firstName"
     val requiredKey = "whatIsYourName.error.firstName.required"
-    val invalidKey  = "whatIsYourName.error.firstName.invalid"
     val lengthKey   = "whatIsYourName.error.firstName.length"
     val maxLength   = 35
 
@@ -37,7 +36,7 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
       validPersonalName(maxLength)
     )
 
-    behave like fieldWithMaxLengthName(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
@@ -55,7 +54,6 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName   = "lastName"
     val requiredKey = "whatIsYourName.error.lastName.required"
-    val invalidKey  = "whatIsYourName.error.lastName.invalid"
     val lengthKey   = "whatIsYourName.error.lastName.length"
     val maxLength   = 35
 
@@ -65,7 +63,7 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
       validPersonalName(maxLength)
     )
 
-    behave like fieldWithMaxLengthName(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
