@@ -29,7 +29,6 @@ case class AddressLookup(addressLine1: Option[String],
 )
 
 object AddressLookup {
-  //  implicit val addressLookupWrite = Json.writes[AddressLookup]
 
   implicit val addressLookupWrite = new Writes[AddressLookup] {
 
