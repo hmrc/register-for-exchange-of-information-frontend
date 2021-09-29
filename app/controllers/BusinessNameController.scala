@@ -56,7 +56,7 @@ class BusinessNameController @Inject() (
   private val form = formProvider()
 
   val llpHeading = "registered name of your business"
-  val llpHint    = "This is the registered nam of your incorporated certificate."
+  val llpHint    = "This is the registered name of your incorporation certificate."
 
   val partnershipHeading = "partnership name"
   val partnershipHint    = "This is the name that you registered with HMRC."
@@ -67,7 +67,7 @@ class BusinessNameController @Inject() (
   private def pageHeadingAndHint(businessType: BusinessType): (String, String) =
     businessType match {
       case LimitedPartnership | LimitedCompany => (llpHeading, llpHint)
-      case Partnership                         => (partnershipHint, partnershipHint)
+      case Partnership                         => (partnershipHeading, partnershipHint)
       case UnincorporatedAssociation           => (unincorporatedHeading, unincorporatedHint)
     }
 

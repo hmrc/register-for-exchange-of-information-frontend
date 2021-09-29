@@ -33,23 +33,6 @@
 
           {{ csrf() | safe }}
 
-{#
-          {{ govukInput({
-            label: {
-              text: messages('utr.heading', taxType),
-              isPageHeading: true,
-              classes: "govuk-label--l text-overflow"
-            },
-            id: "value",
-            name: "value",
-            hint: {
-                        text: messages('utr.hint', taxType)
-                      },
-            value: form.value.value,
-            errorMessage: form.value.error
-          }) }}
-#}
-
         <h1 class="govuk-heading-l text-overflow" id="heading">
             {{ messages("utr.heading", taxType) }}
         </h1>

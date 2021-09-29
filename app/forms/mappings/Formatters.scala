@@ -138,6 +138,22 @@ trait Formatters extends Transforms {
       Map(key -> value)
   }
 
+  private[mappings] def stringTrimFormatterWithMsgArg(errorKey: String, msgArg: String): Formatter[String] = new Formatter[String] {
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+      data.get(key) match {
+        case None => Left(Seq(FormError(key, errorKey, Seq(msgArg))))
+        case Some(s) =>
+          s.trim match {
+            case "" => Left(Seq(FormError(key, errorKey, Seq(msgArg))))
+            case s1 => Right(s1)
+          }
+      }
+
+    override def unbind(key: String, value: String): Map[String, String] =
+      Map(key -> value)
+  }
+
   protected def validatedOptionalTextFormatter(invalidKey: String, lengthKey: String, regex: String, length: Int): Formatter[Option[String]] =
     new Formatter[Option[String]] {
 
@@ -275,17 +291,18 @@ trait Formatters extends Transforms {
         Map(key -> value.getOrElse(""))
     }
 
-  protected def validatedFixedLengthTextFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int) =
+  protected def validatedFixedLengthTextFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int, msgArg: String) =
     new Formatter[String] {
-      private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
+
+      private val dataFormatter: Formatter[String] = stringTrimFormatterWithMsgArg(requiredKey, msgArg)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         dataFormatter
           .bind(key, data)
           .right
           .flatMap {
-            case str if !str.matches(regex)  => Left(Seq(FormError(key, invalidKey)))
-            case str if str.length != length => Left(Seq(FormError(key, lengthKey)))
+            case str if !str.matches(regex)  => Left(Seq(FormError(key, invalidKey, Seq(msgArg))))
+            case str if str.length != length => Left(Seq(FormError(key, lengthKey, Seq(msgArg))))
             case str                         => Right(str)
           }
 

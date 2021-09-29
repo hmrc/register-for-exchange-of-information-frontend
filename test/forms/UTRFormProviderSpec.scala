@@ -26,7 +26,7 @@ class UTRFormProviderSpec extends StringFieldBehaviours {
   val invalidKey  = "utr.error.invalid"
   val maxLength   = 10
 
-  val form = new UTRFormProvider()()
+  val form = new UTRFormProvider()("")
 
   ".value" - {
 

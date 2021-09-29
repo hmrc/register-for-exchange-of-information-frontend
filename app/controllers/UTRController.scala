@@ -55,15 +55,13 @@ class UTRController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
-  private val ct   = "Corporation Tax"
-  private val sa   = "Self Assessment"
+  private val ct = "Corporation Tax"
+  private val sa = "Self Assessment"
 
   private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val taxType = businessType match {
-      case Partnership => sa
-      case Sole        => sa
-      case _           => ct
+      case Partnership | Sole | LimitedPartnership => sa
+      case _                                       => ct
     }
 
     val data = Json.obj(
@@ -78,24 +76,32 @@ class UTRController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       SomeInformationIsMissing.isMissingBusinessType {
-        render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill), _).map(Ok(_))
+        businessType =>
+          val form = formProvider(businessType match {
+            case Partnership | Sole | LimitedPartnership => sa
+            case _                                       => ct
+          })
+          render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            SomeInformationIsMissing.isMissingBusinessType {
-              render(mode, formWithErrors, _).map(BadRequest(_))
-            },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
-        )
+      SomeInformationIsMissing.isMissingBusinessType {
+        businessType =>
+          formProvider(businessType match {
+            case Partnership | Sole | LimitedPartnership => sa
+            case _                                       => ct
+          })
+            .bindFromRequest()
+            .fold(
+              formWithErrors => render(mode, formWithErrors, businessType).map(BadRequest(_)),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
+            )
+      }
   }
 }

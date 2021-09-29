@@ -25,8 +25,8 @@ class UTRFormProvider @Inject() extends Mappings with RegexConstants {
 
   private val maxLength = 10
 
-  def apply(): Form[String] =
+  def apply(msgArg: String): Form[String] =
     Form(
-      "value" -> validatedFixedLengthText("utr.error.required", "utr.error.invalid", "utr.error.length", utrRegex, maxLength)
+      "value" -> validatedFixedLengthText("utr.error.required", "utr.error.invalid", "utr.error.length", utrRegex, maxLength, msgArg)
     )
 }
