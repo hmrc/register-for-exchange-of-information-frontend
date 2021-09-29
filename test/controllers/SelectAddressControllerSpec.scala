@@ -80,7 +80,7 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
       val expectedJson = Json.obj(
         "form"             -> form,
         "mode"             -> NormalMode,
-        "manualAddressURL" -> manualAddressURL,
+        "manualAddressUrl" -> manualAddressURL,
         "radios"           -> Radios(field = form("value"), items = addressRadios)
       )
 
@@ -118,7 +118,7 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
       val expectedJson = Json.obj(
         "form"             -> filledForm,
         "mode"             -> NormalMode,
-        "manualAddressURL" -> manualAddressURL,
+        "manualAddressUrl" -> manualAddressURL,
         "radios"           -> Radios(field = filledForm("value"), items = addressRadios)
       )
 
@@ -185,7 +185,7 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
       val expectedJson = Json.obj(
         "form"             -> boundForm,
         "mode"             -> NormalMode,
-        "manualAddressURL" -> manualAddressURL,
+        "manualAddressUrl" -> manualAddressURL,
         "radios"           -> Radios(field = boundForm("value"), items = addressRadios)
       )
 
