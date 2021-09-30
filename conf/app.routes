@@ -132,3 +132,8 @@ GET        /register/select-address                        controllers.SelectAdd
 POST       /register/select-address                        controllers.SelectAddressController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-select-address                 controllers.SelectAddressController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-select-address                 controllers.SelectAddressController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/without-id/business-name            controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/without-id/business-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode)

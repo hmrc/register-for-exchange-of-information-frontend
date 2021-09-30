@@ -19,6 +19,7 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
+import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -292,6 +293,38 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
+      "must go from 'What are registering as' page to 'What is the name of your business' page when business is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+                .success
+                .value
+
+            navigator
+              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is the name of you business' page to 'What is the main address of your business' page when a valid business name is entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+                .success
+                .value
+                .set(BusinessWithoutIDNamePage, "a business")
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessWithoutIDNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }
