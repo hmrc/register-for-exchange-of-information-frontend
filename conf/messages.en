@@ -312,7 +312,7 @@ businessType.partnership = Partnership
 businessType.limitedPartnership = Limited partnership or limited liability partnership
 businessType.unincorporatedAssociation = Unincorporated association or trust
 businessType.checkYourAnswersLabel = What type of business do you have?
-businessType.error.required = Select businessType
+businessType.error.required = Select the type of business you have
 
 utr.title = What is your {0} Unique Taxpayer Reference?
 utr.heading = What is your {0} Unique Taxpayer Reference?
