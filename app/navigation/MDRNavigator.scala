@@ -33,9 +33,10 @@ class MDRNavigator @Inject() () extends Navigator {
     case DoYouHaveNINPage                      => doYouHaveNINPage(NormalMode)
     case WhatIsYourNationalInsuranceNumberPage => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
     case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
-    case WhatIsYourDateOfBirthPage             => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+    case WhatIsYourDateOfBirthPage             => _ => Some(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
     case BusinessTypePage                      => _ => Some(routes.UTRController.onPageLoad(NormalMode))
     case UTRPage                               => isSoleProprietor(NormalMode)
+    case SoleNamePage                          => _ => Some(routes.SoleNameController.onPageLoad(NormalMode)) // todo change to DOB-business
     case BusinessNamePage                      => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
     case _                                     => _ => Some(routes.IndexController.onPageLoad())
@@ -65,7 +66,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def isSoleProprietor(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(BusinessTypePage) map {
-      case BusinessType.Sole => routes.WhatIsYourNameController.onPageLoad(mode)
+      case BusinessType.Sole => routes.SoleNameController.onPageLoad(mode)
       case _                 => routes.BusinessNameController.onPageLoad(mode)
     }
 

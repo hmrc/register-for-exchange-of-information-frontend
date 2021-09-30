@@ -20,6 +20,9 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitrarySoleNamePage: Arbitrary[pages.SoleNamePage.type] =
+    Arbitrary(pages.SoleNamePage)
+
   implicit lazy val arbitraryAddressUKPage: Arbitrary[pages.AddressUKPage.type] =
     Arbitrary(pages.AddressUKPage)
 

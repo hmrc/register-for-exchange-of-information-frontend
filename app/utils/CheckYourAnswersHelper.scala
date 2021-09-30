@@ -24,6 +24,15 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
+  def soleName: Option[Row] = userAnswers.get(pages.SoleNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "soleName",
+        value = msg"site.edit",
+        href = routes.SoleNameController.onPageLoad(CheckMode).url
+      )
+  }
+
   def addressUK: Option[Row] = userAnswers.get(pages.AddressUKPage) map {
     answer =>
       toRow(

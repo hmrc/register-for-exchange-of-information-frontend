@@ -132,3 +132,8 @@ GET        /register/is-this-your-business              controllers.IsThisYourBu
 POST       /register/is-this-your-business              controllers.IsThisYourBusinessController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-is-this-your-business       controllers.IsThisYourBusinessController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-is-this-your-business       controllers.IsThisYourBusinessController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/sole-name                        controllers.SoleNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/sole-name                        controllers.SoleNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-sole-name                  controllers.SoleNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-sole-name                  controllers.SoleNameController.onSubmit(mode: models.Mode = models.CheckMode)

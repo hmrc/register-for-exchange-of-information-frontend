@@ -335,3 +335,15 @@ isThisYourBusiness.title = Is this your business?
 isThisYourBusiness.heading = Is this your business?
 isThisYourBusiness.checkYourAnswersLabel = isThisYourBusiness
 isThisYourBusiness.error.required = Select yes if this is your business
+
+soleName.title = What is your name?
+soleName.heading = What is your name?
+soleName.firstName = First name
+soleName.lastName = Last name
+soleName.checkYourAnswersLabel = What is your name
+soleName.error.firstName.required = Enter your first name
+soleName.error.firstName.invalid = First name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+soleName.error.firstName.length = First name must be 35 characters or less
+soleName.error.lastName.required = Enter your last name
+soleName.error.lastName.invalid = Last name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+soleName.error.lastName.length = Last name must be 35 characters or less
