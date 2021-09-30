@@ -237,13 +237,13 @@ whatIsYourName.error.lastName.length = Last name must be 35 characters or less
 
 whatIsYourDateOfBirth.title = What is your date of birth?
 whatIsYourDateOfBirth.heading = What is your date of birth?
-whatIsYourDateOfBirth.hint = For example, 12 11 2007
+whatIsYourDateOfBirth.hint = For example, 31 3 1980
 whatIsYourDateOfBirth.checkYourAnswersLabel = What is your date of birth?
 whatIsYourDateOfBirth.error.required.all = Enter your date of birth
 whatIsYourDateOfBirth.error.required.two = Date of birth must include {0} and {1}
 whatIsYourDateOfBirth.error.required = Your date of birth must include {0}
 whatIsYourDateOfBirth.error.invalid = Enter a valid date of birth
-whatIsYourDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1903
+whatIsYourDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1909
 individualDateOfBirth.error.futureDate = Date of birth must be before {0}
 
 someInformationIsMissing.title = Some information is missing
@@ -305,3 +305,36 @@ addressUK.error.postcode.required = Enter a postcode
 addressUK.error.postcode.length = Postcode must be 8 characters or less
 addressUK.error.postcode.invalid = Enter a postcode, like AA1 1AA
 
+doYouLiveInTheUK.title = Do you live in the United Kingdom?
+doYouLiveInTheUK.heading = Do you live in the United Kingdom?
+doYouLiveInTheUK.checkYourAnswersLabel = Do you live in the United Kingdom?
+doYouLiveInTheUK.error.required = Select yes if you live in the United Kingdom
+
+nonUkName.title = What is your name?
+nonUkName.heading = What is your name?
+nonUkName.givenName = Given name
+nonUkName.familyName = Family name
+nonUkName.checkYourAnswersLabel = What is your name?
+nonUkName.error.givenName.required = Enter your given name
+nonUkName.error.givenName.invalid = Given name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.givenName.length = Given name must be 35 characters or less
+nonUkName.error.familyName.required = Enter your family name
+nonUkName.error.familyName.invalid = Family name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.familyName.length = Family name must be 35 characters or less
+
+whatIsYourPostcode.title = What is your postcode?
+whatIsYourPostcode.heading = What is your postcode?
+whatIsYourPostcode.checkYourAnswersLabel = What is your postcode?
+whatIsYourPostcode.button = Find address
+whatIsYourPostcode.manualLink = Or enter the address manually
+whatIsYourPostcode.error.required = Enter your postcode
+whatIsYourPostcode.error.length = Your postcode must be 8 characters or less
+whatIsYourPostcode.error.invalid = Enter a postcode, like AA1 1AA
+whatIsYourPostcode.error.notFound = Address not found - enter a different postcode or enter the address manually
+
+selectAddress.title = What is your address?
+selectAddress.heading = What is your address?
+selectAddress.checkYourAnswersLabel = Your home address
+selectAddress.error.required = Select your address
+selectAddress.hint.part1 = Select from the list or
+selectAddress.hint.part2 = enter your address manually

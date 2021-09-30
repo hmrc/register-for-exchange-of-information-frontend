@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo ""
+echo "Applying migration SelectAddress"
+
+echo "Adding routes to conf/app.routes"
+echo "" >> ../conf/app.routes
+echo "GET        /selectAddress                       controllers.SelectAddressController.onPageLoad()" >> ../conf/app.routes
+
+echo "Adding messages to conf.messages"
+echo "" >> ../conf/messages.en
+echo "selectAddress.title = selectAddress" >> ../conf/messages.en
+echo "selectAddress.heading = selectAddress" >> ../conf/messages.en
+
+echo "Migration SelectAddress completed"

@@ -24,6 +24,24 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
+  def whatIsYourPostcode: Option[Row] = userAnswers.get(pages.WhatIsYourPostcodePage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsYourPostcode",
+        value = msg"site.edit",
+        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def nonUkName: Option[Row] = userAnswers.get(pages.NonUkNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "nonUkName",
+        value = msg"site.edit",
+        href = routes.NonUkNameController.onPageLoad(CheckMode).url
+      )
+  }
+
   def addressUK: Option[Row] = userAnswers.get(pages.AddressUKPage) map {
     answer =>
       toRow(
@@ -39,6 +57,24 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         msgKey = "addressWithoutId",
         value = msg"site.edit",
         href = routes.AddressWithoutIdController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def doYouLiveInTheUK: Option[Row] = userAnswers.get(pages.DoYouLiveInTheUKPage) map {
+    answer =>
+      toRow(
+        msgKey = "doYouLiveInTheUK",
+        value = msg"site.edit",
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def nonUkNameController: Option[Row] = userAnswers.get(pages.NonUkNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "nonUkNameController",
+        value = msg"site.edit",
+        href = routes.NonUkNameController.onPageLoad(CheckMode).url
       )
   }
 

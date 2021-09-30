@@ -30,10 +30,16 @@ class MDRNavigator @Inject() () extends Navigator {
   override val normalRoutes: Page => UserAnswers => Option[Call] = {
     case DoYouHaveUniqueTaxPayerReferencePage  => doYouHaveUniqueTaxPayerReference(NormalMode)
     case WhatAreYouRegisteringAsPage           => whatAreYouRegisteringAs(NormalMode)
-    case DoYouHaveNINPage                      => doYouHaveNINPage(NormalMode)
+    case DoYouHaveNINPage                      => doYouHaveNINORoutes(NormalMode)
     case WhatIsYourNationalInsuranceNumberPage => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
     case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
-    case WhatIsYourDateOfBirthPage             => _ => Some(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
+    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
+    case NonUkNamePage                         => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
+    case DoYouLiveInTheUKPage                  => doYouLiveInTheUkRoutes(NormalMode)
+    case AddressUKPage                         => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
+    case AddressWithoutIdPage                  => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
+    case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
+    case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case _                                     => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -43,20 +49,32 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def doYouHaveUniqueTaxPayerReference(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
-      case true  => routes.WhatAreYouRegisteringAsController.onPageLoad(mode) // TODO replace with not yet implemented route
+      case true  => ??? // TODO - Change to What is your UTR when built
       case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode)
     }
 
   private def whatAreYouRegisteringAs(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(WhatAreYouRegisteringAsPage) map {
-      case RegistrationTypeBusiness   => routes.DoYouHaveNINController.onPageLoad(mode) // TODO replace with not yet implemented route
+      case RegistrationTypeBusiness   => ??? // TODO - Change to Business Journey when built
       case RegistrationTypeIndividual => routes.DoYouHaveNINController.onPageLoad(mode)
     }
 
-  private def doYouHaveNINPage(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def doYouHaveNINORoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode) // TODO replace with not yet implemented route
-      case false => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode)
+      case true  => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode)
+      case false => routes.NonUkNameController.onPageLoad(mode)
+    }
+
+  private def whatIsYourDateOfBirthRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveNINPage) map {
+      case true  => ??? //TODO - add this case when logic is added for individual matching
+      case false => routes.DoYouLiveInTheUKController.onPageLoad(mode)
+    }
+
+  private def doYouLiveInTheUkRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouLiveInTheUKPage) map {
+      case true  => routes.WhatIsYourPostcodeController.onPageLoad(mode)
+      case false => routes.AddressWithoutIdController.onPageLoad(mode)
     }
 
 }

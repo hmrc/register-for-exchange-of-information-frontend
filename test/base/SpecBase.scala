@@ -43,4 +43,5 @@ trait SpecBase
   def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
+
 }

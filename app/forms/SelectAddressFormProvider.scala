@@ -16,23 +16,15 @@
 
 package forms
 
-import java.time.LocalDate
 import forms.mappings.Mappings
-import models.DateHelper.{formatDateToString, today}
-
-import javax.inject.Inject
 import play.api.data.Form
 
-class WhatIsYourDateOfBirthFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
 
-  def apply(): Form[LocalDate] =
+class SelectAddressFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[String] =
     Form(
-      "value" -> localDate(
-        invalidKey = "whatIsYourDateOfBirth.error.invalid",
-        allRequiredKey = "whatIsYourDateOfBirth.error.required.all",
-        twoRequiredKey = "whatIsYourDateOfBirth.error.required.two",
-        requiredKey = "whatIsYourDateOfBirth.error.required"
-      ).verifying(maxDate(today, "individualDateOfBirth.error.futureDate", formatDateToString(today)))
-        .verifying(minDate(LocalDate.of(1909, 1, 1), "whatIsYourDateOfBirth.error.pastDate"))
+      "value" -> text("selectAddress.error.required")
     )
 }
