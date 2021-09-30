@@ -68,7 +68,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def whatIsYourDateOfBirthRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => ??? //TODO - add this case when logic is added for individual matching
+      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad()
       case false => routes.DoYouLiveInTheUKController.onPageLoad(mode)
     }
 
