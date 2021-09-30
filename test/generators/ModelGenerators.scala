@@ -21,7 +21,14 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
-  4
+
+  implicit lazy val arbitraryNonUkName: Arbitrary[models.NonUkName] =
+    Arbitrary {
+      for {
+        givenName  <- arbitrary[String]
+        familyName <- arbitrary[String]
+      } yield models.NonUkName(givenName, familyName)
+    }
 
   implicit lazy val arbitraryCountry: Arbitrary[Country] =
     Arbitrary {

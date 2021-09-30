@@ -20,6 +20,18 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryBusinessWithoutIDNamePage: Arbitrary[pages.BusinessWithoutIDNamePage.type] =
+    Arbitrary(pages.BusinessWithoutIDNamePage)
+
+  implicit lazy val arbitraryWhatIsYourPostcodePage: Arbitrary[pages.WhatIsYourPostcodePage.type] =
+    Arbitrary(pages.WhatIsYourPostcodePage)
+
+  implicit lazy val arbitraryNonUkNamePage: Arbitrary[pages.NonUkNamePage.type] =
+    Arbitrary(pages.NonUkNamePage)
+
+  implicit lazy val arbitraryDoYouLiveInTheUKPage: Arbitrary[pages.DoYouLiveInTheUKPage.type] =
+    Arbitrary(pages.DoYouLiveInTheUKPage)
+
   implicit lazy val arbitrarySoleDateOfBirthPage: Arbitrary[pages.SoleDateOfBirthPage.type] =
     Arbitrary(pages.SoleDateOfBirthPage)
 

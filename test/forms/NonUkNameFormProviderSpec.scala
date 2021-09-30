@@ -19,21 +19,22 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
+class NonUkNameFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new WhatIsYourNameFormProvider()()
+  val form      = new NonUkNameFormProvider()()
+  val maxLength = 35
 
-  ".firstName" - {
+  ".givenName" - {
 
-    val fieldName   = "firstName"
-    val requiredKey = "whatIsYourName.error.firstName.required"
-    val lengthKey   = "whatIsYourName.error.firstName.length"
-    val maxLength   = 35
+    val fieldName   = "givenName"
+    val requiredKey = "nonUkName.error.givenName.required"
+    val lengthKey   = "nonUkName.error.givenName.length"
+    val invalidKey  = "nonUkName.error.givenName.invalid"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validPersonalName(maxLength)
+      stringsWithMaxLength(maxLength)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -48,19 +49,27 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jfhf-\\^' `&%",
+      FormError(fieldName, invalidKey)
+    )
+
   }
 
-  ".lastName" - {
+  ".familyName" - {
 
-    val fieldName   = "lastName"
-    val requiredKey = "whatIsYourName.error.lastName.required"
-    val lengthKey   = "whatIsYourName.error.lastName.length"
-    val maxLength   = 35
+    val fieldName   = "familyName"
+    val requiredKey = "nonUkName.error.familyName.required"
+    val lengthKey   = "nonUkName.error.familyName.length"
+    val invalidKey  = "nonUkName.error.familyName.invalid"
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validPersonalName(maxLength)
+      stringsWithMaxLength(maxLength)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -74,6 +83,13 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jfhf-\\^' `&%",
+      FormError(fieldName, invalidKey)
     )
   }
 }

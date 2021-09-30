@@ -81,10 +81,10 @@ POST       /register/change-registration-type            controllers.WhatAreYouR
 
 GET        /register/could-not-confirm-identity          controllers.WeCouldNotConfirmController.onPageLoad(mode: models.Mode = models.CheckMode)
 
-GET        /register/have-ni-number                     controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/have-ni-number                     controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-have-ni-number              controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-have-ni-number              controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.CheckMode)
+GET        /register/have-ni-number                      controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-ni-number                      controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-ni-number               controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-ni-number               controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/ni-number                           controllers.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/ni-number                           controllers.WhatIsYourNationalInsuranceNumberController.onSubmit(mode: models.Mode = models.NormalMode)
@@ -112,6 +112,31 @@ GET        /register/without-id/change-address-uk              controllers.Addre
 POST       /register/without-id/change-address-uk        controllers.AddressUKController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad()
+
+GET        /register/live-in-uk                         controllers.DoYouLiveInTheUKController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/live-in-uk                         controllers.DoYouLiveInTheUKController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-live-in-uk                  controllers.DoYouLiveInTheUKController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-live-in-uk                  controllers.DoYouLiveInTheUKController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/without-id/name                         controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/without-id/name                         controllers.NonUkNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/without-id/change-name                  controllers.NonUkNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/without-id/change-name                  controllers.NonUkNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/without-id/uk-postcode                         controllers.WhatIsYourPostcodeController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/without-id/uk-postcode                         controllers.WhatIsYourPostcodeController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/without-id/change-uk-postcode                  controllers.WhatIsYourPostcodeController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/without-id/change-uk-postcode                  controllers.WhatIsYourPostcodeController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/select-address                        controllers.SelectAddressController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/select-address                        controllers.SelectAddressController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-select-address                 controllers.SelectAddressController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-select-address                 controllers.SelectAddressController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/without-id/business-name            controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/without-id/business-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/bussiness-type                     controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/bussiness-type                     controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode)
