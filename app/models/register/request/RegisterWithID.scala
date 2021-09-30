@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package models.subscription.response
+package models.register.request
 
+import models.Name
 import play.api.libs.json.{Format, Json}
 
-case class AddressResponse(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
-)
+import java.time.LocalDate
 
-object AddressResponse {
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+case class RegisterWithID(registerWithIDRequest: RegisterWithIDRequest)
+
+object RegisterWithID {
+  implicit val format: Format[RegisterWithID] = Json.format[RegisterWithID]
+
+  def apply(name: Name, dob: LocalDate, identifierName: String, identifierValue: String): RegisterWithID =
+    RegisterWithID(
+      RegisterWithIDRequest(
+        RequestCommon("MDR"), // TODO refactor hard-coded argument
+        RequestWithIDDetails(name, dob, identifierName, identifierValue)
+      )
+    )
 }

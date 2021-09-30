@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
-import models.WhatIsYourName
+import models.Name
 import play.api.data.Form
 import play.api.data.Forms._
 import utils.RegexConstants
@@ -28,7 +28,7 @@ class SoleNameFormProvider @Inject() extends Mappings with RegexConstants {
 
   private val maxLength = 35
 
-  def apply(): Form[WhatIsYourName] = Form(
+  def apply(): Form[Name] = Form(
     mapping(
       "firstName" -> validatedText(
         "soleName.error.firstName.required",
@@ -44,6 +44,6 @@ class SoleNameFormProvider @Inject() extends Mappings with RegexConstants {
         individualNameRegex,
         maxLength
       )
-    )(WhatIsYourName.apply)(WhatIsYourName.unapply)
+    )(Name.apply)(Name.unapply)
   )
 }

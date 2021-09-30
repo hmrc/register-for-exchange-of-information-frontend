@@ -16,6 +16,7 @@
 
 package models.subscription.response
 
+import models.shared.ResponseCommon
 import play.api.libs.json._
 
 case class SubscriptionForCBCResponse(responseCommon: ResponseCommon, responseDetail: ResponseDetail)

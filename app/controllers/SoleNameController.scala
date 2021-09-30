@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.SoleNameFormProvider
 import models.requests.DataRequest
-import models.{Mode, WhatIsYourName}
+import models.{Mode, Name}
 import navigation.MDRNavigator
 import pages.SoleNamePage
 import play.api.data.Form
@@ -52,7 +52,7 @@ class SoleNameController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[WhatIsYourName])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Name])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
       "action" -> routes.SoleNameController.onSubmit(mode).url

@@ -16,12 +16,12 @@
 
 package models.register.response
 
-import models.register.{ResponseCommon, ResponseDetail}
+import models.shared.ResponseCommon
 import play.api.libs.json.{Format, Json}
 
 case class RegisterWithIDResponse(
   responseCommon: ResponseCommon,
-  responseDetail: Option[ResponseDetail]
+  responseDetail: Option[RegisterWithIDResponseDetail]
 )
 
 object RegisterWithIDResponse {

@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package models.register
+package models.shared
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.Json
 
-case class ResponseCommon(status: String, statusText: Option[String], processingDate: String, returnParameters: Option[Seq[ReturnParameters]])
+case class ContactDetails(
+  phoneNumber: Option[String],
+  mobileNumber: Option[String],
+  faxNumber: Option[String],
+  emailAddress: Option[String]
+)
 
-object ResponseCommon {
-  implicit val format: Format[ResponseCommon] = Json.format[ResponseCommon]
+object ContactDetails {
+
+  def apply(phoneNumber: Option[String], emailAddress: Option[String]): ContactDetails =
+    ContactDetails(None, None, None, emailAddress)
+
+  implicit val formats = Json.format[ContactDetails]
 }

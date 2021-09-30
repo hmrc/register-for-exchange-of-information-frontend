@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-package models.matching
+package models.shared
 
-case class MatchingInfo(safeId: String, subscriptionID: String)
+import play.api.libs.json.{Format, Json}
+
+case class ResponseCommon(status: String, statusText: Option[String], processingDate: String, returnParameters: Option[Seq[Parameters]])
+
+object ResponseCommon {
+  implicit val format: Format[ResponseCommon] = Json.format[ResponseCommon]
+}

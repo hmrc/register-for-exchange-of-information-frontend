@@ -16,10 +16,17 @@
 
 package models.register.request
 
-import play.api.libs.json.{Format, Json}
+import models.register.request.details.{AddressRequest, Identification, Individual, NoIdOrganisation}
+import models.shared.ContactDetails
+import play.api.libs.json.Json
 
-case class RegisterWithIDRequest(requestCommon: RequestCommon, requestDetail: RequestWithIDDetails)
+case class RequestWithoutIDDetails(organisation: Option[NoIdOrganisation],
+                                   individual: Option[Individual],
+                                   address: AddressRequest,
+                                   contactDetails: ContactDetails,
+                                   identification: Option[Identification]
+)
 
-object RegisterWithIDRequest {
-  implicit val format: Format[RegisterWithIDRequest] = Json.format[RegisterWithIDRequest]
+object RequestWithoutIDDetails {
+  implicit val formats = Json.format[RequestWithoutIDDetails]
 }

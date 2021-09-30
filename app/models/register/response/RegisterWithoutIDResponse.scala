@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.response
 
-import play.api.libs.json.{Format, Json}
+import models.shared.ResponseCommon
+import play.api.libs.json.{Json, OFormat}
 
-case class ReturnParameters(paramName: String, paramValue: String)
+case class RegisterWithoutIDResponse(responseCommon: ResponseCommon, responseDetail: Option[RegisterWithoutIDResponseDetail])
 
-object ReturnParameters {
-  implicit val format: Format[ReturnParameters] = Json.format[ReturnParameters]
+object RegisterWithoutIDResponse {
+  implicit val format: OFormat[RegisterWithoutIDResponse] = Json.format[RegisterWithoutIDResponse]
 }

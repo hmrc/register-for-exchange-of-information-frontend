@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.request
 
 import play.api.libs.json.Json
 
-case class RequestParameters(paramName: String, paramValue: String)
+case class RegisterWithoutIDRequest(requestCommon: RequestCommon, requestDetail: RequestWithoutIDDetails)
 
-object RequestParameters {
-  implicit val formats = Json.format[RequestParameters]
+object RegisterWithoutIDRequest {
+  implicit val format = Json.format[RegisterWithoutIDRequest]
 }

@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models.register
+package models.subscription.response
 
-import play.api.libs.json.Json
+import models.subscription.{PrimaryContact, SecondaryContact}
+import play.api.libs.json.{Json, OFormat}
 
-case class Identification(idNumber: String, issuingInstitution: String, issuingCountryCode: String)
+case class ResponseDetail(subscriptionID: String,
+                          tradingName: Option[String],
+                          isGBUser: Boolean,
+                          primaryContact: PrimaryContact,
+                          secondaryContact: Option[SecondaryContact]
+)
 
-object Identification {
-  implicit val formats = Json.format[Identification]
+object ResponseDetail {
+  implicit val format: OFormat[ResponseDetail] = Json.format[ResponseDetail]
 }

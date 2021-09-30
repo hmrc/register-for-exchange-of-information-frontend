@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.register
+package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
-case class NoIdOrganisation(organisationName: String)
+//strings between 1 and 35 inclusive ^[a-zA-Z &`\\-\\'^]{1,35}$
+case class Name(firstName: String, lastName: String)
 
-object NoIdOrganisation {
-  implicit val format: OFormat[NoIdOrganisation] = Json.format[NoIdOrganisation]
+object Name {
+  implicit val format = Json.format[Name]
 }

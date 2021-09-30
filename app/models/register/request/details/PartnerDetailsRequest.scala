@@ -14,6 +14,28 @@
  * limitations under the License.
  */
 
-package models.matching
+package models.register.request.details
 
-case class MatchingInfo(safeId: String, subscriptionID: String)
+import play.api.libs.json.Json
+
+sealed trait PartnerDetails
+
+case class WithIDIndividual(
+  firstName: String,
+  middleName: Option[String],
+  lastName: String,
+  dateOfBirth: String
+) extends PartnerDetails
+
+object WithIDIndividual {
+  implicit val format = Json.format[WithIDIndividual]
+}
+
+case class WithIDOrganisation(
+  organisationName: String,
+  organisationType: String
+) extends PartnerDetails
+
+object WithIDOrganisation {
+  implicit val format = Json.format[WithIDOrganisation]
+}

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.response
 
-import models.register.response.{IndividualResponse, OrganisationResponse, PartnerDetailsResponse}
-import models.subscription.response.AddressResponse
+import models.register.response.details.{AddressResponse, IndividualResponse, OrganisationResponse, PartnerDetailsResponse}
+import models.shared.ContactDetails
 import play.api.libs.json.{__, Json, Reads, Writes}
 
-case class ResponseDetail(
+case class RegisterWithIDResponseDetail(
   SAFEID: String,
   ARN: Option[String],
   isEditable: Boolean,
@@ -32,18 +32,18 @@ case class ResponseDetail(
   contactDetails: ContactDetails
 )
 
-object ResponseDetail {
+object RegisterWithIDResponseDetail {
 
-  implicit lazy val responseDetailsWrites: Writes[ResponseDetail] = Writes[ResponseDetail] {
-    case ResponseDetail(safeid,
-                        arn,
-                        isEditable,
-                        isAnAgent,
-                        isAnASAgent,
-                        isAnIndividual,
-                        individual @ IndividualResponse(_, _, _, _),
-                        address,
-                        contactDetails
+  implicit lazy val responseDetailsWrites: Writes[RegisterWithIDResponseDetail] = Writes[RegisterWithIDResponseDetail] {
+    case RegisterWithIDResponseDetail(safeid,
+                                      arn,
+                                      isEditable,
+                                      isAnAgent,
+                                      isAnASAgent,
+                                      isAnIndividual,
+                                      individual @ IndividualResponse(_, _, _, _),
+                                      address,
+                                      contactDetails
         ) =>
       Json.obj(
         "SAFEID"         -> safeid,
@@ -57,15 +57,15 @@ object ResponseDetail {
         "contactDetails" -> contactDetails
       )
 
-    case ResponseDetail(safeid,
-                        arn,
-                        isEditable,
-                        isAnAgent,
-                        isAnASAgent,
-                        isAnIndividual,
-                        organisation @ OrganisationResponse(_, _, _, _),
-                        address,
-                        contactDetails
+    case RegisterWithIDResponseDetail(safeid,
+                                      arn,
+                                      isEditable,
+                                      isAnAgent,
+                                      isAnASAgent,
+                                      isAnIndividual,
+                                      organisation @ OrganisationResponse(_, _, _, _),
+                                      address,
+                                      contactDetails
         ) =>
       Json.obj(
         "SAFEID"         -> safeid,
@@ -80,7 +80,7 @@ object ResponseDetail {
       )
   }
 
-  implicit lazy val responseDetailsReads: Reads[ResponseDetail] = {
+  implicit lazy val responseDetailsReads: Reads[RegisterWithIDResponseDetail] = {
     import play.api.libs.functional.syntax._
     (
       (__ \ "SAFEID").read[String] and
@@ -97,8 +97,8 @@ object ResponseDetail {
       (safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, individual, organisation, address, contactDetails) =>
         (individual, organisation) match {
           case (Some(_), Some(_)) => throw new Exception("Response details cannot have both and organisation or individual element")
-          case (Some(ind), _)     => ResponseDetail(safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, ind, address, contactDetails)
-          case (_, Some(org))     => ResponseDetail(safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, org, address, contactDetails)
+          case (Some(ind), _)     => RegisterWithIDResponseDetail(safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, ind, address, contactDetails)
+          case (_, Some(org))     => RegisterWithIDResponseDetail(safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, org, address, contactDetails)
           case (None, None)       => throw new Exception("Response Details must have either an organisation or individual element")
         }
     )

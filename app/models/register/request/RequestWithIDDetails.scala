@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.request
 
-import models.UserAnswers
-import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage}
+import models.Name
+import models.register.request
+import models.register.request.details.{PartnerDetails, WithIDIndividual, WithIDOrganisation}
 import play.api.libs.json.{__, Json, OWrites, Reads}
 
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 case class RequestWithIDDetails(
@@ -46,8 +48,8 @@ object RequestWithIDDetails {
       (idType, idNumber, requiresNameMatch, isAnAgent, individual, organisation) =>
         (individual, organisation) match {
           case (Some(_), Some(_)) => throw new Exception("Request details cannot have both and organisation or individual element")
-          case (Some(ind), _)     => RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, ind)
-          case (_, Some(org))     => RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, org)
+          case (Some(ind), _)     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, ind)
+          case (_, Some(org))     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, org)
           case (None, None)       => throw new Exception("Request Details must have either an organisation or individual element")
         }
     )
@@ -72,44 +74,12 @@ object RequestWithIDDetails {
       )
   }
 
-  def createIndividualSubmission(userAnswers: UserAnswers, identifierName: String, identifierValue: String): Option[RequestWithIDDetails] =
-    for {
-      name <- userAnswers.get(WhatIsYourNamePage) //.orElse(userAnswers.get(SoleTraderNamePage))
-      dob  <- userAnswers.get(WhatIsYourDateOfBirthPage)
-    } yield RequestWithIDDetails(
+  def apply(name: Name, dob: LocalDate, identifierName: String, identifierValue: String): RequestWithIDDetails =
+    RequestWithIDDetails(
       identifierName,
       identifierValue,
       requiresNameMatch = true,
       isAnAgent = false, //This may change
       WithIDIndividual(name.firstName, None, name.lastName, dob.format(dateFormat))
     )
-
-//  def createBusinessSubmission(userAnswers: UserAnswers, identifierName: String, identifierValue: String): Option[RequestWithIDDetails] =
-//    for {
-//      businessName <- getBusinessName(userAnswers)
-//      businessType <- userAnswers.get(BusinessTypePage)
-//    } yield RequestWithIDDetails(
-//      identifierName,
-//      identifierValue,
-//      requiresNameMatch = true,
-//      isAnAgent = false, //This may change
-//      WithIDOrganisation(businessName, toEnumeratedBusinessType(businessType))
-//    )
-
-//  private def toEnumeratedBusinessType(businessType: BusinessType) = businessType match {
-//    case BusinessType.NotSpecified       => "0000"
-//    case BusinessType.Partnership        => "0001"
-//    case BusinessType.LimitedLiability   => "0002"
-//    case BusinessType.CorporateBody      => "0003"
-//    case BusinessType.UnIncorporatedBody => "0004"
-//  }
-
-//  private def getBusinessName(userAnswers: UserAnswers): Option[String] =
-//    userAnswers.get(BusinessTypePage) match {
-//      case Some(BusinessType.NotSpecified) =>
-//        userAnswers.get(SoleTraderNamePage).map {
-//          name => s"${name.firstName} ${name.secondName}"
-//        }
-//      case _ => userAnswers.get(BusinessNamePage)
-//    }
 }

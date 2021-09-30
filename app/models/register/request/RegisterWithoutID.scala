@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-package models.matching
+package models.register.request
 
-case class MatchingInfo(safeId: String, subscriptionID: String)
+import play.api.libs.json.Json
+
+case class RegisterWithoutID(
+  registerWithoutIDRequest: RegisterWithoutIDRequest
+)
+
+object RegisterWithoutID {
+  implicit val format = Json.format[RegisterWithoutID]
+}

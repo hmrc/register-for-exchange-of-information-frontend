@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-package models.matching
+package models.register.request.details
 
-case class MatchingInfo(safeId: String, subscriptionID: String)
+import play.api.libs.json.{Json, OFormat}
+
+case class NoIdOrganisation(organisationName: String)
+
+object NoIdOrganisation {
+  implicit val format: OFormat[NoIdOrganisation] = Json.format[NoIdOrganisation]
+}

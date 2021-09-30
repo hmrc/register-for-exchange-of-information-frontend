@@ -51,12 +51,12 @@ trait ModelGenerators {
       } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, country)
     }
 
-  implicit lazy val arbitraryWhatIsYourName: Arbitrary[models.WhatIsYourName] =
+  implicit lazy val arbitraryWhatIsYourName: Arbitrary[models.Name] =
     Arbitrary {
       for {
         firstName <- arbitrary[String]
         lastName  <- arbitrary[String]
-      } yield models.WhatIsYourName(firstName, lastName)
+      } yield models.Name(firstName, lastName)
     }
 
   implicit lazy val arbitraryBussinessType: Arbitrary[models.BusinessType] =

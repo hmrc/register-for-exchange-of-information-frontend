@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
-package models.matching
+package models.register.response.details
 
-case class MatchingInfo(safeId: String, subscriptionID: String)
+import play.api.libs.json.{Format, Json}
+
+case class AddressResponse(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postalCode: Option[String],
+  countryCode: String
+)
+
+object AddressResponse {
+  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+}

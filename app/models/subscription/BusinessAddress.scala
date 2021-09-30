@@ -16,7 +16,7 @@
 
 package models.subscription
 
-import models.subscription.response.AddressResponse
+import models.register.response.details.AddressResponse
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 

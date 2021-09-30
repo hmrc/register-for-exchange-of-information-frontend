@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.response
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
-case class ContactDetails(
-  phoneNumber: Option[String],
-  mobileNumber: Option[String],
-  faxNumber: Option[String],
-  emailAddress: Option[String]
-)
+case class RegistrationWithoutIDResponse(registerWithoutIDResponse: RegisterWithoutIDResponse)
 
-object ContactDetails {
-
-  def apply(phoneNumber: Option[String], emailAddress: Option[String]): ContactDetails =
-    ContactDetails(None, None, None, emailAddress)
-
-  implicit val formats = Json.format[ContactDetails]
+object RegistrationWithoutIDResponse {
+  implicit val format: OFormat[RegistrationWithoutIDResponse] = Json.format[RegistrationWithoutIDResponse]
 }

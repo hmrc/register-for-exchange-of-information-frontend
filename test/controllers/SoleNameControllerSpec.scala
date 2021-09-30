@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerSpecBase
 import forms.SoleNameFormProvider
-import models.{NormalMode, UserAnswers, WhatIsYourName}
+import models.{Name, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.SoleNamePage
@@ -36,9 +36,9 @@ class SoleNameControllerSpec extends ControllerSpecBase {
 
   private def form = new SoleNameFormProvider().apply()
 
-  val firstName: String           = "First Name"
-  val lastName: String            = "Last"
-  val validAnswer: WhatIsYourName = WhatIsYourName(firstName, lastName)
+  val firstName: String = "First Name"
+  val lastName: String  = "Last"
+  val validAnswer: Name = Name(firstName, lastName)
 
   val validData = Map(
     "firstName" -> firstName,

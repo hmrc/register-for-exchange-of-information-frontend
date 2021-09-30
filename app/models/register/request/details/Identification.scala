@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.request.details
 
 import play.api.libs.json.Json
 
-sealed trait PartnerDetails
+case class Identification(idNumber: String, issuingInstitution: String, issuingCountryCode: String)
 
-case class WithIDIndividual(
-  firstName: String,
-  middleName: Option[String],
-  lastName: String,
-  dateOfBirth: String
-) extends PartnerDetails
-
-object WithIDIndividual {
-  implicit val format = Json.format[WithIDIndividual]
-}
-
-case class WithIDOrganisation(
-  organisationName: String,
-  organisationType: String
-) extends PartnerDetails
-
-object WithIDOrganisation {
-  implicit val format = Json.format[WithIDOrganisation]
+object Identification {
+  implicit val formats = Json.format[Identification]
 }

@@ -120,7 +120,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatIsYourNamePage, WhatIsYourName("Little", "Comets"))
+                .set(WhatIsYourNamePage, Name("Little", "Comets"))
                 .success
                 .value
 
@@ -393,9 +393,9 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
       }
 
       "must go from 'What is your name?' page for sole proprietor business to 'What is your DOB?' page" in {
-        val firstName: String           = "First Name"
-        val lastName: String            = "Last"
-        val validAnswer: WhatIsYourName = WhatIsYourName(firstName, lastName)
+        val firstName: String = "First Name"
+        val lastName: String  = "Last"
+        val validAnswer: Name = Name(firstName, lastName)
 
         forAll(arbitrary[UserAnswers]) {
           answers =>

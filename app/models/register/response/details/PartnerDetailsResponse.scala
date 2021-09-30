@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.register.response
+package models.register.response.details
 
 import play.api.libs.json._
 
