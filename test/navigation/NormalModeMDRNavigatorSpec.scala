@@ -164,7 +164,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
       //TODO - add this test when logic is added for individual matching
       "must go from 'What Is Your DOB?' page to 'We have confirmed your identity' page when valid DOB is entered " +
-        "and individual could be matched" ignore {
+        "and individual could be matched" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
