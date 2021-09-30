@@ -18,7 +18,7 @@ package models.register
 
 import models.UserAnswers
 import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage}
-import play.api.libs.json.{Json, OWrites, Reads, __}
+import play.api.libs.json.{__, Json, OWrites, Reads}
 
 import java.time.format.DateTimeFormatter
 

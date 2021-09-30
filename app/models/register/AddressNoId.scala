@@ -16,7 +16,7 @@
 
 package models.register
 
-import play.api.libs.json.{Json, OWrites, Reads, __}
+import play.api.libs.json.{__, Json, OWrites, Reads}
 
 case class AddressNoId(addressLine1: String,
                        addressLine2: Option[String],

@@ -18,7 +18,7 @@ package models.register
 
 import models.register.response.{IndividualResponse, OrganisationResponse, PartnerDetailsResponse}
 import models.subscription.response.AddressResponse
-import play.api.libs.json.{Json, Reads, Writes, __}
+import play.api.libs.json.{__, Json, Reads, Writes}
 
 case class ResponseDetail(
   SAFEID: String,
