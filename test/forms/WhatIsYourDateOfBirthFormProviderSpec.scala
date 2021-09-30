@@ -16,9 +16,9 @@
 
 package forms
 
-import java.time.{LocalDate, ZoneOffset}
-
 import forms.behaviours.DateBehaviours
+
+import java.time.{LocalDate, ZoneOffset}
 
 class WhatIsYourDateOfBirthFormProviderSpec extends DateBehaviours {
 

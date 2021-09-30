@@ -16,12 +16,12 @@
 
 package forms
 
-import java.time.LocalDate
 import forms.mappings.Mappings
 import models.DateHelper.{formatDateToString, today}
-
-import javax.inject.Inject
 import play.api.data.Form
+
+import java.time.LocalDate
+import javax.inject.Inject
 
 class WhatIsYourDateOfBirthFormProvider @Inject() extends Mappings {
 

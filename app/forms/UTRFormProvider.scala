@@ -16,10 +16,11 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import utils.RegexConstants
+
+import javax.inject.Inject
 
 class UTRFormProvider @Inject() extends Mappings with RegexConstants {
 

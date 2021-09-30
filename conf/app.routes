@@ -137,3 +137,8 @@ GET        /register/sole-name                        controllers.SoleNameContro
 POST       /register/sole-name                        controllers.SoleNameController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-sole-name                  controllers.SoleNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-sole-name                  controllers.SoleNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/sole-date-of-birth                        controllers.SoleDateOfBirthController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/sole-date-of-birth                        controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode)

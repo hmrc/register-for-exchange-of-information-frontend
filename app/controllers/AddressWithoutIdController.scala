@@ -19,11 +19,9 @@ package controllers
 import controllers.actions._
 import forms.AddressWithoutIdFormProvider
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
-
-import javax.inject.Inject
-import models.{Address, Country, Mode, WhatAreYouRegisteringAs}
 import models.requests.DataRequest
-import navigation.{MDRNavigator, Navigator}
+import models.{Address, Country, Mode}
+import navigation.MDRNavigator
 import pages.{AddressWithoutIdPage, WhatAreYouRegisteringAsPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,6 +33,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressWithoutIdController @Inject() (

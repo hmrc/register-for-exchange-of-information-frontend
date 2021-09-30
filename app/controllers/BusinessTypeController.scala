@@ -19,8 +19,6 @@ package controllers
 import controllers.actions._
 import forms.BusinessTypeFormProvider
 import models.requests.DataRequest
-
-import javax.inject.Inject
 import models.{BusinessType, Mode}
 import navigation.MDRNavigator
 import pages.BusinessTypePage
@@ -34,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessTypeController @Inject() (

@@ -36,7 +36,8 @@ class MDRNavigator @Inject() () extends Navigator {
     case WhatIsYourDateOfBirthPage             => _ => Some(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
     case BusinessTypePage                      => _ => Some(routes.UTRController.onPageLoad(NormalMode))
     case UTRPage                               => isSoleProprietor(NormalMode)
-    case SoleNamePage                          => _ => Some(routes.SoleNameController.onPageLoad(NormalMode)) // todo change to DOB-business
+    case SoleNamePage                          => _ => Some(routes.SoleDateOfBirthController.onPageLoad(NormalMode))
+    case SoleDateOfBirthPage                   => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
     case BusinessNamePage                      => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
     case _                                     => _ => Some(routes.IndexController.onPageLoad())

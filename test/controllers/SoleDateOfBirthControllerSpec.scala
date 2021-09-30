@@ -20,47 +20,65 @@ import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{SndContactEmailPage, SndContactNamePage}
+import pages.SoleDateOfBirthPage
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import uk.gov.hmrc.viewmodels.DateInput
 
+import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class SndContactEmailControllerSpec extends ControllerSpecBase {
+class SoleDateOfBirthControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.SndContactEmailController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.SndContactEmailController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.SoleDateOfBirthController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.SoleDateOfBirthController.onSubmit(NormalMode).url
 
-  private def form = new forms.SndContactEmailFormProvider().apply()
+  private def form = new forms.SoleDateOfBirthFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value
+  val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  "SndContactEmail Controller" - {
+  override val emptyUserAnswers = UserAnswers(userAnswersId)
+
+  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, loadRoute)
+
+  def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest(POST, submitRoute)
+      .withFormUrlEncodedBody(
+        "value.day"   -> validAnswer.getDayOfMonth.toString,
+        "value.month" -> validAnswer.getMonthValue.toString,
+        "value.year"  -> validAnswer.getYear.toString
+      )
+
+  "SoleDateOfBirth Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
+      retrieveUserAnswersData(emptyUserAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
+      val viewModel = DateInput.localDate(form("value"))
+
       val expectedJson = Json.obj(
         "form"   -> form,
-        "action" -> submitRoute
+        "action" -> submitRoute,
+        "date"   -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "sndContactEmail.njk"
+      templateCaptor.getValue mustEqual "soleDateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -69,27 +87,34 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers2 = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value.set(SndContactEmailPage, "some@email.com").success.value
-      retrieveUserAnswersData(userAnswers2)
-      val request        = FakeRequest(GET, loadRoute)
+      val userAnswers = UserAnswers(userAnswersId).set(SoleDateOfBirthPage, validAnswer).success.value
+      retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val result = route(app, getRequest).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> "some@email.com"))
+      val filledForm = form.bind(
+        Map(
+          "value.day"   -> validAnswer.getDayOfMonth.toString,
+          "value.month" -> validAnswer.getMonthValue.toString,
+          "value.year"  -> validAnswer.getYear.toString
+        )
+      )
+
+      val viewModel = DateInput.localDate(filledForm("value"))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
-        "name"   -> "Name",
-        "action" -> submitRoute
+        "action" -> submitRoute,
+        "date"   -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "sndContactEmail.njk"
+      templateCaptor.getValue mustEqual "soleDateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -97,14 +122,11 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(userAnswers)
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "some@email.com"))
-
-      val result = route(app, request).value
+      retrieveUserAnswersData(emptyUserAnswers)
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
+
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
@@ -113,9 +135,9 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm      = form.bind(Map("value" -> "invalid value"))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -125,27 +147,16 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
+      val viewModel = DateInput.localDate(boundForm("value"))
+
       val expectedJson = Json.obj(
         "form"   -> boundForm,
-        "action" -> submitRoute
+        "action" -> submitRoute,
+        "date"   -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "sndContactEmail.njk"
+      templateCaptor.getValue mustEqual "soleDateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must redirect to 'SomeInformationIsMissing' when data is missing" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
     }
   }
 }

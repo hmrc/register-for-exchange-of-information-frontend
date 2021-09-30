@@ -16,15 +16,23 @@
 
 package forms
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import forms.behaviours.DateBehaviours
 
-import javax.inject.Inject
+import java.time.{LocalDate, ZoneOffset}
 
-class SndConHavePhoneFormProvider @Inject() extends Mappings {
+class SoleDateOfBirthFormProviderSpec extends DateBehaviours {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("sndConHavePhone.error.required")
+  val form = new SoleDateOfBirthFormProvider()()
+
+  ".value" - {
+
+    val validData = datesBetween(
+      min = LocalDate.of(2000, 1, 1),
+      max = LocalDate.now(ZoneOffset.UTC)
     )
+
+    behave like dateField(form, "value", validData)
+
+    behave like mandatoryDateField(form, "value", "soleDateOfBirth.error.required.all")
+  }
 }

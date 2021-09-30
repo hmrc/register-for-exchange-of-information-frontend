@@ -17,15 +17,12 @@
 package controllers
 
 import controllers.actions._
-import exceptions.SomeInformationIsMissingException
 import forms.BusinessNameFormProvider
 import models.BusinessType._
-
-import javax.inject.Inject
-import models.{BusinessType, Mode}
 import models.requests.DataRequest
+import models.{BusinessType, Mode}
 import navigation.MDRNavigator
-import pages.{BusinessNamePage, BusinessTypePage}
+import pages.BusinessNamePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -36,6 +33,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessNameController @Inject() (

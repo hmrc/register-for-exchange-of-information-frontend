@@ -16,11 +16,11 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
-import play.api.data.Form
 import models.BusinessType
+import play.api.data.Form
+
+import javax.inject.Inject
 
 class BusinessTypeFormProvider @Inject() extends Mappings {
 

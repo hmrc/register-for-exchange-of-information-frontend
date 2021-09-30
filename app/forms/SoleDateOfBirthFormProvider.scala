@@ -17,14 +17,22 @@
 package forms
 
 import forms.mappings.Mappings
+import models.DateHelper.{formatDateToString, today}
 import play.api.data.Form
 
+import java.time.LocalDate
 import javax.inject.Inject
 
-class SndConHavePhoneFormProvider @Inject() extends Mappings {
+class SoleDateOfBirthFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(): Form[LocalDate] =
     Form(
-      "value" -> boolean("sndConHavePhone.error.required")
+      "value" -> localDate(
+        invalidKey = "soleDateOfBirth.error.invalid",
+        allRequiredKey = "soleDateOfBirth.error.required.all",
+        twoRequiredKey = "soleDateOfBirth.error.required.two",
+        requiredKey = "soleDateOfBirth.error.required"
+      ).verifying(maxDate(today, "individualDateOfBirth.error.futureDate", formatDateToString(today)))
+        .verifying(minDate(LocalDate.of(1909, 1, 1), "soleDateOfBirth.error.pastDate"))
     )
 }

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+import java.time.LocalDate
 
-class SndConHavePhoneFormProvider @Inject() extends Mappings {
+case object SoleDateOfBirthPage extends QuestionPage[LocalDate] {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("sndConHavePhone.error.required")
-    )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "soleDateOfBirth"
 }
