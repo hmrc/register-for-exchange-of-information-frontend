@@ -176,9 +176,15 @@ trait Formatters extends Transforms {
       Map(key -> value.getOrElse(""))
   }
 
-  protected def validatedTextFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, maxLength: Int): Formatter[String] =
+  protected def validatedTextFormatter(requiredKey: String,
+                                       invalidKey: String,
+                                       lengthKey: String,
+                                       regex: String,
+                                       maxLength: Int,
+                                       msgArg: String = ""
+  ): Formatter[String] =
     new Formatter[String] {
-      private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
+      private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey, msgArg)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         dataFormatter

@@ -53,7 +53,10 @@ class BusinessNameController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  private val form = formProvider()
+  // error msgs
+  val ltdErr            = "registered name of your business"
+  val partnerErr        = "partnership name"
+  val unincorporatedErr = "name of your organisation"
 
   val llpHeading = "registered name of your business"
   val llpHint    = "This is the registered name of your incorporation certificate."
@@ -86,24 +89,34 @@ class BusinessNameController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       SomeInformationIsMissing.isMissingBusinessType {
-        render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), _).map(Ok(_))
+        businessType =>
+          val form = formProvider(businessType match {
+            case LimitedCompany | LimitedPartnership => ltdErr
+            case Partnership                         => partnerErr
+            case UnincorporatedAssociation           => unincorporatedErr
+          })
+          render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            SomeInformationIsMissing.isMissingBusinessType {
-              render(mode, formWithErrors, _).map(BadRequest(_))
-            },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
-        )
+      SomeInformationIsMissing.isMissingBusinessType {
+        businessType =>
+          formProvider(businessType match {
+            case LimitedCompany | LimitedPartnership => ltdErr
+            case Partnership                         => partnerErr
+            case UnincorporatedAssociation           => unincorporatedErr
+          })
+            .bindFromRequest()
+            .fold(
+              formWithErrors => render(mode, formWithErrors, businessType).map(BadRequest(_)),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
+            )
+      }
   }
 }

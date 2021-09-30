@@ -26,7 +26,7 @@ class BusinessNameFormProviderSpec extends StringFieldBehaviours {
   val invalidKey  = "businessName.error.invalid"
   val maxLength   = 100
 
-  val form = new BusinessNameFormProvider()()
+  val form = new BusinessNameFormProvider()("")
 
   ".value" - {
 

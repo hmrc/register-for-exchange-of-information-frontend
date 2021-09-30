@@ -33,7 +33,8 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode).url
 
-  private def form = new forms.BusinessNameFormProvider().apply()
+  val ltdErr       = "registered name of your business"
+  private def form = new forms.BusinessNameFormProvider().apply(ltdErr)
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value
 
@@ -97,7 +98,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", "answer"))

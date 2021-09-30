@@ -327,7 +327,7 @@ businessName.title = What is the {0}?
 businessName.heading = What is the {0}?
 businessName.hint = {0}
 businessName.checkYourAnswersLabel = businessName
-businessName.error.required = Enter business name
+businessName.error.required = Enter the {0}
 contactName.error.invalid = Name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 businessName.error.length = BusinessName must be 100 characters or less
 

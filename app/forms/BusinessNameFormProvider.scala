@@ -25,8 +25,8 @@ class BusinessNameFormProvider @Inject() extends Mappings with RegexConstants {
 
   private val maxLength = 100
 
-  def apply(): Form[String] =
+  def apply(msgArg: String): Form[String] =
     Form(
-      "value" -> validatedText("businessName.error.required", "businessName.error.invalid", "businessName.error.length", orgNameRegex, maxLength)
+      "value" -> validatedText("businessName.error.required", "businessName.error.invalid", "businessName.error.length", orgNameRegex, maxLength, msgArg)
     )
 }
