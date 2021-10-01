@@ -71,6 +71,11 @@ class BusinessNameController @Inject() (
   private val partnerReqErrKey        = "businessName.error.required.partner"
   private val unincorporatedReqErrKey = "businessName.error.required.unincorporated"
 
+  // length error msg keys
+  private val llpLnErrKey            = "businessName.error.length.llp"
+  private val partnerLnErrKey        = "businessName.error.length.partner"
+  private val unincorporatedLnErrKey = "businessName.error.length.unincorporated"
+
   private def pageHeadingAndHint(businessType: BusinessType)(implicit messages: Messages): (String, String, String) =
     businessType match {
       case LimitedPartnership | LimitedCompany => (messages(llpTitleKey), messages(llpHeadingKey), messages(llpHintKey))
@@ -96,9 +101,9 @@ class BusinessNameController @Inject() (
       SomeInformationIsMissing.isMissingBusinessType {
         businessType =>
           val form = formProvider(businessType match {
-            case LimitedCompany | LimitedPartnership => llpReqErrKey
-            case Partnership                         => partnerReqErrKey
-            case UnincorporatedAssociation           => unincorporatedReqErrKey
+            case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
+            case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
+            case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
           })
           render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
       }
@@ -109,9 +114,9 @@ class BusinessNameController @Inject() (
       SomeInformationIsMissing.isMissingBusinessType {
         businessType =>
           formProvider(businessType match {
-            case LimitedCompany | LimitedPartnership => llpReqErrKey
-            case Partnership                         => partnerReqErrKey
-            case UnincorporatedAssociation           => unincorporatedReqErrKey
+            case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
+            case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
+            case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
           })
             .bindFromRequest()
             .fold(

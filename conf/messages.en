@@ -378,7 +378,9 @@ businessName.error.required.llp = Enter the registered name of your business
 businessName.error.required.partner = Enter the partnership name
 businessName.error.required.unincorporated = Enter the name of your organisation
 contactName.error.invalid = Name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-businessName.error.length = BusinessName must be 100 characters or less
+businessName.error.length.llp = Registered name of your business must be 105 characters or less
+businessName.error.length.partner = Partnership name must be 105 characters or less
+businessName.error.length.unincorporated = Organisation name must be 105 characters of less
 
 isThisYourBusiness.title = Is this your business?
 isThisYourBusiness.heading = Is this your business?
@@ -391,10 +393,10 @@ soleName.firstName = First name
 soleName.lastName = Last name
 soleName.checkYourAnswersLabel = What is your name
 soleName.error.firstName.required = Enter your first name
-soleName.error.firstName.invalid = First name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+soleName.error.firstName.invalid = First name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
 soleName.error.firstName.length = First name must be 35 characters or less
 soleName.error.lastName.required = Enter your last name
-soleName.error.lastName.invalid = Last name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+soleName.error.lastName.invalid = Last name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
 soleName.error.lastName.length = Last name must be 35 characters or less
 
 soleDateOfBirth.title = What is your date of birth?

@@ -24,10 +24,10 @@ import javax.inject.Inject
 
 class BusinessNameFormProvider @Inject() extends Mappings with RegexConstants {
 
-  private val maxLength = 100
+  private val maxLength = 105
 
-  def apply(requiredKey: String): Form[String] =
+  def apply(keys: Tuple2[String, String]): Form[String] =
     Form(
-      "value" -> validatedText(requiredKey, "businessName.error.invalid", "businessName.error.length", orgNameRegex, maxLength)
+      "value" -> validatedText(keys._1, "businessName.error.invalid", keys._2, orgNameRegex, maxLength)
     )
 }
