@@ -138,8 +138,8 @@ POST       /register/without-id/business-name            controllers.BusinessWit
 GET        /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/bussiness-type                     controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/bussiness-type                     controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/business-type                     controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/business-type                     controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-bussiness-type              controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-bussiness-type              controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.CheckMode)
 

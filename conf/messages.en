@@ -229,10 +229,10 @@ whatIsYourName.firstName = First name
 whatIsYourName.lastName = Last name
 whatIsYourName.checkYourAnswersLabel = What is your name
 whatIsYourName.error.firstName.required = Enter your first name
-whatIsYourName.error.firstName.invalid = First name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+whatIsYourName.error.firstName.invalid = First name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 whatIsYourName.error.firstName.length = First name must be 35 characters or less
 whatIsYourName.error.lastName.required = Enter your last name
-whatIsYourName.error.lastName.invalid = Last name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+whatIsYourName.error.lastName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 whatIsYourName.error.lastName.length = Last name must be 35 characters or less
 
 whatIsYourDateOfBirth.title = What is your date of birth?
@@ -315,10 +315,10 @@ nonUkName.givenName = Given name
 nonUkName.familyName = Family name
 nonUkName.checkYourAnswersLabel = What is your name?
 nonUkName.error.givenName.required = Enter your given name
-nonUkName.error.givenName.invalid = Given name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.givenName.invalid = Given name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 nonUkName.error.givenName.length = Given name must be 35 characters or less
 nonUkName.error.familyName.required = Enter your family name
-nonUkName.error.familyName.invalid = Family name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.familyName.invalid = Family name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 nonUkName.error.familyName.length = Family name must be 35 characters or less
 
 whatIsYourPostcode.title = What is your postcode?
@@ -337,7 +337,6 @@ selectAddress.checkYourAnswersLabel = Your home address
 selectAddress.error.required = Select your address
 selectAddress.hint.part1 = Select from the list or
 selectAddress.hint.part2 = enter your address manually
-
 
 businessWithoutIDName.title = What is the name of your business?
 businessWithoutIDName.heading = What is the name of your business?
@@ -393,10 +392,10 @@ soleName.firstName = First name
 soleName.lastName = Last name
 soleName.checkYourAnswersLabel = What is your name
 soleName.error.firstName.required = Enter your first name
-soleName.error.firstName.invalid = First name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
+soleName.error.firstName.invalid = First name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 soleName.error.firstName.length = First name must be 35 characters or less
 soleName.error.lastName.required = Enter your last name
-soleName.error.lastName.invalid = Last name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
+soleName.error.lastName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 soleName.error.lastName.length = Last name must be 35 characters or less
 
 soleDateOfBirth.title = What is your date of birth?
