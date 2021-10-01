@@ -325,6 +325,91 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
               .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode))
         }
       }
+
+      "must go from 'Do You Have UTR?' page to 'What is your business type?' page if YES is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessTypeController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is your business type?' page to 'UTR?' page when business type is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, BusinessType.Sole)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.UTRController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'UTR?' page to 'What is your name?' page when sole proprietor business type is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(UTRPage, "0123456789")
+                .success
+                .value
+                .set(BusinessTypePage, BusinessType.Sole)
+                .success
+                .value
+
+            navigator
+              .nextPage(UTRPage, NormalMode, updatedAnswers)
+              .mustBe(routes.SoleNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'UTR?' page to 'What is your business name?' page when NOT sole proprietor business type is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(UTRPage, "0123456789")
+                .success
+                .value
+                .set(BusinessTypePage, BusinessType.LimitedCompany)
+                .success
+                .value
+
+            navigator
+              .nextPage(UTRPage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is your name?' page to 'What is your DOB?' page" in {
+        val firstName: String           = "First Name"
+        val lastName: String            = "Last"
+        val validAnswer: WhatIsYourName = WhatIsYourName(firstName, lastName)
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(SoleNamePage, validAnswer)
+                .success
+                .value
+
+            navigator
+              .nextPage(SoleNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SoleDateOfBirthController.onPageLoad(NormalMode))
+        }
+      }
     }
   }
 }
