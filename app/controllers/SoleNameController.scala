@@ -21,7 +21,7 @@ import forms.SoleNameFormProvider
 import models.requests.DataRequest
 import models.{Mode, WhatIsYourName}
 import navigation.MDRNavigator
-import pages.{SoleNamePage, WhatIsYourNamePage}
+import pages.SoleNamePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -75,7 +75,7 @@ class SoleNameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(SoleNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(SoleNamePage, mode, updatedAnswers))
         )
   }
 }
