@@ -51,19 +51,31 @@ class BusinessNameController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  // error msgs
-  private val ltdErr            = "registered name of your business"
-  private val partnerErr        = "partnership name"
-  private val unincorporatedErr = "name of your organisation"
+  // title msg keys
+  private val llpTitleKey            = "businessName.title.llp"
+  private val partnerTitleKey        = "businessName.title.partnership"
+  private val unincorporatedTitleKey = "businessName.title.unincorporated"
+
+  // heading msg keys
+  private val llpHeadingKey            = "businessName.heading.llp"
+  private val partnerHeadingKey        = "businessName.heading.partnership"
+  private val unincorporatedHeadingKey = "businessName.heading.unincorporated"
+
+  // hint msg keys
+  private val llpHintKey            = "businessName.hint.llp"
+  private val partnerHintKey        = "businessName.hint.partnership"
+  private val unincorporatedHintKey = "businessName.hint.unincorporated"
+
+  // required error msg keys
+  private val llpReqErrKey            = "businessName.error.required.llp"
+  private val partnerReqErrKey        = "businessName.error.required.partner"
+  private val unincorporatedReqErrKey = "businessName.error.required.unincorporated"
 
   private def pageHeadingAndHint(businessType: BusinessType)(implicit messages: Messages): (String, String, String) =
     businessType match {
-      case LimitedPartnership | LimitedCompany =>
-        (messages("businessName.title.llp"), messages("businessName.heading.llp"), messages("businessName.hint.llp"))
-      case Partnership =>
-        (messages("businessName.title.partnership"), messages("businessName.heading.partnership"), messages("businessName.hint.partnership"))
-      case UnincorporatedAssociation =>
-        (messages("businessName.title.unincorporated"), messages("businessName.heading.unincorporated"), messages("businessName.hint.unincorporated"))
+      case LimitedPartnership | LimitedCompany => (messages(llpTitleKey), messages(llpHeadingKey), messages(llpHintKey))
+      case Partnership                         => (messages(partnerTitleKey), messages(partnerHeadingKey), messages(partnerHintKey))
+      case UnincorporatedAssociation           => (messages(unincorporatedTitleKey), messages(unincorporatedHeadingKey), messages(unincorporatedHintKey))
     }
 
   private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
@@ -84,9 +96,9 @@ class BusinessNameController @Inject() (
       SomeInformationIsMissing.isMissingBusinessType {
         businessType =>
           val form = formProvider(businessType match {
-            case LimitedCompany | LimitedPartnership => ltdErr
-            case Partnership                         => partnerErr
-            case UnincorporatedAssociation           => unincorporatedErr
+            case LimitedCompany | LimitedPartnership => llpReqErrKey
+            case Partnership                         => partnerReqErrKey
+            case UnincorporatedAssociation           => unincorporatedReqErrKey
           })
           render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
       }
@@ -97,9 +109,9 @@ class BusinessNameController @Inject() (
       SomeInformationIsMissing.isMissingBusinessType {
         businessType =>
           formProvider(businessType match {
-            case LimitedCompany | LimitedPartnership => ltdErr
-            case Partnership                         => partnerErr
-            case UnincorporatedAssociation           => unincorporatedErr
+            case LimitedCompany | LimitedPartnership => llpReqErrKey
+            case Partnership                         => partnerReqErrKey
+            case UnincorporatedAssociation           => unincorporatedReqErrKey
           })
             .bindFromRequest()
             .fold(

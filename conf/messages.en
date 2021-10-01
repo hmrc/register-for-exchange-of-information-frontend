@@ -374,7 +374,9 @@ businessName.hint.llp = This is the registered name of your incorporation certif
 businessName.hint.partnership = This is the name that you registered with HMRC.
 businessName.hint.unincorporated = This is the name on your governing document.
 businessName.checkYourAnswersLabel = businessName
-businessName.error.required = Enter the {0}
+businessName.error.required.llp = Enter the registered name of your business
+businessName.error.required.partner = Enter the partnership name
+businessName.error.required.unincorporated = Enter the name of your organisation
 contactName.error.invalid = Name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 businessName.error.length = BusinessName must be 100 characters or less
 
