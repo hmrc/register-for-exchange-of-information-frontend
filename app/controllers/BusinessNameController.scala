@@ -24,7 +24,7 @@ import models.{BusinessType, Mode}
 import navigation.MDRNavigator
 import pages.BusinessNamePage
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
@@ -52,34 +52,29 @@ class BusinessNameController @Inject() (
     with NunjucksSupport {
 
   // error msgs
-  val ltdErr            = "registered name of your business"
-  val partnerErr        = "partnership name"
-  val unincorporatedErr = "name of your organisation"
+  private val ltdErr            = "registered name of your business"
+  private val partnerErr        = "partnership name"
+  private val unincorporatedErr = "name of your organisation"
 
-  val llpHeading = "registered name of your business"
-  val llpHint    = "This is the registered name of your incorporation certificate."
-
-  val partnershipHeading = "partnership name"
-  val partnershipHint    = "This is the name that you registered with HMRC."
-
-  val unincorporatedHeading = "name of your organisation"
-  val unincorporatedHint    = "This is the name on your governing document."
-
-  private def pageHeadingAndHint(businessType: BusinessType): (String, String) =
+  private def pageHeadingAndHint(businessType: BusinessType)(implicit messages: Messages): (String, String, String) =
     businessType match {
-      case LimitedPartnership | LimitedCompany => (llpHeading, llpHint)
-      case Partnership                         => (partnershipHeading, partnershipHint)
-      case UnincorporatedAssociation           => (unincorporatedHeading, unincorporatedHint)
+      case LimitedPartnership | LimitedCompany =>
+        (messages("businessName.title.llp"), messages("businessName.heading.llp"), messages("businessName.hint.llp"))
+      case Partnership =>
+        (messages("businessName.title.partnership"), messages("businessName.heading.partnership"), messages("businessName.hint.partnership"))
+      case UnincorporatedAssociation =>
+        (messages("businessName.title.unincorporated"), messages("businessName.heading.unincorporated"), messages("businessName.hint.unincorporated"))
     }
 
   private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val (heading, hint) = pageHeadingAndHint(businessType)
+    val (title, heading, hint) = pageHeadingAndHint(businessType)
 
     val data = Json.obj(
-      "form"    -> form,
-      "heading" -> heading,
-      "hint"    -> hint,
-      "action"  -> routes.BusinessNameController.onSubmit(mode).url
+      "form"     -> form,
+      "titleTxt" -> title,
+      "heading"  -> heading,
+      "hint"     -> hint,
+      "action"   -> routes.BusinessNameController.onSubmit(mode).url
     )
     renderer.render("businessName.njk", data)
   }
