@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
@@ -38,7 +38,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
     .build()
 
   lazy val connector: AddressLookupConnector = app.injector.instanceOf[AddressLookupConnector]
-  val addressLookupUrl                       = "/v2/uk/addresses?postcode=ZZ1+1ZZ"
+  val addressLookupUrl                       = "/lookup"
   val postcode: String                       = "ZZ1 1ZZ"
 
   def addressJson: String =
@@ -138,7 +138,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
 
   private def stubResponse(expectedUrl: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
-      get(urlEqualTo(expectedUrl))
+      post(urlEqualTo(expectedUrl))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)

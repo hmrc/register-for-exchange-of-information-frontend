@@ -19,6 +19,8 @@ package models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+case class LookupAddressByPostcode(postcode: String, filter: Option[String])
+
 case class AddressLookup(addressLine1: Option[String],
                          addressLine2: Option[String],
                          addressLine3: Option[String],
@@ -27,6 +29,10 @@ case class AddressLookup(addressLine1: Option[String],
                          county: Option[String],
                          postcode: String
 )
+
+object LookupAddressByPostcode {
+  implicit val writes: Writes[LookupAddressByPostcode] = Json.writes[LookupAddressByPostcode]
+}
 
 object AddressLookup {
 
