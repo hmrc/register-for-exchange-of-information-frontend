@@ -32,6 +32,12 @@ trait PageGenerators {
   implicit lazy val arbitraryDoYouLiveInTheUKPage: Arbitrary[pages.DoYouLiveInTheUKPage.type] =
     Arbitrary(pages.DoYouLiveInTheUKPage)
 
+  implicit lazy val arbitrarySoleDateOfBirthPage: Arbitrary[pages.SoleDateOfBirthPage.type] =
+    Arbitrary(pages.SoleDateOfBirthPage)
+
+  implicit lazy val arbitrarySoleNamePage: Arbitrary[pages.SoleNamePage.type] =
+    Arbitrary(pages.SoleNamePage)
+
   implicit lazy val arbitraryAddressUKPage: Arbitrary[pages.AddressUKPage.type] =
     Arbitrary(pages.AddressUKPage)
 
@@ -46,6 +52,18 @@ trait PageGenerators {
 
   implicit lazy val arbitraryWhatIsYourNationalInsuranceNumberPage: Arbitrary[pages.WhatIsYourNationalInsuranceNumberPage.type] =
     Arbitrary(pages.WhatIsYourNationalInsuranceNumberPage)
+
+  implicit lazy val arbitraryIsThisYourBusinessPage: Arbitrary[pages.IsThisYourBusinessPage.type] =
+    Arbitrary(pages.IsThisYourBusinessPage)
+
+  implicit lazy val arbitraryBusinessNamePage: Arbitrary[pages.BusinessNamePage.type] =
+    Arbitrary(pages.BusinessNamePage)
+
+  implicit lazy val arbitraryUTRPage: Arbitrary[pages.UTRPage.type] =
+    Arbitrary(pages.UTRPage)
+
+  implicit lazy val arbitraryBussinessTypePage: Arbitrary[pages.BusinessTypePage.type] =
+    Arbitrary(pages.BusinessTypePage)
 
   implicit lazy val arbitraryDoYouHaveUniqueTaxPayerReferencePage: Arbitrary[pages.DoYouHaveUniqueTaxPayerReferencePage.type] =
     Arbitrary(pages.DoYouHaveUniqueTaxPayerReferencePage)

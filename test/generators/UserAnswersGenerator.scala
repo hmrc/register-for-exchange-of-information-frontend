@@ -32,11 +32,20 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(NonUkNamePage.type, JsValue)] ::
       arbitrary[(DoYouLiveInTheUKPage.type, JsValue)] ::
       arbitrary[(AddressUKPage.type, JsValue)] ::
+      arbitrary[(SoleDateOfBirthPage.type, JsValue)] ::
+      arbitrary[(SoleNamePage.type, JsValue)] ::
+      arbitrary[(AddressUKPage.type, JsValue)] ::
       arbitrary[(AddressWithoutIdPage.type, JsValue)] ::
       arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
       arbitrary[(pages.WhatIsYourDateOfBirthPage.type, JsValue)] ::
       arbitrary[(WhatIsYourNamePage.type, JsValue)] ::
       arbitrary[(WhatIsYourNationalInsuranceNumberPage.type, JsValue)] ::
+      arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
+      arbitrary[(BusinessNamePage.type, JsValue)] ::
+      arbitrary[(IsThisYourBusinessPage.type, JsValue)] ::
+      arbitrary[(BusinessNamePage.type, JsValue)] ::
+      arbitrary[(UTRPage.type, JsValue)] ::
+      arbitrary[(BusinessTypePage.type, JsValue)] ::
       arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
       arbitrary[(DoYouHaveUniqueTaxPayerReferencePage.type, JsValue)] ::
       arbitrary[(SndConHavePhonePage.type, JsValue)] ::

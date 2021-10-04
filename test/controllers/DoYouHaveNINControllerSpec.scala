@@ -17,7 +17,6 @@
 package controllers
 
 import base.ControllerNoDataSpecBase
-import exceptions.SomeInformationIsMissingException
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any

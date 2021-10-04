@@ -137,3 +137,33 @@ GET        /register/without-id/business-name            controllers.BusinessWit
 POST       /register/without-id/business-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/business-type                     controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/business-type                     controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-bussiness-type              controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-bussiness-type              controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/utr                                controllers.UTRController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/utr                                controllers.UTRController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-utr                         controllers.UTRController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-utr                         controllers.UTRController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/business-name                      controllers.BusinessNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/business-name                      controllers.BusinessNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-business-name               controllers.BusinessNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-business-name               controllers.BusinessNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/is-this-your-business              controllers.IsThisYourBusinessController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/is-this-your-business              controllers.IsThisYourBusinessController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-is-this-your-business       controllers.IsThisYourBusinessController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-is-this-your-business       controllers.IsThisYourBusinessController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/your-name                        controllers.SoleNameController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/your-name                        controllers.SoleNameController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-your-name                  controllers.SoleNameController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-your-name                  controllers.SoleNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/sole-date-of-birth                        controllers.SoleDateOfBirthController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/sole-date-of-birth                        controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode)

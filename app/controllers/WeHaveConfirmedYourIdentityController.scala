@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.actions._
-import models.Mode
 import models.matching.MatchingInfo
 import models.requests.DataRequest
 import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}

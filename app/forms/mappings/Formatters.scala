@@ -122,14 +122,22 @@ trait Formatters extends Transforms {
         baseFormatter.unbind(key, value.toString)
     }
 
-  private[mappings] def stringTrimFormatter(errorKey: String): Formatter[String] = new Formatter[String] {
+  private[mappings] def stringTrimFormatter(errorKey: String, msgArg: String = ""): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
       data.get(key) match {
-        case None => Left(Seq(FormError(key, errorKey)))
+        case None =>
+          msgArg.isEmpty match {
+            case true  => Left(Seq(FormError(key, errorKey)))
+            case false => Left(Seq(FormError(key, errorKey, Seq(msgArg))))
+          }
         case Some(s) =>
           s.trim match {
-            case "" => Left(Seq(FormError(key, errorKey)))
+            case "" =>
+              msgArg.isEmpty match {
+                case true  => Left(Seq(FormError(key, errorKey)))
+                case false => Left(Seq(FormError(key, errorKey, Seq(msgArg))))
+              }
             case s1 => Right(s1)
           }
       }
@@ -168,9 +176,15 @@ trait Formatters extends Transforms {
       Map(key -> value.getOrElse(""))
   }
 
-  protected def validatedTextFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, maxLength: Int): Formatter[String] =
+  protected def validatedTextFormatter(requiredKey: String,
+                                       invalidKey: String,
+                                       lengthKey: String,
+                                       regex: String,
+                                       maxLength: Int,
+                                       msgArg: String = ""
+  ): Formatter[String] =
     new Formatter[String] {
-      private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey)
+      private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey, msgArg)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         dataFormatter
@@ -275,4 +289,30 @@ trait Formatters extends Transforms {
         Map(key -> value.getOrElse(""))
     }
 
+  protected def validatedFixedLengthTextFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, length: Int, msgArg: String = "") =
+    new Formatter[String] {
+
+      private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey, msgArg)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        dataFormatter
+          .bind(key, data)
+          .right
+          .flatMap {
+            case str if !str.matches(regex) =>
+              msgArg.isEmpty match {
+                case true  => Left(Seq(FormError(key, invalidKey)))
+                case false => Left(Seq(FormError(key, invalidKey, Seq(msgArg))))
+              }
+            case str if str.length != length =>
+              msgArg.isEmpty match {
+                case true  => Left(Seq(FormError(key, lengthKey)))
+                case false => Left(Seq(FormError(key, lengthKey, Seq(msgArg))))
+              }
+            case str => Right(str)
+          }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    }
 }

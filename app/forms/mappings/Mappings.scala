@@ -53,8 +53,14 @@ trait Mappings extends Formatters with Constraints {
   protected def maxLengthText(requiredKey: String, lengthKey: String, maxLength: Int): FieldMapping[String] =
     of(maxLengthTextFormatter(requiredKey, lengthKey, maxLength))
 
-  protected def validatedText(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, maxLength: Int): FieldMapping[String] =
-    of(validatedTextFormatter(requiredKey, invalidKey, lengthKey, regex, maxLength))
+  protected def validatedText(requiredKey: String,
+                              invalidKey: String,
+                              lengthKey: String,
+                              regex: String,
+                              maxLength: Int,
+                              msgArg: String = ""
+  ): FieldMapping[String] =
+    of(validatedTextFormatter(requiredKey, invalidKey, lengthKey, regex, maxLength, msgArg))
 
   protected def validatedTextMaxLength(requiredKey: String, lengthKey: String, maxLength: Int): FieldMapping[String] =
     of(textMaxLengthFormatter(requiredKey, lengthKey, maxLength))
@@ -77,4 +83,12 @@ trait Mappings extends Formatters with Constraints {
   ): FieldMapping[Option[String]] =
     of(addressPostcodeFormatter(invalidKey, regex, requiredKey))
 
+  protected def validatedFixedLengthText(requiredKey: String,
+                                         invalidKey: String,
+                                         lengthKey: String,
+                                         regex: String,
+                                         length: Int,
+                                         msgArg: String
+  ): FieldMapping[String] =
+    of(validatedFixedLengthTextFormatter(requiredKey, invalidKey, lengthKey, regex, length, msgArg))
 }

@@ -54,6 +54,22 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitrarySoleDateOfBirthUserAnswersEntry: Arbitrary[(pages.SoleDateOfBirthPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.SoleDateOfBirthPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitrarySoleNameUserAnswersEntry: Arbitrary[(pages.SoleNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.SoleNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryAddressUKUserAnswersEntry: Arbitrary[(pages.AddressUKPage.type, JsValue)] =
     Arbitrary {
       for {
@@ -91,6 +107,38 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[pages.WhatIsYourNationalInsuranceNumberPage.type]
         value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIsThisYourBusinessUserAnswersEntry: Arbitrary[(pages.IsThisYourBusinessPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.IsThisYourBusinessPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryBusinessNameUserAnswersEntry: Arbitrary[(pages.BusinessNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.BusinessNamePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryUTRUserAnswersEntry: Arbitrary[(pages.UTRPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.UTRPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryBussinessTypeUserAnswersEntry: Arbitrary[(pages.BusinessTypePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.BusinessTypePage.type]
+        value <- arbitrary[models.BusinessType].map(Json.toJson(_))
       } yield (page, value)
     }
 

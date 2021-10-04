@@ -41,6 +41,13 @@ class MDRNavigator @Inject() () extends Navigator {
     case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case BusinessWithoutIDNamePage             => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode))
+    case WhatIsYourDateOfBirthPage             => _ => Some(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
+    case BusinessTypePage                      => _ => Some(routes.UTRController.onPageLoad(NormalMode))
+    case UTRPage                               => isSoleProprietor(NormalMode)
+    case SoleNamePage                          => _ => Some(routes.SoleDateOfBirthController.onPageLoad(NormalMode))
+    case SoleDateOfBirthPage                   => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+    case BusinessNamePage                      => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+    case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
     case _                                     => _ => Some(routes.IndexController.onPageLoad())
   }
 
@@ -50,7 +57,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def doYouHaveUniqueTaxPayerReference(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
-      case true  => ??? // TODO - Change to What is your UTR when built
+      case true  => routes.BusinessTypeController.onPageLoad(mode)
       case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode)
     }
 
@@ -78,4 +85,15 @@ class MDRNavigator @Inject() () extends Navigator {
       case false => routes.AddressWithoutIdController.onPageLoad(mode)
     }
 
+  private def isSoleProprietor(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(BusinessTypePage) map {
+      case BusinessType.Sole => routes.SoleNameController.onPageLoad(mode)
+      case _                 => routes.BusinessNameController.onPageLoad(mode)
+    }
+
+  private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(IsThisYourBusinessPage) map {
+      case true  => routes.IndexController.onPageLoad() // todo replace once impl
+      case false => routes.WeCouldNotConfirmController.onPageLoad()
+    }
 }

@@ -16,26 +16,15 @@
 
 package controllers
 
-import base.{ControllerMockFixtures, ControllerSpecBase, SpecBase}
-import models.{NormalMode, UserAnswers}
+import base.{ControllerMockFixtures, SpecBase}
+import models.UserAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{
-  ContactEmailPage,
-  ContactNamePage,
-  ContactPhonePage,
-  IsContactTelephonePage,
-  SecondContactPage,
-  SndContactEmailPage,
-  SndContactNamePage,
-  SndContactPhonePage
-}
-import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
+import pages._
+import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import repositories.SessionRepository
 
 import scala.concurrent.Future
 

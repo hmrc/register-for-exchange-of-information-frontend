@@ -16,12 +16,13 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import models.{Address, Country}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{Address, Country}
 import utils.RegexConstants
+
+import javax.inject.Inject
 
 class AddressWithoutIdFormProvider @Inject() extends Mappings with RegexConstants {
 

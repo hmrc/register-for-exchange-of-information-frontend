@@ -225,14 +225,14 @@ whatIsYourNationalInsuranceNumber.error.length = Your National Insurance Number 
 
 whatIsYourName.title = What is your name?
 whatIsYourName.heading = What is your name?
-whatIsYourName.firstName = First Name
-whatIsYourName.lastName = Last Name
+whatIsYourName.firstName = First name
+whatIsYourName.lastName = Last name
 whatIsYourName.checkYourAnswersLabel = What is your name
 whatIsYourName.error.firstName.required = Enter your first name
-whatIsYourName.error.firstName.invalid = First name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+whatIsYourName.error.firstName.invalid = First name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 whatIsYourName.error.firstName.length = First name must be 35 characters or less
 whatIsYourName.error.lastName.required = Enter your last name
-whatIsYourName.error.lastName.invalid = Last name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+whatIsYourName.error.lastName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 whatIsYourName.error.lastName.length = Last name must be 35 characters or less
 
 whatIsYourDateOfBirth.title = What is your date of birth?
@@ -263,7 +263,6 @@ addressWithoutId.addressLine3 = City
 addressWithoutId.addressLine4 = Region (optional)
 addressWithoutId.postCode = Postcode (if applicable)
 addressWithoutId.countryCode = Country
-
 
 addressWithoutId.checkYourAnswersLabel = Your home address
 addressWithoutId.error.addressLine1.required = Enter address line 1
@@ -316,10 +315,10 @@ nonUkName.givenName = Given name
 nonUkName.familyName = Family name
 nonUkName.checkYourAnswersLabel = What is your name?
 nonUkName.error.givenName.required = Enter your given name
-nonUkName.error.givenName.invalid = Given name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.givenName.invalid = Given name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 nonUkName.error.givenName.length = Given name must be 35 characters or less
 nonUkName.error.familyName.required = Enter your family name
-nonUkName.error.familyName.invalid = Family name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+nonUkName.error.familyName.invalid = Family name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 nonUkName.error.familyName.length = Family name must be 35 characters or less
 
 whatIsYourPostcode.title = What is your postcode?
@@ -339,10 +338,74 @@ selectAddress.error.required = Select your address
 selectAddress.hint.part1 = Select from the list or
 selectAddress.hint.part2 = enter your address manually
 
-
 businessWithoutIDName.title = What is the name of your business?
 businessWithoutIDName.heading = What is the name of your business?
 businessWithoutIDName.checkYourAnswersLabel = Legal name of business
 businessWithoutIDName.error.businessName.required = Enter the name of your business
 businessWithoutIDName.error.businessName.length = Business name must be 105 characters or less
 businessWithoutIDName.error.businessName.invalid = Business name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
+businessType.title = What type of business do you have?
+businessType.heading = What type of business do you have?
+businessType.limited = Limited company
+businessType.sole = Sole proprietor
+businessType.partnership = Partnership
+businessType.limitedPartnership = Limited partnership or limited liability partnership
+businessType.unincorporatedAssociation = Unincorporated association or trust
+businessType.checkYourAnswersLabel = What type of business do you have?
+businessType.error.required = Select the type of business you have
+
+utr.title = What is your {0} Unique Taxpayer Reference?
+utr.heading = What is your {0} Unique Taxpayer Reference?
+utr.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about {0}. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can
+utr.hint.link = find a lost UTR number (opens in new tab)
+utr.checkYourAnswersLabel = What is your Corporation Tax Unique Taxpayer Reference?
+utr.error.sa = Self Assessment
+utr.error.ct = Corporation Tax
+utr.error.required = Enter your {0} Unique Taxpayer Reference
+utr.error.length = {0} Unique Taxpayer Reference must be 10 numbers
+utr.error.invalid = {0} Unique Taxpayer Reference must only include numbers 0 to 9
+
+businessName.title.llp = What is the registered name of your business?
+businessName.title.partnership = What is the partnership name?
+businessName.title.unincorporated = What is the name of your organisation?
+businessName.heading.llp = What is the registered name of your business?
+businessName.heading.partnership = What is the partnership name?
+businessName.heading.unincorporated = What is the name of your organisation?
+businessName.hint.llp = This is the registered name of your incorporation certificate.
+businessName.hint.partnership = This is the name that you registered with HMRC.
+businessName.hint.unincorporated = This is the name on your governing document.
+businessName.checkYourAnswersLabel = businessName
+businessName.error.required.llp = Enter the registered name of your business
+businessName.error.required.partner = Enter the partnership name
+businessName.error.required.unincorporated = Enter the name of your organisation
+businessName.error.length.llp = Registered name of your business must be 105 characters or less
+businessName.error.length.partner = Partnership name must be 105 characters or less
+businessName.error.length.unincorporated = Organisation name must be 105 characters of less
+
+isThisYourBusiness.title = Is this your business?
+isThisYourBusiness.heading = Is this your business?
+isThisYourBusiness.checkYourAnswersLabel = isThisYourBusiness
+isThisYourBusiness.error.required = Select yes if this is your business
+
+soleName.title = What is your name?
+soleName.heading = What is your name?
+soleName.firstName = First name
+soleName.lastName = Last name
+soleName.checkYourAnswersLabel = What is your name
+soleName.error.firstName.required = Enter your first name
+soleName.error.firstName.invalid = First name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+soleName.error.firstName.length = First name must be 35 characters or less
+soleName.error.lastName.required = Enter your last name
+soleName.error.lastName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+soleName.error.lastName.length = Last name must be 35 characters or less
+
+soleDateOfBirth.title = What is your date of birth?
+soleDateOfBirth.heading = What is your date of birth?
+soleDateOfBirth.hint = For example, 12 11 2007
+soleDateOfBirth.checkYourAnswersLabel = What is your date of birth?
+soleDateOfBirth.error.required.all = Enter your date of birth
+soleDateOfBirth.error.required.two = Date of birth must include {0} and {1}
+soleDateOfBirth.error.required = Your date of birth must include {0}
+soleDateOfBirth.error.invalid = Enter a valid date of birth
+soleDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1909
+soleDateOfBirth.error.futureDate = Date of birth must be before {0}

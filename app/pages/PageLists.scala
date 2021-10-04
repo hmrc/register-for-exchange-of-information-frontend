@@ -33,4 +33,6 @@ object PageLists {
   val allAfterSecondContactPages = List(SndContactNamePage, SndContactEmailPage, SndConHavePhonePage, SndContactPhonePage)
 
   val afterAllSndConHavePhonePages = List(SndContactPhonePage)
+
+  val allAfterBusinessTypePage = List(UTRPage, BusinessNamePage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
 }

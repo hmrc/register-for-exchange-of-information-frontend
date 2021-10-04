@@ -172,4 +172,10 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
         Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
   }
+
+  def stringsNotOfFixedLengthNumeric(givenLength: Int): Gen[String] = for {
+    maxLength <- givenLength + 50
+    length    <- Gen.chooseNum(1, maxLength).suchThat(_ != givenLength)
+    chars     <- listOfN(length, Gen.numChar)
+  } yield chars.mkString
 }

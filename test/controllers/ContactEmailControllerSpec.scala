@@ -17,9 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import exceptions.SomeInformationIsMissingException
 import models.{NormalMode, UserAnswers}
-import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{ContactEmailPage, ContactNamePage}

@@ -51,6 +51,24 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
+  def soleDateOfBirth: Option[Row] = userAnswers.get(pages.SoleDateOfBirthPage) map {
+    answer =>
+      toRow(
+        msgKey = "soleDateOfBirth",
+        value = msg"site.edit",
+        href = routes.SoleDateOfBirthController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def soleName: Option[Row] = userAnswers.get(pages.SoleNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "soleName",
+        value = msg"site.edit",
+        href = routes.SoleNameController.onPageLoad(CheckMode).url
+      )
+  }
+
   def addressUK: Option[Row] = userAnswers.get(pages.AddressUKPage) map {
     answer =>
       toRow(
@@ -111,6 +129,42 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         msgKey = "whatIsYourNationalInsuranceNumber",
         value = msg"site.edit",
         href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def isThisYourBusiness: Option[Row] = userAnswers.get(pages.IsThisYourBusinessPage) map {
+    answer =>
+      toRow(
+        msgKey = "isThisYourBusiness",
+        value = msg"site.edit",
+        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def businessName: Option[Row] = userAnswers.get(pages.BusinessNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "businessName",
+        value = msg"site.edit",
+        href = routes.BusinessNameController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def uTR: Option[Row] = userAnswers.get(pages.UTRPage) map {
+    answer =>
+      toRow(
+        msgKey = "uTR",
+        value = msg"site.edit",
+        href = routes.UTRController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def bussinessType: Option[Row] = userAnswers.get(pages.BusinessTypePage) map {
+    answer =>
+      toRow(
+        msgKey = "bussinessType",
+        value = msg"site.edit",
+        href = routes.BusinessTypeController.onPageLoad(CheckMode).url
       )
   }
 

@@ -18,8 +18,8 @@ package models.register
 
 import play.api.libs.json.Json
 
-import java.time.{ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{ZoneId, ZonedDateTime}
 import java.util.UUID
 
 case class RequestCommon(
