@@ -23,8 +23,6 @@ import models.{AddressLookup, Mode}
 import navigation.MDRNavigator
 import pages.{AddressLookupPage, SelectAddressPage, SelectedAddressLookupPage}
 import play.api.data.Form
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelectAddressController @Inject() (
