@@ -53,8 +53,8 @@ class UTRController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  private val ct = "utr.ct"
-  private val sa = "utr.sa"
+  private val ct = "Corporation Tax"
+  private val sa = "Self Assessment"
 
   private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val taxType = businessType match {
