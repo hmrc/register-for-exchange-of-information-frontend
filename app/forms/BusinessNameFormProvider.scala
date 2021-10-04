@@ -28,6 +28,6 @@ class BusinessNameFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(keys: Tuple2[String, String]): Form[String] =
     Form(
-      "value" -> validatedText(keys._1, "businessName.error.invalid", keys._2, orgNameRegex, maxLength)
+      "value" -> validatedTextMaxLength(keys._1, keys._2, maxLength)
     )
 }

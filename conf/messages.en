@@ -378,7 +378,6 @@ businessName.checkYourAnswersLabel = businessName
 businessName.error.required.llp = Enter the registered name of your business
 businessName.error.required.partner = Enter the partnership name
 businessName.error.required.unincorporated = Enter the name of your organisation
-businessName.error.invalid = Name must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 businessName.error.length.llp = Registered name of your business must be 105 characters or less
 businessName.error.length.partner = Partnership name must be 105 characters or less
 businessName.error.length.unincorporated = Organisation name must be 105 characters of less
