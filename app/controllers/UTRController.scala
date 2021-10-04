@@ -25,7 +25,7 @@ import models.{BusinessType, Mode}
 import navigation.MDRNavigator
 import pages.UTRPage
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
@@ -53,13 +53,15 @@ class UTRController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  private val ct = "Corporation Tax"
-  private val sa = "Self Assessment"
+  private val ct = "utr.error.ct"
+  private val sa = "utr.error.sa"
+
+  private def readKey(key: String)(implicit messages: Messages) = messages(key)
 
   private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val taxType = businessType match {
-      case Partnership | Sole | LimitedPartnership => sa
-      case _                                       => ct
+      case Partnership | Sole | LimitedPartnership => readKey(sa)
+      case _                                       => readKey(ct)
     }
 
     val data = Json.obj(
@@ -76,8 +78,8 @@ class UTRController @Inject() (
       SomeInformationIsMissing.isMissingBusinessType {
         businessType =>
           val form = formProvider(businessType match {
-            case Partnership | Sole | LimitedPartnership => sa
-            case _                                       => ct
+            case Partnership | Sole | LimitedPartnership => readKey(sa)
+            case _                                       => readKey(ct)
           })
           render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
       }
@@ -88,8 +90,8 @@ class UTRController @Inject() (
       SomeInformationIsMissing.isMissingBusinessType {
         businessType =>
           formProvider(businessType match {
-            case Partnership | Sole | LimitedPartnership => sa
-            case _                                       => ct
+            case Partnership | Sole | LimitedPartnership => readKey(sa)
+            case _                                       => readKey(ct)
           })
             .bindFromRequest()
             .fold(

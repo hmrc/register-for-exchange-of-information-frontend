@@ -33,8 +33,7 @@ class UTRControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.UTRController.onSubmit(NormalMode).url
 
-  private val sa   = "utr.sa"
-  private def form = new forms.UTRFormProvider().apply(sa) // has to match BusinessType in user answer
+  private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
 
