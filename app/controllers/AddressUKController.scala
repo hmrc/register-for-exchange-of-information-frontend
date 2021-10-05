@@ -31,12 +31,14 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressUKController @Inject() (
   override val messagesApi: MessagesApi,
+  countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
   identify: IdentifierAction,
@@ -50,8 +52,8 @@ class AddressUKController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  val countries: Seq[Country] =
-    Seq(Country("valid", "GB", "United Kingdom"))
+  val countries: Seq[Country] = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
+
   private val form = formProvider(countries)
 
   private def render(mode: Mode, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {

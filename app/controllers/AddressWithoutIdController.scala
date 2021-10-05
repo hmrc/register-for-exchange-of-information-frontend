@@ -32,12 +32,14 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressWithoutIdController @Inject() (
   override val messagesApi: MessagesApi,
+  countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
   identify: IdentifierAction,
@@ -51,42 +53,53 @@ class AddressWithoutIdController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  val countries: Seq[Country] =
-    Seq(Country("valid", "GB", "United Kingdom"),
-        Country("valid", "FR", "France"),
-        Country("valid", "DE", "Germany")
-    ) //TODO replace with valid country list when available
+  //val countries: Seq[Country] = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
 
-  private val form = formProvider(countries)
+  //private val form = formProvider(countries)
 
-  private def render(mode: Mode, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def getFormWithCountries(registeringAsBusiness: Boolean): Seq[Country] = {
+    val countries: Seq[Country] = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
+    if (registeringAsBusiness) countries else countries.filter(_.code != "GB")
+  }
 
-    val registeringAsBusiness: Boolean =
-      request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
-        case Some(RegistrationTypeBusiness) => true
-        case _                              => false
-      }
-
+  private def render(mode: Mode, form: Form[Address], registeringAsBusiness: Boolean, countries: Seq[Country])(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Html] = {
     val data = Json.obj(
       "form"                  -> form,
       "action"                -> routes.AddressWithoutIdController.onSubmit(mode).url,
       "registeringAsBusiness" -> registeringAsBusiness,
-      "countries"             -> countryJsonList(form.data, countries.filter(_.code != "GB"))
+      "countries"             -> countryJsonList(form.data, countries)
     )
     renderer.render("addressWithoutId.njk", data)
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill)).map(Ok(_))
+      val registeringAsBusiness: Boolean =
+        request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
+          case Some(RegistrationTypeBusiness) => true
+          case _                              => false
+        }
+      val countries = getFormWithCountries(registeringAsBusiness)
+      val form      = formProvider(countries)
+
+      render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, countries).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      form
+      val registeringAsBusiness: Boolean =
+        request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
+          case Some(RegistrationTypeBusiness) => true
+          case _                              => false
+        }
+      val countries = getFormWithCountries(registeringAsBusiness)
+
+      formProvider(countries)
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => render(mode, formWithErrors, registeringAsBusiness, countries).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressWithoutIdPage, value))

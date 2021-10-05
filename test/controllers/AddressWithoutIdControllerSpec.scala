@@ -110,12 +110,13 @@ class AddressWithoutIdControllerSpec extends ControllerNoDataSpecBase { // TODO 
       retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 1"),
-                                  ("addressLine2", "value 2"),
-                                  ("addressLine3", "value 3"),
-                                  ("addressLine4", "value 4"),
-                                  ("postCode", "XX9 9XX"),
-                                  ("country", "GB")
+          .withFormUrlEncodedBody(
+            ("addressLine1", "value 1"),
+            ("addressLine2", "value 2"),
+            ("addressLine3", "value 3"),
+            ("addressLine4", "value 4"),
+            ("postCode", "XX9 9XX"),
+            ("country", "US")
           )
 
       val result = route(app, request).value
