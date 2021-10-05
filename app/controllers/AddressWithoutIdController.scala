@@ -53,10 +53,6 @@ class AddressWithoutIdController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  //val countries: Seq[Country] = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
-
-  //private val form = formProvider(countries)
-
   private def getFormWithCountries(registeringAsBusiness: Boolean): Seq[Country] = {
     val countries: Seq[Country] = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
     if (registeringAsBusiness) countries else countries.filter(_.code != "GB")
