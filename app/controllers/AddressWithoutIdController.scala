@@ -23,6 +23,7 @@ import models.requests.DataRequest
 import models.{Address, Country, Mode}
 import navigation.MDRNavigator
 import pages.{AddressWithoutIdPage, WhatAreYouRegisteringAsPage}
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -32,12 +33,14 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressWithoutIdController @Inject() (
   override val messagesApi: MessagesApi,
+  countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
   identify: IdentifierAction,
@@ -50,49 +53,58 @@ class AddressWithoutIdController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
+  private val logger: Logger = Logger(this.getClass)
 
-  val countries: Seq[Country] =
-    Seq(Country("valid", "GB", "United Kingdom"),
-        Country("valid", "FR", "France"),
-        Country("valid", "DE", "Germany")
-    ) //TODO replace with valid country list when available
+  val countriesList: Option[Seq[Country]] = countryListFactory.getCountryList
 
-  private val form = formProvider(countries)
-
-  private def render(mode: Mode, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-
-    val registeringAsBusiness: Boolean =
-      request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
-        case Some(RegistrationTypeBusiness) => true
-        case _                              => false
-      }
-
+  private def render(mode: Mode, form: Form[Address], registeringAsBusiness: Boolean, countries: Seq[Country])(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Html] = {
     val data = Json.obj(
       "form"                  -> form,
       "action"                -> routes.AddressWithoutIdController.onSubmit(mode).url,
       "registeringAsBusiness" -> registeringAsBusiness,
-      "countries"             -> countryJsonList(form.data, countries.filter(_.code != "GB"))
+      "countries"             -> countryJsonList(form.data, countries)
     )
     renderer.render("addressWithoutId.njk", data)
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill)).map(Ok(_))
+      val registeringAsBusiness = getRegisteringAsBusiness()
+
+      countriesList match {
+        case Some(countries) =>
+          val filteredCountries = if (registeringAsBusiness) countries else countries.filter(_.code != "GB")
+          val form              = formProvider(filteredCountries)
+          render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, filteredCountries).map(Ok(_))
+        case None =>
+          logger.error("Could not retrieve countries list from JSON file.")
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressWithoutIdPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddressWithoutIdPage, mode, updatedAnswers))
-        )
+      val registeringAsBusiness = getRegisteringAsBusiness()
+
+      countriesList match {
+        case Some(countries) =>
+          val filteredCountries = if (registeringAsBusiness) countries else countries.filter(_.code != "GB")
+          formProvider(filteredCountries)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => render(mode, formWithErrors, registeringAsBusiness, filteredCountries).map(BadRequest(_)),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressWithoutIdPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(AddressWithoutIdPage, mode, updatedAnswers))
+            )
+        case None =>
+          logger.error("Could not retrieve countries list from JSON file.")
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      }
   }
 
   private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
@@ -109,4 +121,10 @@ class AddressWithoutIdController @Inject() (
 
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
+
+  private def getRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
+      case Some(RegistrationTypeBusiness) => true
+      case _                              => false
+    }
 }
