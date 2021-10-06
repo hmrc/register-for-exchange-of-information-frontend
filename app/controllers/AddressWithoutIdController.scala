@@ -53,11 +53,6 @@ class AddressWithoutIdController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  private def getFormWithCountries(registeringAsBusiness: Boolean): Seq[Country] = {
-    val countries: Seq[Country] = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
-    if (registeringAsBusiness) countries else countries.filter(_.code != "GB")
-  }
-
   private def render(mode: Mode, form: Form[Address], registeringAsBusiness: Boolean, countries: Seq[Country])(implicit
     request: DataRequest[AnyContent]
   ): Future[Html] = {
@@ -72,36 +67,34 @@ class AddressWithoutIdController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      val registeringAsBusiness: Boolean =
-        request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
-          case Some(RegistrationTypeBusiness) => true
-          case _                              => false
-        }
-      val countries = getFormWithCountries(registeringAsBusiness)
-      val form      = formProvider(countries)
+      implicit val registeringAsBusiness  = getRegisteringAsBusiness()
+      implicit val countryListFactoryImpl = countryListFactory
 
-      render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, countries).map(Ok(_))
+      SomeInformationIsMissing.isMissingCountryList {
+        countries =>
+          val form = formProvider(countries)
+          render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, countries).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      val registeringAsBusiness: Boolean =
-        request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
-          case Some(RegistrationTypeBusiness) => true
-          case _                              => false
-        }
-      val countries = getFormWithCountries(registeringAsBusiness)
+      implicit val registeringAsBusiness  = getRegisteringAsBusiness()
+      implicit val countryListFactoryImpl = countryListFactory
 
-      formProvider(countries)
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, formWithErrors, registeringAsBusiness, countries).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressWithoutIdPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddressWithoutIdPage, mode, updatedAnswers))
-        )
+      SomeInformationIsMissing.isMissingCountryList {
+        countries =>
+          formProvider(countries)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => render(mode, formWithErrors, registeringAsBusiness, countries).map(BadRequest(_)),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressWithoutIdPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(AddressWithoutIdPage, mode, updatedAnswers))
+            )
+      }
   }
 
   private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
@@ -118,4 +111,10 @@ class AddressWithoutIdController @Inject() (
 
     Json.obj("value" -> "", "text" -> "") +: countryJsonList
   }
+
+  private def getRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
+      case Some(RegistrationTypeBusiness) => true
+      case _                              => false
+    }
 }
