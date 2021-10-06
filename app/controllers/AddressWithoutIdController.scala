@@ -75,7 +75,7 @@ class AddressWithoutIdController @Inject() (
 
       countriesList match {
         case Some(countries) =>
-          val form = formProvider(countries)
+          val form = formProvider(if(registeringAsBusiness) countries else countries.filterNot(_.code == "GB"))
           render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, countries).map(Ok(_))
         case None =>
           logger.error("Could not retrieve countries list from JSON file.")
@@ -89,7 +89,7 @@ class AddressWithoutIdController @Inject() (
 
       countriesList match {
         case Some(countries) =>
-          formProvider(countries)
+          formProvider(if(registeringAsBusiness) countries else countries.filterNot(_.code == "GB"))
             .bindFromRequest()
             .fold(
               formWithErrors => render(mode, formWithErrors, registeringAsBusiness, countries).map(BadRequest(_)),
