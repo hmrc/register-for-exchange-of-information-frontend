@@ -207,7 +207,7 @@ whatAreYouRegisteringAs.title = What are you registering as?
 whatAreYouRegisteringAs.heading = What are you registering as?
 whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
 whatAreYouRegisteringAs.registrationTypeBusiness = A business
-whatAreYouRegisteringAs.registrationTypeIndividual = An Individual
+whatAreYouRegisteringAs.registrationTypeIndividual = An individual
 whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
 whatAreYouRegisteringAs.error.required = Select registration as a business or as an individual
 
@@ -266,8 +266,8 @@ addressWithoutId.countryCode = Country
 
 addressWithoutId.checkYourAnswersLabel = Your home address
 addressWithoutId.error.addressLine1.required = Enter address line 1
-addressWithoutId.error.addressLine3.required = Enter City
-addressWithoutId.error.country.required = Enter Country
+addressWithoutId.error.addressLine3.required = Enter city
+addressWithoutId.error.country.required = Choose a country
 addressWithoutId.error.addressLine1.length = Address line 1 must be 35 characters or less
 addressWithoutId.error.addressLine2.length = Address line 2 must be 35 characters or less
 addressWithoutId.error.addressLine3.length = City must be must be 35 characters or less
@@ -290,8 +290,8 @@ addressUK.countryCode = Country
 
 addressUK.checkYourAnswersLabel = Your home address
 addressUK.error.addressLine1.required = Enter address line 1
-addressUK.error.addressLine3.required = Enter City
-addressUK.error.country.required = Enter Country
+addressUK.error.addressLine3.required = Enter city
+addressUK.error.country.required = Choose a country
 addressUK.error.addressLine1.length = Address line 1 must be 35 characters or less
 addressUK.error.addressLine2.length = Address line 2 must be 35 characters or less
 addressUK.error.addressLine3.length = City must be must be 35 characters or less
