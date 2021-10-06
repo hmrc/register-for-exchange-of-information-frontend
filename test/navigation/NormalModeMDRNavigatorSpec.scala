@@ -24,6 +24,7 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 
@@ -105,7 +106,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatIsYourNationalInsuranceNumberPage, "QQ123456C")
+                .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
                 .success
                 .value
 

@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.BusinessMatchingService
+import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -36,7 +37,7 @@ import scala.concurrent.Future
 class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with ControllerMockFixtures {
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(WhatIsYourNationalInsuranceNumberPage, "nino")
+    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
     .success
     .value
     .set(WhatIsYourNamePage, Name("First", "Last"))

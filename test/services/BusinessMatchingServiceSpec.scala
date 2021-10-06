@@ -33,6 +33,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -88,7 +89,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
         when(mockSubscriptionConnector.readSubscriptionDetails(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(displaySubscriptionResponse)))
 
-        val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation("nino", name, dob)
+        val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
 
         result.futureValue mustBe Right(MatchingInfo("XE0000123456789", "subscriptionID"))
       }
@@ -100,7 +101,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
         when(mockSubscriptionConnector.readSubscriptionDetails(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(displaySubscriptionResponse)))
 
-        val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation("nino", name, dob)
+        val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
 
         result.futureValue mustBe Left(NotFoundError)
       }

@@ -62,10 +62,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val betaFeedbackUrl                = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
-  lazy val lostUTRUrl: String = "https://www.gov.uk/find-lost-utr-number"
+  lazy val businessMatchingUrl: String =
+    s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"
 
-  private lazy val backendConfig = "microservice.services.register-for-exchange-of-information"
-
-  lazy val backendUrl: String =
-    s"${configuration.get[Service](backendConfig).baseUrl}${configuration.get[String](s"$backendConfig.startUrl")}"
+  lazy val countryCodeJson: String = configuration.get[String]("json.countries")
+  lazy val lostUTRUrl: String      = "https://www.gov.uk/find-lost-utr-number"
 }

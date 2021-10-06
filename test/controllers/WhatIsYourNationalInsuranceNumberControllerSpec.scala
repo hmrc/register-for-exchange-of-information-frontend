@@ -25,6 +25,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import uk.gov.hmrc.domain.Nino
 
 import scala.concurrent.Future
 
@@ -35,7 +36,7 @@ class WhatIsYourNationalInsuranceNumberControllerSpec extends ControllerSpecBase
 
   private def form = new forms.WhatIsYourNationalInsuranceNumberFormProvider().apply()
 
-  val validAnswer = "CC123456C"
+  val validAnswer = Nino("CC123456C")
 
   "WhatIsYourNationalInsuranceNumber Controller" - {
 
@@ -81,7 +82,7 @@ class WhatIsYourNationalInsuranceNumberControllerSpec extends ControllerSpecBase
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val filledForm = form.bind(Map("value" -> validAnswer))
+      val filledForm = form.bind(Map("value" -> validAnswer.nino))
 
       val expectedJson = Json.obj(
         "form"   -> filledForm,
@@ -99,7 +100,7 @@ class WhatIsYourNationalInsuranceNumberControllerSpec extends ControllerSpecBase
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", validAnswer))
+          .withFormUrlEncodedBody(("value", validAnswer.nino))
 
       val result = route(app, request).value
 

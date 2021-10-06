@@ -38,7 +38,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
   lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
-      conf = "microservice.services.register-for-exchange-of-information.port" -> server.port()
+      conf = "microservice.services.business-matching.port" -> server.port()
     )
     .build()
 

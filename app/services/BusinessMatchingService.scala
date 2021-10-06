@@ -26,6 +26,7 @@ import models.register.request.RegisterWithID
 import models.subscription.BusinessDetails
 import models.subscription.response.DisplaySubscriptionForCBCResponse
 import models.{Name, UserAnswers}
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -34,12 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector, subscriptionConnector: SubscriptionConnector) {
 
-  def sendIndividualMatchingInformation(nino: String, name: Name, dob: LocalDate)(implicit
+  def sendIndividualMatchingInformation(nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, MatchingInfo]] = {
     for {
-      registrationWithIDResponse <- registrationConnector.registerWithID(RegisterWithID(name, dob, "NINO", nino))
+      registrationWithIDResponse <- registrationConnector.registerWithID(RegisterWithID(name, dob, "NINO", nino.nino))
       safeId                     <- EitherT.fromOption[Future](registrationWithIDResponse.safeId, MandatoryInformationMissingError)
       subscriptionDetails        <- subscriptionConnector.readSubscriptionDetails(safeId)
     } yield MatchingInfo(safeId, subscriptionDetails.subscriptionID)

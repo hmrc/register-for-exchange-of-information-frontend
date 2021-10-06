@@ -36,7 +36,7 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   private val logger: Logger = Logger(this.getClass)
 
-  val submissionUrl = s"${config.backendUrl}/registration"
+  val submissionUrl = s"${config.businessMatchingUrl}/registration"
 
   def registerWithID(
     registration: RegisterWithID
