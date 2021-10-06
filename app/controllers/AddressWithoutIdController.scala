@@ -23,6 +23,7 @@ import models.requests.DataRequest
 import models.{Address, Country, Mode}
 import navigation.MDRNavigator
 import pages.{AddressWithoutIdPage, WhatAreYouRegisteringAsPage}
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -52,6 +53,9 @@ class AddressWithoutIdController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport {
+  private val logger: Logger = Logger(this.getClass)
+
+  val countriesList: Option[Seq[Country]] = countryListFactory.getCountryList
 
   private def render(mode: Mode, form: Form[Address], registeringAsBusiness: Boolean, countries: Seq[Country])(implicit
     request: DataRequest[AnyContent]
@@ -69,10 +73,13 @@ class AddressWithoutIdController @Inject() (
     implicit request =>
       val registeringAsBusiness = getRegisteringAsBusiness()
 
-      SomeInformationIsMissing.isMissingCountryList(countryListFactory, registeringAsBusiness) {
-        countries =>
+      countriesList match {
+        case Some(countries) =>
           val form = formProvider(countries)
           render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, countries).map(Ok(_))
+        case None =>
+          logger.error("Could not retrieve countries list from JSON file.")
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
       }
   }
 
@@ -80,8 +87,8 @@ class AddressWithoutIdController @Inject() (
     implicit request =>
       val registeringAsBusiness = getRegisteringAsBusiness()
 
-      SomeInformationIsMissing.isMissingCountryList(countryListFactory, registeringAsBusiness) {
-        countries =>
+      countriesList match {
+        case Some(countries) =>
           formProvider(countries)
             .bindFromRequest()
             .fold(
@@ -92,6 +99,9 @@ class AddressWithoutIdController @Inject() (
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield Redirect(navigator.nextPage(AddressWithoutIdPage, mode, updatedAnswers))
             )
+        case None =>
+          logger.error("Could not retrieve countries list from JSON file.")
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
       }
   }
 

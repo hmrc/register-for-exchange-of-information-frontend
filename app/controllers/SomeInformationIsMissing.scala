@@ -50,14 +50,4 @@ object SomeInformationIsMissing {
       .fold(missingInformationResult) {
         name => f(name)
       }
-
-  def isMissingCountryList(countryListFactory: CountryListFactory, registeringAsBusiness: Boolean)(f: Seq[Country] => Future[Result]): Future[Result] =
-    countryListFactory.getCountryList.fold(missingInformationResult) {
-      countries => f(if (registeringAsBusiness) countries else countries.filterNot(_.code == "GB"))
-    }
-
-  def isMissingCountryListUK(countryListFactory: CountryListFactory)(f: Seq[Country] => Future[Result]): Future[Result] =
-    countryListFactory.getCountryList.fold(missingInformationResult) {
-      countries => f(countries)
-    }
 }
