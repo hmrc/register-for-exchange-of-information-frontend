@@ -51,8 +51,8 @@ object SomeInformationIsMissing {
         name => f(name)
       }
 
-  def isMissingCountryList(f: Seq[Country] => Future[Result])(implicit registeringAsBusiness: Boolean, countryListFactory: CountryListFactory): Future[Result] =
+  def isMissingCountryList(countryListFactory: CountryListFactory, registeringAsBusiness: Boolean)(f: Seq[Country] => Future[Result]): Future[Result] =
     countryListFactory.getCountryList.fold(missingInformationResult) {
-      countries => f(if (registeringAsBusiness) countries else countries.filter(_.code != "GB"))
+      countries => f(if (registeringAsBusiness) countries else countries.filterNot(_.code == "GB"))
     }
 }

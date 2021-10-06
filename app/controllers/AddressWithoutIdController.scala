@@ -67,10 +67,9 @@ class AddressWithoutIdController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      implicit val registeringAsBusiness  = getRegisteringAsBusiness()
-      implicit val countryListFactoryImpl = countryListFactory
+      val registeringAsBusiness  = getRegisteringAsBusiness()
 
-      SomeInformationIsMissing.isMissingCountryList {
+      SomeInformationIsMissing.isMissingCountryList(countryListFactory, registeringAsBusiness) {
         countries =>
           val form = formProvider(countries)
           render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, countries).map(Ok(_))
@@ -79,10 +78,9 @@ class AddressWithoutIdController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      implicit val registeringAsBusiness  = getRegisteringAsBusiness()
-      implicit val countryListFactoryImpl = countryListFactory
+      val registeringAsBusiness  = getRegisteringAsBusiness()
 
-      SomeInformationIsMissing.isMissingCountryList {
+      SomeInformationIsMissing.isMissingCountryList(countryListFactory, registeringAsBusiness) {
         countries =>
           formProvider(countries)
             .bindFromRequest()
