@@ -55,4 +55,9 @@ object SomeInformationIsMissing {
     countryListFactory.getCountryList.fold(missingInformationResult) {
       countries => f(if (registeringAsBusiness) countries else countries.filterNot(_.code == "GB"))
     }
+
+  def isMissingCountryListUK(countryListFactory: CountryListFactory)(f: Seq[Country] => Future[Result]): Future[Result] =
+    countryListFactory.getCountryList.fold(missingInformationResult) {
+      countries => f(countries)
+    }
 }

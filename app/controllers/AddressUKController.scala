@@ -52,10 +52,6 @@ class AddressUKController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  val countries: Seq[Country] = countryListFactory.getCountryList.getOrElse(throw new Exception("Cannot retrieve country list"))
-
-  private val form = formProvider(countries)
-
   private def render(mode: Mode, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"      -> form,
@@ -67,21 +63,28 @@ class AddressUKController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(AddressUKPage).fold(form)(form.fill)).map(Ok(_))
+      SomeInformationIsMissing.isMissingCountryListUK(countryListFactory) {
+        countries =>
+          val form = formProvider(countries)
+          render(mode, request.userAnswers.get(AddressUKPage).fold(form)(form.fill)).map(Ok(_))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressUKPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddressUKPage, mode, updatedAnswers))
-        )
+      SomeInformationIsMissing.isMissingCountryListUK(countryListFactory) {
+        countries =>
+          formProvider(countries)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressUKPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(AddressUKPage, mode, updatedAnswers))
+            )
+      }
   }
 
   private def countryJsonList: Seq[JsObject] = Seq(
