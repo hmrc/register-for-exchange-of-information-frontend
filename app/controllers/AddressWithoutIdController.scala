@@ -75,8 +75,9 @@ class AddressWithoutIdController @Inject() (
 
       countriesList match {
         case Some(countries) =>
-          val form = formProvider(if(registeringAsBusiness) countries else countries.filterNot(_.code == "GB"))
-          render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, countries).map(Ok(_))
+          val filteredCountries = if (registeringAsBusiness) countries else countries.filter(_.code != "GB")
+          val form              = formProvider(filteredCountries)
+          render(mode, request.userAnswers.get(AddressWithoutIdPage).fold(form)(form.fill), registeringAsBusiness, filteredCountries).map(Ok(_))
         case None =>
           logger.error("Could not retrieve countries list from JSON file.")
           Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
@@ -89,10 +90,11 @@ class AddressWithoutIdController @Inject() (
 
       countriesList match {
         case Some(countries) =>
-          formProvider(if(registeringAsBusiness) countries else countries.filterNot(_.code == "GB"))
+          val filteredCountries = if (registeringAsBusiness) countries else countries.filter(_.code != "GB")
+          formProvider(filteredCountries)
             .bindFromRequest()
             .fold(
-              formWithErrors => render(mode, formWithErrors, registeringAsBusiness, countries).map(BadRequest(_)),
+              formWithErrors => render(mode, formWithErrors, registeringAsBusiness, filteredCountries).map(BadRequest(_)),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressWithoutIdPage, value))
