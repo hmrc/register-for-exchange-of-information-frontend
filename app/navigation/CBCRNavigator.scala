@@ -17,6 +17,8 @@
 package navigation
 
 import controllers.routes
+import models.BusinessType.Sole
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
 import play.api.mvc.Call
@@ -30,7 +32,7 @@ class CBCRNavigator @Inject() () extends Navigator {
     case ContactNamePage        => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case ContactEmailPage       => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode))
     case IsContactTelephonePage => isContactTelephoneRoutes(NormalMode)
-    case ContactPhonePage       => _ => Some(routes.SecondContactController.onPageLoad(NormalMode))
+    case ContactPhonePage       => contactTelephoneNumber(NormalMode)
     case SecondContactPage      => isSecondContact(NormalMode)
     case SndContactNamePage     => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode))
     case SndContactEmailPage    => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode))
@@ -46,11 +48,31 @@ class CBCRNavigator @Inject() () extends Navigator {
     case _                      => _ => Some(Navigator.checkYourAnswers)
   }
 
+  private def contactTelephoneNumber(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(DoYouHaveUniqueTaxPayerReferencePage) match {
+      case Some(true) =>
+        ua.get(BusinessTypePage) map {
+          case Sole => routes.CheckYourAnswersController.onPageLoad()
+          case _    => routes.SecondContactController.onPageLoad(mode)
+        }
+      case Some(false) =>
+        ua.get(WhatAreYouRegisteringAsPage) map {
+          case RegistrationTypeIndividual => routes.CheckYourAnswersController.onPageLoad()
+          case RegistrationTypeBusiness   => routes.SecondContactController.onPageLoad(mode)
+        }
+      case None => Some(routes.SecondContactController.onPageLoad(mode))
+    }
+
   private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsContactTelephonePage) map {
       case true                       => routes.ContactPhoneController.onPageLoad(mode)
       case false if mode == CheckMode => routes.CheckYourAnswersController.onPageLoad()
-      case false                      => routes.SecondContactController.onPageLoad(mode)
+      case false =>
+        if (isIndividual(ua)) {
+          routes.CheckYourAnswersController.onPageLoad()
+        } else {
+          routes.SecondContactController.onPageLoad(mode)
+        }
     }
 
   private def isSecondContact(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -66,4 +88,18 @@ class CBCRNavigator @Inject() () extends Navigator {
       case true  => routes.SndContactPhoneController.onPageLoad(mode)
       case false => routes.CheckYourAnswersController.onPageLoad()
     }
+
+  private def isIndividual(ua: UserAnswers): Boolean = ua.get(DoYouHaveUniqueTaxPayerReferencePage) match {
+    case Some(true) =>
+      ua.get(BusinessTypePage) match {
+        case Some(Sole) => true
+        case _          => false
+      }
+    case Some(false) =>
+      ua.get(WhatAreYouRegisteringAsPage) match {
+        case Some(RegistrationTypeIndividual) => true
+        case Some(RegistrationTypeBusiness)   => false
+      }
+    case None => false
+  }
 }

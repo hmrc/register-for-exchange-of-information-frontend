@@ -17,10 +17,12 @@
 package navigation
 
 import controllers.routes
+import models.BusinessType.Sole
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
 import play.api.mvc.Call
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import javax.inject.{Inject, Singleton}
 
@@ -37,7 +39,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case NonUkNamePage                         => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
     case DoYouLiveInTheUKPage                  => doYouLiveInTheUkRoutes(NormalMode)
     case AddressUKPage                         => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
-    case AddressWithoutIdPage                  => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
+    case AddressWithoutIdPage                  => addressWithoutID(NormalMode)
     case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case BusinessWithoutIDNamePage             => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode))
@@ -53,6 +55,13 @@ class MDRNavigator @Inject() () extends Navigator {
   override val checkRouteMap: Page => UserAnswers => Option[Call] = {
     case _ => _ => Some(Navigator.checkYourAnswers)
   }
+
+  private def addressWithoutID(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(WhatAreYouRegisteringAsPage) match {
+      case Some(RegistrationTypeBusiness)   => Some(routes.ContactNameController.onPageLoad(mode))
+      case Some(RegistrationTypeIndividual) => Some(routes.ContactEmailController.onPageLoad(mode))
+      case None                             => Some(routes.SomeInformationIsMissingController.onPageLoad())
+    }
 
   private def doYouHaveUniqueTaxPayerReference(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
@@ -92,7 +101,12 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsThisYourBusinessPage) map {
-      case true  => routes.IndexController.onPageLoad() // todo replace once impl
+      case true =>
+        ua.get(BusinessTypePage) match {
+          case Some(Sole) => routes.ContactEmailController.onPageLoad(mode)
+          case Some(_)    => routes.ContactNameController.onPageLoad(mode)
+          case None       => routes.WeCouldNotConfirmController.onPageLoad("identity")
+        }
       case false => routes.WeCouldNotConfirmController.onPageLoad("identity")
     }
 }

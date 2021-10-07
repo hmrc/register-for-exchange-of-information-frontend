@@ -135,6 +135,8 @@ contactName.error.length = Name of the individual or team must be 35 characters 
 
 contactEmail.title = What is the email address for {0}?
 contactEmail.heading = What is the email address for {0}?
+contactEmail.individual.title = What is your email address?
+contactEmail.individual.heading = What is your email address?
 contactEmail.hint = We will use this to send confirmation emails and to contact you if we have questions about the reports.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.error.required = Enter an email address
@@ -143,10 +145,14 @@ contactEmail.error.invalid = Enter an email address in the correct format, like 
 
 isContactTelephone.title = Can we contact {0} by telephone?
 isContactTelephone.heading = Can we contact {0} by telephone?
+isContactTelephone.individual.title = Do you have a telephone number?
+isContactTelephone.individual.heading = Do you have a telephone number?
 isContactTelephone.error.required = Select yes if there is a telephone number
 
 contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
+contactPhone.individual.title = What is your telephone number?
+contactPhone.individual.heading = What is your telephone number?
 contactPhone.hint = For international numbers include the country code
 contactPhone.checkYourAnswersLabel = Telephone number
 contactPhone.error.required = Enter a telephone number

@@ -17,12 +17,14 @@
 package controllers
 
 import controllers.actions._
+import models.{BusinessType, NormalMode}
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
-import pages.{SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{BusinessTypePage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -48,9 +50,19 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
 
     implicit request =>
+      // TODO confirm redirection logic
+      val action: String = request.userAnswers.get(BusinessTypePage) match {
+        case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode).url
+        case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode).url
+        case None                    => routes.ContactEmailController.onPageLoad(NormalMode).url
+      }
+      val json = Json.obj(
+        "action" -> action
+      )
+
       matchIndividualInfo flatMap {
         case Right(_) =>
-          renderer.render("weHaveConfirmedYourIdentity.njk").map(Ok(_))
+          renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
         case Left(NotFoundError) =>
           Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
         case _ =>

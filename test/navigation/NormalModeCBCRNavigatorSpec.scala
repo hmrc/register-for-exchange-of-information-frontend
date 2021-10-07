@@ -19,6 +19,8 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
+import models.BusinessType.{LimitedCompany, Sole}
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -70,7 +72,7 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
         }
       }
 
-      "must go from IsContactTelephone page to Second Contact Phone page if NO is selected" in {
+      "must go from IsContactTelephone page to Second Contact Phone page if NO is selected and they are a business" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -78,10 +80,130 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
                 .set(IsContactTelephonePage, false)
                 .success
                 .value
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, LimitedCompany)
+                .success
+                .value
 
             navigator
               .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
               .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from IsContactTelephone page to to the check your answers page if NO is selected and they are an individual" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(IsContactTelephonePage, false)
+                .success
+                .value
+                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                .success
+                .value
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from IsContactTelephone page to to the check your answers page if NO is selected and they are a sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(IsContactTelephonePage, false)
+                .success
+                .value
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, Sole)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from telephone number page to second contact name page if they have a UTR and are not a sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, LimitedCompany)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from telephone number page to the check your answers page if they have a UTR and they are a sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, Sole)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from telephone number page to second contact name page if they do not have a UTR and are registering as a business" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                .success
+                .value
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from telephone number page to the check you answers page if they do not have a UTR and are registering as an individual" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                .success
+                .value
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 

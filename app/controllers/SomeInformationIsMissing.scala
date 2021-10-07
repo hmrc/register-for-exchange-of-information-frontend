@@ -16,13 +16,12 @@
 
 package controllers
 
-import models.{BusinessType, Country}
+import models.BusinessType
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.{BusinessTypePage, ContactNamePage, SndContactNamePage}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
-import utils.CountryListFactory
 
 import scala.concurrent.Future
 
