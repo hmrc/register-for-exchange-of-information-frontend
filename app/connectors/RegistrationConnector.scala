@@ -42,7 +42,7 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
     registration: RegisterWithID
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithIDResponse] =
     EitherT {
-      http.POST[RegisterWithID, HttpResponse](s"$submissionUrl/individual/id/nino", registration) map {
+      http.POST[RegisterWithID, HttpResponse](s"$submissionUrl/individual/nino", registration) map {
         case responseMessage if is2xx(responseMessage.status) =>
           Right(responseMessage.json.as[RegistrationWithIDResponse])
         case responseMessage if responseMessage.status == NOT_FOUND =>
