@@ -16,13 +16,13 @@
 
 package services
 
-import cats.data.EitherT
 import cats.implicits._
-import connectors.{RegistrationConnector, SubscriptionConnector}
+import connectors.RegistrationConnector
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.MandatoryInformationMissingError
 import models.register.request.RegisterWithID
+import models.register.response.RegistrationWithIDResponse
 import models.subscription.BusinessDetails
 import models.subscription.response.DisplaySubscriptionForCBCResponse
 import models.{Name, UserAnswers}
@@ -33,18 +33,19 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector, subscriptionConnector: SubscriptionConnector) {
+class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
+
+  type ApiT[T] = Future[Either[ApiError, T]]
 
   def sendIndividualMatchingInformation(nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ApiError, MatchingInfo]] = {
-    for {
-      registrationWithIDResponse <- registrationConnector.registerWithID(RegisterWithID(name, dob, "NINO", nino.nino))
-      safeId                     <- EitherT.fromOption[Future](registrationWithIDResponse.safeId, MandatoryInformationMissingError)
-      subscriptionDetails        <- subscriptionConnector.readSubscriptionDetails(safeId)
-    } yield MatchingInfo(safeId, subscriptionDetails.subscriptionID)
-  }.value
+  ): Future[Either[ApiError, MatchingInfo]] =
+    registrationConnector
+      .registerWithID(RegisterWithID(name, dob, "NINO", nino.nino))
+      .subflatMap(_.safeId.toRight(MandatoryInformationMissingError))
+      .map(MatchingInfo)
+      .value
 
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,

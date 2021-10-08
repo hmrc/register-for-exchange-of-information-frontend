@@ -21,7 +21,7 @@ import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.MandatoryInformationMissingError
 import models.requests.DataRequest
-import pages.{SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{NotMatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -49,8 +49,11 @@ class WeHaveConfirmedYourIdentityController @Inject() (
 
     implicit request =>
       matchIndividualInfo flatMap {
-        case Right(_) => renderer.render("weHaveConfirmedYourIdentity.njk").map(Ok(_))
-        case _        => Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad()))
+        case Right(_) =>
+          renderer.render("weHaveConfirmedYourIdentity.njk").map(Ok(_))
+        case _ =>
+          request.userAnswers.set(NotMatchingInfoPage, "identity").foreach(sessionRepository.set)
+          Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad()))
       }
 
   }

@@ -16,4 +16,4 @@
 
 package models.matching
 
-case class MatchingInfo(safeId: String, subscriptionID: String)
+case class MatchingInfo(safeId: String)

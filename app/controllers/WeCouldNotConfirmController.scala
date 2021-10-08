@@ -18,7 +18,9 @@ package controllers
 
 import controllers.actions._
 import models.Mode
-import play.api.i18n.{I18nSupport, MessagesApi}
+import org.slf4j.LoggerFactory
+import pages.NotMatchingInfoPage
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -31,17 +33,26 @@ class WeCouldNotConfirmController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction, // TODO replace with DataRequireAction when actual flow is ready
+  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
+  private val logger = LoggerFactory.getLogger(getClass)
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
+      val messages = implicitly[Messages]
+      val affinity = request.userAnswers.get(NotMatchingInfoPage) match {
+        case Some(key) => messages(s"weCouldNotConfirm.$key")
+        case None =>
+          logger.error("'We could not confirm' controller must be called with a valid answer.")
+          throw new IllegalStateException("Either identity or business not matching info page is required.")
+      }
       val data = Json.obj(
-        "affinity" -> "[placeholder]", // TODO replace with dinamic property when actual flow is ready
+        "affinity" -> affinity,
         "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode).url
       )
       renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))

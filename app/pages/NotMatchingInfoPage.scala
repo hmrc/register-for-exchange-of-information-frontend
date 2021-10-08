@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.subscription.response
+package pages
 
-import play.api.libs.json._
+import play.api.libs.json.JsPath
 
-case class SubscriptionForCBCResponse(responseCommon: ResponseCommon, responseDetail: ResponseDetail)
+case object NotMatchingInfoPage extends QuestionPage[String] {
 
-object SubscriptionForCBCResponse {
-  implicit val format: OFormat[SubscriptionForCBCResponse] = Json.format[SubscriptionForCBCResponse]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "individualNotMatching"
 }

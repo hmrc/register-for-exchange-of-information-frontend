@@ -19,15 +19,14 @@ package services
 import base.{MockServiceApp, SpecBase}
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
-import connectors.{RegistrationConnector, SubscriptionConnector}
+import connectors.RegistrationConnector
 import helpers.RegisterHelper._
 import models.Name
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.NotFoundError
 import models.register.response.RegistrationWithIDResponse
-import models.shared.{Parameters, ResponseCommon}
-import models.subscription.response.{DisplaySubscriptionForCBCResponse, ResponseDetail, SubscriptionForCBCResponse}
+import models.subscription.response._
 import models.subscription.{ContactInformationForOrganisation, OrganisationDetails, PrimaryContact}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}
@@ -43,21 +42,17 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
   val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
-  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
-
   val service: BusinessMatchingService = app.injector.instanceOf[BusinessMatchingService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
     .overrides(
-      bind[RegistrationConnector].toInstance(mockRegistrationConnector),
-      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+      bind[RegistrationConnector].toInstance(mockRegistrationConnector)
     )
 
   override def beforeEach: Unit = {
     Mockito.reset(
-      mockRegistrationConnector,
-      mockSubscriptionConnector
+      mockRegistrationConnector
     )
     super.beforeEach()
   }
@@ -68,7 +63,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
   val displaySubscriptionResponse: DisplaySubscriptionForCBCResponse = DisplaySubscriptionForCBCResponse(
     SubscriptionForCBCResponse(
-      ResponseCommon("200", None, "2016-08-16T15:55:30Z", Some(Seq(Parameters("REGIME", "MDR")))),
+      ResponseCommon("200", None, "2016-08-16T15:55:30Z", Some(Seq(ReturnParameters("REGIME", "MDR")))),
       ResponseDetail("subscriptionID",
                      None,
                      isGBUser = true,
@@ -87,11 +82,10 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Right(registrationWithIDResponse))
 
         when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
-        when(mockSubscriptionConnector.readSubscriptionDetails(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(displaySubscriptionResponse)))
 
         val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
 
-        result.futureValue mustBe Right(MatchingInfo("XE0000123456789", "subscriptionID"))
+        result.futureValue mustBe Right(MatchingInfo("XE0000123456789"))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
@@ -99,7 +93,6 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
 
         when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
-        when(mockSubscriptionConnector.readSubscriptionDetails(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(displaySubscriptionResponse)))
 
         val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
 

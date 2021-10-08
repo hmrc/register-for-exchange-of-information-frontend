@@ -66,7 +66,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     "return OK and the correct view for a GET when there is a match" in {
 
       when(mockMatchingService.sendIndividualMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId", "subscriptionID"))))
+        .thenReturn(Future.successful(Right(MatchingInfo("safeId"))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

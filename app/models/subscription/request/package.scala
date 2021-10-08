@@ -16,7 +16,6 @@
 
 package models.subscription
 
-import models.shared.Parameters
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 
@@ -25,6 +24,12 @@ import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 package object request {
+
+  case class RequestParameter(paramName: String, paramValue: String)
+
+  object RequestParameter {
+    implicit val format: OFormat[RequestParameter] = Json.format[RequestParameter]
+  }
 
   case class CreateRequestDetail(IDType: String,
                                  IDNumber: String,
@@ -65,7 +70,7 @@ package object request {
                                      receiptDate: String,
                                      acknowledgementReference: String,
                                      originatingSystem: String,
-                                     requestParameters: Option[Seq[Parameters]]
+                                     requestParameters: Option[Seq[RequestParameter]]
   )
 
   object RequestCommonForDisplay {
@@ -94,7 +99,7 @@ package object request {
                                           receiptDate: String,
                                           acknowledgementReference: String,
                                           originatingSystem: String,
-                                          requestParameters: Option[Seq[Parameters]]
+                                          requestParameters: Option[Seq[RequestParameter]]
   )
 
   object RequestCommonForSubscription {
@@ -105,7 +110,7 @@ package object request {
                                     receiptDate: String,
                                     acknowledgementReference: String,
                                     originatingSystem: String,
-                                    requestParameters: Option[Seq[Parameters]]
+                                    requestParameters: Option[Seq[RequestParameter]]
   )
 
   object RequestCommonForUpdate {
