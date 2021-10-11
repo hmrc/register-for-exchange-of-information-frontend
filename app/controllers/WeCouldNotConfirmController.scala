@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import models.Mode
+import models.{Mode, NormalMode}
 import org.slf4j.LoggerFactory
 import pages.NotMatchingInfoPage
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -53,7 +53,7 @@ class WeCouldNotConfirmController @Inject() (
       }
       val data = Json.obj(
         "affinity" -> affinity,
-        "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode).url
+        "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
       )
       renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
   }
