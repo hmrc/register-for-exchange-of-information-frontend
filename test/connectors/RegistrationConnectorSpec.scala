@@ -57,7 +57,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "return 200 and a registration response when individual is matched by nino" in {
 
-        stubResponse("/individual/id/nino", OK, withIDResponse)
+        stubResponse("/individual/nino", OK, withIDResponse)
 
         val result = connector.registerWithID(registrationWithIDPayload)
         result.value.futureValue mustBe Right(registrationWithIDResponse)
@@ -73,7 +73,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "return 503 and ServiceUnavailableError when remote is unavailable " in {
 
-        stubResponse("/individual/id/nino", SERVICE_UNAVAILABLE, "{}")
+        stubResponse("/individual/nino", SERVICE_UNAVAILABLE, "{}")
 
         val result = connector.registerWithID(registrationWithIDPayload)
         result.value.futureValue mustBe Left(ServiceUnavailableError)
