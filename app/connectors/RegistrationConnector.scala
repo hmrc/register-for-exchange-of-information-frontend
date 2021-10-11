@@ -18,7 +18,7 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
-import models.register.error.ApiError.{NotFoundError, ServiceUnavailableError}
+import models.register.error.ApiError.{BadRequest, NotFoundError, ServiceUnavailableError}
 import models.register.error.{ApiError, RegisterWithIDErrorResponse}
 import models.register.request.RegisterWithID
 import models.register.response.RegistrationWithIDResponse
@@ -48,6 +48,9 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
         case responseMessage if responseMessage.status == NOT_FOUND =>
           logger.error("Error in individual registration with nino: not found.")
           Left(NotFoundError)
+        case responseMessage if responseMessage.status == BAD_REQUEST =>
+          logger.error("Error in individual registration with nino: invalid.")
+          Left(BadRequest)
         case responseMessage =>
           responseMessage.json.validate[RegisterWithIDErrorResponse] match {
             case JsSuccess(response, _) =>
