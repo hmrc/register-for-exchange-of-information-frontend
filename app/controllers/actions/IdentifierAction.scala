@@ -26,7 +26,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
+import uk.gov.hmrc.auth.core.retrieve.~
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
@@ -43,16 +43,20 @@ class AuthenticatedIdentifierAction @Inject() (
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId => block(IdentifierRequest(request, internalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
-    } recover {
-      case _: NoActiveSession =>
-        Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-      case _: AuthorisationException =>
-        Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad())
-    }
+    authorised()
+      .retrieve(Retrievals.internalId and Retrievals.allEnrolments) {
+        case _ ~ enrolments if enrolments.enrolments.exists(_.key == config.enrolmentKey("mdr")) => //TODO should come from the request path
+          Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
+        case Some(internalID) ~ _ => block(IdentifierRequest(request, internalID))
+        case _                    => throw new UnauthorizedException("Unable to retrieve internal Id")
+      }
+      .recover {
+        case _: NoActiveSession =>
+          Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+        case _: InsufficientEnrolments => Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad())
+        case _: AuthorisationException =>
+          Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad())
+      }
   }
 }
 
