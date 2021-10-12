@@ -96,7 +96,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad("identity").url
     }
 
     "return redirect for a GET when there is no data" in {
@@ -108,7 +108,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       status(result) mustEqual SEE_OTHER
 
-      redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad().url
+      redirectLocation(result).value mustEqual controllers.routes.ThereIsAProblemController.onPageLoad().url
     }
   }
 }

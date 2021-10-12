@@ -17,10 +17,8 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.UserAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.NotMatchingInfoPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -36,9 +34,8 @@ class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtur
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(NotMatchingInfoPage, "identity").success.value
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad().url)
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request        = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad("identity").url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

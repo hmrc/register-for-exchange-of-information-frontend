@@ -49,7 +49,7 @@ class SessionActionSpec extends SpecBase with ControllerMockFixtures {
         val result = controller.onPageLoad()(fakeRequest)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).get must startWith(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result).get must startWith(controllers.routes.ThereIsAProblemController.onPageLoad().url)
       }
     }
 
