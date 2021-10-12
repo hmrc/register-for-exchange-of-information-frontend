@@ -17,8 +17,9 @@
 package controllers
 
 import controllers.actions._
-import models.Mode
-import play.api.i18n.{I18nSupport, MessagesApi}
+import models.NormalMode
+import org.slf4j.LoggerFactory
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -31,18 +32,21 @@ class WeCouldNotConfirmController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction, // TODO replace with DataRequireAction when actual flow is ready
+  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  private val logger = LoggerFactory.getLogger(getClass)
+
+  def onPageLoad(key: String): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
+      val messages = implicitly[Messages]
       val data = Json.obj(
-        "affinity" -> "[placeholder]", // TODO replace with dinamic property when actual flow is ready
-        "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode).url
+        "affinity" -> messages(s"weCouldNotConfirm.$key"),
+        "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
       )
       renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
   }

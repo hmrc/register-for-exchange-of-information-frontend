@@ -19,6 +19,7 @@ package generators
 import models.{Address, Country}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+import uk.gov.hmrc.domain.Nino
 
 trait ModelGenerators {
 
@@ -51,13 +52,21 @@ trait ModelGenerators {
       } yield Address(addressLine1, addressLine2, addressLine3, addressLine4, postCode, country)
     }
 
-  implicit lazy val arbitraryWhatIsYourName: Arbitrary[models.WhatIsYourName] =
+  implicit lazy val arbitraryName: Arbitrary[models.Name] =
     Arbitrary {
       for {
         firstName <- arbitrary[String]
         lastName  <- arbitrary[String]
-      } yield models.WhatIsYourName(firstName, lastName)
+      } yield models.Name(firstName, lastName)
     }
+
+  implicit val arbitraryNino: Arbitrary[Nino] = Arbitrary {
+    for {
+      prefix <- Gen.oneOf(Nino.validPrefixes)
+      number <- Gen.choose(0, 999999)
+      suffix <- Gen.oneOf(Nino.validSuffixes)
+    } yield Nino(f"$prefix$number%06d$suffix")
+  }
 
   implicit lazy val arbitraryBussinessType: Arbitrary[models.BusinessType] =
     Arbitrary {

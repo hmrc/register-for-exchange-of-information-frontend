@@ -16,23 +16,36 @@
 
 package services
 
+import cats.implicits._
+import connectors.RegistrationConnector
 import models.matching.MatchingInfo
+import models.register.error.ApiError
+import models.register.error.ApiError.MandatoryInformationMissingError
+import models.register.request.RegisterWithID
+import models.register.response.RegistrationWithIDResponse
 import models.subscription.BusinessDetails
 import models.subscription.response.DisplaySubscriptionForCBCResponse
-import models.{UserAnswers, WhatIsYourName}
+import models.{Name, UserAnswers}
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject() () {
+class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
-  def sendIndividualMatchingInformation(nino: String, name: Option[WhatIsYourName], dob: Option[LocalDate])(implicit
+  type ApiT[T] = Future[Either[ApiError, T]]
+
+  def sendIndividualMatchingInformation(nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[Exception, MatchingInfo]] =
-    Future.successful(Left(new RuntimeException)) // TODO implement
+  ): Future[Either[ApiError, MatchingInfo]] =
+    registrationConnector
+      .registerWithID(RegisterWithID(name, dob, "NINO", nino.nino))
+      .subflatMap(_.safeId.toRight(MandatoryInformationMissingError))
+      .map(MatchingInfo)
+      .value
 
   def sendBusinessMatchingInformation(userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,

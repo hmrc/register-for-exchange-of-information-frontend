@@ -16,7 +16,6 @@
 
 package models.register.request
 
-import models.register.{RequestCommon, RequestWithIDDetails}
 import play.api.libs.json.{Format, Json}
 
 case class RegisterWithIDRequest(requestCommon: RequestCommon, requestDetail: RequestWithIDDetails)

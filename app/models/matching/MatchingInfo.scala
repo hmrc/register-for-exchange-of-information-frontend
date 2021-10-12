@@ -16,4 +16,4 @@
 
 package models.matching
 
-case class MatchingInfo(hasSubscriptionDetails: Boolean, safeId: Option[String], subscriptionID: Option[String])
+case class MatchingInfo(safeId: String)

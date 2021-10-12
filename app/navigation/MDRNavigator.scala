@@ -41,7 +41,6 @@ class MDRNavigator @Inject() () extends Navigator {
     case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
     case BusinessWithoutIDNamePage             => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode))
-    case WhatIsYourDateOfBirthPage             => _ => Some(routes.WeHaveConfirmedYourIdentityController.onPageLoad())
     case BusinessTypePage                      => _ => Some(routes.UTRController.onPageLoad(NormalMode))
     case UTRPage                               => isSoleProprietor(NormalMode)
     case SoleNamePage                          => _ => Some(routes.SoleDateOfBirthController.onPageLoad(NormalMode))
@@ -94,6 +93,6 @@ class MDRNavigator @Inject() () extends Navigator {
   private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsThisYourBusinessPage) map {
       case true  => routes.IndexController.onPageLoad() // todo replace once impl
-      case false => routes.WeCouldNotConfirmController.onPageLoad()
+      case false => routes.WeCouldNotConfirmController.onPageLoad("identity")
     }
 }

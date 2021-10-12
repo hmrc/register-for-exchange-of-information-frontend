@@ -16,8 +16,8 @@
 
 package models.subscription
 
-import models.register.response.{IndividualResponse, OrganisationResponse, PayloadRegistrationWithIDResponse}
-import models.subscription.response.AddressResponse
+import models.register.response.RegistrationWithIDResponse
+import models.subscription.response.{AddressResponse, IndividualResponse, OrganisationResponse}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
@@ -32,8 +32,8 @@ object BusinessDetails {
 
   implicit lazy val writes: Writes[BusinessDetails] = Json.writes[BusinessDetails]
 
-  def fromRegistrationMatch(payload: PayloadRegistrationWithIDResponse): Option[BusinessDetails] = {
-    val addressExtracted: Option[AddressResponse] =
+  def fromRegistrationMatch(payload: RegistrationWithIDResponse): Option[BusinessDetails] = {
+    val addressExtracted =
       payload.registerWithIDResponse.responseDetail.map(_.address)
 
     val nameExtracted: Option[String] =

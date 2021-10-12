@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.shared
 
-import play.api.libs.json._
+import play.api.libs.json.Json
 
-//strings between 1 and 35 inclusive ^[a-zA-Z &`\\-\\'^]{1,35}$
-case class WhatIsYourName(firstName: String, lastName: String)
+case class Parameters(paramName: String, paramValue: String)
 
-object WhatIsYourName {
-  implicit val format = Json.format[WhatIsYourName]
+object Parameters {
+  implicit val formats = Json.format[Parameters]
 }

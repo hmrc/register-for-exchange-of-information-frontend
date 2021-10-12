@@ -16,9 +16,12 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 GET         /unauthorised                                controllers.auth.UnauthorisedController.onPageLoad
 
-GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
+# TODO verify if necessary
+GET         /journey-recovery                            controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
 
-GET         /check-answers                              controllers.CheckYourAnswersController.onPageLoad()
+GET         /there-is-a-problem                          controllers.ThereIsAProblemController.onPageLoad()
+
+GET         /check-answers                               controllers.CheckYourAnswersController.onPageLoad()
 
 GET         /register/need-contact-details               controllers.NeedContactDetailsController.onPageLoad()
 
@@ -79,7 +82,7 @@ POST       /register/registration-type                   controllers.WhatAreYouR
 GET        /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/could-not-confirm-identity          controllers.WeCouldNotConfirmController.onPageLoad(mode: models.Mode = models.CheckMode)
+GET        /register/could-not-confirm/:key              controllers.WeCouldNotConfirmController.onPageLoad(key: String)
 
 GET        /register/have-ni-number                      controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/have-ni-number                      controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)

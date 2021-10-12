@@ -35,5 +35,4 @@ class WhatIsYourNationalInsuranceNumberFormProvider @Inject() extends Mappings w
         .verifying(regexp(ninoRegex, "whatIsYourNationalInsuranceNumber.error.invalid"))
         .verifying(maxLength(maxLength, "whatIsYourNationalInsuranceNumber.error.length"))
     )
-
 }

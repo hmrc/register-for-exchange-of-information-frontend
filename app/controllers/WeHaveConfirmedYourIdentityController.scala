@@ -18,8 +18,10 @@ package controllers
 
 import controllers.actions._
 import models.matching.MatchingInfo
+import models.register.error.ApiError
+import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
-import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -46,20 +48,22 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
 
     implicit request =>
-      matchInfo flatMap {
-        // TODO implement redirection logic
-        case _ => renderer.render("weHaveConfirmedYourIdentity.njk").map(Ok(_))
+      matchIndividualInfo flatMap {
+        case Right(_) =>
+          renderer.render("weHaveConfirmedYourIdentity.njk").map(Ok(_))
+        case Left(NotFoundError) =>
+          Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
+        case _ =>
+          Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
       }
 
   }
 
-  private def matchInfo(implicit request: DataRequest[AnyContent]): Future[Either[Exception, MatchingInfo]] =
-    request.userAnswers
-      .get(WhatIsYourNationalInsuranceNumberPage)
-      .fold[Future[Either[Exception, MatchingInfo]]](Future.successful(Left(new RuntimeException))) {
-        nino =>
-          val name = request.userAnswers.get(WhatIsYourNamePage) //.orElse(userAnswers.get(SoleTraderNamePage))
-          val dob  = request.userAnswers.get(WhatIsYourDateOfBirthPage)
-          matchingService.sendIndividualMatchingInformation(nino, name, dob)
-      }
+  private def matchIndividualInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
+    (for {
+      nino <- request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
+      name <- request.userAnswers.get(WhatIsYourNamePage).orElse(request.userAnswers.get(SoleNamePage))
+      dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
+    } yield matchingService.sendIndividualMatchingInformation(nino, name, dob))
+      .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
 }

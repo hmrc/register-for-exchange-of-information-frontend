@@ -29,6 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -62,7 +63,13 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage).fold(form)(form.fill)).map(Ok(_))
+      render(mode,
+             request.userAnswers
+               .get(WhatIsYourNationalInsuranceNumberPage)
+               .fold(form)(
+                 nino => form.fill(nino.nino)
+               )
+      ).map(Ok(_))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -73,7 +80,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
           formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, updatedAnswers))
         )

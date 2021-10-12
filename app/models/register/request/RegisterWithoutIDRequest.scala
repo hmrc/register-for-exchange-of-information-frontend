@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.request
 
 import play.api.libs.json.Json
 
-case class Identification(idNumber: String, issuingInstitution: String, issuingCountryCode: String)
+case class RegisterWithoutIDRequest(requestCommon: RequestCommon, requestDetail: RequestWithoutIDDetails)
 
-object Identification {
-  implicit val formats = Json.format[Identification]
+object RegisterWithoutIDRequest {
+  implicit val format = Json.format[RegisterWithoutIDRequest]
 }

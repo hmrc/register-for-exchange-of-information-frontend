@@ -35,8 +35,7 @@ class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtur
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad().url)
+      val request        = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad("identity").url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.request
 
-import play.api.libs.json.Json
+import models.Name
+import play.api.libs.json.{Format, Json}
 
-case class RequestParameters(paramName: String, paramValue: String)
+import java.time.LocalDate
 
-object RequestParameters {
-  implicit val formats = Json.format[RequestParameters]
+case class RegisterWithID(registerWithIDRequest: RegisterWithIDRequest)
+
+object RegisterWithID {
+  implicit val format: Format[RegisterWithID] = Json.format[RegisterWithID]
+
+  def apply(name: Name, dob: LocalDate, identifierName: String, identifierValue: String): RegisterWithID =
+    RegisterWithID(
+      RegisterWithIDRequest(
+        RequestCommon("MDR"), // TODO refactor hard-coded argument
+        RequestWithIDDetails(name, dob, identifierName, identifierValue)
+      )
+    )
 }

@@ -18,8 +18,11 @@ package models.register.response
 
 import play.api.libs.json.{Format, Json}
 
-case class PayloadRegistrationWithIDResponse(registerWithIDResponse: RegisterWithIDResponse)
+case class RegistrationWithIDResponse(registerWithIDResponse: RegisterWithIDResponse) {
 
-object PayloadRegistrationWithIDResponse {
-  implicit val format: Format[PayloadRegistrationWithIDResponse] = Json.format[PayloadRegistrationWithIDResponse]
+  val safeId: Option[String] = registerWithIDResponse.responseDetail.map(_.SAFEID)
+}
+
+object RegistrationWithIDResponse {
+  implicit val format: Format[RegistrationWithIDResponse] = Json.format[RegistrationWithIDResponse]
 }

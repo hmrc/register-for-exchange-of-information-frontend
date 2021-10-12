@@ -16,17 +16,17 @@
 
 package pages
 
-import models.WhatIsYourName
+import models.Name
 import pages.behaviours.PageBehaviours
 
 class WhatIsYourNamePageSpec extends PageBehaviours {
 
   "WhatIsYourNamePage" - {
 
-    beRetrievable[WhatIsYourName](WhatIsYourNamePage)
+    beRetrievable[Name](WhatIsYourNamePage)
 
-    beSettable[WhatIsYourName](WhatIsYourNamePage)
+    beSettable[Name](WhatIsYourNamePage)
 
-    beRemovable[WhatIsYourName](WhatIsYourNamePage)
+    beRemovable[Name](WhatIsYourNamePage)
   }
 }

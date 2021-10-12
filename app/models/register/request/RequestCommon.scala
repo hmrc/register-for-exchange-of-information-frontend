@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models.register
+package models.register.request
 
+import models.shared.Parameters
 import play.api.libs.json.Json
 
 import java.time.format.DateTimeFormatter
@@ -26,19 +27,19 @@ case class RequestCommon(
   receiptDate: String,
   regime: String,
   acknowledgementReference: String,
-  requestParameters: Option[Seq[RequestParameters]]
+  requestParameters: Option[Seq[Parameters]]
 )
 
 object RequestCommon {
   implicit val format = Json.format[RequestCommon]
 
-  def forService: RequestCommon = {
+  def apply(regime: String): RequestCommon = {
     val acknRef: String = UUID.randomUUID().toString.replaceAll("-", "") //uuids are 36 and spec demands 32
     //Format: ISO 8601 YYYY-MM-DDTHH:mm:ssZ e.g. 2020-09-23T16:12:11Z
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
     val dateTime: String = ZonedDateTime
       .now(ZoneId.of("UTC"))
       .format(formatter)
-    RequestCommon(dateTime, "DAC", acknRef, None)
+    RequestCommon(dateTime, regime, acknRef, None)
   }
 }
