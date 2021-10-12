@@ -17,7 +17,7 @@ GET         /account/signed-out                          controllers.auth.Signed
 GET         /unauthorised                                controllers.auth.UnauthorisedController.onPageLoad
 
 # TODO verify if necessary
-GET         /there-is-a-problem-                         controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
+GET         /journey-recovery                            controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
 
 GET         /there-is-a-problem                          controllers.ThereIsAProblemController.onPageLoad()
 
@@ -82,8 +82,7 @@ POST       /register/registration-type                   controllers.WhatAreYouR
 GET        /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/could-not-confirm-identity          controllers.WeCouldNotConfirmController.onPageLoad(key: String  = "identity")
-GET        /register/could-not-confirm-business          controllers.WeCouldNotConfirmController.onPageLoad(key: String  = "business")
+GET        /register/could-not-confirm/:key              controllers.WeCouldNotConfirmController.onPageLoad(key: String)
 
 GET        /register/have-ni-number                      controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/have-ni-number                      controllers.DoYouHaveNINController.onSubmit(mode: models.Mode = models.NormalMode)
