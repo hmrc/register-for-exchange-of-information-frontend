@@ -18,6 +18,7 @@ package pages
 
 import play.api.libs.json.JsPath
 
+// TODO use UniqueTaxpayerReference instead of String
 case object UTRPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString

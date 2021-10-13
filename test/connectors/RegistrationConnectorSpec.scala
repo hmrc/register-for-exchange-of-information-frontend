@@ -59,7 +59,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubResponse("/individual/nino", OK, withIDResponse)
 
-        val result = connector.registerWithID(registrationWithIDPayload)
+        val result = connector.withIndividualNino(registrationWithIDPayload)
         result.value.futureValue mustBe Right(registrationWithIDResponse)
       }
 
@@ -67,7 +67,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubResponse("/individual/id/nino", NOT_FOUND, "{}")
 
-        val result = connector.registerWithID(registrationWithIDPayload)
+        val result = connector.withIndividualNino(registrationWithIDPayload)
         result.value.futureValue mustBe Left(NotFoundError)
       }
 
@@ -75,7 +75,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubResponse("/individual/nino", SERVICE_UNAVAILABLE, "{}")
 
-        val result = connector.registerWithID(registrationWithIDPayload)
+        val result = connector.withIndividualNino(registrationWithIDPayload)
         result.value.futureValue mustBe Left(ServiceUnavailableError)
       }
 

@@ -20,15 +20,18 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels._
 
-sealed trait BusinessType
+sealed trait BusinessType {
+  val code: String
+}
 
 object BusinessType extends Enumerable.Implicits {
 
-  case object LimitedCompany extends WithName("limited") with BusinessType
-  case object Sole extends WithName("sole") with BusinessType
-  case object Partnership extends WithName("partnership") with BusinessType
-  case object LimitedPartnership extends WithName("limitedPartnership") with BusinessType
-  case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with BusinessType
+  // TODO implement correct business types and codes
+  case object LimitedCompany extends WithName("limited") with BusinessType { val code = "0001" }
+  case object Sole extends WithName("sole") with BusinessType { val code = "0002" }
+  case object Partnership extends WithName("partnership") with BusinessType { val code = "0003" }
+  case object LimitedPartnership extends WithName("limitedPartnership") with BusinessType { val code = "0004" }
+  case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with BusinessType { val code = "0005" }
 
   val values: Seq[BusinessType] = Seq(
     LimitedCompany,

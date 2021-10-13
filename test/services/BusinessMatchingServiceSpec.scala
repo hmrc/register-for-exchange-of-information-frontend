@@ -81,7 +81,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Right(registrationWithIDResponse))
 
-        when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
+        when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
 
@@ -92,7 +92,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
 
-        when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
+        when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
 

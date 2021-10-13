@@ -18,10 +18,22 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.Mode
+import models.{Mode, UniqueTaxpayerReference}
+import models.matching.MatchingInfo
+import models.register.error.ApiError
+import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
 import navigation.MDRNavigator
-import pages.IsThisYourBusinessPage
+import pages.{
+  BusinessNamePage,
+  BusinessTypePage,
+  IsThisYourBusinessPage,
+  SoleNamePage,
+  UTRPage,
+  WhatIsYourDateOfBirthPage,
+  WhatIsYourNamePage,
+  WhatIsYourNationalInsuranceNumberPage
+}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -29,6 +41,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
+import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -44,6 +57,7 @@ class IsThisYourBusinessController @Inject() (
   requireData: DataRequiredAction,
   formProvider: IsThisYourBusinessFormProvider,
   val controllerComponents: MessagesControllerComponents,
+  matchingService: BusinessMatchingService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -61,10 +75,37 @@ class IsThisYourBusinessController @Inject() (
     renderer.render("isThisYourBusiness.njk", data)
   }
 
+  // TODO clean-up before PR
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)).map(Ok(_))
+      println("?? " + request.userAnswers.get(BusinessNamePage))
+      println("?? " + request.userAnswers.get(UTRPage))
+      matchBusinessInfo
+        .map {
+          i => println(i); i
+        }
+        .flatMap {
+          case Right(_) =>
+            render(mode, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)).map(Ok(_))
+          case Left(NotFoundError) =>
+            Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("organisation")))
+          case _ =>
+            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
+        }
   }
+
+  private def matchBusinessInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
+    (for {
+      utr <- request.userAnswers.get(UTRPage)
+      businessName <- request.userAnswers
+        .get(BusinessNamePage)
+        .orElse(request.userAnswers.get(SoleNamePage).map {
+          name => s"${name.firstName} ${name.lastName}"
+        })
+      //TODO: ETMP data suggests sole trader business partner accounts are individual records
+      businessType <- request.userAnswers.get(BusinessTypePage)
+    } yield matchingService.sendBusinessMatchingInformation(utr, businessName, businessType))
+      .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>

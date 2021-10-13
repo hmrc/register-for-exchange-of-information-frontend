@@ -22,10 +22,7 @@ import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.MandatoryInformationMissingError
 import models.register.request.RegisterWithID
-import models.register.response.RegistrationWithIDResponse
-import models.subscription.BusinessDetails
-import models.subscription.response.DisplaySubscriptionForCBCResponse
-import models.{Name, UserAnswers}
+import models.{BusinessType, Name, UniqueTaxpayerReference}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -40,16 +37,20 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
   def sendIndividualMatchingInformation(nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ApiError, MatchingInfo]] =
+  ): ApiT[MatchingInfo] =
     registrationConnector
-      .registerWithID(RegisterWithID(name, dob, "NINO", nino.nino))
+      .withIndividualNino(RegisterWithID(name, dob, "NINO", nino.nino))
       .subflatMap(_.safeId.toRight(MandatoryInformationMissingError))
       .map(MatchingInfo)
       .value
 
-  def sendBusinessMatchingInformation(userAnswers: UserAnswers)(implicit
+  def sendBusinessMatchingInformation(utr: String, businessName: String, businessType: BusinessType)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[(Option[BusinessDetails], Option[String], Option[DisplaySubscriptionForCBCResponse])] =
-    Future.failed(new RuntimeException) // TODO implement
+  ): ApiT[MatchingInfo] =
+    registrationConnector
+      .withOrganisationUtr(RegisterWithID(businessName, businessType, "UTR", utr))
+      .subflatMap(_.safeId.toRight(MandatoryInformationMissingError))
+      .map(MatchingInfo)
+      .value
 }
