@@ -40,17 +40,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 
-  val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(UTRPage, "UTR")
-    .success
-    .value
-    .set(BusinessNamePage, "Name")
-    .success
-    .value
-    .set(BusinessTypePage, BusinessType.LimitedCompany)
-    .success
-    .value
-
   val mockMatchingService: BusinessMatchingService = mock[BusinessMatchingService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
@@ -74,6 +63,17 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+
+      val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(UTRPage, "UTR")
+        .success
+        .value
+        .set(BusinessNamePage, "Name")
+        .success
+        .value
+        .set(BusinessTypePage, BusinessType.LimitedCompany)
+        .success
+        .value
 
       retrieveUserAnswersData(validUserAnswers)
       val request        = FakeRequest(GET, loadRoute)
@@ -101,8 +101,19 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = validUserAnswers.set(IsThisYourBusinessPage, true).success.value
-      retrieveUserAnswersData(userAnswers)
+      val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(UTRPage, "UTR")
+        .success
+        .value
+        .set(BusinessNamePage, "Name")
+        .success
+        .value
+        .set(BusinessTypePage, BusinessType.LimitedCompany)
+        .success
+        .value
+        .set(IsThisYourBusinessPage, true).success.value
+
+      retrieveUserAnswersData(validUserAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
