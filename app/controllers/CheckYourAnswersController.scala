@@ -17,13 +17,18 @@
 package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.BusinessType.Sole
+import models.{Mode, UserAnswers, WhatAreYouRegisteringAs}
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.requests.DataRequest
 import navigation.Navigator
+import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.CheckYourAnswersHelper
 
 import javax.inject.Inject
@@ -43,17 +48,37 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      val helper = new CheckYourAnswersHelper(request.userAnswers)
+      val helper                                = new CheckYourAnswersHelper(request.userAnswers)
+      val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
+
+      val contactHeading = if (getRegisteringAsBusiness()) "checkYourAnswers.firstContact.h2" else "checkYourAnswers.contactDetails.h2"
+
+      val header: String =
+        (request.userAnswers.get(BusinessTypePage), request.userAnswers.get(WhatAreYouRegisteringAsPage)) match {
+          case (Some(_), _)                                                => "checkYourAnswers.businessDetails.h2"
+          case (_, Some(WhatAreYouRegisteringAs.RegistrationTypeBusiness)) => "checkYourAnswers.businessDetails.h2"
+          case _                                                           => "checkYourAnswers.individualDetails.h2"
+        }
 
       renderer
         .render(
           "checkYourAnswers.njk",
           Json.obj(
-            "firstContactList"  -> helper.buildFirstContact,
-            "secondContactList" -> helper.buildSecondContact,
-            "action"            -> Navigator.checkYourAnswers.url // todo change once backend for onSubmit is implemented
+            "header"              -> header,
+            "contactHeading"      -> contactHeading,
+            "isBusiness"          -> getRegisteringAsBusiness(),
+            "businessDetailsList" -> businessDetails,
+            "firstContactList"    -> helper.buildFirstContact,
+            "secondContactList"   -> helper.buildSecondContact,
+            "action"              -> Navigator.checkYourAnswers.url // todo change once backend for onSubmit is implemented
           )
         )
         .map(Ok(_))
   }
+
+  private def getRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
+      case Some(RegistrationTypeBusiness) => true
+      case _                              => false
+    }
 }
