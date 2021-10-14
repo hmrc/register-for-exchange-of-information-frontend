@@ -78,20 +78,14 @@ class IsThisYourBusinessController @Inject() (
   // TODO clean-up before PR
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      println("?? " + request.userAnswers.get(BusinessNamePage))
-      println("?? " + request.userAnswers.get(UTRPage))
-      matchBusinessInfo
-        .map {
-          i => println(i); i
-        }
-        .flatMap {
-          case Right(_) =>
-            render(mode, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)).map(Ok(_))
-          case Left(NotFoundError) =>
-            Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("organisation")))
-          case _ =>
-            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
-        }
+      matchBusinessInfo flatMap {
+        case Right(_) =>
+          render(mode, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)).map(Ok(_))
+        case Left(NotFoundError) =>
+          Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("organisation")))
+        case _ =>
+          Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
+      }
   }
 
   private def matchBusinessInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
