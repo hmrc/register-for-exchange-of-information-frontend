@@ -16,8 +16,8 @@
 
 package helpers
 
-import models.register.response.{RegisterWithIDResponse, RegisterWithIDResponseDetail, RegistrationWithIDResponse}
 import models.register.response.details.{AddressResponse, IndividualResponse}
+import models.register.response.{RegisterWithIDResponse, RegisterWithIDResponseDetail, RegistrationWithIDResponse}
 import models.shared.{ContactDetails, Parameters, ResponseCommon}
 
 object RegisterHelper {
