@@ -21,7 +21,7 @@ import forms.IsContactTelephoneFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.CBCRNavigator
-import pages.IsContactTelephonePage
+import pages.{ContactNamePage, IsContactTelephonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -59,7 +59,7 @@ class IsContactTelephoneController @Inject() (
   private val individualTitleKey   = "isContactTelephone.individual.heading"
   private val individualHeadingKey = "isContactTelephone.individual.heading"
 
-  private def render(mode: Mode, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Boolean], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val (pageTitle, heading) = if (hasContactName()) {
       (businessTitleKey, businessHeadingKey)
@@ -80,12 +80,10 @@ class IsContactTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      if (hasContactName()) {
-        SomeInformationIsMissing.isMissingContactName {
-          render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), _).map(Ok(_))
-        }
-      } else {
-        render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), "").map(Ok(_))
+      request.userAnswers
+        .get(ContactNamePage) match {
+        case Some(contactName) => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), contactName).map(Ok(_))
+        case _                 => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)).map(Ok(_))
       }
   }
 
@@ -94,14 +92,7 @@ class IsContactTelephoneController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            if (hasContactName()) {
-              SomeInformationIsMissing.isMissingContactName {
-                render(mode, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
-              }
-            } else {
-              render(mode, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill), "").map(BadRequest(_))
-            },
+          formWithErrors => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))

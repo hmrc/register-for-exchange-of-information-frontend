@@ -61,7 +61,7 @@ class ContactEmailController @Inject() (
   private val individualTitleKey   = "contactEmail.individual.heading"
   private val individualHeadingKey = "contactEmail.individual.title"
 
-  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val (pageTitle, heading) = if (hasContactName()) {
       (businessTitleKey, businessHeadingKey)
@@ -81,12 +81,10 @@ class ContactEmailController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      if (hasContactName()) {
-        SomeInformationIsMissing.isMissingContactName {
-          render(mode, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill), _).map(Ok(_))
-        }
-      } else {
-        render(mode, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill), "").map(Ok(_))
+      request.userAnswers
+        .get(ContactNamePage) match {
+        case Some(contactName) => render(mode, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill), contactName).map(Ok(_))
+        case _                 => render(mode, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill)).map(Ok(_))
       }
   }
 
@@ -95,14 +93,7 @@ class ContactEmailController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            if (hasContactName()) {
-              SomeInformationIsMissing.isMissingContactName {
-                render(mode, formWithErrors, _).map(BadRequest(_))
-              }
-            } else {
-              render(mode, formWithErrors, "").map(BadRequest(_))
-            },
+          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
