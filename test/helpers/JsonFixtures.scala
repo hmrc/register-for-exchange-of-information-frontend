@@ -79,7 +79,7 @@ object JsonFixtures {
   )
 
   val withIDIndividualResponse: String =
-    """
+    s"""
       |{
       |"registerWithIDResponse": {
       |"responseCommon": {

@@ -16,4 +16,12 @@
 
 package models.matching
 
-case class MatchingInfo(safeId: String)
+import models.register.response.details.AddressResponse
+import play.api.libs.json.Json
+
+case class MatchingInfo(safeId: String, name: Option[String], address: Option[AddressResponse])
+
+object MatchingInfo {
+
+  implicit val format = Json.format[MatchingInfo]
+}

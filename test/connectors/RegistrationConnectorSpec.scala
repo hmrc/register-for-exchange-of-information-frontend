@@ -73,7 +73,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "return 404 and NotFoundError when there is no match" in {
 
-        stubResponse("/individual/id/nino", NOT_FOUND, "{}")
+        stubResponse("/individual/nino", NOT_FOUND, withIDIndividualResponse)
 
         val result = connector.withIndividualNino(registrationWithIndividualIDPayload)
         result.value.futureValue mustBe Left(NotFoundError)
@@ -81,7 +81,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "return 503 and ServiceUnavailableError when remote is unavailable " in {
 
-        stubResponse("/individual/nino", SERVICE_UNAVAILABLE, "{}")
+        stubResponse("/individual/nino", SERVICE_UNAVAILABLE, withIDIndividualResponse)
 
         val result = connector.withIndividualNino(registrationWithIndividualIDPayload)
         result.value.futureValue mustBe Left(ServiceUnavailableError)
@@ -101,7 +101,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "return 404 and NotFoundError when there is no match" in {
 
-        stubResponse("/organisation/utr", NOT_FOUND, "{}")
+        stubResponse("/organisation/utr", NOT_FOUND, withIDOrganisationResponse)
 
         val result = connector.withOrganisationUtr(registrationWithIndividualIDPayload)
         result.value.futureValue mustBe Left(NotFoundError)
@@ -109,7 +109,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "return 503 and ServiceUnavailableError when remote is unavailable " in {
 
-        stubResponse("/organisation/utr", SERVICE_UNAVAILABLE, "{}")
+        stubResponse("/organisation/utr", SERVICE_UNAVAILABLE, withIDOrganisationResponse)
 
         val result = connector.withOrganisationUtr(registrationWithOrganisationIDPayload)
         result.value.futureValue mustBe Left(ServiceUnavailableError)

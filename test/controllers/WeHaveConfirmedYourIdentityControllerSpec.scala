@@ -66,7 +66,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     "return OK and the correct view for a GET when there is a match" in {
 
       when(mockMatchingService.sendIndividualMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId"))))
+        .thenReturn(Future.successful(Right(MatchingInfo("safeId", None, None))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -99,16 +99,22 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad("identity").url
     }
 
-    "return redirect for a GET when there is no data" in {
+    "return return Service Unavailable for a GET when there is no data" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad().url)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad().url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
 
-      status(result) mustEqual SEE_OTHER
+      status(result) mustEqual SERVICE_UNAVAILABLE
 
-      redirectLocation(result).value mustEqual controllers.routes.ThereIsAProblemController.onPageLoad().url
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
     }
   }
 }

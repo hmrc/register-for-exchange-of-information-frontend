@@ -64,7 +64,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
         case Left(NotFoundError) =>
           Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
         case _ =>
-          Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
+          renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
       }
 
   }

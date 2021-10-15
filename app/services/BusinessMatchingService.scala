@@ -22,7 +22,7 @@ import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.MandatoryInformationMissingError
 import models.register.request.RegisterWithID
-import models.{BusinessType, Name, UniqueTaxpayerReference}
+import models.{BusinessType, Name}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -40,8 +40,14 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
   ): ApiT[MatchingInfo] =
     registrationConnector
       .withIndividualNino(RegisterWithID(name, dob, "NINO", nino.nino))
-      .subflatMap(_.safeId.toRight(MandatoryInformationMissingError))
-      .map(MatchingInfo)
+      .subflatMap {
+        response =>
+          response.safeId
+            .map {
+              MatchingInfo(_, None, None)
+            }
+            .toRight(MandatoryInformationMissingError)
+      }
       .value
 
   def sendBusinessMatchingInformation(utr: String, businessName: String, businessType: BusinessType)(implicit
@@ -50,7 +56,13 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
   ): ApiT[MatchingInfo] =
     registrationConnector
       .withOrganisationUtr(RegisterWithID(businessName, businessType, "UTR", utr))
-      .subflatMap(_.safeId.toRight(MandatoryInformationMissingError))
-      .map(MatchingInfo)
+      .subflatMap {
+        response =>
+          (for {
+            safeId <- response.safeId
+            name    = response.organisationName
+            address = response.address
+          } yield MatchingInfo(safeId, name, address)).toRight(MandatoryInformationMissingError)
+      }
       .value
 }

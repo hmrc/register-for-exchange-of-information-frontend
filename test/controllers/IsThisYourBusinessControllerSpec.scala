@@ -18,6 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.matching.MatchingInfo
+import models.register.response.details.AddressResponse
 import models.{BusinessType, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -67,10 +68,12 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   "IsThisYourBusiness Controller" - {
 
+    val address = AddressResponse("address", None, None, None, None, "GB")
+
     "must return OK and the correct view for a GET" in {
 
       when(mockMatchingService.sendBusinessMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId"))))
+        .thenReturn(Future.successful(Right(MatchingInfo("safeId", Some("name"), Some(address)))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -99,7 +102,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockMatchingService.sendBusinessMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId"))))
+        .thenReturn(Future.successful(Right(MatchingInfo("safeId", Some("name"), Some(address)))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -143,7 +146,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return Service Unavailable and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -152,22 +155,14 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) mustEqual SERVICE_UNAVAILABLE
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(boundForm("value"))
-      )
-
-      templateCaptor.getValue mustEqual "isThisYourBusiness.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
     }
   }
 }
