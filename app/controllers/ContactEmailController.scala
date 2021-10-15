@@ -93,7 +93,7 @@ class ContactEmailController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => render(mode, request.userAnswers.get(ContactEmailPage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
