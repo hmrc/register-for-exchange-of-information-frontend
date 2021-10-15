@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("contactPhone.title"), form.errors) }}
+  {{ title(messages(pageTitle), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -34,9 +34,9 @@
 
         {{ govukInput({
           label: {
-            text: messages('contactPhone.heading', name),
+            text: messages(heading, name),
             isPageHeading: true,
-            classes: "govuk-label--xl text-overflow"
+            classes: "govuk-label--l text-overflow"
           },
           id: "value",
           name: "value",

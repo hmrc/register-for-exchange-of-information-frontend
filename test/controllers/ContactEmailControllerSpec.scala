@@ -17,10 +17,11 @@
 package controllers
 
 import base.ControllerSpecBase
+import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{ContactEmailPage, ContactNamePage}
+import pages.{ContactEmailPage, ContactNamePage, WhatAreYouRegisteringAsPage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -35,7 +36,13 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.ContactEmailFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
+  val userAnswers = UserAnswers(userAnswersId)
+    .set(ContactNamePage, "Name")
+    .success
+    .value
+    .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+    .success
+    .value
 
   "ContactEmail Controller" - {
 
@@ -69,7 +76,18 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers2 = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(ContactEmailPage, "some@email.com").success.value
+      val userAnswers2 =
+        UserAnswers(userAnswersId)
+          .set(ContactNamePage, "Name")
+          .success
+          .value
+          .set(ContactEmailPage, "some@email.com")
+          .success
+          .value
+          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .success
+          .value
+
       retrieveUserAnswersData(userAnswers2)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -132,20 +150,6 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
       templateCaptor.getValue mustEqual "contactEmail.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must redirect to 'SomeInformationIsMissing' when data is missing" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("email", ""))
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
     }
   }
 }

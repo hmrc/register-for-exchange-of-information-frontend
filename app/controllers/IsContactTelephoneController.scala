@@ -21,7 +21,7 @@ import forms.IsContactTelephoneFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.CBCRNavigator
-import pages.IsContactTelephonePage
+import pages.{ContactNamePage, IsContactTelephonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,24 +49,41 @@ class IsContactTelephoneController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private val businessTitleKey     = "isContactTelephone.title"
+  private val businessHeadingKey   = "isContactTelephone.heading"
+  private val individualTitleKey   = "isContactTelephone.individual.heading"
+  private val individualHeadingKey = "isContactTelephone.individual.heading"
+
+  private def render(mode: Mode, form: Form[Boolean], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
+
+    val (pageTitle, heading) = if (hasContactName()) {
+      (businessTitleKey, businessHeadingKey)
+    } else {
+      (individualTitleKey, individualHeadingKey)
+    }
+
     val data = Json.obj(
-      "form"   -> form,
-      "name"   -> name,
-      "action" -> routes.IsContactTelephoneController.onSubmit(mode).url,
-      "radios" -> Radios.yesNo(form("value"))
+      "form"      -> form,
+      "name"      -> name,
+      "pageTitle" -> pageTitle,
+      "heading"   -> heading,
+      "action"    -> routes.IsContactTelephoneController.onSubmit(mode).url,
+      "radios"    -> Radios.yesNo(form("value"))
     )
     renderer.render("isContactTelephone.njk", data)
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      SomeInformationIsMissing.isMissingContactName {
-        render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), _).map(Ok(_))
+      request.userAnswers
+        .get(ContactNamePage) match {
+        case Some(contactName) => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), contactName).map(Ok(_))
+        case _                 => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)).map(Ok(_))
       }
   }
 
@@ -74,10 +92,7 @@ class IsContactTelephoneController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            SomeInformationIsMissing.isMissingContactName {
-              render(mode, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
-            },
+          formWithErrors => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))

@@ -21,7 +21,7 @@ import forms.ContactPhoneFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.CBCRNavigator
-import pages.ContactPhonePage
+import pages.{ContactNamePage, ContactPhonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,24 +49,42 @@ class ContactPhoneController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private val businessTitleKey     = "contactPhone.title"
+  private val businessHeadingKey   = "contactPhone.heading"
+  private val individualTitleKey   = "contactPhone.individual.heading"
+  private val individualHeadingKey = "contactPhone.individual.heading"
+
+  private def render(mode: Mode, form: Form[String], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
+
+    val (pageTitle, heading) = if (hasContactName()) {
+      (businessTitleKey, businessHeadingKey)
+    } else {
+      (individualTitleKey, individualHeadingKey)
+    }
+
     val data = Json.obj(
-      "form"   -> form,
-      "name"   -> name,
-      "action" -> routes.ContactPhoneController.onSubmit(mode).url
+      "form"      -> form,
+      "name"      -> name,
+      "pageTitle" -> pageTitle,
+      "heading"   -> heading,
+      "action"    -> routes.ContactPhoneController.onSubmit(mode).url
     )
     renderer.render("contactPhone.njk", data)
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      SomeInformationIsMissing.isMissingContactName {
-        render(mode, request.userAnswers.get(ContactPhonePage).fold(form)(form.fill), _).map(Ok(_))
+      request.userAnswers
+        .get(ContactNamePage) match {
+        case Some(contactName) => render(mode, request.userAnswers.get(ContactPhonePage).fold(form)(form.fill), contactName).map(Ok(_))
+        case _                 => render(mode, request.userAnswers.get(ContactPhonePage).fold(form)(form.fill)).map(Ok(_))
       }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
@@ -73,10 +92,7 @@ class ContactPhoneController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors =>
-            SomeInformationIsMissing.isMissingContactName {
-              render(mode, request.userAnswers.get(ContactPhonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
-            },
+          formWithErrors => render(mode, request.userAnswers.get(ContactPhonePage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactPhonePage, value))

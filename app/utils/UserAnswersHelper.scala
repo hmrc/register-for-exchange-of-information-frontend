@@ -13,3 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package utils
+
+import models.requests.DataRequest
+import pages.ContactNamePage
+import play.api.mvc.AnyContent
+
+trait UserAnswersHelper {
+
+  def hasContactName()(implicit request: DataRequest[AnyContent]): Boolean =
+    request.userAnswers.get(ContactNamePage) match {
+      case Some(_) => true
+      case _       => false
+    }
+}
