@@ -38,7 +38,7 @@
           <div>
             <div class="govuk-body">{{ name }}</div>
             {% for line in address %}
-              <p class="govuk-body{{ %if !loop.last }} govuk-!-margin-bottom-0{{ %endif }}">{{ line }}</p>
+              <p class="govuk-body{% if not loop.last %} govuk-!-margin-bottom-0{% endif %}">{{ line }}</p>
             {% endfor %}
           </div>
 

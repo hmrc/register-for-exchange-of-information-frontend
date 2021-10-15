@@ -32,12 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
-  type ApiT[T] = Future[Either[ApiError, T]]
+  type MatchingResponseType[T] = Future[Either[ApiError, T]]
 
   def sendIndividualMatchingInformation(nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): ApiT[MatchingInfo] =
+  ): MatchingResponseType[MatchingInfo] =
     registrationConnector
       .withIndividualNino(RegisterWithID(name, dob, "NINO", nino.nino))
       .subflatMap {
@@ -53,7 +53,7 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
   def sendBusinessMatchingInformation(utr: String, businessName: String, businessType: BusinessType)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): ApiT[MatchingInfo] =
+  ): MatchingResponseType[MatchingInfo] =
     registrationConnector
       .withOrganisationUtr(RegisterWithID(businessName, businessType, "UTR", utr))
       .subflatMap {

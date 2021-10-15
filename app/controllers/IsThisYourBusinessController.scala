@@ -95,7 +95,6 @@ class IsThisYourBusinessController @Inject() (
         .orElse(request.userAnswers.get(SoleNamePage).map {
           name => s"${name.firstName} ${name.lastName}"
         })
-      //TODO: ETMP data suggests sole trader business partner accounts are individual records
       businessType <- request.userAnswers.get(BusinessTypePage)
     } yield matchingService.sendBusinessMatchingInformation(utr, businessName, businessType))
       .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
