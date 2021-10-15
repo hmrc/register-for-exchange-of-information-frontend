@@ -26,18 +26,17 @@ sealed trait BusinessType {
 
 object BusinessType extends Enumerable.Implicits {
 
-  // TODO implement correct business types and codes
-  case object LimitedCompany extends WithName("limited") with BusinessType { val code = "0001" }
-  case object Sole extends WithName("sole") with BusinessType { val code = "0002" }
-  case object Partnership extends WithName("partnership") with BusinessType { val code = "0003" }
-  case object LimitedPartnership extends WithName("limitedPartnership") with BusinessType { val code = "0004" }
-  case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with BusinessType { val code = "0005" }
+  case object Sole extends WithName("sole") with BusinessType { val code = "0000" }
+  case object Partnership extends WithName("partnership") with BusinessType { val code = "0001" }
+  case object LimitedPartnership extends WithName("limitedPartnership") with BusinessType { val code = "0002" }
+  case object LimitedCompany extends WithName("limited") with BusinessType { val code = "0003" }
+  case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with BusinessType { val code = "0004" }
 
   val values: Seq[BusinessType] = Seq(
-    LimitedCompany,
     Sole,
     Partnership,
     LimitedPartnership,
+    LimitedCompany,
     UnincorporatedAssociation
   )
 
