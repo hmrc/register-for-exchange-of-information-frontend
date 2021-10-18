@@ -346,7 +346,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
+              .nextPage(BusinessWithoutIDNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode))
         }
       }
@@ -361,7 +361,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(WhatIsTradingNamePage, NormalMode, updatedAnswers)
+              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.WhatIsTradingNameController.onPageLoad(NormalMode))
         }
       }
@@ -376,7 +376,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(AddressWithoutIdPage, NormalMode, updatedAnswers)
+              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode))
         }
       }

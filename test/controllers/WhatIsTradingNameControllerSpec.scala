@@ -89,8 +89,7 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
 
       val filledForm = form.bind(
         Map(
-          "business-name" -> "value 1",
-          "remove"        -> "value 2"
+          "businessName" -> "value 1"
         )
       )
 
@@ -110,7 +109,7 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("business-name", "value 1"), ("remove", "value 2"))
+          .withFormUrlEncodedBody(("businessName", "value 1"))
 
       val result = route(app, request).value
 
