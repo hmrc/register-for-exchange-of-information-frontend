@@ -51,9 +51,11 @@ class CheckYourAnswersController @Inject() (
           Json.obj(
             "firstContactList"  -> helper.buildFirstContact,
             "secondContactList" -> helper.buildSecondContact,
-            "action"            -> Navigator.checkYourAnswers.url // todo change once backend for onSubmit is implemented
+            "action"            -> routes.CheckYourAnswersController.onSubmit().url
           )
         )
         .map(Ok(_))
   }
+
+  def onSubmit(): Action[AnyContent] = ???
 }

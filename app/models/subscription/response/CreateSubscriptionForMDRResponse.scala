@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.subscription.request
+package models.subscription.response
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, Reads}
 
-case class UpdateSubscriptionForCBCRequest(updateSubscriptionForCBCRequest: UpdateSubscriptionDetails)
+case class CreateSubscriptionForMDRResponse(createSubscriptionForMDRResponse: SubscriptionResponse)
 
-object UpdateSubscriptionForCBCRequest {
-  implicit val format: OFormat[UpdateSubscriptionForCBCRequest] = Json.format[UpdateSubscriptionForCBCRequest]
+object CreateSubscriptionForMDRResponse {
+  implicit val reads: Reads[CreateSubscriptionForMDRResponse] = Json.reads[CreateSubscriptionForMDRResponse]
 }

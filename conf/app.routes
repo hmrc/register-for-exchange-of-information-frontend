@@ -22,6 +22,7 @@ GET         /journey-recovery                            controllers.JourneyReco
 GET         /there-is-a-problem                          controllers.ThereIsAProblemController.onPageLoad()
 
 GET         /check-answers                               controllers.CheckYourAnswersController.onPageLoad()
+POST        /check-answers                               controllers.CheckYourAnswersController.onSubmit()
 
 GET         /register/need-contact-details               controllers.NeedContactDetailsController.onPageLoad()
 

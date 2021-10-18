@@ -23,8 +23,8 @@ import connectors.RegistrationConnector
 import helpers.RegisterHelper._
 import models.Name
 import models.matching.MatchingInfo
-import models.register.error.ApiError
-import models.register.error.ApiError.NotFoundError
+import models.error.ApiError
+import models.error.ApiError.NotFoundError
 import models.register.response.RegistrationWithIDResponse
 import models.subscription.response._
 import models.subscription.{ContactInformationForOrganisation, OrganisationDetails, PrimaryContact}

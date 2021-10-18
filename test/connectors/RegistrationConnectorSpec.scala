@@ -23,7 +23,7 @@ import generators.Generators
 import helpers.JsonFixtures.withIDResponse
 import helpers.RegisterHelper._
 import helpers.WireMockServerHandler
-import models.register.error.ApiError.{NotFoundError, ServiceUnavailableError}
+import models.error.ApiError.{NotFoundError, ServiceUnavailableError}
 import models.register.request.details.WithIDIndividual
 import models.register.request.{RegisterWithID, RegisterWithIDRequest, RequestCommon, RequestWithIDDetails}
 import models.shared.Parameters

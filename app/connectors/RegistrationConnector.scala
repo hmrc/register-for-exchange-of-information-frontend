@@ -18,8 +18,8 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
-import models.register.error.ApiError.{BadRequest, NotFoundError, ServiceUnavailableError}
-import models.register.error.{ApiError, RegisterWithIDErrorResponse}
+import models.error.ApiError.{BadRequest, NotFoundError, ServiceUnavailableError}
+import models.error.{ApiError, ErrorResponse}
 import models.register.request.RegisterWithID
 import models.register.response.RegistrationWithIDResponse
 import play.api.Logger
@@ -52,7 +52,7 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.error("Error in individual registration with nino: invalid.")
           Left(BadRequest)
         case responseMessage =>
-          responseMessage.json.validate[RegisterWithIDErrorResponse] match {
+          responseMessage.json.validate[ErrorResponse] match {
             case JsSuccess(response, _) =>
               val errorDetail = response.errorDetail
               logger.error(s"Error in individual registration with nino: $errorDetail.")

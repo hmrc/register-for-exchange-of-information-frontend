@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.register.error
+package models.error
 
 import uk.gov.hmrc.http.HttpReads
 import uk.gov.hmrc.http.HttpReads.{is4xx, is5xx}
@@ -46,4 +46,8 @@ object ApiError {
   case object ServiceUnavailableError extends ApiError
 
   case object MandatoryInformationMissingError extends ApiError
+
+  case object DuplicateSubmissionError extends ApiError
+
+  case object UnableToCreateEMTPSubscriptionError extends ApiError
 }

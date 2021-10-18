@@ -18,8 +18,8 @@ package models.subscription.request
 
 import play.api.libs.json.{Json, OFormat}
 
-case class UpdateSubscriptionDetails(requestCommon: RequestCommonForUpdate, requestDetail: RequestDetailForUpdate)
+case class RequestParameter(paramName: String, paramValue: String)
 
-object UpdateSubscriptionDetails {
-  implicit val format: OFormat[UpdateSubscriptionDetails] = Json.format[UpdateSubscriptionDetails]
+object RequestParameter {
+  implicit val format: OFormat[RequestParameter] = Json.format[RequestParameter]
 }

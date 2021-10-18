@@ -14,12 +14,31 @@
  * limitations under the License.
  */
 
-package models.subscription.request
+package models.error
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DisplaySubscriptionForCBCRequest(displaySubscriptionForCBCRequest: DisplaySubscriptionDetails)
+case class SourceDetail(detail: Seq[String])
 
-object DisplaySubscriptionForCBCRequest {
-  implicit val format: OFormat[DisplaySubscriptionForCBCRequest] = Json.format[DisplaySubscriptionForCBCRequest]
+object SourceDetail {
+  implicit val format: OFormat[SourceDetail] = Json.format[SourceDetail]
+}
+
+case class ErrorDetail(
+  timestamp: String,
+  correlationId: String,
+  errorCode: String,
+  errorMessage: String,
+  source: String,
+  sourceFaultDetail: SourceDetail
+)
+
+object ErrorDetail {
+  implicit val format: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+}
+
+case class ErrorResponse(errorDetail: ErrorDetail)
+
+object ErrorResponse {
+  implicit val format: OFormat[ErrorResponse] = Json.format[ErrorResponse]
 }

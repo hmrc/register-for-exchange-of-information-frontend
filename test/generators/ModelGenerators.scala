@@ -16,6 +16,8 @@
 
 package generators
 
+import models.subscription.PrimaryContact
+import models.subscription.request.{ContactInformation, CreateRequestDetail, CreateSubscriptionForMDRRequest, PrimaryContact, RequestParameter, SubscriptionRequest, SubscriptionRequestCommon}
 import models.{Address, Country}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -77,4 +79,54 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
     }
+
+
+  implicit val arbitraryRequestParameter: Arbitrary[RequestParameter] = Arbitrary {
+    for {
+      paramName <- arbitrary[String]
+      paramValue <- arbitrary[String]
+    } yield RequestParameter(paramName, paramValue)
+  }
+
+  implicit val arbitrarySubscriptionRequestCommon: Arbitrary[SubscriptionRequestCommon] = Arbitrary {
+    for {
+      regime <- arbitrary[String]
+      receiptDate <- arbitrary[String]
+      acknowledgementReference <- arbitrary[String]
+      originatingSystem <-  arbitrary[String]
+      requestParameters <- Gen.option(arbitrary[Seq[RequestParameter]])
+    } yield SubscriptionRequestCommon(regime, receiptDate, acknowledgementReference, originatingSystem, requestParameters)
+  }
+
+
+  implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
+    for {
+      contactInformation <- arbitrary[Seq[ContactInformation]]
+    } yield PrimaryContact(contactInformation)
+  }
+
+  implicit val arbitraryCreateRequestDetail: Arbitrary[CreateRequestDetail] = Arbitrary {
+    for {
+      idType <- arbitrary[String]
+      idNumber <- arbitrary[String]
+      tradingName <- Gen.option(arbitrary[String])
+      isGBUser <- arbitrary[Boolean]
+      primaryContact <- arbitrary[CreateRequestDetail]
+      secondaryContact <- arbitrary[CreateRequestDetail]
+    } yield CreateRequestDetail(idType, idNumber, tradingName, isGBUser, primaryContact, secondaryContact)
+  }
+
+  implicit val arbitrarySubscriptionRequest: Arbitrary[SubscriptionRequest] = Arbitrary {
+    for {
+      requestCommon <- arbitrary[SubscriptionRequestCommon]
+      requestDetails <- arbitrary[CreateRequestDetail]
+    } yield SubscriptionRequest(requestCommon, requestDetails)
+  }
+
+
+  implicit val arbitraryCreateSubscriptionForMDRRequest: Arbitrary[CreateSubscriptionForMDRRequest] = Arbitrary {
+    for {
+      subscriptionRequest <- arbitrary[SubscriptionRequest]
+    } yield CreateSubscriptionForMDRRequest(subscriptionRequest)
+  }
 }

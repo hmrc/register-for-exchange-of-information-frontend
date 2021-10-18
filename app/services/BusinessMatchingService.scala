@@ -19,8 +19,8 @@ package services
 import cats.implicits._
 import connectors.RegistrationConnector
 import models.matching.MatchingInfo
-import models.register.error.ApiError
-import models.register.error.ApiError.MandatoryInformationMissingError
+import models.error.ApiError
+import models.error.ApiError.MandatoryInformationMissingError
 import models.register.request.RegisterWithID
 import models.register.response.RegistrationWithIDResponse
 import models.subscription.BusinessDetails

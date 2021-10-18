@@ -18,8 +18,9 @@ package models.subscription.request
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DisplaySubscriptionDetails(requestCommon: RequestCommonForDisplay, requestDetail: DisplayRequestDetail)
+case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: CreateRequestDetail)
 
-object DisplaySubscriptionDetails {
-  implicit val format: OFormat[DisplaySubscriptionDetails] = Json.format[DisplaySubscriptionDetails]
+object SubscriptionRequest {
+
+  implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
 }

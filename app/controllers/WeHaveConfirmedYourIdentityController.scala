@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import models.matching.MatchingInfo
-import models.register.error.ApiError
-import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
+import models.error.ApiError
+import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
 import pages.{SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}

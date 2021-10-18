@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.matching.MatchingInfo
-import models.register.error.ApiError.NotFoundError
+import models.error.ApiError.NotFoundError
 import models.{Name, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
