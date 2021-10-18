@@ -22,9 +22,8 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
-import models.shared.ResponseCommon
 import models.subscription.request.CreateSubscriptionForMDRRequest
-import models.subscription.response.{CreateSubscriptionForMDRResponse, CreateSubscriptionResponse, CreateSubscriptionResponseDetail}
+import models.subscription.response.SubscriptionID
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -49,10 +48,9 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
   "SubscriptionConnector" - {
     "createSubscription" - {
       "must return SubscriptionResponse for valid input request" in {
-        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
-        val expectedResponse = CreateSubscriptionForMDRResponse(
-          CreateSubscriptionResponse(ResponseCommon("OK", None, "2020-09-23T16:12:11Z", None), CreateSubscriptionResponseDetail("subscriptionID"))
-        )
+        val subMDRRequest    = arbitrary[CreateSubscriptionForMDRRequest].sample.value
+        val expectedResponse = SubscriptionID("subscriptionID")
+
         val subscriptionResponse: String =
           s"""
              |{
@@ -71,6 +69,30 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         val result = connector.createSubscription(subMDRRequest)
         result.value.futureValue mustBe Right(expectedResponse)
+      }
+
+      "must return UnableToCreateEMTPSubscriptionError for invalid response" in {
+        val subMDRRequest    = arbitrary[CreateSubscriptionForMDRRequest].sample.value
+        val expectedResponse = SubscriptionID("subscriptionID")
+
+        val subscriptionResponse: String =
+          s"""
+             |{
+             | "createSubscriptionForMDRResponse": {
+             |   "responseCommon": {
+             |     "status": "OK",
+             |     "processingDate": "2020-09-23T16:12:11Z"
+             |   },
+             |   "responseDetail1": {
+             |      "subscriptionID": "subscriptionID"
+             |   }
+             | }
+             |}""".stripMargin
+
+        stubPostResponse("/create-subscription", OK, subscriptionResponse)
+
+        val result = connector.createSubscription(subMDRRequest)
+        result.value.futureValue mustBe Left(UnableToCreateEMTPSubscriptionError)
       }
 
       "must return DuplicateSubmissionError when tried to submit the same request" in {

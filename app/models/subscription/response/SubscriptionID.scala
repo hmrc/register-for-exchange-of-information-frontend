@@ -16,17 +16,14 @@
 
 package models.subscription.response
 
-import models.shared.ResponseCommon
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.{__, Reads}
 
-case class CreateSubscriptionResponseDetail(subscriptionID: String)
+case class SubscriptionID(subscriptionID: String)
 
-object CreateSubscriptionResponseDetail {
-  implicit val reads: Reads[CreateSubscriptionResponseDetail] = Json.reads[CreateSubscriptionResponseDetail]
-}
+object SubscriptionID {
 
-case class CreateSubscriptionResponse(responseCommon: ResponseCommon, responseDetail: CreateSubscriptionResponseDetail)
-
-object CreateSubscriptionResponse {
-  implicit val reads: Reads[CreateSubscriptionResponse] = Json.reads[CreateSubscriptionResponse]
+  implicit val reads: Reads[SubscriptionID] = {
+    import play.api.libs.functional.syntax._
+    (__ \ "createSubscriptionForMDRResponse" \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionID.apply
+  }
 }

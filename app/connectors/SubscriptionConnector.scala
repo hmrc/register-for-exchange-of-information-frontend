@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.CreateSubscriptionForMDRRequest
-import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionForCBCResponse}
+import models.subscription.response.{DisplaySubscriptionForCBCResponse, SubscriptionID}
 import org.slf4j.LoggerFactory
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -42,7 +42,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def createSubscription(
     createSubscriptionForMDRRequest: CreateSubscriptionForMDRRequest
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, CreateSubscriptionForMDRResponse] = {
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, SubscriptionID] = {
 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-subscription"
     EitherT {
@@ -53,7 +53,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         )(wts = CreateSubscriptionForMDRRequest.writes, rds = readRaw, hc = hc, ec = ec)
         .map {
           case response if is2xx(response.status) =>
-            Right(response.json.as[CreateSubscriptionForMDRResponse])
+            response.json.asOpt[SubscriptionID].map(Right(_)).getOrElse(Left(UnableToCreateEMTPSubscriptionError))
           case response if response.status equals CONFLICT =>
             logger.warn(s"Duplicate submission to ETMP. ${response.status} response status")
             Left(DuplicateSubmissionError)

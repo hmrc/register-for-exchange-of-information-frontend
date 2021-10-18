@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models.subscription.response
+package services
 
-import play.api.libs.json.{Json, Reads}
+import connectors.SubscriptionConnector
 
-case class CreateSubscriptionForMDRResponse(createSubscriptionForMDRResponse: CreateSubscriptionResponse)
+import javax.inject.Inject
 
-object CreateSubscriptionForMDRResponse {
-  implicit val reads: Reads[CreateSubscriptionForMDRResponse] = Json.reads[CreateSubscriptionForMDRResponse]
+class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
+
+  def createSubscription() = ???
+
 }
