@@ -16,17 +16,16 @@
 
 package models.subscription.response
 
-import play.api.libs.json.{Format, Json}
+import models.subscription.request.{PrimaryContact, SecondaryContact}
+import play.api.libs.json.{Json, OFormat}
 
-case class AddressResponse(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
+case class DisplayResponseDetail(subscriptionID: String,
+                                 tradingName: Option[String],
+                                 isGBUser: Boolean,
+                                 primaryContact: PrimaryContact,
+                                 secondaryContact: Option[SecondaryContact]
 )
 
-object AddressResponse {
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+object DisplayResponseDetail {
+  implicit val format: OFormat[DisplayResponseDetail] = Json.format[DisplayResponseDetail]
 }

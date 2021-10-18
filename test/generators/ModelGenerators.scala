@@ -127,9 +127,9 @@ trait ModelGenerators {
   implicit val arbitraryIndividualDetails: Arbitrary[IndividualDetails] = Arbitrary {
     for {
       firstName  <- arbitrary[String]
-      lastName   <- arbitrary[String]
       middleName <- Gen.option(arbitrary[String])
-    } yield IndividualDetails(firstName, lastName, middleName)
+      lastName   <- arbitrary[String]
+    } yield IndividualDetails(firstName, middleName, lastName)
   }
 
   implicit val arbitraryContactInformationForIndividual: Arbitrary[ContactInformationForIndividual] = Arbitrary {
@@ -147,13 +147,13 @@ trait ModelGenerators {
 
   implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
     for {
-      contactInformation <- arbitrary[Seq[ContactInformation]]
+      contactInformation <- arbitrary[ContactInformation]
     } yield PrimaryContact(contactInformation)
   }
 
   implicit val arbitrarySecondaryContact: Arbitrary[SecondaryContact] = Arbitrary {
     for {
-      contactInformation <- arbitrary[Seq[ContactInformation]]
+      contactInformation <- arbitrary[ContactInformation]
     } yield SecondaryContact(contactInformation)
   }
 

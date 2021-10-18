@@ -17,7 +17,7 @@
 package models.subscription
 
 import models.register.response.RegistrationWithIDResponse
-import models.subscription.response.{AddressResponse, IndividualResponse, OrganisationResponse}
+import models.subscription.response.{IndividualResponse, OrganisationResponse}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 

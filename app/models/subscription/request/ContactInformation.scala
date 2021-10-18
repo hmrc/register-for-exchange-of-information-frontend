@@ -16,9 +16,7 @@
 
 package models.subscription.request
 
-import play.api.libs.json.{__, Json, OFormat, OWrites, Reads}
-
-sealed trait ContactInformation
+import play.api.libs.json._
 
 case class OrganisationDetails(organisationName: String)
 
@@ -26,11 +24,13 @@ object OrganisationDetails {
   implicit val format: OFormat[OrganisationDetails] = Json.format[OrganisationDetails]
 }
 
-case class IndividualDetails(firstName: String, lastName: String, middleName: Option[String])
+case class IndividualDetails(firstName: String, middleName: Option[String], lastName: String)
 
 object IndividualDetails {
   implicit val format: OFormat[IndividualDetails] = Json.format[IndividualDetails]
 }
+
+sealed trait ContactInformation
 
 case class ContactInformationForIndividual(individual: IndividualDetails, email: String, phone: Option[String], mobile: Option[String])
     extends ContactInformation
@@ -46,64 +46,64 @@ object ContactInformationForOrganisation {
   implicit val format: OFormat[ContactInformationForOrganisation] = Json.format[ContactInformationForOrganisation]
 }
 
-case class PrimaryContact(contactInformation: Seq[ContactInformation])
+case class PrimaryContact(contactInformation: ContactInformation)
 
 object PrimaryContact {
 
   implicit lazy val reads: Reads[PrimaryContact] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \\ "organisation").readNullable[OrganisationDetails] and
-        (__ \\ "individual").readNullable[IndividualDetails] and
-        (__ \\ "email").read[String] and
-        (__ \\ "phone").readNullable[String] and
-        (__ \\ "mobile").readNullable[String]
+      (__ \ "organisation").readNullable[OrganisationDetails] and
+        (__ \ "individual").readNullable[IndividualDetails] and
+        (__ \ "email").read[String] and
+        (__ \ "phone").readNullable[String] and
+        (__ \ "mobile").readNullable[String]
     )(
       (organisation, individual, email, phone, mobile) =>
-        (organisation.isDefined, individual.isDefined) match {
-          case (true, false) => PrimaryContact(Seq(ContactInformationForOrganisation(organisation.get, email, phone, mobile)))
-          case (false, true) => PrimaryContact(Seq(ContactInformationForIndividual(individual.get, email, phone, mobile)))
-          case _             => throw new Exception("Primary Contact must have either an organisation or individual element")
+        (organisation, individual) match {
+          case (Some(_), Some(_)) => throw new Exception("PrimaryContact cannot have both and organisation or individual element")
+          case (Some(org), _)     => PrimaryContact(ContactInformationForOrganisation(org, email, phone, mobile))
+          case (_, Some(ind))     => PrimaryContact(ContactInformationForIndividual(ind, email, phone, mobile))
+          case (None, None)       => throw new Exception("PrimaryContact must have either an organisation or individual element")
         }
     )
   }
 
-  //API accepts one item for contact information
-  implicit lazy val writes: OWrites[PrimaryContact] = OWrites[PrimaryContact] {
-    case PrimaryContact(Seq(contactInformationForInd @ ContactInformationForIndividual(_, _, _, _))) =>
+  implicit lazy val writes: OWrites[PrimaryContact] = {
+    case PrimaryContact(contactInformationForInd @ ContactInformationForIndividual(_, _, _, _)) =>
       Json.toJsObject(contactInformationForInd)
-    case PrimaryContact(Seq(contactInformationForOrg @ ContactInformationForOrganisation(_, _, _, _))) =>
+    case PrimaryContact(contactInformationForOrg @ ContactInformationForOrganisation(_, _, _, _)) =>
       Json.toJsObject(contactInformationForOrg)
   }
 }
 
-case class SecondaryContact(contactInformation: Seq[ContactInformation])
+case class SecondaryContact(contactInformation: ContactInformation)
 
 object SecondaryContact {
 
   implicit lazy val reads: Reads[SecondaryContact] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \\ "organisation").readNullable[OrganisationDetails] and
-        (__ \\ "individual").readNullable[IndividualDetails] and
-        (__ \\ "email").read[String] and
-        (__ \\ "phone").readNullable[String] and
-        (__ \\ "mobile").readNullable[String]
+      (__ \ "organisation").readNullable[OrganisationDetails] and
+        (__ \ "individual").readNullable[IndividualDetails] and
+        (__ \ "email").read[String] and
+        (__ \ "phone").readNullable[String] and
+        (__ \ "mobile").readNullable[String]
     )(
       (organisation, individual, email, phone, mobile) =>
-        (organisation.isDefined, individual.isDefined) match {
-          case (true, false) => SecondaryContact(Seq(ContactInformationForOrganisation(organisation.get, email, phone, mobile)))
-          case (false, true) => SecondaryContact(Seq(ContactInformationForIndividual(individual.get, email, phone, mobile)))
-          case _             => throw new Exception("Secondary Contact must have either an organisation or individual element")
+        (organisation, individual) match {
+          case (Some(_), Some(_)) => throw new Exception("SecondaryContact cannot have both and organisation or individual element")
+          case (Some(org), _)     => SecondaryContact(ContactInformationForOrganisation(org, email, phone, mobile))
+          case (_, Some(ind))     => SecondaryContact(ContactInformationForIndividual(ind, email, phone, mobile))
+          case (None, None)       => throw new Exception("SecondaryContact must have either an organisation or individual element")
         }
     )
   }
 
-  //API accepts one item for contact information
   implicit lazy val writes: OWrites[SecondaryContact] = {
-    case SecondaryContact(Seq(contactInformationForInd @ ContactInformationForIndividual(_, _, _, _))) =>
+    case SecondaryContact(contactInformationForInd @ ContactInformationForIndividual(_, _, _, _)) =>
       Json.toJsObject(contactInformationForInd)
-    case SecondaryContact(Seq(contactInformationForOrg @ ContactInformationForOrganisation(_, _, _, _))) =>
+    case SecondaryContact(contactInformationForOrg @ ContactInformationForOrganisation(_, _, _, _)) =>
       Json.toJsObject(contactInformationForOrg)
   }
 }

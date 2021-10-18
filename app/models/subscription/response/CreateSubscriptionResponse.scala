@@ -16,10 +16,17 @@
 
 package models.subscription.response
 
-import play.api.libs.json._
+import models.shared.ResponseCommon
+import play.api.libs.json.{Json, Reads}
 
-case class SubscriptionForCBCResponse(responseCommon: ResponseCommon, responseDetail: ResponseDetail)
+case class CreateSubscriptionResponseDetail(subscriptionID: String)
 
-object SubscriptionForCBCResponse {
-  implicit val format: OFormat[SubscriptionForCBCResponse] = Json.format[SubscriptionForCBCResponse]
+object CreateSubscriptionResponseDetail {
+  implicit val reads: Reads[CreateSubscriptionResponseDetail] = Json.reads[CreateSubscriptionResponseDetail]
+}
+
+case class CreateSubscriptionResponse(responseCommon: ResponseCommon, responseDetail: CreateSubscriptionResponseDetail)
+
+object CreateSubscriptionResponse {
+  implicit val reads: Reads[CreateSubscriptionResponse] = Json.reads[CreateSubscriptionResponse]
 }

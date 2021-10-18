@@ -25,6 +25,7 @@ import models.subscription.request.CreateSubscriptionForMDRRequest
 import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionForCBCResponse}
 import org.slf4j.LoggerFactory
 import play.api.http.Status.CONFLICT
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -49,11 +50,12 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         .POST[CreateSubscriptionForMDRRequest, HttpResponse](
           submissionUrl,
           createSubscriptionForMDRRequest
-        )
+        )(wts = CreateSubscriptionForMDRRequest.writes, rds = readRaw, hc = hc, ec = ec)
         .map {
           case response if is2xx(response.status) =>
             Right(response.json.as[CreateSubscriptionForMDRResponse])
           case response if response.status equals CONFLICT =>
+            logger.warn(s"Duplicate submission to ETMP. ${response.status} response status")
             Left(DuplicateSubmissionError)
           case response =>
             logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")

@@ -18,7 +18,7 @@ package models.subscription.response
 
 import play.api.libs.json.{Json, Reads}
 
-case class CreateSubscriptionForMDRResponse(createSubscriptionForMDRResponse: SubscriptionResponse)
+case class CreateSubscriptionForMDRResponse(createSubscriptionForMDRResponse: CreateSubscriptionResponse)
 
 object CreateSubscriptionForMDRResponse {
   implicit val reads: Reads[CreateSubscriptionForMDRResponse] = Json.reads[CreateSubscriptionForMDRResponse]

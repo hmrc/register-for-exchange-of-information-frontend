@@ -18,7 +18,7 @@ package models.subscription.response
 
 import play.api.libs.json._
 
-case class DisplaySubscriptionForCBCResponse(displaySubscriptionForDACResponse: SubscriptionForCBCResponse)
+case class DisplaySubscriptionForCBCResponse(displaySubscriptionForDACResponse: DisplaySubscriptionResponse)
 
 object DisplaySubscriptionForCBCResponse {
   implicit val format: OFormat[DisplaySubscriptionForCBCResponse] = Json.format[DisplaySubscriptionForCBCResponse]

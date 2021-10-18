@@ -16,7 +16,6 @@
 
 package models.shared
 
-import models.subscription.response.AddressResponse
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
@@ -44,15 +43,4 @@ object BusinessAddress {
   )(BusinessAddress.apply _)
 
   implicit lazy val writes: Writes[BusinessAddress] = Json.writes[BusinessAddress]
-
-  def fromAddressResponse(addressResponse: AddressResponse): BusinessAddress =
-    BusinessAddress(
-      addressResponse.addressLine1,
-      addressResponse.addressLine2,
-      addressResponse.addressLine3,
-      addressResponse.addressLine4,
-      addressResponse.postalCode.getOrElse(""),
-      addressResponse.countryCode
-    )
-
 }

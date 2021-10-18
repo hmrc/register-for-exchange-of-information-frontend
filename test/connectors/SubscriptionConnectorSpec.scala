@@ -21,11 +21,14 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
+import models.shared.ResponseCommon
 import models.subscription.request.CreateSubscriptionForMDRRequest
+import models.subscription.response.{CreateSubscriptionForMDRResponse, CreateSubscriptionResponse, CreateSubscriptionResponseDetail}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.OK
+import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,11 +48,13 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
     "createSubscription" - {
       "must return SubscriptionResponse for valid input request" in {
         val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
-
+        val expectedResponse = CreateSubscriptionForMDRResponse(
+          CreateSubscriptionResponse(ResponseCommon("OK", None, "2020-09-23T16:12:11Z", None), CreateSubscriptionResponseDetail("subscriptionID"))
+        )
         val subscriptionResponse: String =
           s"""
              |{
-             | "createSubscriptionForDACResponse": {
+             | "createSubscriptionForMDRResponse": {
              |   "responseCommon": {
              |     "status": "OK",
              |     "processingDate": "2020-09-23T16:12:11Z"
@@ -63,8 +68,54 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
         stubPostResponse("/create-subscription", OK, subscriptionResponse)
 
         val result = connector.createSubscription(subMDRRequest)
-        result.value.futureValue mustBe ""
+        result.value.futureValue mustBe Right(expectedResponse)
       }
+
+      "must return DuplicateSubmissionError when tried to submit the same request" in {
+        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
+
+        val subscriptionErrorResponse: String =
+          s"""
+             | "errorDetail": {
+             |    "timestamp" : "2021-03-11T08:20:44Z",
+             |    "correlationId": "c181e730-2386-4359-8ee0-f911d6e5f3bc",
+             |    "errorCode": "409",
+             |    "errorMessage": "Duplicate submission",
+             |    "source": "Back End",
+             |    "sourceFaultDetail": {
+             |      "detail": [
+             |        "Duplicate submission"
+             |      ]
+             |    }
+             |  }
+             |""".stripMargin
+
+        stubPostResponse("/create-subscription", CONFLICT, subscriptionErrorResponse)
+
+        val result = connector.createSubscription(subMDRRequest)
+        result.value.futureValue mustBe Left(DuplicateSubmissionError)
+      }
+
+      "must return UnableToCreateEMTPSubscriptionError when submission to backend fails" in {
+        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
+
+        val subscriptionErrorResponse: String =
+          s"""
+             | "errorDetail": {
+             |    "timestamp": "2016-08-16T18:15:41Z",
+             |    "correlationId": "f058ebd6-02f7-4d3f-942e-904344e8cde5",
+             |    "errorCode": "500",
+             |    "errorMessage": "Internal error",
+             |    "source": "Internal error"
+             |  }
+             |""".stripMargin
+
+        stubPostResponse("/create-subscription", INTERNAL_SERVER_ERROR, subscriptionErrorResponse)
+
+        val result = connector.createSubscription(subMDRRequest)
+        result.value.futureValue mustBe Left(UnableToCreateEMTPSubscriptionError)
+      }
+
     }
 
   }
