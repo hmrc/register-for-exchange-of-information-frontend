@@ -16,8 +16,10 @@
 
 package pages
 
-import models.UserAnswers
+import models.{Name, UserAnswers}
+import uk.gov.hmrc.domain.Nino
 
+import java.time.LocalDate
 import scala.util.Try
 
 object PageLists {
@@ -34,5 +36,6 @@ object PageLists {
 
   val afterAllSndConHavePhonePages = List(SndContactPhonePage)
 
-  val allAfterBusinessTypePage = List(WhatIsYourNationalInsuranceNumberPage, UTRPage, BusinessNamePage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
+  val allAfterBusinessTypePage =
+    List(WhatIsYourNationalInsuranceNumberPage, UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage)
 }
