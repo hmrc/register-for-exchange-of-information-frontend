@@ -36,6 +36,14 @@ object PageLists {
 
   val afterAllSndConHavePhonePages = List(SndContactPhonePage)
 
-  val allAfterBusinessTypePage =
-    List(WhatIsYourNationalInsuranceNumberPage, UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage)
+  val allAfterBusinessTypePage = List(UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage)
+
+  val individualWithIdJourney = List(WhatIsYourNationalInsuranceNumberPage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
+
+  val businessWithIdJourney = BusinessTypePage +: allAfterBusinessTypePage
+
+  val individualWithoutIdJourney =
+    List(BusinessWithoutIDNamePage, WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, AddressUKPage, SelectAddressPage)
+
+  val businessWithoutIdJourney = List()
 }
