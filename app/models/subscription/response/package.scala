@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import models.subscription.request.{PrimaryContact, SecondaryContact}
 import play.api.libs.json.{Format, Json, OFormat}
 
 package object response {

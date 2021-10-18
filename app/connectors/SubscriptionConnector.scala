@@ -31,31 +31,34 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnector @Inject()(val config: FrontendAppConfig, val http: HttpClient) {
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
   def readSubscriptionDetails(safeID: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, DisplaySubscriptionForCBCResponse] =
-  // TODO replace with actual implementation
+    // TODO replace with actual implementation
     EitherT.fromEither[Future](Left(MandatoryInformationMissingError))
 
-  def createSubscription(createSubscriptionForMDRRequest: CreateSubscriptionForMDRRequest)
-                        (implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, CreateSubscriptionForMDRResponse] = {
+  def createSubscription(
+    createSubscriptionForMDRRequest: CreateSubscriptionForMDRRequest
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, CreateSubscriptionForMDRResponse] = {
 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-subscription"
     EitherT {
-      http.POST[CreateSubscriptionForMDRRequest, HttpResponse](
-        submissionUrl,
-        createSubscriptionForMDRRequest
-      ).map {
-        case response if is2xx(response.status) =>
-          Right(response.json.as[CreateSubscriptionForMDRResponse])
-        case response if response.status equals CONFLICT =>
-          Left(DuplicateSubmissionError)
-        case response =>
-          logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
-          Left(UnableToCreateEMTPSubscriptionError)
-      }
+      http
+        .POST[CreateSubscriptionForMDRRequest, HttpResponse](
+          submissionUrl,
+          createSubscriptionForMDRRequest
+        )
+        .map {
+          case response if is2xx(response.status) =>
+            Right(response.json.as[CreateSubscriptionForMDRResponse])
+          case response if response.status equals CONFLICT =>
+            Left(DuplicateSubmissionError)
+          case response =>
+            logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
+            Left(UnableToCreateEMTPSubscriptionError)
+        }
     }
   }
 }
