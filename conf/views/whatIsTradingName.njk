@@ -38,12 +38,9 @@
         </h1>
 
           {{ govukInput({
-            label: {
-              text: messages('whatIsTradingName.business-name')
-            },
             id: "businessName",
             name: "businessName",
-            value: form.business-name.value,
+            value: form.businessName.value,
             errorMessage: form.businessName.error
           }) }}
 

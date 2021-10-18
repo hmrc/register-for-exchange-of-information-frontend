@@ -424,10 +424,8 @@ businessHaveDifferentName.heading = Does your business trade under a different n
 businessHaveDifferentName.checkYourAnswersLabel = Does your business trade under a different name?
 businessHaveDifferentName.error.required = Select yes if your business trades under a different name
 
-whatIsTradingName.title = whatIsTradingName
-whatIsTradingName.heading = whatIsTradingName
-whatIsTradingName.business-name = business-name
-whatIsTradingName.remove = remove
-whatIsTradingName.checkYourAnswersLabel = whatIsTradingName
+whatIsTradingName.title = What is the trading name of your business?
+whatIsTradingName.heading = What is the trading name of your business?
+whatIsTradingName.checkYourAnswersLabel = What is the trading name of your business?
 whatIsTradingName.error.businessName.required = Enter the trading name of your business
 whatIsTradingName.error.businessName.length = Trading name must be 105 characters or less
