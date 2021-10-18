@@ -20,6 +20,12 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryWhatIsTradingNamePage: Arbitrary[pages.WhatIsTradingNamePage.type] =
+    Arbitrary(pages.WhatIsTradingNamePage)
+
+  implicit lazy val arbitraryBusinessHaveDifferentNamePage: Arbitrary[pages.BusinessHaveDifferentNamePage.type] =
+    Arbitrary(pages.BusinessHaveDifferentNamePage)
+
   implicit lazy val arbitraryBusinessWithoutIDNamePage: Arbitrary[pages.BusinessWithoutIDNamePage.type] =
     Arbitrary(pages.BusinessWithoutIDNamePage)
 

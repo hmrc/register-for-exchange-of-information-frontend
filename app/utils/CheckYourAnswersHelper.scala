@@ -24,6 +24,24 @@ import uk.gov.hmrc.viewmodels._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
 
+  def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsTradingName",
+        value = msg"site.edit",
+        href = routes.WhatIsTradingNameController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def businessHaveDifferentName: Option[Row] = userAnswers.get(pages.BusinessHaveDifferentNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "businessHaveDifferentName",
+        value = msg"site.edit",
+        href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode).url
+      )
+  }
+
   def businessWithoutIDName: Option[Row] = userAnswers.get(pages.BusinessWithoutIDNamePage) map {
     answer =>
       toRow(
