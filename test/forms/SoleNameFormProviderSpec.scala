@@ -37,7 +37,7 @@ class SoleNameFormProviderSpec extends StringFieldBehaviours {
       validPersonalName(maxLength)
     )
 
-    behave like fieldWithMaxLengthName(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
@@ -48,6 +48,13 @@ class SoleNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jfhf-\\^' `&%",
+      FormError(fieldName, invalidKey)
     )
   }
 
@@ -65,7 +72,7 @@ class SoleNameFormProviderSpec extends StringFieldBehaviours {
       validPersonalName(maxLength)
     )
 
-    behave like fieldWithMaxLengthName(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
@@ -76,6 +83,13 @@ class SoleNameFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jfhf-\\^' `&%",
+      FormError(fieldName, invalidKey)
     )
   }
 }
