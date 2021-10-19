@@ -50,7 +50,7 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised()
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup) {
         case _ ~ _ ~ Some(Agent) =>
-          Future.successful(Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad())) // change to unauthorisedAgent controller when built
+          Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad()))
         case _ ~ enrolments ~ _ if enrolments.enrolments.exists(_.key == config.enrolmentKey("mdr")) =>
           logger.info("MDR enrolment exists")
           Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))

@@ -1,86 +1,15 @@
 #!/bin/bash
 
 echo ""
-echo "Applying migration WhatIsTradingName"
+echo "Applying migration UnauthorisedAgent"
 
 echo "Adding routes to conf/app.routes"
-
 echo "" >> ../conf/app.routes
-echo "GET        /whatIsTradingName                        controllers.WhatIsTradingNameController.onPageLoad(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
-echo "POST       /whatIsTradingName                        controllers.WhatIsTradingNameController.onSubmit(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
-
-echo "GET        /changeWhatIsTradingName                  controllers.WhatIsTradingNameController.onPageLoad(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
-echo "POST       /changeWhatIsTradingName                  controllers.WhatIsTradingNameController.onSubmit(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
+echo "GET        /unauthorisedAgent                       controllers.UnauthorisedAgentController.onPageLoad()" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "whatIsTradingName.title = whatIsTradingName" >> ../conf/messages.en
-echo "whatIsTradingName.heading = whatIsTradingName" >> ../conf/messages.en
-echo "whatIsTradingName.business-name = business-name" >> ../conf/messages.en
-echo "whatIsTradingName.remove = remove" >> ../conf/messages.en
-echo "whatIsTradingName.checkYourAnswersLabel = whatIsTradingName" >> ../conf/messages.en
-echo "whatIsTradingName.error.business-name.required = Enter business-name" >> ../conf/messages.en
-echo "whatIsTradingName.error.remove.required = Enter remove" >> ../conf/messages.en
-echo "whatIsTradingName.error.business-name.length = business-name must be 100 characters or less" >> ../conf/messages.en
-echo "whatIsTradingName.error.remove.length = remove must be 0 characters or less" >> ../conf/messages.en
+echo "unauthorisedAgent.title = unauthorisedAgent" >> ../conf/messages.en
+echo "unauthorisedAgent.heading = unauthorisedAgent" >> ../conf/messages.en
 
-echo "Adding to UserAnswersEntryGenerators"
-awk '/trait UserAnswersEntryGenerators/ {\
-    print;\
-    print "";\
-    print "  implicit lazy val arbitraryWhatIsTradingNameUserAnswersEntry: Arbitrary[(pages.WhatIsTradingNamePage.type, JsValue)] =";\
-    print "    Arbitrary {";\
-    print "      for {";\
-    print "        page  <- arbitrary[pages.WhatIsTradingNamePage.type]";\
-    print "        value <- arbitrary[models.WhatIsTradingName].map(Json.toJson(_))";\
-    print "      } yield (page, value)";\
-    print "    }";\
-    next }1' ../test/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test/generators/UserAnswersEntryGenerators.scala
-
-echo "Adding to PageGenerators"
-awk '/trait PageGenerators/ {\
-    print;\
-    print "";\
-    print "  implicit lazy val arbitraryWhatIsTradingNamePage: Arbitrary[pages.WhatIsTradingNamePage.type] =";\
-    print "    Arbitrary(pages.WhatIsTradingNamePage)";\
-    next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
-
-echo "Adding to ModelGenerators"
-awk '/trait ModelGenerators/ {\
-    print;\
-    print "";\
-    print "  implicit lazy val arbitraryWhatIsTradingName: Arbitrary[models.WhatIsTradingName] =";\
-    print "    Arbitrary {";\
-    print "      for {";\
-    print "        business-name <- arbitrary[String]";\
-    print "        remove <- arbitrary[String]";\
-    print "      } yield models.WhatIsTradingName(business-name, remove)";\
-    print "    }";\
-    next }1' ../test/generators/ModelGenerators.scala > tmp && mv tmp ../test/generators/ModelGenerators.scala
-
-echo "Adding to UserAnswersGenerator"
-awk '/val generators/ {\
-    print;\
-    print "    arbitrary[(WhatIsTradingNamePage.type, JsValue)] ::";\
-    next }1' ../test/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test/generators/UserAnswersGenerator.scala
-
-echo "Adding helper method to CheckYourAnswersHelper"
-awk '/extends RowBuilder/ {\
-     print;\
-     print "";\
-     print "  def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {";\
-     print "      answer =>";\
-     print "        toRow(";\
-     print "          msgKey = \"whatIsTradingName\",";\
-     print "          value = msg\"site.edit\",";\
-     print "          href = routes.WhatIsTradingNameController.onPageLoad(CheckMode).url,";\
-     print "        )";\
-     print "    }";\
-     next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
-
-echo "Moving tests"
-mv ../generated-test/controllers/WhatIsTradingNameControllerSpec.scala ../test/controllers/
-mv ../generated-test/forms/WhatIsTradingNameFormProviderSpec.scala ../test/forms/
-mv ../generated-test/pages/WhatIsTradingNamePageSpec.scala ../test/pages/
-
-echo "Migration WhatIsTradingName completed"
+echo "Migration UnauthorisedAgent completed"

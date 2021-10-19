@@ -430,3 +430,13 @@ whatIsTradingName.checkYourAnswersLabel = What is the trading name of your busin
 whatIsTradingName.error.businessName.required = Enter the trading name of your business
 whatIsTradingName.error.businessName.invalid = Trading name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
 whatIsTradingName.error.businessName.length = Trading name must be 80 characters or less
+
+#Agent messages
+unauthorisedAgent.title = There is a problem
+unauthorisedAgent.heading = There is a problem
+unauthorisedAgent.paragraph.1 = You’ve signed into the Government Gateway as an agent. The agent service is not available for MDR.
+unauthorisedAgent.paragraph.2.a = If you want to use the service yourself,
+unauthorisedAgent.paragraph.2.b = sign in
+unauthorisedAgent.paragraph.2.c = with those Government Gateway details.
+unauthorisedAgent.paragraph.3 = You cannot disclose cross-border arrangements for other organisations or individuals, they must do it themselves.
+
