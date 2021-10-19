@@ -456,10 +456,10 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(IsThisYourBusinessPage, true)
+                .set(BusinessTypePage, Sole)
                 .success
                 .value
-                .set(BusinessTypePage, Sole)
+                .set(IsThisYourBusinessPage, true)
                 .success
                 .value
 
@@ -474,10 +474,10 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(IsThisYourBusinessPage, true)
+                .set(BusinessTypePage, LimitedCompany)
                 .success
                 .value
-                .set(BusinessTypePage, LimitedCompany)
+                .set(IsThisYourBusinessPage, true)
                 .success
                 .value
 
