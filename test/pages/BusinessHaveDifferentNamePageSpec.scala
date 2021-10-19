@@ -34,7 +34,7 @@ class BusinessHaveDifferentNamePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
-            .set(WhatIsTradingNamePage, WhatIsTradingName("differentName"))
+            .set(WhatIsTradingNamePage, "differentName")
             .success
             .value
             .set(BusinessHaveDifferentNamePage, false)

@@ -16,19 +16,23 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms._
-import models.WhatIsTradingName
+import utils.RegexConstants
 
-class WhatIsTradingNameFormProvider @Inject() extends Mappings {
+import javax.inject.Inject
 
-  def apply(): Form[WhatIsTradingName] = Form(
-    mapping(
-      "businessName" -> text("whatIsTradingName.error.businessName.required")
-        .verifying(maxLength(105, "whatIsTradingName.error.businessName.length"))
-    )(WhatIsTradingName.apply)(WhatIsTradingName.unapply)
+class WhatIsTradingNameFormProvider @Inject() extends Mappings with RegexConstants {
+
+  private val maxLength = 80
+
+  def apply(): Form[String] = Form(
+    "businessName" -> validatedText(
+      "whatIsTradingName.error.businessName.required",
+      "whatIsTradingName.error.businessName.invalid",
+      "whatIsTradingName.error.businessName.length",
+      apiOrganisationNameRegex,
+      maxLength
+    )
   )
 }
