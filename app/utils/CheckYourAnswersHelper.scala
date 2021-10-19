@@ -28,24 +28,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
   val messages: Messages
 ) extends RowBuilder {
 
-  def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {
-    answer =>
-      toRow(
-        msgKey = "whatIsTradingName",
-        value = msg"site.edit",
-        href = routes.WhatIsTradingNameController.onPageLoad(CheckMode).url
-      )
-  }
-
-  def businessHaveDifferentName: Option[Row] = userAnswers.get(pages.BusinessHaveDifferentNamePage) map {
-    answer =>
-      toRow(
-        msgKey = "businessHaveDifferentName",
-        value = msg"site.edit",
-        href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode).url
-      )
-  }
-
   def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
 
     val pagesToCheck = Tuple4(
@@ -77,6 +59,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         Seq(
           helper.doYouHaveUniqueTaxPayerReference,
           helper.whatAreYouRegisteringAs,
+          helper.businessHaveDifferentName,
+          helper.whatIsTradingName,
           helper.businessWithoutIDName,
           helper.addressWithoutIdBusiness
         ).flatten
@@ -141,6 +125,24 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         )
       case _ => None
     }
+
+  def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsTradingName",
+        value = lit"$answer",
+        href = routes.WhatIsTradingNameController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def businessHaveDifferentName: Option[Row] = userAnswers.get(pages.BusinessHaveDifferentNamePage) map {
+    answer =>
+      toRow(
+        msgKey = "businessHaveDifferentName",
+        value = yesOrNo(answer),
+        href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode).url
+      )
+  }
 
   def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
     answer =>
@@ -222,7 +224,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         href = routes.AddressWithoutIdController.onPageLoad(CheckMode).url
       )
   }
-
 
   def doYouLiveInTheUK: Option[Row] = userAnswers.get(pages.DoYouLiveInTheUKPage) map {
     answer =>
