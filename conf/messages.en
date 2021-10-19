@@ -432,14 +432,13 @@ whatIsTradingName.error.businessName.invalid = Trading name must only include le
 whatIsTradingName.error.businessName.length = Trading name must be 80 characters or less
 
 #Assistant messages
-unauthorisedAssistant.title = There is a problem
-unauthorisedAssistant.heading = There is a problem
+unauthorisedAssistant.title = Sorry, you’re unable to use this service
+unauthorisedAssistant.heading = Sorry, you’re unable to use this service
 unauthorisedAssistant.paragraph.1 = You’ve signed in as an assistant. To register for the MDR service, you must sign in as an administrator.
-unauthorisedAssistant.paragraph.2a = If you have an administrator account,
-unauthorisedAssistant.paragraph.2b = sign in
-unauthorisedAssistant.paragraph.2c = with those Government Gateway details.
-unauthorisedAssistant.paragraph.3 = If you do not have an administrator account, find someone in your organisation who does. They will need to register for the MDR service using their Government Gateway sign-in details.
-unauthorisedAssistant.paragraph.4 = When your organisation is registered for MDR, you will be able to access the service to make disclosures using your own Government Gateway credentials.
+unauthorisedAssistant.paragraph.2a = If you have an administrator's account,
+unauthorisedAssistant.paragraph.2b = sign in with those Government Gateway details
+unauthorisedAssistant.paragraph.3 = If you do not have an administrator account, ask someone else in your organisation who does. They can then register for the service using their Government Gateway details.
+unauthorisedAssistant.paragraph.4 = When registered, you can use the service to submit MDR reports using your own Government Gateway credentials.
 
 #Agent messages
 unauthorisedAgent.title = Sorry, you’re unable to use this service
@@ -447,6 +446,5 @@ unauthorisedAgent.heading = Sorry, you’re unable to use this service
 unauthorisedAgent.paragraph.1 = You’ve signed into the Government Gateway as an agent. You will be unable to use the MDR service with these details.
 unauthorisedAgent.paragraph.2.a = You can use the service by
 unauthorisedAgent.paragraph.2.b = signing in with your own or your organisation’s Government Gateway details
-unauthorisedAgent.paragraph.2.c = .
 unauthorisedAgent.paragraph.3 = You cannot report cross-border arrangements for other organisations or individuals, they must do it themselves.
 
