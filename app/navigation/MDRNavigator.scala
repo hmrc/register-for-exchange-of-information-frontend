@@ -100,13 +100,11 @@ class MDRNavigator @Inject() () extends Navigator {
     }
 
   private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(IsThisYourBusinessPage) map {
-      case true =>
-        ua.get(BusinessTypePage) match {
-          case Some(Sole) => routes.ContactEmailController.onPageLoad(mode)
-          case Some(_)    => routes.ContactNameController.onPageLoad(mode)
-          case None       => routes.WeCouldNotConfirmController.onPageLoad("identity")
-        }
-      case false => routes.WeCouldNotConfirmController.onPageLoad("identity")
+    Option(ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) map {
+      case (Some(true), Some(Sole))  => routes.ContactEmailController.onPageLoad(mode)
+      case (Some(true), Some(_))     => routes.ContactNameController.onPageLoad(mode)
+      case (Some(true), None)        => routes.WeCouldNotConfirmController.onPageLoad("identity")
+      case (Some(false), Some(Sole)) => routes.WeCouldNotConfirmController.onPageLoad("identity")
+      case (Some(false), _)          => routes.WeCouldNotConfirmController.onPageLoad("organisation")
     }
 }

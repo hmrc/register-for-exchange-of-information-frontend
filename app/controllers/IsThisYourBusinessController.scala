@@ -29,7 +29,7 @@ import pages._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -62,8 +62,10 @@ class IsThisYourBusinessController @Inject() (
     matchBusinessInfo flatMap {
       case Right(matchingInfo) =>
         (for {
-          name    <- matchingInfo.name
-          address <- matchingInfo.address
+          name           <- matchingInfo.name
+          address        <- matchingInfo.address
+          updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
+          _ = sessionRepository.set(updatedAnswers)
         } yield render(mode, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill), name, address).map(Ok(_)))
           .getOrElse(Future.successful(Redirect(Navigator.missingInformation)))
       case Left(NotFoundError) =>

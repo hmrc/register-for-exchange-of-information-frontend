@@ -22,11 +22,12 @@ import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
-import pages.{BusinessTypePage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{BusinessTypePage, MatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -35,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WeHaveConfirmedYourIdentityController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -59,7 +61,10 @@ class WeHaveConfirmedYourIdentityController @Inject() (
       )
 
       matchIndividualInfo flatMap {
-        case Right(_) =>
+        case Right(matchingInfo) =>
+          for {
+            updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
+          } yield sessionRepository.set(updatedAnswers)
           renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
         case Left(NotFoundError) =>
           Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
