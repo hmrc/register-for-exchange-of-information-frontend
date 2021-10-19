@@ -186,7 +186,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAgentController.onPageLoad().url)
         }
       }
     }
