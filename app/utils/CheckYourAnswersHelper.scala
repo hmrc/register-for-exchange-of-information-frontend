@@ -18,12 +18,15 @@ package utils
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.{AddressUKPage, BusinessNamePage, SelectAddressPage}
+import pages.{AddressUKPage, BusinessNamePage, MatchingInfoPage, SelectAddressPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
+import utils.CountryListFactory
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
+class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
+  val messages: Messages
+) extends RowBuilder {
 
   def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {
     answer =>
@@ -109,31 +112,35 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     }
   }
 
-  def confirmBusiness: Option[Row] = userAnswers.get(pages.BusinessWithoutIDNamePage) map { //ToDo dummy helper while business retrieval developed
-    answer =>
-      val businessName = userAnswers.get(BusinessNamePage).get //ToDo Need retrieved business name
-      val address      = userAnswers.get(AddressUKPage).get
-
-      toRow(
-        msgKey = "businessWithoutIDName",
-        value = Html(s"""
-              $businessName<br><br>
-              ${address.addressLine1}<br>
-              ${address.addressLine2.fold("")(
-          address => s"$address<br>"
-        )}<br>
-              ${address.addressLine3}
-              ${address.addressLine4.fold("")(
-          address => s"$address<br>"
-        )}
-              ${address.postCode.fold("")(
-          postcode => s"$postcode<br>"
-        )}
-              ${address.country.description}
-              """),
-        href = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode).url
-      )
-  }
+  def confirmBusiness: Option[Row] =
+    userAnswers.get(pages.IsThisYourBusinessPage) match {
+      case Some(true) =>
+        for {
+          matchingInfo <- userAnswers.get(MatchingInfoPage)
+          businessName <- matchingInfo.name
+          address      <- matchingInfo.address
+          countryName  <- countryListFactory.getDescriptionFromCode(address.countryCode)
+        } yield toRow(
+          msgKey = "businessWithoutIDName",
+          value = Html(s"""
+                  $businessName<br><br>
+                  ${address.addressLine1}<br>
+                  ${address.addressLine2.fold("")(
+            address => s"$address<br>"
+          )}<br>
+                  ${address.addressLine3}
+                  ${address.addressLine4.fold("")(
+            address => s"$address<br>"
+          )}
+                  ${address.postalCode.fold("")(
+            postcode => s"$postcode<br>"
+          )}
+                  $countryName
+                  """),
+          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
+        )
+      case _ => None
+    }
 
   def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
     answer =>

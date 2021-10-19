@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.CheckYourAnswersHelper
+import utils.{CheckYourAnswersHelper, CountryListFactory}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -40,6 +40,7 @@ class CheckYourAnswersController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
+  countryFactory: CountryListFactory,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -48,7 +49,7 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      val helper                                = new CheckYourAnswersHelper(request.userAnswers)
+      val helper                                = new CheckYourAnswersHelper(request.userAnswers, countryListFactory = countryFactory)
       val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
 
       val contactHeading = if (getRegisteringAsBusiness()) "checkYourAnswers.firstContact.h2" else "checkYourAnswers.contactDetails.h2"
@@ -77,8 +78,13 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def getRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
-      case Some(RegistrationTypeBusiness) => true
-      case _                              => false
+    (request.userAnswers.get(WhatAreYouRegisteringAsPage),
+     request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
+     request.userAnswers.get(BusinessTypePage)
+    ) match { //ToDo defaulting to registering for business change when paths created if necessary
+      case (None, Some(true), Some(Sole))                   => false
+      case (None, Some(true), _)                            => true
+      case (Some(RegistrationTypeBusiness), Some(false), _) => true
+      case _                                                => false
     }
 }

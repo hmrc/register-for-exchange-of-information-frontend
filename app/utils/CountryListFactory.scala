@@ -32,4 +32,13 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
       (country, country2) => country.description < country2.description
     )
   }
+
+  def getDescriptionFromCode(code: String): Option[String] = environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
+    _.as[Seq[Country]]
+      .filter(
+        (p: Country) => p.code == code
+      )
+      .head
+      .description
+  }
 }
