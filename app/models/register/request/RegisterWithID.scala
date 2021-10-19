@@ -16,7 +16,7 @@
 
 package models.register.request
 
-import models.Name
+import models.{BusinessType, Name}
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
@@ -31,6 +31,14 @@ object RegisterWithID {
       RegisterWithIDRequest(
         RequestCommon("MDR"), // TODO refactor hard-coded argument
         RequestWithIDDetails(name, dob, identifierName, identifierValue)
+      )
+    )
+
+  def apply(businessName: String, businessType: BusinessType, identifierName: String, identifierValue: String): RegisterWithID =
+    RegisterWithID(
+      RegisterWithIDRequest(
+        RequestCommon("MDR"), // TODO refactor hard-coded argument
+        RequestWithIDDetails(businessName, businessType.code, "UTR", identifierValue)
       )
     )
 }

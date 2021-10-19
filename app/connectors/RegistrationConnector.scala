@@ -18,13 +18,12 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
+import models.register.error.ApiError
 import models.register.error.ApiError.{BadRequest, NotFoundError, ServiceUnavailableError}
-import models.register.error.{ApiError, RegisterWithIDErrorResponse}
 import models.register.request.RegisterWithID
 import models.register.response.RegistrationWithIDResponse
 import play.api.Logger
 import play.api.http.Status._
-import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -38,29 +37,33 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   val submissionUrl = s"${config.businessMatchingUrl}/registration"
 
-  def registerWithID(
+  def withIndividualNino(
     registration: RegisterWithID
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithIDResponse] =
+    registerWithID(registration, "/individual/nino")
+
+  def withOrganisationUtr(
+    registration: RegisterWithID
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithIDResponse] =
+    registerWithID(registration, "/organisation/utr")
+
+  private def registerWithID(
+    registration: RegisterWithID,
+    endpoint: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithIDResponse] =
     EitherT {
-      http.POST[RegisterWithID, HttpResponse](s"$submissionUrl/individual/nino", registration) map {
+      http.POST[RegisterWithID, HttpResponse](s"$submissionUrl$endpoint", registration) map {
         case responseMessage if is2xx(responseMessage.status) =>
           Right(responseMessage.json.as[RegistrationWithIDResponse])
         case responseMessage if responseMessage.status == NOT_FOUND =>
-          logger.error("Error in individual registration with nino: not found.")
+          logger.error(s"Error in registration with $endpoint: not found.")
           Left(NotFoundError)
         case responseMessage if responseMessage.status == BAD_REQUEST =>
-          logger.error("Error in individual registration with nino: invalid.")
+          logger.error(s"Error in registration with $endpoint: invalid.")
           Left(BadRequest)
         case responseMessage =>
-          responseMessage.json.validate[RegisterWithIDErrorResponse] match {
-            case JsSuccess(response, _) =>
-              val errorDetail = response.errorDetail
-              logger.error(s"Error in individual registration with nino: $errorDetail.")
-              Left(ApiError.toError(errorDetail))
-            case JsError(errors) =>
-              logger.error(s"Error in individual registration with nino: $errors.")
-              Left(ServiceUnavailableError)
-          }
+          logger.error(s"Error in registration with $endpoint: $responseMessage.")
+          Left(ServiceUnavailableError)
       }
     }
 }

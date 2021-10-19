@@ -16,34 +16,69 @@
 
 package controllers
 
-import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import base.{ControllerMockFixtures, SpecBase}
+import models.matching.MatchingInfo
+import models.register.response.details.AddressResponse
+import models.{BusinessType, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.IsThisYourBusinessPage
+import pages.{BusinessNamePage, BusinessTypePage, IsThisYourBusinessPage, UTRPage}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.BusinessMatchingService
 import uk.gov.hmrc.viewmodels.Radios
 
 import scala.concurrent.Future
 
-class IsThisYourBusinessControllerSpec extends ControllerSpecBase {
+class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtures {
 
   lazy val loadRoute   = routes.IsThisYourBusinessController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.IsThisYourBusinessController.onSubmit(NormalMode).url
 
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 
+  val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(BusinessTypePage, BusinessType.LimitedCompany)
+    .success
+    .value
+    .set(UTRPage, "UTR")
+    .success
+    .value
+    .set(BusinessNamePage, "Name")
+    .success
+    .value
+
+  val mockMatchingService: BusinessMatchingService = mock[BusinessMatchingService]
+
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(
+        bind[BusinessMatchingService].toInstance(mockMatchingService)
+      )
+
+  override def beforeEach: Unit = {
+    reset(mockMatchingService)
+    super.beforeEach
+  }
+
   "IsThisYourBusiness Controller" - {
 
+    val address = AddressResponse("address", None, None, None, None, "GB")
+
     "must return OK and the correct view for a GET" in {
+
+      when(mockMatchingService.sendBusinessMatchingInformation(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(MatchingInfo("safeId", Some("name"), Some(address)))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(validUserAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -66,11 +101,13 @@ class IsThisYourBusinessControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
+      when(mockMatchingService.sendBusinessMatchingInformation(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(MatchingInfo("safeId", Some("name"), Some(address)))))
+
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(IsThisYourBusinessPage, true).success.value
-      retrieveUserAnswersData(userAnswers)
+      retrieveUserAnswersData(validUserAnswers.set(IsThisYourBusinessPage, true).success.value)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -109,7 +146,7 @@ class IsThisYourBusinessControllerSpec extends ControllerSpecBase {
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return Service Unavailable and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -118,22 +155,14 @@ class IsThisYourBusinessControllerSpec extends ControllerSpecBase {
       val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) mustEqual SERVICE_UNAVAILABLE
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(boundForm("value"))
-      )
-
-      templateCaptor.getValue mustEqual "isThisYourBusiness.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
     }
   }
 }

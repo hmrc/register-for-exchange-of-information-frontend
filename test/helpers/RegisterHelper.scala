@@ -16,13 +16,17 @@
 
 package helpers
 
-import models.register.response.details.{AddressResponse, IndividualResponse}
+import models.register.response.details.{AddressResponse, IndividualResponse, OrganisationResponse}
 import models.register.response.{RegisterWithIDResponse, RegisterWithIDResponseDetail, RegistrationWithIDResponse}
 import models.shared.{ContactDetails, Parameters, ResponseCommon}
 
 object RegisterHelper {
 
-  val registrationWithIDResponse: RegistrationWithIDResponse = RegistrationWithIDResponse(
+  val address: AddressResponse = AddressResponse("100 Parliament Street", None, None, Some("London"), Some("SW1A 2BQ"), "GB")
+
+  val contactDetails: ContactDetails = ContactDetails(Some("1111111"), Some("2222222"), Some("1111111"), Some("test@test.org"))
+
+  val registrationWithIDIndividualResponse: RegistrationWithIDResponse = RegistrationWithIDResponse(
     RegisterWithIDResponse(
       ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
       Some(
@@ -34,8 +38,27 @@ object RegisterHelper {
           isAnASAgent = None,
           isAnIndividual = true,
           partnerDetails = IndividualResponse("Ron", Some("Madisson"), "Burgundy", Some("1980-12-12")),
-          address = AddressResponse("100 Parliament Street", None, None, Some("London"), Some("SW1A 2BQ"), "GB"),
-          contactDetails = ContactDetails(Some("1111111"), Some("2222222"), Some("1111111"), Some("test@test.org"))
+          address = address,
+          contactDetails = contactDetails
+        )
+      )
+    )
+  )
+
+  val registrationWithIDOrganisationResponse: RegistrationWithIDResponse = RegistrationWithIDResponse(
+    RegisterWithIDResponse(
+      ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
+      Some(
+        RegisterWithIDResponseDetail(
+          "XE0000123456789",
+          Some("WARN8764123"),
+          isEditable = true,
+          isAnAgent = false,
+          isAnASAgent = None,
+          isAnIndividual = true,
+          partnerDetails = OrganisationResponse("name", false, Some("0001"), None),
+          address = address,
+          contactDetails = contactDetails
         )
       )
     )

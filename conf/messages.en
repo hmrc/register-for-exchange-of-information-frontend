@@ -207,7 +207,7 @@ doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique
 
 weCouldNotConfirm.title = We could not {0}
 weCouldNotConfirm.heading = We could not {0}
-weCouldNotConfirm.business = find your business
+weCouldNotConfirm.organisation = find your business
 weCouldNotConfirm.identity = confirm your identity
 weCouldNotConfirm.guidance = The information you entered does not match our records.
 weCouldNotConfirm.button = Try again
