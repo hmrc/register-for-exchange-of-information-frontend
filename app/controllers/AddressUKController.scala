@@ -54,7 +54,7 @@ class AddressUKController @Inject() (
     with NunjucksSupport {
   private val logger: Logger = Logger(this.getClass)
 
-  val countriesList: Option[Seq[Country]] = countryListFactory.getCountryList
+  val countriesList: Option[Seq[Country]] = countryListFactory.countryList
 
   private def render(mode: Mode, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(

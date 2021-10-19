@@ -21,24 +21,24 @@ import models.Country
 import play.api.Environment
 import play.api.libs.json.Json
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class CountryListFactory @Inject() (environment: Environment, appConfig: FrontendAppConfig) {
 
   def uk: Country = Country("valid", "GB", "United Kingdom")
 
-  def getCountryList: Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
+  lazy val countryList: Option[Seq[Country]] = getCountryList
+
+  private def getCountryList: Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
     _.as[Seq[Country]].sortWith(
       (country, country2) => country.description < country2.description
     )
   }
 
-  def getDescriptionFromCode(code: String): Option[String] = environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
-    _.as[Seq[Country]]
-      .filter(
-        (p: Country) => p.code == code
-      )
-      .head
-      .description
+  def getDescriptionFromCode(code: String): Option[String] = countryList map {
+    _.filter(
+      (p: Country) => p.code == code
+    ).head.description
   }
 }

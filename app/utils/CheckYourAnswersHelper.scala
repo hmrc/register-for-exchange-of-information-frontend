@@ -112,7 +112,9 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
                   ${address.addressLine2.fold("")(
             address => s"$address<br>"
           )}<br>
-                  ${address.addressLine3}
+                  ${address.addressLine3.fold("")(
+            address => s"$address<br>"
+          )}
                   ${address.addressLine4.fold("")(
             address => s"$address<br>"
           )}
