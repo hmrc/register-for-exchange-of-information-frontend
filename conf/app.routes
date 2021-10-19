@@ -181,4 +181,6 @@ POST       /register/without-id/trading-name             controllers.WhatIsTradi
 GET        /register/without-id/change-trading-name      controllers.WhatIsTradingNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/change-trading-name      controllers.WhatIsTradingNameController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /problem/sign-in-problem                       controllers.UnauthorisedAssistantController.onPageLoad()
+GET        /problem/no-agent-service-available           controllers.UnauthorisedAgentController.onPageLoad()
+
+GET        /problem/sign-in-problem                      controllers.UnauthorisedAssistantController.onPageLoad()

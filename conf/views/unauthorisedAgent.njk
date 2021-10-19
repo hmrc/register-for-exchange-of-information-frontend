@@ -1,0 +1,31 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("unauthorisedAgent.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-main-wrapper">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">
+          {{ messages("unauthorisedAgent.heading") }}
+        </h1>
+
+          <p class="govuk-body"> {{ messages("unauthorisedAgent.paragraph.1")}}</p>
+
+          <p class="govuk-body"> {{ messages("unauthorisedAgent.paragraph.2.a")}}
+            <a href= "{{ loginUrl }}" class="govuk-link">{{ messages("unauthorisedAgent.paragraph.2.b") }}</a>
+            {{ messages("unauthorisedAgent.paragraph.2.c")}}</p>
+
+          <p class="govuk-body"> {{ messages("unauthorisedAgent.paragraph.3")}}</p>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
