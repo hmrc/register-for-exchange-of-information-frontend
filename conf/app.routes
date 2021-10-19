@@ -170,3 +170,5 @@ GET        /register/sole-date-of-birth                        controllers.SoleD
 POST       /register/sole-date-of-birth                        controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /problem/sign-in-problem                       controllers.UnauthorisedAssistantController.onPageLoad()
