@@ -28,7 +28,8 @@ class WhatIsTradingNameFormProviderSpec extends StringFieldBehaviours {
     val fieldName   = "businessName"
     val requiredKey = "whatIsTradingName.error.businessName.required"
     val lengthKey   = "whatIsTradingName.error.businessName.length"
-    val maxLength   = 105
+    val invalidKey  = "whatIsTradingName.error.businessName.invalid"
+    val maxLength   = 80
 
     behave like fieldThatBindsValidData(
       form,
@@ -36,17 +37,24 @@ class WhatIsTradingNameFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(maxLength)
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithMaxLengthAlpha(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey)
     )
 
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      "jfhf-\\^' `&%",
+      FormError(fieldName, invalidKey)
     )
   }
 }

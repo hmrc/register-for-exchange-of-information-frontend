@@ -18,10 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.WhatIsTradingNameFormProvider
-import javax.inject.Inject
-import models.{Mode, WhatIsTradingName}
+import models.Mode
 import models.requests.DataRequest
-import navigation.{MDRNavigator, Navigator}
+import navigation.MDRNavigator
 import pages.WhatIsTradingNamePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatIsTradingNameController @Inject() (
@@ -52,7 +52,7 @@ class WhatIsTradingNameController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[WhatIsTradingName])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
       "action" -> routes.WhatIsTradingNameController.onSubmit(mode).url

@@ -35,13 +35,10 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.WhatIsTradingNameFormProvider().apply()
 
-  val userAnswers = UserAnswers(
-    userAnswersId,
-    Json.obj(
-      WhatIsTradingNamePage.toString -> Json.obj(
-        "businessName" -> "value 1"
-      )
-    )
+  val tradingName: String = "tradingName"
+
+  val validData = Map(
+    "businessName" -> tradingName
   )
 
   "WhatIsTradingName Controller" - {
@@ -76,6 +73,7 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
+      val userAnswers = UserAnswers(userAnswersId).set(WhatIsTradingNamePage, tradingName).success.value
       retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -89,7 +87,7 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
 
       val filledForm = form.bind(
         Map(
-          "businessName" -> "value 1"
+          "businessName" -> "tradingName"
         )
       )
 
