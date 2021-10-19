@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package models.register.response.details
+package forms
 
-import play.api.libs.json.{Format, Json}
+import forms.mappings.Mappings
+import play.api.data.Form
+import utils.RegexConstants
 
-case class AddressResponse(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
-) {
+import javax.inject.Inject
 
-  val asList: List[String] =
-    List(Option(addressLine1), addressLine2, addressLine3, addressLine4, postalCode, Option(countryCode).filterNot(_ == "GB")).filter(_.isDefined).map(_.get)
-}
+class WhatIsTradingNameFormProvider @Inject() extends Mappings with RegexConstants {
 
-object AddressResponse {
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+  private val maxLength = 80
+
+  def apply(): Form[String] = Form(
+    "businessName" -> validatedText(
+      "whatIsTradingName.error.businessName.required",
+      "whatIsTradingName.error.businessName.invalid",
+      "whatIsTradingName.error.businessName.length",
+      apiOrganisationNameRegex,
+      maxLength
+    )
+  )
 }

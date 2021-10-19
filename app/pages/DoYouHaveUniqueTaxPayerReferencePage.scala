@@ -16,11 +16,26 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "doYouHaveUniqueTaxPayerReference"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(true) => PageLists.businessWithIdJourney.foldLeft(Try(userAnswers))(PageLists.removePage)
+      case Some(false) =>
+        val allOtherPages =
+          List(WhatAreYouRegisteringAsPage,
+               DoYouHaveNINPage
+          ) ++ PageLists.individualWithIdJourney ++ PageLists.individualWithoutIdJourney ++ PageLists.businessWithoutIdJourney
+        allOtherPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+      case _ => super.cleanup(value, userAnswers)
+    }
 }

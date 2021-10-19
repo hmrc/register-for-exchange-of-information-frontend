@@ -22,10 +22,7 @@ import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.MandatoryInformationMissingError
 import models.register.request.RegisterWithID
-import models.register.response.RegistrationWithIDResponse
-import models.subscription.BusinessDetails
-import models.subscription.response.DisplaySubscriptionForCBCResponse
-import models.{Name, UserAnswers}
+import models.{BusinessType, Name}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -35,21 +32,37 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
-  type ApiT[T] = Future[Either[ApiError, T]]
+  type MatchingResponseType[T] = Future[Either[ApiError, T]]
 
   def sendIndividualMatchingInformation(nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ApiError, MatchingInfo]] =
+  ): MatchingResponseType[MatchingInfo] =
     registrationConnector
-      .registerWithID(RegisterWithID(name, dob, "NINO", nino.nino))
-      .subflatMap(_.safeId.toRight(MandatoryInformationMissingError))
-      .map(MatchingInfo)
+      .withIndividualNino(RegisterWithID(name, dob, "NINO", nino.nino))
+      .subflatMap {
+        response =>
+          response.safeId
+            .map {
+              MatchingInfo(_, None, None)
+            }
+            .toRight(MandatoryInformationMissingError)
+      }
       .value
 
-  def sendBusinessMatchingInformation(userAnswers: UserAnswers)(implicit
+  def sendBusinessMatchingInformation(utr: String, businessName: String, businessType: BusinessType)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[(Option[BusinessDetails], Option[String], Option[DisplaySubscriptionForCBCResponse])] =
-    Future.failed(new RuntimeException) // TODO implement
+  ): MatchingResponseType[MatchingInfo] =
+    registrationConnector
+      .withOrganisationUtr(RegisterWithID(businessName, businessType, "UTR", utr))
+      .subflatMap {
+        response =>
+          (for {
+            safeId <- response.safeId
+            name    = response.organisationName
+            address = response.address
+          } yield MatchingInfo(safeId, name, address)).toRight(MandatoryInformationMissingError)
+      }
+      .value
 }

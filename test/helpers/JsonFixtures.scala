@@ -78,8 +78,8 @@ object JsonFixtures {
     )
   )
 
-  val withIDResponse: String =
-    """
+  val withIDIndividualResponse: String =
+    s"""
       |{
       |"registerWithIDResponse": {
       |"responseCommon": {
@@ -108,6 +108,54 @@ object JsonFixtures {
       |"lastName": "Burgundy",
       |"dateOfBirth":
       |"1980-12-12"
+      |},
+      |"address": {
+      |"addressLine1": "100 Parliament Street",
+      |"addressLine4": "London",
+      |"postalCode": "SW1A 2BQ",
+      |"countryCode": "GB"
+      |},
+      |"contactDetails": {
+      |"phoneNumber":
+      |"1111111",
+      |"mobileNumber":
+      |"2222222",
+      |"faxNumber":
+      |"1111111",
+      |"emailAddress":
+      |"test@test.org"
+      |}
+      |}
+      |}
+      |}""".stripMargin
+
+  val withIDOrganisationResponse: String =
+    """
+      |{
+      |"registerWithIDResponse": {
+      |"responseCommon": {
+      |"status": "OK",
+      |"statusText": "Sample status text",
+      |"processingDate": "2016-08-16T15:55:30Z",
+      |"returnParameters": [
+      |{
+      |"paramName":
+      |"SAP_NUMBER",
+      |"paramValue":
+      |"0123456789"
+      |}
+      |]
+      |},
+      |"responseDetail": {
+      |"SAFEID": "XE0000123456789",
+      |"ARN": "WARN8764123",
+      |"isEditable": true,
+      |"isAnAgent": false,
+      |"isAnIndividual": true,
+      |"organisation": {
+      |"organisationName": "name",
+      |"isAGroup": false,
+      |"organisationType": "0001"
       |},
       |"address": {
       |"addressLine1": "100 Parliament Street",

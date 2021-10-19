@@ -1,13 +1,13 @@
 {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
-{% from "govuk/components/radios/macro.njk"        import govukRadios %}
+{% from "govuk/components/input/macro.njk"         import govukInput %}
 {% from "govuk/components/button/macro.njk"        import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isThisYourBusiness.title"), form.errors) }}
+  {{ title(messages("whatIsTradingName.title"), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -33,19 +33,15 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-l">{{ messages('isThisYourBusiness.title') }}</h1>
+        <h1 class="govuk-heading-l">
+          {{ messages("whatIsTradingName.heading") }}
+        </h1>
 
-          <div>
-            <div class="govuk-body">{{ name }}</div>
-            {% for line in address %}
-              <p class="govuk-body{% if not loop.last %} govuk-!-margin-bottom-0{% endif %}">{{ line }}</p>
-            {% endfor %}
-          </div>
-
-          {{ govukRadios({
-            name: 'value',
-            items: radios,
-            errorMessage: form.value.error
+          {{ govukInput({
+            id: "businessName",
+            name: "businessName",
+            value: form.businessName.value,
+            errorMessage: form.businessName.error
           }) }}
 
           {{ govukButton({

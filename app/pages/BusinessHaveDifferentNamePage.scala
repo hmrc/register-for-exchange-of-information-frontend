@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package models.register.response.details
+package pages
 
-import play.api.libs.json.{Format, Json}
+import models.UserAnswers
+import play.api.libs.json.JsPath
 
-case class AddressResponse(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
-) {
+import scala.util.Try
 
-  val asList: List[String] =
-    List(Option(addressLine1), addressLine2, addressLine3, addressLine4, postalCode, Option(countryCode).filterNot(_ == "GB")).filter(_.isDefined).map(_.get)
-}
+case object BusinessHaveDifferentNamePage extends QuestionPage[Boolean] {
 
-object AddressResponse {
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "businessHaveDifferentName"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    value match {
+      case Some(false) =>
+        userAnswers.remove(WhatIsTradingNamePage)
+      case _ =>
+        super.cleanup(value, userAnswers)
+    }
 }

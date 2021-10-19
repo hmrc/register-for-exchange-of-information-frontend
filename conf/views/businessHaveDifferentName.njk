@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(messages("isThisYourBusiness.title"), form.errors) }}
+  {{ title(messages("businessHaveDifferentName.title"), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -33,17 +33,15 @@
 
           {{ csrf() | safe }}
 
-          <h1 class="govuk-heading-l">{{ messages('isThisYourBusiness.title') }}</h1>
-
-          <div>
-            <div class="govuk-body">{{ name }}</div>
-            {% for line in address %}
-              <p class="govuk-body{% if not loop.last %} govuk-!-margin-bottom-0{% endif %}">{{ line }}</p>
-            {% endfor %}
-          </div>
-
           {{ govukRadios({
             name: 'value',
+            fieldset: {
+              legend: {
+                text: messages('businessHaveDifferentName.title'),
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--l"
+              }
+            },
             items: radios,
             errorMessage: form.value.error
           }) }}

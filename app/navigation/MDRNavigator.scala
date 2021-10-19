@@ -42,7 +42,9 @@ class MDRNavigator @Inject() () extends Navigator {
     case AddressWithoutIdPage                  => addressWithoutID(NormalMode)
     case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
-    case BusinessWithoutIDNamePage             => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode))
+    case BusinessWithoutIDNamePage             => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode))
+    case BusinessHaveDifferentNamePage         => businessHaveDifferentNameRoutes(NormalMode)
+    case WhatIsTradingNamePage                 => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode))
     case BusinessTypePage                      => _ => Some(routes.UTRController.onPageLoad(NormalMode))
     case UTRPage                               => isSoleProprietor(NormalMode)
     case SoleNamePage                          => _ => Some(routes.SoleDateOfBirthController.onPageLoad(NormalMode))
@@ -67,6 +69,12 @@ class MDRNavigator @Inject() () extends Navigator {
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
       case true  => routes.BusinessTypeController.onPageLoad(mode)
       case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode)
+    }
+
+  private def businessHaveDifferentNameRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(BusinessHaveDifferentNamePage) map {
+      case true  => routes.WhatIsTradingNameController.onPageLoad(mode)
+      case false => routes.AddressWithoutIdController.onPageLoad(mode)
     }
 
   private def whatAreYouRegisteringAs(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -100,13 +108,9 @@ class MDRNavigator @Inject() () extends Navigator {
     }
 
   private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(IsThisYourBusinessPage) map {
-      case true =>
-        ua.get(BusinessTypePage) match {
-          case Some(Sole) => routes.ContactEmailController.onPageLoad(mode)
-          case Some(_)    => routes.ContactNameController.onPageLoad(mode)
-          case None       => routes.WeCouldNotConfirmController.onPageLoad("identity")
-        }
-      case false => routes.WeCouldNotConfirmController.onPageLoad("identity")
+    Option(ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) map {
+      case (Some(true), Some(Sole)) => routes.ContactEmailController.onPageLoad(mode)
+      case (Some(true), Some(_))    => routes.ContactNameController.onPageLoad(mode)
+      case _                        => routes.WeCouldNotConfirmController.onPageLoad("organisation")
     }
 }

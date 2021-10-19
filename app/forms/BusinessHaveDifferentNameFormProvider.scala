@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package models.register.response.details
+package forms
 
-import play.api.libs.json.{Format, Json}
+import javax.inject.Inject
 
-case class AddressResponse(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
-) {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  val asList: List[String] =
-    List(Option(addressLine1), addressLine2, addressLine3, addressLine4, postalCode, Option(countryCode).filterNot(_ == "GB")).filter(_.isDefined).map(_.get)
-}
+class BusinessHaveDifferentNameFormProvider @Inject() extends Mappings {
 
-object AddressResponse {
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("businessHaveDifferentName.error.required")
+    )
 }

@@ -16,11 +16,20 @@
 
 package models.register.response
 
+import models.register.response.details.{AddressResponse, OrganisationResponse}
 import play.api.libs.json.{Format, Json}
 
 case class RegistrationWithIDResponse(registerWithIDResponse: RegisterWithIDResponse) {
 
-  val safeId: Option[String] = registerWithIDResponse.responseDetail.map(_.SAFEID)
+  private val responseDetail = registerWithIDResponse.responseDetail
+
+  val safeId: Option[String] = responseDetail.map(_.SAFEID)
+
+  val organisationName: Option[String] = responseDetail.map(_.partnerDetails) collect {
+    case organisation: OrganisationResponse => organisation.organisationName
+  }
+
+  val address: Option[AddressResponse] = responseDetail.map(_.address)
 }
 
 object RegistrationWithIDResponse {

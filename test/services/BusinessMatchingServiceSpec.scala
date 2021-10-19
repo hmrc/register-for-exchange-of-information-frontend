@@ -21,13 +21,13 @@ import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
-import models.Name
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.NotFoundError
 import models.register.response.RegistrationWithIDResponse
 import models.subscription.response._
 import models.subscription.{ContactInformationForOrganisation, OrganisationDetails, PrimaryContact}
+import models.{BusinessType, Name}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}
 import play.api.inject.bind
@@ -79,22 +79,47 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
       "must return matching information when both safeId and subscriptionId can be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Right(registrationWithIDResponse))
+        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Right(registrationWithIDIndividualResponse))
 
-        when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
+        when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
 
-        result.futureValue mustBe Right(MatchingInfo("XE0000123456789"))
+        result.futureValue mustBe Right(MatchingInfo("XE0000123456789", None, None))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
 
         val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
 
-        when(mockRegistrationConnector.registerWithID(any())(any(), any())).thenReturn(response)
+        when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, MatchingInfo]] = service.sendIndividualMatchingInformation(Nino("CC123456C"), name, dob)
+
+        result.futureValue mustBe Left(NotFoundError)
+      }
+    }
+
+    "sendBusinessMatchingInformation" - {
+
+      "must return matching information when both safeId and subscriptionId can be recovered" in {
+
+        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Right(registrationWithIDOrganisationResponse))
+
+        when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
+
+        val result: Future[Either[ApiError, MatchingInfo]] = service.sendBusinessMatchingInformation("UTR", "name", BusinessType.LimitedCompany)
+
+        result.futureValue mustBe Right(MatchingInfo("XE0000123456789", Some("name"), Some(address)))
+      }
+
+      "must return an error when when safeId or subscriptionId can't be recovered" in {
+
+        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
+
+        when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
+
+        val result: Future[Either[ApiError, MatchingInfo]] = service.sendBusinessMatchingInformation("UTR", "name", BusinessType.LimitedCompany)
 
         result.futureValue mustBe Left(NotFoundError)
       }

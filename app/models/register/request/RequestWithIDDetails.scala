@@ -82,4 +82,13 @@ object RequestWithIDDetails {
       isAnAgent = false, //This may change
       WithIDIndividual(name.firstName, None, name.lastName, dob.format(dateFormat))
     )
+
+  def apply(organisationName: String, organisationType: String, identifierName: String, identifierValue: String): RequestWithIDDetails =
+    RequestWithIDDetails(
+      identifierName,
+      identifierValue,
+      requiresNameMatch = true,
+      isAnAgent = false, //This may change
+      WithIDOrganisation(organisationName, organisationType)
+    )
 }

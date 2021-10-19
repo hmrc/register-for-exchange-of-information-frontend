@@ -318,7 +318,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'What are registering as' page to 'What is the name of your business' page when business is selected" in {
+      "must go from 'What are you registering as' page to 'What is the name of your business' page when business is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -333,7 +333,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'What is the name of you business' page to 'What is the main address of your business' page when a valid business name is entered" in {
+      "must go from 'What is the name of your business' page to 'Does your business trade under a different name' page when a valid business name is entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -347,6 +347,36 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(BusinessWithoutIDNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Does your business trade under a different name' page to 'What is the trading name of your business' page when yes is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessHaveDifferentNamePage, true)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsTradingNameController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'Does your business trade under a different name' page to 'What is the main address of your business' page when no is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessHaveDifferentNamePage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode))
         }
       }
@@ -456,10 +486,10 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(IsThisYourBusinessPage, true)
+                .set(BusinessTypePage, Sole)
                 .success
                 .value
-                .set(BusinessTypePage, Sole)
+                .set(IsThisYourBusinessPage, true)
                 .success
                 .value
 
@@ -474,10 +504,10 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(IsThisYourBusinessPage, true)
+                .set(BusinessTypePage, LimitedCompany)
                 .success
                 .value
-                .set(BusinessTypePage, LimitedCompany)
+                .set(IsThisYourBusinessPage, true)
                 .success
                 .value
 

@@ -23,6 +23,22 @@ import uk.gov.hmrc.domain.Nino
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryWhatIsTradingNameUserAnswersEntry: Arbitrary[(pages.WhatIsTradingNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.WhatIsTradingNamePage.type]
+        value <- arbitrary[models.WhatIsTradingName].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryBusinessHaveDifferentNameUserAnswersEntry: Arbitrary[(pages.BusinessHaveDifferentNamePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.BusinessHaveDifferentNamePage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryBusinessWithoutIDNameUserAnswersEntry: Arbitrary[(pages.BusinessWithoutIDNamePage.type, JsValue)] =
     Arbitrary {
       for {

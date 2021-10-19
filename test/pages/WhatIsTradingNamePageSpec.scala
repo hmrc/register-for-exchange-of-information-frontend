@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package models.register.response.details
+package pages
 
-import play.api.libs.json.{Format, Json}
+import pages.behaviours.PageBehaviours
 
-case class AddressResponse(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
-) {
+class WhatIsTradingNamePageSpec extends PageBehaviours {
 
-  val asList: List[String] =
-    List(Option(addressLine1), addressLine2, addressLine3, addressLine4, postalCode, Option(countryCode).filterNot(_ == "GB")).filter(_.isDefined).map(_.get)
-}
+  "WhatIsTradingNamePage" - {
 
-object AddressResponse {
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+    beRetrievable[String](WhatIsTradingNamePage)
+
+    beSettable[String](WhatIsTradingNamePage)
+
+    beRemovable[String](WhatIsTradingNamePage)
+  }
 }
