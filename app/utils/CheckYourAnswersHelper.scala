@@ -59,9 +59,9 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         Seq(
           helper.doYouHaveUniqueTaxPayerReference,
           helper.whatAreYouRegisteringAs,
+          helper.businessWithoutIDName,
           helper.businessHaveDifferentName,
           helper.whatIsTradingName,
-          helper.businessWithoutIDName,
           helper.addressWithoutIdBusiness
         ).flatten
       case (None, None, None, Some(_)) =>
