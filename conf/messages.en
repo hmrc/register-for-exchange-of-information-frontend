@@ -70,6 +70,9 @@ checkYourAnswers.heading = Check Your Answers
 
 thereIsAProblem.title = Sorry, there is a problem with the service
 thereIsAProblem.heading = Sorry, there is a problem with the service
+thereIsAProblem.paragraph.1 = Try again later.
+thereIsAProblem.paragraph.2.a = We are unable to complete your registration. We have not saved your answers. If you need to contact someone about your MDR reporting, you can email
+thereIsAProblem.emailAddress = enquiries.aeoi@hmrc.gov.uk
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
