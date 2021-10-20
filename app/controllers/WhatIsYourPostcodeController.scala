@@ -19,8 +19,8 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.WhatIsYourPostcodeFormProvider
-import models.Mode
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages.{AddressLookupPage, WhatIsYourPostcodePage}
 import play.api.data.{Form, FormError}
@@ -54,40 +54,42 @@ class WhatIsYourPostcodeController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"             -> form,
-      "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode).url,
-      "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode).url
+      "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode, regime).url,
+      "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode, regime).url
     )
     renderer.render("whatIsYourPostcode.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      render(mode, request.userAnswers.get(WhatIsYourPostcodePage).fold(form)(form.fill)).map(Ok(_))
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        render(mode, regime, request.userAnswers.get(WhatIsYourPostcodePage).fold(form)(form.fill)).map(Ok(_))
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      val formReturned = form.bindFromRequest()
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        val formReturned = form.bindFromRequest()
 
-      formReturned
-        .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          postCode =>
-            addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
-              case Nil =>
-                val formError = formReturned.withError(FormError("postCode", List("whatIsYourPostcode.error.notFound")))
-                render(mode, formError).map(BadRequest(_))
+        formReturned
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            postCode =>
+              addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
+                case Nil =>
+                  val formError = formReturned.withError(FormError("postCode", List("whatIsYourPostcode.error.notFound")))
+                  render(mode, regime, formError).map(BadRequest(_))
 
-              case addresses =>
-                for {
-                  updatedAnswers            <- Future.fromTry(request.userAnswers.set(WhatIsYourPostcodePage, postCode))
-                  updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
-                  _                         <- sessionRepository.set(updatedAnswersWithAddress)
-                } yield Redirect(navigator.nextPage(WhatIsYourPostcodePage, mode, updatedAnswersWithAddress))
-            }
-        )
-  }
+                case addresses =>
+                  for {
+                    updatedAnswers            <- Future.fromTry(request.userAnswers.set(WhatIsYourPostcodePage, postCode))
+                    updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
+                    _                         <- sessionRepository.set(updatedAnswersWithAddress)
+                  } yield Redirect(navigator.nextPage(WhatIsYourPostcodePage, mode, regime, updatedAnswersWithAddress))
+              }
+          )
+    }
 }

@@ -18,14 +18,14 @@ package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.BusinessType.Sole
-import models.{Mode, UserAnswers, WhatAreYouRegisteringAs}
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.{Regime, WhatAreYouRegisteringAs}
+import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
@@ -47,9 +47,9 @@ class CheckYourAnswersController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      val helper                                = new CheckYourAnswersHelper(request.userAnswers, countryListFactory = countryFactory)
+      val helper                                = new CheckYourAnswersHelper(request.userAnswers, regime, countryListFactory = countryFactory)
       val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
 
       val contactHeading = if (getRegisteringAsBusiness()) "checkYourAnswers.firstContact.h2" else "checkYourAnswers.contactDetails.h2"
@@ -71,7 +71,7 @@ class CheckYourAnswersController @Inject() (
             "businessDetailsList" -> businessDetails,
             "firstContactList"    -> helper.buildFirstContact,
             "secondContactList"   -> helper.buildSecondContact,
-            "action"              -> Navigator.checkYourAnswers.url // todo change once backend for onSubmit is implemented
+            "action"              -> Navigator.checkYourAnswers(regime).url // todo change once backend for onSubmit is implemented
           )
         )
         .map(Ok(_))

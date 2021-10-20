@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{ContactNamePage, ContactPhonePage}
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class ContactPhoneControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.ContactPhoneController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.ContactPhoneController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.ContactPhoneController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.ContactPhoneController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.ContactPhoneFormProvider().apply()
 

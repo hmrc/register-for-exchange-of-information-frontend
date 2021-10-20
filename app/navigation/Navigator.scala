@@ -23,18 +23,18 @@ import play.api.mvc.Call
 
 trait Navigator {
 
-  val normalRoutes: Page => UserAnswers => Option[Call]
+  val normalRoutes: Page => Regime => UserAnswers => Option[Call]
 
-  val checkRouteMap: Page => UserAnswers => Option[Call]
+  val checkRouteMap: Page => Regime => UserAnswers => Option[Call]
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+  def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(userAnswers) match {
+      normalRoutes(page)(regime)(userAnswers) match {
         case Some(call) => call
         case None       => routes.SessionExpiredController.onPageLoad()
       }
     case CheckMode =>
-      checkRouteMap(page)(userAnswers) match {
+      checkRouteMap(page)(regime)(userAnswers) match {
         case Some(call) => call
         case None       => routes.SessionExpiredController.onPageLoad()
       }
@@ -43,6 +43,6 @@ trait Navigator {
 
 object Navigator {
 
-  val missingInformation: Call = controllers.routes.SomeInformationIsMissingController.onPageLoad()
-  val checkYourAnswers: Call   = controllers.routes.CheckYourAnswersController.onPageLoad()
+  val missingInformation: Regime => Call = (regime: Regime) => controllers.routes.SomeInformationIsMissingController.onPageLoad(regime)
+  val checkYourAnswers: Regime => Call   = (regime: Regime) => controllers.routes.CheckYourAnswersController.onPageLoad(regime)
 }

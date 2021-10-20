@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.IsContactTelephoneFormProvider
-import models.Mode
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.CBCRNavigator
 import pages.{ContactNamePage, IsContactTelephonePage}
 import play.api.data.Form
@@ -59,7 +59,7 @@ class IsContactTelephoneController @Inject() (
   private val individualTitleKey   = "isContactTelephone.individual.heading"
   private val individualHeadingKey = "isContactTelephone.individual.heading"
 
-  private def render(mode: Mode, form: Form[Boolean], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val (pageTitle, heading) = if (hasContactName()) {
       (businessTitleKey, businessHeadingKey)
@@ -72,32 +72,35 @@ class IsContactTelephoneController @Inject() (
       "name"      -> name,
       "pageTitle" -> pageTitle,
       "heading"   -> heading,
-      "action"    -> routes.IsContactTelephoneController.onSubmit(mode).url,
+      "action"    -> routes.IsContactTelephoneController.onSubmit(mode, regime).url,
       "radios"    -> Radios.yesNo(form("value"))
     )
     renderer.render("isContactTelephone.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      request.userAnswers
-        .get(ContactNamePage) match {
-        case Some(contactName) => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), contactName).map(Ok(_))
-        case _                 => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)).map(Ok(_))
-      }
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        request.userAnswers
+          .get(ContactNamePage) match {
+          case Some(contactName) => render(mode, regime, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), contactName).map(Ok(_))
+          case _                 => render(mode, regime, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)).map(Ok(_))
+        }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, updatedAnswers))
-        )
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              render(mode, regime, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, regime, updatedAnswers))
+          )
+    }
 }

@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{BusinessType, NormalMode, UserAnswers}
+import models.{BusinessType, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessTypePage, UTRPage}
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class UTRControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.UTRController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.UTRController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
 
@@ -144,7 +144,9 @@ class UTRControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
+      redirectLocation(SomeInformationIsMissing.missingInformationResult(MDR)).value mustEqual controllers.routes.SomeInformationIsMissingController
+        .onPageLoad(MDR)
+        .url
     }
   }
 }

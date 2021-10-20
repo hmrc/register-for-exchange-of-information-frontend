@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{SndConHavePhonePage, SndContactNamePage}
@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class SndConHavePhoneControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.SndConHavePhoneController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.SndConHavePhoneController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.SndConHavePhoneController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.SndConHavePhoneController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.SndConHavePhoneFormProvider().apply()
 
@@ -149,7 +149,9 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
+      redirectLocation(SomeInformationIsMissing.missingInformationResult(MDR)).value mustEqual controllers.routes.SomeInformationIsMissingController
+        .onPageLoad(MDR)
+        .url
     }
   }
 }

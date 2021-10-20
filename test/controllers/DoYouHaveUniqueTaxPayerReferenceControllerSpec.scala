@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerNoDataSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.DoYouHaveUniqueTaxPayerReferencePage
@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class DoYouHaveUniqueTaxPayerReferenceControllerSpec extends ControllerNoDataSpecBase { // TODO replace with ControllerSpecBase when actual flow is ready
 
-  lazy val loadRoute   = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.DoYouHaveUniqueTaxPayerReferenceFormProvider().apply()
 

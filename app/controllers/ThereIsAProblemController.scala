@@ -18,6 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataInitializeAction, DataRetrievalAction, IdentifierAction}
+import models.Regime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -40,7 +41,7 @@ class ThereIsAProblemController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       val json = Json.obj(
         "emailAddress" -> frontendAppConfig.emailEnquiries

@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions.IdentifierAction
+import models.Regime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -38,9 +39,7 @@ class JourneyRecoveryController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoadTemp(): Action[AnyContent] = onPageLoad(None)
-
-  def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = identify.async {
+  def onPageLoad(regime: Regime, continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = identify.async {
     implicit request =>
       val safeUrl: Option[String] = continueUrl.flatMap {
         unsafeUrl =>
