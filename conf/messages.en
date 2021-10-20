@@ -13,7 +13,7 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.saveAndContinue = Save and continue
-site.getHelpWithThisPage = Get help with this page
+site.getHelpWithThisPage = Get help with this page (opens in a new tab)
 site.confirmAndSend= Confirm and send
 site.service_name = Send a country-by-country report
 site.textarea.char_limit = (Limit is {0} characters)
@@ -438,7 +438,7 @@ unauthorisedAssistant.paragraph.1 = You’ve signed in as an assistant. To regis
 unauthorisedAssistant.paragraph.2a = If you have an administrator's account,
 unauthorisedAssistant.paragraph.2b = sign in with those Government Gateway details
 unauthorisedAssistant.paragraph.3 = If you do not have an administrator account, ask someone else in your organisation who does. They can then register for the service using their Government Gateway details.
-unauthorisedAssistant.paragraph.4 = When registered, you can use the service to submit MDR reports using your own Government Gateway credentials.
+unauthorisedAssistant.paragraph.4 = Once registered, you can use the service to submit MDR reports using your own Government Gateway credentials.
 
 #Agent messages
 unauthorisedAgent.title = Sorry, you’re unable to use this service
