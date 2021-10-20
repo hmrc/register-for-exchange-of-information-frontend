@@ -28,28 +28,19 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  "SignedOut Controller" - {
+  private def signOutRoute: String = routes.SignedOutController.signOut().url
 
-    "must return OK and the correct view for a GET" in {
+  "SignedOutController" - {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    "redirect to feedback survey page" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
+      when(mockAppConfig.signOutUrl).thenReturn(mockFrontendAppConfig.signOutUrl)
+      val result = route(app, FakeRequest(GET, signOutRoute)).value
 
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, controllers.auth.routes.SignedOutController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "signedOut.njk"
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(mockFrontendAppConfig.signOutUrl)
     }
   }
 }
