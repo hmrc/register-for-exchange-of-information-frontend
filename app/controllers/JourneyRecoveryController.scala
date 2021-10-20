@@ -16,12 +16,12 @@
 
 package controllers
 
-import controllers.actions.{IdentifierAction, ValidRegimeAction}
+import controllers.actions.IdentifierAction
 import models.Regime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
 import uk.gov.hmrc.play.bootstrap.binders._

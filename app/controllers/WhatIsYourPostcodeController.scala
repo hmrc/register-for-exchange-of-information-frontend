@@ -19,14 +19,14 @@ package controllers
 import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.WhatIsYourPostcodeFormProvider
-import models.{Mode, Regime}
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages.{AddressLookupPage, WhatIsYourPostcodePage}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository

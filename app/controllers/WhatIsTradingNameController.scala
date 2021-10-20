@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.WhatIsTradingNameFormProvider
-import models.{Mode, Regime}
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages.WhatIsTradingNamePage
 import play.api.data.Form

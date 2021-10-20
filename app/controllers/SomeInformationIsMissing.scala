@@ -16,8 +16,8 @@
 
 package controllers
 
-import models.{BusinessType, Regime}
 import models.requests.DataRequest
+import models.{BusinessType, Regime}
 import navigation.Navigator
 import pages.{BusinessTypePage, ContactNamePage, SndContactNamePage}
 import play.api.mvc.Results.Redirect

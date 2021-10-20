@@ -16,10 +16,9 @@
 
 package controllers
 
-import controllers.actions.IdentifierAction
-import models.Regime
 import config.FrontendAppConfig
 import controllers.actions.{DataInitializeAction, DataRetrievalAction, IdentifierAction}
+import models.Regime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json

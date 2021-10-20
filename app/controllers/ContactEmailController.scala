@@ -18,16 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.ContactEmailFormProvider
-import models.BusinessType.Sole
-import models.{Mode, Regime, UserAnswers}
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.CBCRNavigator
-import pages.{BusinessTypePage, ContactEmailPage, ContactNamePage, WhatAreYouRegisteringAsPage}
+import pages.{ContactEmailPage, ContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository

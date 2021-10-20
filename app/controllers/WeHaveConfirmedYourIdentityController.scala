@@ -17,15 +17,15 @@
 package controllers
 
 import controllers.actions._
-import models.{BusinessType, NormalMode, Regime}
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
-import pages.{BusinessTypePage, MatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import models.{BusinessType, NormalMode, Regime}
+import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService

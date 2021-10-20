@@ -18,7 +18,6 @@ package controllers.auth
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import repositories.SessionRepository

@@ -18,12 +18,11 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.Mode
+import models.{Mode, Regime}
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.register.response.details.AddressResponse
-import models.{Mode, Regime}
 import models.requests.DataRequest
 import navigation.{MDRNavigator, Navigator}
 import pages._

@@ -18,17 +18,14 @@ package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.BusinessType.Sole
-import models.{Mode, UserAnswers, WhatAreYouRegisteringAs}
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.{Regime, WhatAreYouRegisteringAs}
+import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.requests.DataRequest
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, ValidRegimeAction}
-import models.Regime
-import models.Regime
 import navigation.Navigator
 import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
