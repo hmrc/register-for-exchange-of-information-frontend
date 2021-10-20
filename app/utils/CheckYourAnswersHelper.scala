@@ -18,12 +18,10 @@ package utils
 
 import controllers.routes
 import models.{CheckMode, Regime, UserAnswers}
-import pages.{AddressUKPage, BusinessNamePage, MatchingInfoPage, SelectAddressPage}
-import models.{CheckMode, Regime, UserAnswers}
+import pages.{MatchingInfoPage, SelectAddressPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
-import utils.CountryListFactory
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
   val messages: Messages
@@ -124,7 +122,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           )}
                   $countryName
                   """),
-          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
+          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
         )
       case _ => None
     }
@@ -152,7 +150,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "selectAddress",
         value = Html(s"${answer.replace(",", "<br>")}"),
-        href = routes.SelectAddressController.onPageLoad(CheckMode).url
+        href = routes.SelectAddressController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -224,7 +222,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "addressWithoutId.business",
         value = formatAddress(answer),
-        href = routes.AddressWithoutIdController.onPageLoad(CheckMode).url
+        href = routes.AddressWithoutIdController.onPageLoad(CheckMode, regime).url
       )
   }
 
