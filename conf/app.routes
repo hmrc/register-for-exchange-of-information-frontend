@@ -180,3 +180,5 @@ GET        /register/without-id/trading-name             controllers.WhatIsTradi
 POST       /register/without-id/trading-name             controllers.WhatIsTradingNameController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/without-id/change-trading-name      controllers.WhatIsTradingNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/change-trading-name      controllers.WhatIsTradingNameController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /problem/no-agent-service-available                  controllers.UnauthorisedAgentController.onPageLoad()
