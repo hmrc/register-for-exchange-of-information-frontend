@@ -16,9 +16,11 @@
 
 package controllers
 
-import controllers.actions.IdentifierAction
+import config.FrontendAppConfig
+import controllers.actions.{DataInitializeAction, DataRetrievalAction, IdentifierAction}
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -29,14 +31,20 @@ import scala.concurrent.ExecutionContext
 class ThereIsAProblemController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataInitializeAction,
+  frontendAppConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      renderer.render("thereIsAProblem.njk").map(Ok(_))
+      val json = Json.obj(
+        "emailAddress" -> frontendAppConfig.emailEnquiries
+      )
+      renderer.render("thereIsAProblem.njk", json).map(Ok(_))
   }
 }

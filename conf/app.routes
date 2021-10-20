@@ -19,7 +19,7 @@ GET         /unauthorised                                controllers.auth.Unauth
 # TODO verify if necessary
 GET         /journey-recovery                            controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
 
-GET         /there-is-a-problem                          controllers.ThereIsAProblemController.onPageLoad()
+GET         /problem/there-is-a-problem                          controllers.ThereIsAProblemController.onPageLoad()
 
 GET         /check-answers                               controllers.CheckYourAnswersController.onPageLoad()
 
