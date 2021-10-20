@@ -16,6 +16,9 @@
 
 package models.subscription.request
 
+import models.UserAnswers
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import pages.{AddressWithoutIdPage, DoYouHaveNINPage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
 import play.api.libs.json.{__, Json, OWrites, Reads}
 
 case class CreateRequestDetail(IDType: String,
@@ -44,4 +47,29 @@ object CreateRequestDetail {
   }
 
   implicit val writes: OWrites[CreateRequestDetail] = Json.writes[CreateRequestDetail]
+  private val idType: String                        = "SAFE"
+
+  def apply(userAnswers: UserAnswers, safeId: String): CreateRequestDetail =
+    CreateRequestDetail(
+      IDType = idType,
+      IDNumber = safeId,
+      tradingName = None,
+      isGBUser = isGBUser(userAnswers),
+      primaryContact = PrimaryContact(OrganisationDetails("org"), "email", Some("phone"), Some("mobile")), //createPrimaryContact(userAnswers),
+      secondaryContact = Some(SecondaryContact(OrganisationDetails("org"), "email", Some("phone"), Some("mobile")))
+      //createSecondaryContact(userAnswers)
+    )
+
+  private def isGBUser(userAnswers: UserAnswers): Boolean =
+    userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {
+      case Some(true) => true
+      case _ =>
+        userAnswers.get(WhatAreYouRegisteringAsPage) match {
+          case Some(RegistrationTypeIndividual) =>
+            userAnswers.get(DoYouHaveNINPage).contains(true)
+          case Some(RegistrationTypeBusiness) =>
+            userAnswers.get(AddressWithoutIdPage).exists(_.isGB)
+          case _ => false
+        }
+    }
 }

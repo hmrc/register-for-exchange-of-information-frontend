@@ -16,13 +16,21 @@
 
 package models.subscription.request
 
-import models.UserAnswers
-import play.api.libs.json.{Json, OFormat}
+import base.SpecBase
+import generators.Generators
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.Json
 
-case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: CreateRequestDetail)
+class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-object SubscriptionRequest {
-  implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
+  "SubscriptionRequest" - {
+    "must serialise and de-serialise" in {
+      val subscriptionRequest = arbitrary[SubscriptionRequest].sample.value
+      Json.toJson(subscriptionRequest).as[SubscriptionRequest] mustBe subscriptionRequest
+    }
 
-  def apply(userAnswers: UserAnswers): SubscriptionRequest = ???
+    "must return SubscriptionRequest for the input 'UserAnswers' " in {}
+
+  }
 }

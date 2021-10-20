@@ -18,8 +18,6 @@ package generators
 
 import models.subscription.request.{
   ContactInformation,
-  ContactInformationForIndividual,
-  ContactInformationForOrganisation,
   CreateRequestDetail,
   CreateSubscriptionForMDRRequest,
   IndividualDetails,
@@ -115,15 +113,6 @@ trait ModelGenerators {
     } yield OrganisationDetails(organisationName)
   }
 
-  implicit val arbitraryContactInformationForOrganisation: Arbitrary[ContactInformationForOrganisation] = Arbitrary {
-    for {
-      individual <- arbitrary[OrganisationDetails]
-      email      <- arbitrary[String]
-      phone      <- Gen.option(arbitrary[String])
-      mobile     <- Gen.option(arbitrary[String])
-    } yield ContactInformationForOrganisation(individual, email, phone, mobile)
-  }
-
   implicit val arbitraryIndividualDetails: Arbitrary[IndividualDetails] = Arbitrary {
     for {
       firstName  <- arbitrary[String]
@@ -132,29 +121,26 @@ trait ModelGenerators {
     } yield IndividualDetails(firstName, middleName, lastName)
   }
 
-  implicit val arbitraryContactInformationForIndividual: Arbitrary[ContactInformationForIndividual] = Arbitrary {
-    for {
-      individual <- arbitrary[IndividualDetails]
-      email      <- arbitrary[String]
-      phone      <- Gen.option(arbitrary[String])
-      mobile     <- Gen.option(arbitrary[String])
-    } yield ContactInformationForIndividual(individual, email, phone, mobile)
-  }
-
   implicit lazy val arbitraryContactInformation: Arbitrary[ContactInformation] = Arbitrary {
-    Gen.oneOf[ContactInformation](arbitrary[ContactInformationForIndividual], arbitrary[ContactInformationForOrganisation])
+    Gen.oneOf[ContactInformation](arbitrary[OrganisationDetails], arbitrary[IndividualDetails])
   }
 
   implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
     for {
       contactInformation <- arbitrary[ContactInformation]
-    } yield PrimaryContact(contactInformation)
+      email              <- arbitrary[String]
+      phone              <- Gen.option(arbitrary[String])
+      mobile             <- Gen.option(arbitrary[String])
+    } yield PrimaryContact(contactInformation, email, phone, mobile)
   }
 
   implicit val arbitrarySecondaryContact: Arbitrary[SecondaryContact] = Arbitrary {
     for {
       contactInformation <- arbitrary[ContactInformation]
-    } yield SecondaryContact(contactInformation)
+      email              <- arbitrary[String]
+      phone              <- Gen.option(arbitrary[String])
+      mobile             <- Gen.option(arbitrary[String])
+    } yield SecondaryContact(contactInformation, email, phone, mobile)
   }
 
   implicit val arbitraryCreateRequestDetail: Arbitrary[CreateRequestDetail] = Arbitrary {

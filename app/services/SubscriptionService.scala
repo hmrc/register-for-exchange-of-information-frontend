@@ -17,11 +17,12 @@
 package services
 
 import connectors.SubscriptionConnector
+import models.UserAnswers
 
 import javax.inject.Inject
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
 
-  def createSubscription() = ???
+  def createSubscription(userAnswers: UserAnswers) = ???
 
 }
