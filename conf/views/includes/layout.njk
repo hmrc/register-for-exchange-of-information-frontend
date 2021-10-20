@@ -8,6 +8,7 @@
 
 {% block head %}
 {{ hmrcTimeoutDialog({
+  title: messages("timeout.title"),
   timeout: config.timeout,
   countdown: config.countdown,
   keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
