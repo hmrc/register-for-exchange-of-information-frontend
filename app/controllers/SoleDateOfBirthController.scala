@@ -18,14 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.SoleDateOfBirthFormProvider
-import models.Mode
+import models.{Mode, Regime}
 import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.SoleDateOfBirthPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -53,31 +53,33 @@ class SoleDateOfBirthController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[LocalDate])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[LocalDate])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "action" -> routes.SoleDateOfBirthController.onSubmit(mode).url,
+      "action" -> routes.SoleDateOfBirthController.onSubmit(mode, regime).url,
       "date"   -> DateInput.localDate(form("value"))
     )
     renderer.render("soleDateOfBirth.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      render(mode, request.userAnswers.get(SoleDateOfBirthPage).fold(form)(form.fill)).map(Ok(_))
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        render(mode, regime, request.userAnswers.get(SoleDateOfBirthPage).fold(form)(form.fill)).map(Ok(_))
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SoleDateOfBirthPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SoleDateOfBirthPage, mode, updatedAnswers))
-        )
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SoleDateOfBirthPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(SoleDateOfBirthPage, mode, regime, updatedAnswers))
+          )
+    }
 }

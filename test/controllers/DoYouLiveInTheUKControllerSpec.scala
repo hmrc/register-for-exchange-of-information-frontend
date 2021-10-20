@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.DoYouLiveInTheUKPage
@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class DoYouLiveInTheUKControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.DoYouLiveInTheUKController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.DoYouLiveInTheUKController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.DoYouLiveInTheUKController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.DoYouLiveInTheUKController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.DoYouLiveInTheUKFormProvider().apply()
 

@@ -21,13 +21,13 @@ import controllers.actions._
 import forms.UTRFormProvider
 import models.BusinessType._
 import models.requests.DataRequest
-import models.{BusinessType, Mode}
+import models.{BusinessType, Mode, Regime}
 import navigation.MDRNavigator
 import pages.UTRPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -58,7 +58,7 @@ class UTRController @Inject() (
 
   private def readKey(key: String)(implicit messages: Messages) = messages(key)
 
-  private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val taxType = businessType match {
       case Partnership | Sole | LimitedPartnership => readKey(sa)
       case _                                       => readKey(ct)
@@ -68,40 +68,43 @@ class UTRController @Inject() (
       "form"       -> form,
       "taxType"    -> taxType,
       "lostUTRUrl" -> appConfig.lostUTRUrl,
-      "action"     -> routes.UTRController.onSubmit(mode).url
+      "action"     -> routes.UTRController.onSubmit(mode, regime).url
     )
     renderer.render("utr.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      SomeInformationIsMissing.isMissingBusinessType {
-        businessType =>
-          val form = formProvider(businessType match {
-            case Partnership | Sole | LimitedPartnership => readKey(sa)
-            case _                                       => readKey(ct)
-          })
-          render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
-      }
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        SomeInformationIsMissing.isMissingBusinessType(regime) {
+          businessType =>
+            val form = formProvider(businessType match {
+              case Partnership | Sole | LimitedPartnership => readKey(sa)
+              case _                                       => readKey(ct)
+            })
+            render(mode, regime, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
+        }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      SomeInformationIsMissing.isMissingBusinessType {
-        businessType =>
-          formProvider(businessType match {
-            case Partnership | Sole | LimitedPartnership => readKey(sa)
-            case _                                       => readKey(ct)
-          })
-            .bindFromRequest()
-            .fold(
-              formWithErrors => render(mode, formWithErrors, businessType).map(BadRequest(_)),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
-            )
-      }
-  }
+    }
+
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        SomeInformationIsMissing.isMissingBusinessType(regime) {
+          businessType =>
+            formProvider(businessType match {
+              case Partnership | Sole | LimitedPartnership => readKey(sa)
+              case _                                       => readKey(ct)
+            })
+              .bindFromRequest()
+              .fold(
+                formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
+              )
+        }
+    }
 }

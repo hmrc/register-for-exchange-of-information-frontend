@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.{NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.ContactNamePage
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class ContactNameControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val loadRoute   = routes.ContactNameController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.ContactNameController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.ContactNameController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.ContactNameController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.ContactNameFormProvider().apply()
 

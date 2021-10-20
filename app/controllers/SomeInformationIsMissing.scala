@@ -16,7 +16,7 @@
 
 package controllers
 
-import models.BusinessType
+import models.{BusinessType, Regime}
 import models.requests.DataRequest
 import navigation.Navigator
 import pages.{BusinessTypePage, ContactNamePage, SndContactNamePage}
@@ -27,26 +27,26 @@ import scala.concurrent.Future
 
 object SomeInformationIsMissing {
 
-  val missingInformationResult: Future[Result] = Future.successful(Redirect(Navigator.missingInformation))
+  val missingInformationResult: Regime => Future[Result] = regime => Future.successful(Redirect(Navigator.missingInformation(regime)))
 
-  def isMissingContactName(f: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
+  def isMissingContactName(regime: Regime)(f: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
     request.userAnswers
       .get(ContactNamePage)
-      .fold(missingInformationResult) {
+      .fold(missingInformationResult(regime)) {
         name => f(name)
       }
 
-  def isMissingSecondContactName(f: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
+  def isMissingSecondContactName(regime: Regime)(f: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
     request.userAnswers
       .get(SndContactNamePage)
-      .fold(missingInformationResult) {
+      .fold(missingInformationResult(regime)) {
         name => f(name)
       }
 
-  def isMissingBusinessType(f: BusinessType => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
+  def isMissingBusinessType(regime: Regime)(f: BusinessType => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
     request.userAnswers
       .get(BusinessTypePage)
-      .fold(missingInformationResult) {
+      .fold(missingInformationResult(regime)) {
         name => f(name)
       }
 }

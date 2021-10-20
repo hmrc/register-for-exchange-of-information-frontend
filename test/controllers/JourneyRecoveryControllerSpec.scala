@@ -18,6 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
+import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.{JsObject, Json}
@@ -42,7 +43,7 @@ class JourneyRecoveryControllerSpec extends SpecBase with ControllerMockFixtures
 
         val continueUrl = RedirectUrl("/foo")
         retrieveUserAnswersData(emptyUserAnswers)
-        val request        = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(Some(continueUrl)).url)
+        val request        = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(MDR, Some(continueUrl)).url)
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,7 +69,7 @@ class JourneyRecoveryControllerSpec extends SpecBase with ControllerMockFixtures
 
         val continueUrl = RedirectUrl("https://foo.com")
         retrieveUserAnswersData(emptyUserAnswers)
-        val request        = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(Some(continueUrl)).url)
+        val request        = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(MDR, Some(continueUrl)).url)
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
         val result = route(app, request).value
@@ -89,7 +90,7 @@ class JourneyRecoveryControllerSpec extends SpecBase with ControllerMockFixtures
           .thenReturn(Future.successful(Html("")))
 
         retrieveUserAnswersData(emptyUserAnswers)
-        val request        = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad().url)
+        val request        = FakeRequest(GET, routes.JourneyRecoveryController.onPageLoad(MDR).url)
         val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
         val result = route(app, request).value

@@ -17,6 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
+import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -36,7 +37,7 @@ class SomeInformationIsMissingControllerSpec extends SpecBase with ControllerMoc
 
       retrieveUserAnswersData(emptyUserAnswers)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.SomeInformationIsMissingController.onPageLoad().url)
+      val request        = FakeRequest(GET, routes.SomeInformationIsMissingController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

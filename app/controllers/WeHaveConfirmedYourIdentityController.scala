@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import models.{BusinessType, NormalMode}
+import models.{BusinessType, NormalMode, Regime}
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
@@ -25,7 +25,7 @@ import models.requests.DataRequest
 import pages.{BusinessTypePage, MatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService
@@ -47,32 +47,33 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
 
-    implicit request =>
-      // TODO confirm redirection logic
-      val action: String = request.userAnswers.get(BusinessTypePage) match {
-        case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode).url
-        case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode).url
-        case None                    => routes.ContactEmailController.onPageLoad(NormalMode).url
-      }
-      val json = Json.obj(
-        "action" -> action
-      )
+      implicit request =>
+        // TODO confirm redirection logic
+        val action: String = request.userAnswers.get(BusinessTypePage) match {
+          case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+          case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
+          case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+        }
+        val json = Json.obj(
+          "action" -> action
+        )
 
-      matchIndividualInfo flatMap {
-        case Right(matchingInfo) =>
-          for {
-            updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
-          } yield sessionRepository.set(updatedAnswers)
-          renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
-        case Left(NotFoundError) =>
-          Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
-        case _ =>
-          renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
-      }
+        matchIndividualInfo flatMap {
+          case Right(matchingInfo) =>
+            for {
+              updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
+            } yield sessionRepository.set(updatedAnswers)
+            renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+          case Left(NotFoundError) =>
+            Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
+          case _ =>
+            renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+        }
 
-  }
+    }
 
   private def matchIndividualInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
     (for {

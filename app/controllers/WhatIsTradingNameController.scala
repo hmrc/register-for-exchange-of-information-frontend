@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.WhatIsTradingNameFormProvider
-import models.Mode
+import models.{Mode, Regime}
 import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.WhatIsTradingNamePage
@@ -52,30 +52,30 @@ class WhatIsTradingNameController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "action" -> routes.WhatIsTradingNameController.onSubmit(mode).url
+      "action" -> routes.WhatIsTradingNameController.onSubmit(mode, regime).url
     )
     renderer.render("whatIsTradingName.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      render(mode, request.userAnswers.get(WhatIsTradingNamePage).fold(form)(form.fill)).map(Ok(_))
+      render(mode, regime, request.userAnswers.get(WhatIsTradingNamePage).fold(form)(form.fill)).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTradingNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatIsTradingNamePage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(WhatIsTradingNamePage, mode, regime, updatedAnswers))
         )
   }
 }

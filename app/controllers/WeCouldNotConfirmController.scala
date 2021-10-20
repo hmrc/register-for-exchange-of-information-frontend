@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
-import models.NormalMode
+import models.{NormalMode, Regime}
 import org.slf4j.LoggerFactory
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -41,13 +41,14 @@ class WeCouldNotConfirmController @Inject() (
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def onPageLoad(key: String): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      val messages = implicitly[Messages]
-      val data = Json.obj(
-        "affinity" -> messages(s"weCouldNotConfirm.$key"),
-        "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
-      )
-      renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
-  }
+  def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        val messages = implicitly[Messages]
+        val data = Json.obj(
+          "affinity" -> messages(s"weCouldNotConfirm.$key"),
+          "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
+        )
+        renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
+    }
 }

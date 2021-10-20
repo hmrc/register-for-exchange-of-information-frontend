@@ -21,6 +21,9 @@ import models.BusinessType.Sole
 import models.{Mode, UserAnswers, WhatAreYouRegisteringAs}
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models.requests.DataRequest
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, ValidRegimeAction}
+import models.Regime
+import models.Regime
 import navigation.Navigator
 import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -47,9 +50,9 @@ class CheckYourAnswersController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
-      val helper                                = new CheckYourAnswersHelper(request.userAnswers, countryListFactory = countryFactory)
+      val helper                                = new CheckYourAnswersHelper(request.userAnswers, regime, countryListFactory = countryFactory)
       val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
 
       val contactHeading = if (getRegisteringAsBusiness()) "checkYourAnswers.firstContact.h2" else "checkYourAnswers.contactDetails.h2"

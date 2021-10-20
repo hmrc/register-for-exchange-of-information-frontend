@@ -18,14 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.DoYouHaveNINFormProvider
-import models.Mode
+import models.{Mode, Regime}
 import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.DoYouHaveNINPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -52,31 +52,33 @@ class DoYouHaveNINController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "action" -> routes.DoYouHaveNINController.onSubmit(mode).url,
+      "action" -> routes.DoYouHaveNINController.onSubmit(mode, regime).url,
       "radios" -> Radios.yesNo(form("value"))
     )
     renderer.render("doYouHaveNIN.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      render(mode, request.userAnswers.get(DoYouHaveNINPage).fold(form)(form.fill)).map(Ok(_))
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        render(mode, regime, request.userAnswers.get(DoYouHaveNINPage).fold(form)(form.fill)).map(Ok(_))
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, updatedAnswers))
-        )
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, regime, updatedAnswers))
+          )
+    }
 }

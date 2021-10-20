@@ -20,13 +20,13 @@ import controllers.actions._
 import forms.BusinessNameFormProvider
 import models.BusinessType._
 import models.requests.DataRequest
-import models.{BusinessType, Mode}
+import models.{BusinessType, Mode, Regime}
 import navigation.MDRNavigator
 import pages.BusinessNamePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -83,7 +83,7 @@ class BusinessNameController @Inject() (
       case UnincorporatedAssociation           => (messages(unincorporatedTitleKey), messages(unincorporatedHeadingKey), messages(unincorporatedHintKey))
     }
 
-  private def render(mode: Mode, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val (title, heading, hint) = pageHeadingAndHint(businessType)
 
     val data = Json.obj(
@@ -91,42 +91,44 @@ class BusinessNameController @Inject() (
       "titleTxt" -> title,
       "heading"  -> heading,
       "hint"     -> hint,
-      "action"   -> routes.BusinessNameController.onSubmit(mode).url
+      "action"   -> routes.BusinessNameController.onSubmit(mode, regime).url
     )
     renderer.render("businessName.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      SomeInformationIsMissing.isMissingBusinessType {
-        businessType =>
-          val form = formProvider(businessType match {
-            case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
-            case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
-            case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
-          })
-          render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
-      }
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        SomeInformationIsMissing.isMissingBusinessType(regime) {
+          businessType =>
+            val form = formProvider(businessType match {
+              case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
+              case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
+              case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
+            })
+            render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
+        }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      SomeInformationIsMissing.isMissingBusinessType {
-        businessType =>
-          formProvider(businessType match {
-            case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
-            case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
-            case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
-          })
-            .bindFromRequest()
-            .fold(
-              formWithErrors => render(mode, formWithErrors, businessType).map(BadRequest(_)),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
-            )
-      }
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        SomeInformationIsMissing.isMissingBusinessType(regime) {
+          businessType =>
+            formProvider(businessType match {
+              case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
+              case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
+              case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
+            })
+              .bindFromRequest()
+              .fold(
+                formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
+              )
+        }
+    }
 }
