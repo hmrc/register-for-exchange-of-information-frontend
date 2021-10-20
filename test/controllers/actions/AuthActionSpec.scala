@@ -46,7 +46,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
     }
   }
 
-  type AuthRetrievals = Option[String] ~ Enrolments ~ Option[AffinityGroup]
+  type AuthRetrievals = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
 
   "Auth Action" - {
 
@@ -178,7 +178,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         running(application) {
           val bodyParsers               = application.injector.instanceOf[BodyParsers.Default]
           val appConfig                 = application.injector.instanceOf[FrontendAppConfig]
-          val retrieval: AuthRetrievals = None ~ emptyEnrolments ~ Some(Agent)
+          val retrieval: AuthRetrievals = None ~ emptyEnrolments ~ Some(Agent) ~ None
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
           val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
@@ -209,6 +209,27 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad().url)
         }
       }
+
+      "must redirect the user to the unauthorised assistant page" in {
+
+        val application                      = applicationBuilder(userAnswers = None).build()
+        val mockAuthConnector: AuthConnector = mock[AuthConnector]
+        val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
+
+        running(application) {
+          val bodyParsers               = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig                 = application.injector.instanceOf[FrontendAppConfig]
+          val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ Some(Assistant)
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad().url)
+        }
+      }
     }
 
     "the user has an mdr enrolment" - {
@@ -222,7 +243,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         running(application) {
           val bodyParsers               = application.injector.instanceOf[BodyParsers.Default]
           val appConfig                 = application.injector.instanceOf[FrontendAppConfig]
-          val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None
+          val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ None
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
           val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
