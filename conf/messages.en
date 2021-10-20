@@ -118,7 +118,7 @@ unauthorised.heading = You can’t access this service with this account
 
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out
-sessionExpired.guidance = The details you entered will be saved for 28 days from when you last made changes.
+sessionExpired.guidance = Your answers have not been saved.
 
 needContactDetails.title = We need your contact details
 needContactDetails.heading = We need your contact details

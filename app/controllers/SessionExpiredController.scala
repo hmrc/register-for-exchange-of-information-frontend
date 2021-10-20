@@ -18,6 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,6 +36,10 @@ class SessionExpiredController @Inject() (
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("sessionExpired.njk").map(Ok(_).withNewSession)
+      val json = Json.obj(
+        "startUrl" -> config.mdrStartUrl
+      )
+
+      renderer.render("sessionExpired.njk", json).map(Ok(_).withNewSession)
   }
 }

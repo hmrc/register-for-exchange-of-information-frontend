@@ -51,8 +51,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
     "cy" -> Lang("cy")
   )
 
-  val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
-  val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
+  val timeoutSeconds: Int   = configuration.get[Int]("session.timeoutSeconds")
+  val countdownSeconds: Int = configuration.get[Int]("session.countdownSeconds")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
 
@@ -64,6 +64,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val businessMatchingUrl: String =
     s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"
+
+  lazy val mdrStartUrl: String =
+    s"${configuration.get[Service]("microservice.services.register-for-exchange-of-information-frontend").baseUrl}${configuration.get[String]("urls.haveUtr")}"
 
   lazy val lostUTRUrl: String        = "https://www.gov.uk/find-lost-utr-number"
   lazy val countryCodeJson: String   = configuration.get[String]("json.countries")
