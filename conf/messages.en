@@ -67,6 +67,9 @@ index.guidance = Register for exchange of information.
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
+checkYourAnswers.individualDetails.h2 = Your details
+checkYourAnswers.businessDetails.h2 = Business details
+
 
 thereIsAProblem.title = Sorry, there is a problem with the service
 thereIsAProblem.heading = Sorry, there is a problem with the service
@@ -199,11 +202,13 @@ checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 checkYourAnswers.firstContact.h2 = First contact
 checkYourAnswers.secondContact.h2 = Second contact
+checkYourAnswers.contactDetails.h2 = Contact details
 checkYourAnswers.information.h2 = Now send the contact details
 checkYourAnswers.information.p = By sending these contact details, you are confirming that the information is correct and complete to the best of your knowledge.
 checkYourAnswers.button = Accept and send
 
 doYouHaveUniqueTaxPayerReference.title = Do you have a UK Unique Taxpayer Reference (UTR)?
+doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a UK Unique Taxpayer Reference?
 doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax.
 doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique Taxpayer Reference
@@ -225,11 +230,12 @@ whatAreYouRegisteringAs.error.required = Select registration as a business or as
 
 doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
-doYouHaveNIN.checkYourAnswersLabel = National Insurance number
+doYouHaveNIN.checkYourAnswersLabel =  Do you have a National Insurance number?
 doYouHaveNIN.error.required = Select yes if you have National Insurance number
 
 whatIsYourNationalInsuranceNumber.title = What is your National Insurance number?
 whatIsYourNationalInsuranceNumber.heading = What is your National Insurance number?
+whatIsYourNationalInsuranceNumber.checkYourAnswersLabel = Your National Insurance number
 whatIsYourNationalInsuranceNumber.hint = It is on your National Insurance card, benefit letter, payslip or P60.  For example, ''QQ 12 34 56 C''
 whatIsYourNationalInsuranceNumber.error.required = Enter your National Insurance number
 whatIsYourNationalInsuranceNumber.error.invalid = Enter your National Insurance number in the correct format
@@ -276,7 +282,8 @@ addressWithoutId.addressLine4 = Region (optional)
 addressWithoutId.postCode = Postcode (if applicable)
 addressWithoutId.countryCode = Country
 
-addressWithoutId.checkYourAnswersLabel = Your home address
+addressWithoutId.individual.checkYourAnswersLabel = Your home address
+addressWithoutId.business.checkYourAnswersLabel = Main business address
 addressWithoutId.error.addressLine1.required = Enter address line 1
 addressWithoutId.error.addressLine3.required = Enter city
 addressWithoutId.error.country.required = Choose a country

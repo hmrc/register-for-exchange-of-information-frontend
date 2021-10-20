@@ -55,7 +55,7 @@ class AddressWithoutIdController @Inject() (
     with NunjucksSupport {
   private val logger: Logger = Logger(this.getClass)
 
-  val countriesList: Option[Seq[Country]] = countryListFactory.getCountryList
+  val countriesList: Option[Seq[Country]] = countryListFactory.countryList
 
   private def render(mode: Mode, form: Form[Address], registeringAsBusiness: Boolean, countries: Seq[Country])(implicit
     request: DataRequest[AnyContent]
