@@ -18,7 +18,7 @@ package models.subscription.request
 
 import models.UserAnswers
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import pages.{AddressWithoutIdPage, DoYouHaveNINPage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
+import pages._
 import play.api.libs.json.{__, Json, OWrites, Reads}
 
 case class CreateRequestDetail(IDType: String,
@@ -49,18 +49,18 @@ object CreateRequestDetail {
   implicit val writes: OWrites[CreateRequestDetail] = Json.writes[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def convertTo(userAnswers: UserAnswers, safeId: String): Option[CreateRequestDetail] =
-    PrimaryContact.convertTo(userAnswers) map {
-      primaryContact =>
-        CreateRequestDetail(
-          IDType = idType,
-          IDNumber = safeId,
-          tradingName = None,
-          isGBUser = isGBUser(userAnswers),
-          primaryContact = primaryContact,
-          secondaryContact = SecondaryContact.convertTo(userAnswers)
-        )
-    }
+  def convertTo(userAnswers: UserAnswers): Option[CreateRequestDetail] =
+    for {
+      safeId         <- userAnswers.get(SafeIDPage)
+      primaryContact <- PrimaryContact.convertTo(userAnswers)
+    } yield CreateRequestDetail(
+      IDType = idType,
+      IDNumber = safeId,
+      tradingName = None,
+      isGBUser = isGBUser(userAnswers),
+      primaryContact = primaryContact,
+      secondaryContact = SecondaryContact.convertTo(userAnswers)
+    )
 
   private def isGBUser(userAnswers: UserAnswers): Boolean =
     userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {

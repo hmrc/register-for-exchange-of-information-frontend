@@ -70,6 +70,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
       val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad().url)

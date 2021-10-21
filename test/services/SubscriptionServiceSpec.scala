@@ -22,7 +22,7 @@ import cats.implicits.catsStdInstancesForFuture
 import connectors.SubscriptionConnector
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
-import models.error.ApiError.{BadRequest, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.response.SubscriptionID
 import models.{Address, Country, NonUkName, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -79,27 +79,26 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(AddressWithoutIdPage, address)
         .success
         .value
+        .set(SafeIDPage, "id")
+        .success
+        .value
 
-      val result = service.createSubscription(userAnswers).value
+      val result = service.createSubscription(userAnswers)
       result.futureValue mustBe Right(subscriptionID)
     }
 
     "must return MandatoryInformationMissingError when UserAnswers is empty" in {
-      val errors = Seq(NotFoundError, BadRequest, DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError)
-      for (error <- errors) {
-        println("====================" + error)
-        val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(MandatoryInformationMissingError))
+      val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(MandatoryInformationMissingError))
 
-        when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
+      when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-        val result = service.createSubscription(UserAnswers("id")).value
+      val result = service.createSubscription(UserAnswers("id"))
 
-        result.futureValue mustBe Left(MandatoryInformationMissingError)
-      }
+      result.futureValue mustBe Left(MandatoryInformationMissingError)
     }
 
     "must return error when it fails to create subscription" in {
-      val errors = Seq(NotFoundError, BadRequest, DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError)
+      val errors = Seq(NotFoundError, BadRequestError, DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError)
       for (error <- errors) {
         val userAnswers = UserAnswers("id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -111,12 +110,15 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .set(ContactNamePage, "Name Name")
           .success
           .value
+          .set(SafeIDPage, "id")
+          .success
+          .value
 
         val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(error))
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-        val result = service.createSubscription(userAnswers).value
+        val result = service.createSubscription(userAnswers)
 
         result.futureValue mustBe Left(error)
       }

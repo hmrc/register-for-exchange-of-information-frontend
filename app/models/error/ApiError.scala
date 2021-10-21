@@ -28,7 +28,7 @@ object ApiError {
       case (_, _, response) =>
         response.status match {
           case status if status == 404 => HttpReads.pure(Left(NotFoundError))
-          case status if is4xx(status) => HttpReads.pure(Left(BadRequest))
+          case status if is4xx(status) => HttpReads.pure(Left(BadRequestError))
           case status if is5xx(status) => HttpReads.pure(Left(ServiceUnavailableError))
           case _                       => HttpReads[A].map(Right.apply)
         }
@@ -39,7 +39,7 @@ object ApiError {
     case _                                 => ServiceUnavailableError
   }
 
-  case object BadRequest extends ApiError
+  case object BadRequestError extends ApiError
 
   case object NotFoundError extends ApiError
 

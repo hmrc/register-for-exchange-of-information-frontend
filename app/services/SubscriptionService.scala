@@ -21,7 +21,7 @@ import cats.implicits.catsStdInstancesForFuture
 import connectors.SubscriptionConnector
 import models.UserAnswers
 import models.error.ApiError
-import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
+import models.error.ApiError.MandatoryInformationMissingError
 import models.subscription.request.{CreateSubscriptionForMDRRequest, SubscriptionRequest}
 import models.subscription.response.SubscriptionID
 import uk.gov.hmrc.http.HeaderCarrier
@@ -31,12 +31,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
 
-  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, SubscriptionID] =
+  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, SubscriptionID]] =
     SubscriptionRequest.convertTo(userAnswers) match {
       case Some(subscriptionRequest) =>
         subscriptionConnector
           .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
-      case _ => EitherT.fromEither[Future](Left(MandatoryInformationMissingError))
+          .value
+      case _ => EitherT.leftT(MandatoryInformationMissingError).value
     }
 
 }

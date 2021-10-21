@@ -29,6 +29,7 @@ import pages.{
   DoYouHaveNINPage,
   DoYouHaveUniqueTaxPayerReferencePage,
   NonUkNamePage,
+  SafeIDPage,
   WhatAreYouRegisteringAsPage,
   WhatIsYourNamePage
 }
@@ -100,8 +101,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(SafeIDPage, "safeId")
+        .success
+        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers, "safeId").value
+      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
       request mustBe createRequestDetails
     }
 
@@ -117,8 +121,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(SafeIDPage, "id")
+        .success
+        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers, "safeId").value
+      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -141,8 +148,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "hello")
         .success
         .value
+        .set(SafeIDPage, "id")
+        .success
+        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers, "safeId").value
+      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -165,8 +175,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, businessAddress)
         .success
         .value
+        .set(SafeIDPage, "id")
+        .success
+        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers, "safeId").value
+      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -189,8 +202,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, businessAddress)
         .success
         .value
+        .set(SafeIDPage, "id")
+        .success
+        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers, "safeId").value
+      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }
@@ -217,8 +233,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, address)
         .success
         .value
+        .set(SafeIDPage, "id")
+        .success
+        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers, "safeId").value
+      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }
@@ -232,8 +251,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(SafeIDPage, "id")
+        .success
+        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers, "safeId").value
+      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }

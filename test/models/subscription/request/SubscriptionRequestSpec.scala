@@ -21,7 +21,7 @@ import generators.Generators
 import models.{NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{ContactEmailPage, ContactNamePage, DoYouHaveUniqueTaxPayerReferencePage, NonUkNamePage}
+import pages.{ContactEmailPage, ContactNamePage, DoYouHaveUniqueTaxPayerReferencePage, NonUkNamePage, SafeIDPage}
 import play.api.libs.json.Json
 
 class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -33,6 +33,35 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
     }
 
     "must return SubscriptionRequest for the input 'UserAnswers'" in {
+      val subscriptionRequestCommon = SubscriptionRequestCommon("MDR", "2021-10-22T00:40:06Z", "d64d76beb68349d19931035ace5b4582", "MDTP", None)
+      val requestDtls               = CreateRequestDetail("SAFE", "safeId", None, true, PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
+
+      val expectedRequest = SubscriptionRequest(subscriptionRequestCommon, requestDtls)
+
+      val userAnswers = UserAnswers("id")
+        .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+        .success
+        .value
+        .set(NonUkNamePage, NonUkName("fred", "smith"))
+        .success
+        .value
+        .set(ContactEmailPage, "test@test.com")
+        .success
+        .value
+        .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(SafeIDPage, "safeId")
+        .success
+        .value
+
+      val subscriptionRequest = SubscriptionRequest.convertTo(userAnswers).value
+      subscriptionRequest.requestCommon.regime mustBe "MDR"
+      subscriptionRequest.requestCommon.originatingSystem mustBe "MDTP"
+      subscriptionRequest.requestDetail mustBe requestDtls
+    }
+
+    "must return None for missing 'UserAnswers'" in {
       val userAnswers = UserAnswers("id")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
@@ -47,7 +76,8 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .success
         .value
 
+      val subscriptionRequest = SubscriptionRequest.convertTo(userAnswers)
+      subscriptionRequest mustBe None
     }
-
   }
 }

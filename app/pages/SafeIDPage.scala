@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package models.subscription.request
+package pages
 
-import models.UserAnswers
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsPath
 
-case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: CreateRequestDetail)
+case object SafeIDPage extends QuestionPage[String] {
 
-object SubscriptionRequest {
-  implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
+  override def path: JsPath = JsPath \ toString
 
-  def convertTo(userAnswers: UserAnswers): Option[SubscriptionRequest] =
-    CreateRequestDetail.convertTo(userAnswers) map {
-      requestDetails =>
-        SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon, requestDetails)
-    }
-
+  override def toString: String = "safeIDPage"
 }

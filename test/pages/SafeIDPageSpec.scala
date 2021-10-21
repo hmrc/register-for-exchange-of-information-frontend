@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package models.subscription.request
+package pages
 
-import models.UserAnswers
-import play.api.libs.json.{Json, OFormat}
+import pages.behaviours.PageBehaviours
 
-case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: CreateRequestDetail)
+class SafeIDPageSpec extends PageBehaviours {
 
-object SubscriptionRequest {
-  implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
+  "SafeIDPage" - {
 
-  def convertTo(userAnswers: UserAnswers): Option[SubscriptionRequest] =
-    CreateRequestDetail.convertTo(userAnswers) map {
-      requestDetails =>
-        SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon, requestDetails)
-    }
+    beRetrievable[String](SafeIDPage)
 
+    beSettable[String](SafeIDPage)
+
+    beRemovable[String](SafeIDPage)
+  }
 }
