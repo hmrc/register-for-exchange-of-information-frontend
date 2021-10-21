@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package models.subscription.response
+package pages
 
-import play.api.libs.json.{__, Reads}
+import models.matching.RegistrationInfo
+import play.api.libs.json.JsPath
 
-case class SubscriptionID(subscriptionID: String)
+case object RegistrationInfoPage extends QuestionPage[RegistrationInfo] {
 
-object SubscriptionID {
+  override def path: JsPath = JsPath \ toString
 
-  implicit val reads: Reads[SubscriptionID] = {
-    import play.api.libs.functional.syntax._
-    (__ \ "createSubscriptionForMDRResponse" \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionID.apply
-  }
+  override def toString: String = "registrationInfo"
 }

@@ -16,13 +16,19 @@
 
 package models.error
 
+import cats.data.EitherT
 import models.enrolment.GroupIds
+import models.matching.RegistrationInfo
 import uk.gov.hmrc.http.HttpReads
 import uk.gov.hmrc.http.HttpReads.{is4xx, is5xx}
+
+import scala.concurrent.Future
 
 sealed trait ApiError
 
 object ApiError {
+
+  type RegistrationResponseType = EitherT[Future, ApiError, RegistrationInfo]
 
   implicit def readEitherOf[A: HttpReads]: HttpReads[Either[ApiError, A]] =
     HttpReads.ask.flatMap {
@@ -46,15 +52,13 @@ object ApiError {
 
   case object ServiceUnavailableError extends ApiError
 
-  case object MandatoryInformationMissingError extends ApiError
+  case class MandatoryInformationMissingError(value: String = "") extends ApiError
 
   case object DuplicateSubmissionError extends ApiError
 
   case object UnableToCreateEMTPSubscriptionError extends ApiError
 
   case object UnableToCreateEnrolmentError extends ApiError
-
-  case object SubscriptionInfoCreationError extends ApiError
 
   case object SubscriptionCreationError extends ApiError
 

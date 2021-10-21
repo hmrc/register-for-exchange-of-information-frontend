@@ -22,10 +22,11 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.CreateSubscriptionForMDRRequest
-import models.subscription.response.SubscriptionID
+import models.subscription.response.SubscriptionIDResponse
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -76,7 +77,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "must return UnableToCreateEMTPSubscriptionError for invalid response" in {
         val subMDRRequest    = arbitrary[CreateSubscriptionForMDRRequest].sample.value
-        val expectedResponse = SubscriptionID("subscriptionID")
+        val expectedResponse = SubscriptionIDResponse("subscriptionID")
 
         val subscriptionResponse: String =
           s"""

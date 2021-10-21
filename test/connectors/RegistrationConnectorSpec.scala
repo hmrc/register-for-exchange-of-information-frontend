@@ -20,18 +20,20 @@ import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
-import helpers.JsonFixtures.{withIDIndividualResponse, withIDOrganisationResponse}
+import helpers.JsonFixtures.{withIDIndividualResponse, withIDOrganisationResponse, withoutIDResponse}
 import helpers.RegisterHelper._
 import helpers.WireMockServerHandler
+import models.Name
 import models.error.ApiError.{NotFoundError, ServiceUnavailableError}
-import models.register.request.details.{WithIDIndividual, WithIDOrganisation}
-import models.register.request.{RegisterWithID, RegisterWithIDRequest, RequestCommon, RequestWithIDDetails}
+import models.register.request.details.{Individual, NoIdOrganisation, WithIDIndividual, WithIDOrganisation}
+import models.register.request._
 import models.shared.Parameters
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status.{NOT_FOUND, OK, SERVICE_UNAVAILABLE}
 import play.api.inject.guice.GuiceApplicationBuilder
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
@@ -45,17 +47,34 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
   lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
   val registrationUrl                       = "/register-for-exchange-of-information/registration"
 
+  val requestCommon: RequestCommon =
+    RequestCommon("2016-08-16T15:55:30Z", "MDR", "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", "MDR"))))
+
   val registrationWithIndividualIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
-      RequestCommon("2016-08-16T15:55:30Z", "MDR", "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", "MDR")))),
+      requestCommon,
       RequestWithIDDetails("NINO", "0123456789", requiresNameMatch = true, isAnAgent = false, WithIDIndividual("Fred", None, "Flint", "1999-12-20"))
     )
   )
 
   val registrationWithOrganisationIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
-      RequestCommon("2016-08-16T15:55:30Z", "MDR", "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", "MDR")))),
+      requestCommon,
       RequestWithIDDetails("UTR", "utr", requiresNameMatch = true, isAnAgent = false, WithIDOrganisation("name", "0001"))
+    )
+  )
+
+  val registrationWithoutOrganisationIDPayload: RegisterWithoutID = RegisterWithoutID(
+    RegisterWithoutIDRequest(
+      requestCommon,
+      RequestWithoutIDDetails(Some(NoIdOrganisation("name")), None, addressRequest, contactDetails, None)
+    )
+  )
+
+  val registrationWithoutIndividualIDPayload: RegisterWithoutID = RegisterWithoutID(
+    RegisterWithoutIDRequest(
+      requestCommon,
+      RequestWithoutIDDetails(None, Some(Individual(Name("Fred", "Flint"), LocalDate.of(1999, 12, 20))), addressRequest, contactDetails, None)
     )
   )
 
@@ -112,6 +131,60 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/organisation/utr", SERVICE_UNAVAILABLE, withIDOrganisationResponse)
 
         val result = connector.withOrganisationUtr(registrationWithOrganisationIDPayload)
+        result.value.futureValue mustBe Left(ServiceUnavailableError)
+      }
+    }
+
+    "when calling withIndividualNoId" - {
+
+      "return 200 and a registration response when individual has no id" in {
+
+        stubResponse("/individual/noId", OK, withoutIDResponse)
+
+        val result = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
+        result.value.futureValue mustBe Right(registrationWithoutIDResponse)
+      }
+
+      "return 404 and NotFoundError when there is no match" in {
+
+        stubResponse("/individual/noId", NOT_FOUND, withoutIDResponse)
+
+        val result = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
+        result.value.futureValue mustBe Left(NotFoundError)
+      }
+
+      "return 503 and ServiceUnavailableError when remote is unavailable " in {
+
+        stubResponse("/individual/noId", SERVICE_UNAVAILABLE, withoutIDResponse)
+
+        val result = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
+        result.value.futureValue mustBe Left(ServiceUnavailableError)
+      }
+    }
+
+    "when calling withOrganisationNoId" - {
+
+      "return 200 and a registration response when organisation has no id" in {
+
+        stubResponse("/organisation/noId", OK, withoutIDResponse)
+
+        val result = connector.withOrganisationNoId(registrationWithoutOrganisationIDPayload)
+        result.value.futureValue mustBe Right(registrationWithoutIDResponse)
+      }
+
+      "return 404 and NotFoundError when there is no match" in {
+
+        stubResponse("/organisation/noId", NOT_FOUND, withoutIDResponse)
+
+        val result = connector.withOrganisationNoId(registrationWithoutOrganisationIDPayload)
+        result.value.futureValue mustBe Left(NotFoundError)
+      }
+
+      "return 503 and ServiceUnavailableError when remote is unavailable " in {
+
+        stubResponse("/organisation/noId", SERVICE_UNAVAILABLE, withoutIDResponse)
+
+        val result = connector.withOrganisationNoId(registrationWithoutOrganisationIDPayload)
         result.value.futureValue mustBe Left(ServiceUnavailableError)
       }
     }

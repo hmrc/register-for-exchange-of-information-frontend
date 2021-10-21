@@ -18,11 +18,12 @@ package services
 
 import cats.implicits._
 import connectors.RegistrationConnector
-import models.matching.MatchingInfo
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
+import models.matching.MatchingType.{AsIndividual, AsOrganisation}
+import models.matching.RegistrationInfo
 import models.register.request.RegisterWithID
-import models.{BusinessType, Name}
+import models.{BusinessType, Name, Regime}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,37 +33,35 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
-  type MatchingResponseType[T] = Future[Either[ApiError, T]]
-
-  def sendIndividualMatchingInformation(nino: Nino, name: Name, dob: LocalDate)(implicit
+  def sendIndividualRegistratonInformation(regime: Regime, nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): MatchingResponseType[MatchingInfo] =
+  ): Future[Either[ApiError, RegistrationInfo]] =
     registrationConnector
-      .withIndividualNino(RegisterWithID(name, dob, "NINO", nino.nino))
+      .withIndividualNino(RegisterWithID(regime, name, dob, "NINO", nino.nino))
       .subflatMap {
         response =>
           response.safeId
             .map {
-              MatchingInfo(_, None, None)
+              RegistrationInfo(_, None, None, AsIndividual)
             }
-            .toRight(MandatoryInformationMissingError)
+            .toRight(MandatoryInformationMissingError())
       }
       .value
 
-  def sendBusinessMatchingInformation(utr: String, businessName: String, businessType: BusinessType)(implicit
+  def sendBusinessRegistrationInformation(regime: Regime, utr: String, businessName: String, businessType: BusinessType)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): MatchingResponseType[MatchingInfo] =
+  ): Future[Either[ApiError, RegistrationInfo]] =
     registrationConnector
-      .withOrganisationUtr(RegisterWithID(businessName, businessType, "UTR", utr))
+      .withOrganisationUtr(RegisterWithID(regime, businessName, businessType, "UTR", utr))
       .subflatMap {
         response =>
           (for {
             safeId <- response.safeId
             name    = response.organisationName
             address = response.address
-          } yield MatchingInfo(safeId, name, address)).toRight(MandatoryInformationMissingError)
+          } yield RegistrationInfo(safeId, name, address, AsOrganisation)).toRight(MandatoryInformationMissingError())
       }
       .value
 }

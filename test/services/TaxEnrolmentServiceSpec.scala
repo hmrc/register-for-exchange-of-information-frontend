@@ -18,31 +18,23 @@ package services
 
 import base.{ControllerMockFixtures, SpecBase}
 import cats.data.EitherT
-import connectors.TaxEnrolmentsConnector
-import org.scalatest.BeforeAndAfterEach
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import cats.implicits.catsStdInstancesForFuture
-import models.{Address, Country, MDR, NonUkName, UserAnswers}
+import connectors.TaxEnrolmentsConnector
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
-import models.error.ApiError.{SubscriptionInfoCreationError, UnableToCreateEnrolmentError}
-import models.matching.MatchingInfo
-import models.subscription.response.SubscriptionID
-
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import models.error.ApiError.UnableToCreateEnrolmentError
+import models.matching.MatchingType.AsIndividual
+import models.matching.RegistrationInfo
+import models.{Address, Country, MDR, NonUkName, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{
-  AddressWithoutIdPage,
-  ContactEmailPage,
-  DoYouHaveNINPage,
-  DoYouHaveUniqueTaxPayerReferencePage,
-  MatchingInfoPage,
-  NonUkNamePage,
-  WhatAreYouRegisteringAsPage
-}
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT}
+import org.scalatest.BeforeAndAfterEach
+import pages._
+import play.api.http.Status.NO_CONTENT
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with BeforeAndAfterEach {
 
@@ -67,7 +59,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
 
-      val subscriptionID = SubscriptionID("id")
+      val subscriptionID = "id"
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -88,11 +80,11 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
         .success
         .value
 
-      val result = service.createEnrolment(userAnswers, subscriptionID, MDR)
+      val result = service.createEnrolment("safeId", userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Right(NO_CONTENT)
     }
@@ -103,7 +95,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
 
-      val subscriptionID = SubscriptionID("id")
+      val subscriptionID = "id"
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -124,45 +116,13 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
         .success
         .value
 
-      val result = service.createEnrolment(userAnswers, subscriptionID, MDR)
+      val result = service.createEnrolment("safeId", userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Left(UnableToCreateEnrolmentError)
-    }
-
-    "must return INTERNAL_SERVER_ERROR when MatchingInfo is missing from userAnswers" in {
-      val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
-
-      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
-
-      val subscriptionID = SubscriptionID("id")
-      val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
-      val userAnswers = UserAnswers("")
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-        .success
-        .value
-        .set(DoYouHaveNINPage, false)
-        .success
-        .value
-        .set(NonUkNamePage, NonUkName("a", "b"))
-        .success
-        .value
-        .set(ContactEmailPage, "test@gmail.com")
-        .success
-        .value
-        .set(AddressWithoutIdPage, address)
-        .success
-        .value
-
-      val result = service.createEnrolment(userAnswers, subscriptionID, MDR)
-
-      result.futureValue mustBe Left(SubscriptionInfoCreationError)
     }
   }
 

@@ -24,7 +24,7 @@ import helpers.WireMockServerHandler
 import models.MDR
 import models.enrolment.GroupIds
 import models.error.ApiError.{EnrolmentExistsError, MalformedError}
-import models.subscription.response.SubscriptionID
+import models.SubscriptionID
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}

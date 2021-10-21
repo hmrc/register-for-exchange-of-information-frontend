@@ -16,12 +16,21 @@
 
 package models.matching
 
-import models.register.response.details.AddressResponse
+import models.{Enumerable, WithName}
 import play.api.libs.json.Json
 
-case class MatchingInfo(safeId: String, name: Option[String], address: Option[AddressResponse])
+sealed trait MatchingType
 
-object MatchingInfo {
+object MatchingType extends Enumerable.Implicits {
 
-  implicit val format = Json.format[MatchingInfo]
+  case object AsIndividual extends WithName("individual") with MatchingType
+  case object AsOrganisation extends WithName("organisation") with MatchingType
+  val values: Seq[MatchingType] = Seq(AsIndividual, AsOrganisation)
+
+  implicit val enumerable: Enumerable[MatchingType] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

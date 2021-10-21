@@ -22,7 +22,7 @@ import models.Regime
 import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MalformedError}
-import models.subscription.response.SubscriptionID
+import models.SubscriptionID
 import org.slf4j.LoggerFactory
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -40,7 +40,7 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): EitherT[Future, ApiError, Unit] = {
-    val serviceEnrolmentPattern = s"HMRC-${regime.toUpperCase}-ORG~${regime.toUpperCase}ID~${subscriptionID.subscriptionID}"
+    val serviceEnrolmentPattern = s"HMRC-${regime.toUpperCase}-ORG~${regime.toUpperCase}ID~${subscriptionID.value}"
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     EitherT {
       http

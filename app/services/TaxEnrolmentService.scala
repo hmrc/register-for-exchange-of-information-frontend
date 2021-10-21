@@ -18,10 +18,9 @@ package services
 
 import com.google.inject.Inject
 import connectors.TaxEnrolmentsConnector
-import models.{Regime, UserAnswers}
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
-import models.subscription.response.SubscriptionID
+import models.{Regime, UserAnswers}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -29,11 +28,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnector) extends Logging {
 
-  def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
+  def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: String, regime: Regime)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, Int]] =
-    SubscriptionInfo.createSubscriptionInfo(userAnswers, subscriptionId.subscriptionID) match {
+    SubscriptionInfo.createSubscriptionInfo(safeId, userAnswers, subscriptionId) match {
       case Right(subscriptionInfo: SubscriptionInfo) =>
         taxEnrolmentsConnector.createEnrolment(subscriptionInfo, regime).value
       case Left(apiError: ApiError) =>

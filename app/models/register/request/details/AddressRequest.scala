@@ -29,16 +29,14 @@ case class AddressRequest(addressLine1: String,
 
 object AddressRequest {
 
-  def apply(address: Address): Option[AddressRequest] =
-    Some(
-      AddressRequest(
-        addressLine1 = address.addressLine1,
-        addressLine2 = address.addressLine2,
-        addressLine3 = address.addressLine3,
-        addressLine4 = address.addressLine4,
-        postalCode = address.postCode,
-        countryCode = address.country.code
-      )
+  def apply(address: Address): AddressRequest =
+    AddressRequest(
+      addressLine1 = address.addressLine1,
+      addressLine2 = address.addressLine2,
+      addressLine3 = address.addressLine3,
+      addressLine4 = address.addressLine4,
+      postalCode = address.postCode,
+      countryCode = address.country.code
     )
 
   implicit lazy val writes: OWrites[AddressRequest] = OWrites[AddressRequest] {

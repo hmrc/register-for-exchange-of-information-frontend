@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package pages
+package models
 
-import models.matching.MatchingInfo
-import play.api.libs.json.JsPath
+import models.subscription.response.SubscriptionIDResponse
+import play.api.libs.json.Json
 
-case object MatchingInfoPage extends QuestionPage[MatchingInfo] {
+case class SubscriptionID(value: String)
 
-  override def path: JsPath = JsPath \ toString
+object SubscriptionID {
 
-  override def toString: String = "matchingInfo"
+  def apply(response: SubscriptionIDResponse): SubscriptionID = new SubscriptionID(response.subscriptionID)
+
+  implicit val format = Json.format[SubscriptionID]
 }

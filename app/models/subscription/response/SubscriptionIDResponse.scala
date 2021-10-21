@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.subscription.response
 
-import play.api.libs.json._
+import play.api.libs.json.{__, Reads, Writes}
+import uk.gov.hmrc.domain.SimpleObjectWrites
 
-case class NonUkName(givenName: String, familyName: String) {
+case class SubscriptionIDResponse(subscriptionID: String)
 
-  val toName: Name = Name(givenName, familyName) // TODO possible unification ?
-}
+object SubscriptionIDResponse {
 
-object NonUkName {
-  implicit val format = Json.format[NonUkName]
+  implicit val reads: Reads[SubscriptionIDResponse] = {
+    import play.api.libs.functional.syntax._
+    (__ \ "createSubscriptionForMDRResponse" \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionIDResponse.apply
+  }
+
+  implicit lazy val writes: Writes[SubscriptionIDResponse] = new SimpleObjectWrites[SubscriptionIDResponse](_.subscriptionID)
+
 }

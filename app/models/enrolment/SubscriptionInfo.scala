@@ -19,9 +19,7 @@ package models.enrolment
 import models.BusinessType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
 import models.UserAnswers
 import models.error.ApiError
-import models.error.ApiError.SubscriptionInfoCreationError
 import pages._
-import play.api.Logger
 import play.api.libs.json.Json
 
 case class SubscriptionInfo(safeID: String,
@@ -59,21 +57,17 @@ case class SubscriptionInfo(safeID: String,
 object SubscriptionInfo {
   implicit val format = Json.format[SubscriptionInfo]
 
-  def createSubscriptionInfo(userAnswers: UserAnswers, subscriptionId: String): Either[ApiError, SubscriptionInfo] =
-    userAnswers.get(MatchingInfoPage) match {
-      case Some(mi) =>
-        Right(
-          SubscriptionInfo(
-            safeID = mi.safeId,
-            saUtr = getSaUtrIfProvided(userAnswers),
-            ctUtr = getCtUtrIfProvided(userAnswers),
-            nino = getNinoIfProvided(userAnswers),
-            nonUkPostcode = getNonUkPostCodeIfProvided(userAnswers),
-            mdrId = subscriptionId
-          )
-        )
-      case _ => Left(SubscriptionInfoCreationError)
-    }
+  def createSubscriptionInfo(safeId: String, userAnswers: UserAnswers, subscriptionId: String): Either[ApiError, SubscriptionInfo] =
+    Right(
+      SubscriptionInfo(
+        safeID = safeId,
+        saUtr = getSaUtrIfProvided(userAnswers),
+        ctUtr = getCtUtrIfProvided(userAnswers),
+        nino = getNinoIfProvided(userAnswers),
+        nonUkPostcode = getNonUkPostCodeIfProvided(userAnswers),
+        mdrId = subscriptionId
+      )
+    )
 
   private def getNinoIfProvided(userAnswers: UserAnswers): Option[String] =
     userAnswers.get(WhatIsYourNationalInsuranceNumberPage) match {

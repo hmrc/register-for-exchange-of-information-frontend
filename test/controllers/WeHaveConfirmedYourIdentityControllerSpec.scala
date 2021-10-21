@@ -17,10 +17,9 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.matching.MatchingInfo
 import models.error.ApiError.NotFoundError
-import models.{Name, UserAnswers}
-import models.error.ApiError.NotFoundError
+import models.matching.MatchingType.AsIndividual
+import models.matching.RegistrationInfo
 import models.{MDR, Name, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -67,8 +66,8 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return OK and the correct view for a GET when there is a match" in {
 
-      when(mockMatchingService.sendIndividualMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId", None, None))))
+      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", None, None, AsIndividual))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -89,7 +88,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return redirect for a GET when there is no match" in {
 
-      when(mockMatchingService.sendIndividualMatchingInformation(any(), any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)

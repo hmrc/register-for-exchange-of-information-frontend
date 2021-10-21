@@ -466,6 +466,18 @@ noRecordsMatched.p1 = We could not match the details you entered with records he
 noRecordsMatched.p2 = If you used the wrong details, you can
 noRecordsMatched.link =  try again using different details
 
+registrationConfirmation.title = Registration successful
+registrationConfirmation.heading = What happens next
+registrationConfirmation.panel = Registration successful
+registrationConfirmation.panel.html = Your User ID
+registrationConfirmation.subscriptionID.text = If you use the file upload service, you will need to provide your User ID in every file you submit to HMRC.
+registrationConfirmation.email = We will send you an email to confirm you have registered.
+registrationConfirmation.submission.text = You can now
+registrationConfirmation.submission.text.mdr = for Mandatory Disclosure Rules (MDR).
+registrationConfirmation.submission.text.cbc = for Country-by-Country Rules (CBCR).
+registrationConfirmation.submission.link = report cross-border arrangements
+registrationConfirmation.survey.link = What did you think of this service? (opens in a new tab)
+
 pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
 pageNotFound.p1 = This may be because:
