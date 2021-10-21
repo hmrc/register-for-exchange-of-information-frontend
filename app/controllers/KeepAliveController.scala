@@ -28,7 +28,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class KeepAliveController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  actionBuilder: DefaultActionBuilder,
   getData: DataRetrievalAction,
   sessionRepository: SessionRepository
 )(implicit ec: ExecutionContext)
