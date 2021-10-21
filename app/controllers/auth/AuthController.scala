@@ -30,8 +30,7 @@ class AuthController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   config: FrontendAppConfig,
   sessionRepository: SessionRepository,
-  identify: IdentifierAction,
-  actionBuilder: DefaultActionBuilder
+  identify: IdentifierAction
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -42,7 +41,7 @@ class AuthController @Inject() (
         .clear(request.userId)
         .map {
           _ =>
-            Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl)))
+            Redirect(config.exitSurveyUrl).withNewSession
         }
   }
 
