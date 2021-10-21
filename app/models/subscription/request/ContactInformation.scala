@@ -165,9 +165,13 @@ object SecondaryContact {
   def convertTo(userAnswers: UserAnswers): Option[SecondaryContact] = {
     val secondaryContactNumber = userAnswers.get(SndContactPhonePage)
 
-    for {
-      orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
-      secondaryEmail <- userAnswers.get(SndContactEmailPage)
-    } yield SecondaryContact(contactInformation = orgDetails, email = secondaryEmail, phone = secondaryContactNumber, mobile = None)
+    userAnswers.get(SndConHavePhonePage) match {
+      case Some(true) =>
+        for {
+          orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
+          secondaryEmail <- userAnswers.get(SndContactEmailPage)
+        } yield SecondaryContact(contactInformation = orgDetails, email = secondaryEmail, phone = secondaryContactNumber, mobile = None)
+      case _ => None
+    }
   }
 }

@@ -17,10 +17,12 @@
 package connectors
 
 import base.SpecBase
+import cats.data.EitherT
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.CreateSubscriptionForMDRRequest
 import models.subscription.response.SubscriptionID
@@ -32,6 +34,7 @@ import play.api.http.Status.{CONFLICT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
@@ -91,7 +94,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubPostResponse("/create-subscription", OK, subscriptionResponse)
 
-        val result = connector.createSubscription(subMDRRequest)
+        val result: EitherT[Future, ApiError, SubscriptionID] = connector.createSubscription(subMDRRequest)
         result.value.futureValue mustBe Left(UnableToCreateEMTPSubscriptionError)
       }
 

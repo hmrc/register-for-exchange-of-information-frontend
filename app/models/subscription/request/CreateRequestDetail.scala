@@ -49,16 +49,18 @@ object CreateRequestDetail {
   implicit val writes: OWrites[CreateRequestDetail] = Json.writes[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def apply(userAnswers: UserAnswers, safeId: String): CreateRequestDetail =
-    CreateRequestDetail(
-      IDType = idType,
-      IDNumber = safeId,
-      tradingName = None,
-      isGBUser = isGBUser(userAnswers),
-      primaryContact = PrimaryContact(OrganisationDetails("org"), "email", Some("phone"), Some("mobile")), //createPrimaryContact(userAnswers),
-      secondaryContact = Some(SecondaryContact(OrganisationDetails("org"), "email", Some("phone"), Some("mobile")))
-      //createSecondaryContact(userAnswers)
-    )
+  def convertTo(userAnswers: UserAnswers, safeId: String): Option[CreateRequestDetail] =
+    PrimaryContact.convertTo(userAnswers) map {
+      primaryContact =>
+        CreateRequestDetail(
+          IDType = idType,
+          IDNumber = safeId,
+          tradingName = None,
+          isGBUser = isGBUser(userAnswers),
+          primaryContact = primaryContact,
+          secondaryContact = SecondaryContact.convertTo(userAnswers)
+        )
+    }
 
   private def isGBUser(userAnswers: UserAnswers): Boolean =
     userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {

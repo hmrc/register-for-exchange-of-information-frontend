@@ -18,8 +18,10 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
+import models.{NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.{ContactEmailPage, ContactNamePage, DoYouHaveUniqueTaxPayerReferencePage, NonUkNamePage}
 import play.api.libs.json.Json
 
 class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -30,7 +32,22 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
       Json.toJson(subscriptionRequest).as[SubscriptionRequest] mustBe subscriptionRequest
     }
 
-    "must return SubscriptionRequest for the input 'UserAnswers' " in {}
+    "must return SubscriptionRequest for the input 'UserAnswers'" in {
+      val userAnswers = UserAnswers("id")
+        .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+        .success
+        .value
+        .set(NonUkNamePage, NonUkName("fred", "smith"))
+        .success
+        .value
+        .set(ContactEmailPage, "test@test.com")
+        .success
+        .value
+        .set(ContactNamePage, "Name Name")
+        .success
+        .value
+
+    }
 
   }
 }
