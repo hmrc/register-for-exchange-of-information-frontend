@@ -65,9 +65,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val businessMatchingUrl: String =
     s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"
 
-  lazy val mdrStartUrl: String =
-    s"${configuration.get[Service]("microservice.services.register-for-exchange-of-information-frontend").baseUrl}${configuration.get[String]("urls.haveUtr")}"
-
   lazy val lostUTRUrl: String        = "https://www.gov.uk/find-lost-utr-number"
   lazy val countryCodeJson: String   = configuration.get[String]("json.countries")
   val enrolmentKey: String => String = (serviceName: String) => configuration.get[String](s"keys.enrolmentKey.$serviceName")

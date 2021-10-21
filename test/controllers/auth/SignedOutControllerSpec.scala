@@ -17,6 +17,7 @@
 package controllers.auth
 
 import base.{ControllerMockFixtures, SpecBase}
+import config.FrontendAppConfig
 import matchers.JsonMatchers
 import models.UserAnswers
 import org.mockito.ArgumentCaptor
@@ -28,28 +29,20 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  "SignedOut Controller" - {
+  private def signOutRoute: String = controllers.auth.routes.SignedOutController.signOut().url
 
-    "must return OK and the correct view for a GET" in {
+  "SignOut Controller" - {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    "redirect to feedback survey page" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
+      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+      val result    = route(app, FakeRequest(GET, signOutRoute)).value
 
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, controllers.auth.routes.SignedOutController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(appConfig.exitSurveyUrl)
 
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "signedOut.njk"
     }
   }
 }

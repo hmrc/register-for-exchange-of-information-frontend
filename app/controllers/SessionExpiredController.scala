@@ -36,10 +36,6 @@ class SessionExpiredController @Inject() (
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
-      val json = Json.obj(
-        "startUrl" -> config.mdrStartUrl
-      )
-
-      renderer.render("sessionExpired.njk", json).map(Ok(_).withNewSession)
+      renderer.render("sessionExpired.njk").map(Ok(_).withNewSession)
   }
 }
