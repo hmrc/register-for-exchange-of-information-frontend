@@ -38,6 +38,7 @@ class UnauthorisedAgentController @Inject() (
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
+        "regime"   -> "MDR",
         "loginUrl" -> frontendAppConfig.loginUrl
       )
       renderer.render("unauthorisedAgent.njk", json).map(Ok(_))

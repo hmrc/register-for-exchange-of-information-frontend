@@ -42,6 +42,7 @@ class UnauthorisedAssistantController @Inject() (
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
+        "regime"   -> "MDR",
         "loginUrl" -> frontendAppConfig.loginUrl
       )
       renderer.render("unauthorisedAssistant.njk", json).map(Ok(_))
