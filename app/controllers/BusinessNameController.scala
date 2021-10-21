@@ -88,6 +88,7 @@ class BusinessNameController @Inject() (
 
     val data = Json.obj(
       "form"     -> form,
+      "regime"   -> regime.toUpperCase,
       "titleTxt" -> title,
       "heading"  -> heading,
       "hint"     -> hint,

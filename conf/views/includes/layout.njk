@@ -5,7 +5,6 @@
 
 {%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
 {%- set htmlLang = request.language -%}
-
 {% block head %}
 {{ hmrcTimeoutDialog({
   timeout: config.timeout,
@@ -20,7 +19,7 @@
 {% block header %}
   {{ hmrcHeader({
     homepageUrl: "https://www.gov.uk",
-    serviceName: messages("site.service_name"),
+    serviceName: messages("site.service_name", regime),
     serviceUrl: "/register-for-exchange-of-information",
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",

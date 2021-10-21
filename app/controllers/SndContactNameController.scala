@@ -55,6 +55,7 @@ class SndContactNameController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "action" -> routes.SndContactNameController.onSubmit(mode, regime).url
     )
     renderer.render("sndContactName.njk", data)

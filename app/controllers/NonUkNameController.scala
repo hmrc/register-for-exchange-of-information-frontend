@@ -55,6 +55,8 @@ class NonUkNameController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[NonUkName])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
+      "regime" -> regime.toUpperCase,
       "action" -> routes.NonUkNameController.onSubmit(mode, regime).url
     )
     renderer.render("nonUkName.njk", data)

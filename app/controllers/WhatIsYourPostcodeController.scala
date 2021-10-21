@@ -57,6 +57,7 @@ class WhatIsYourPostcodeController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"             -> form,
+      "regime"           -> regime.toUpperCase,
       "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode, regime).url,
       "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode, regime).url
     )

@@ -44,6 +44,7 @@ class ThereIsAProblemController @Inject() (
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       val json = Json.obj(
+        "regime"       -> regime.toUpperCase,
         "emailAddress" -> frontendAppConfig.emailEnquiries
       )
       renderer.render("thereIsAProblem.njk", json).map(Ok(_))

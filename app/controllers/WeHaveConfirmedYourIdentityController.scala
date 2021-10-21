@@ -58,6 +58,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
           case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
         }
         val json = Json.obj(
+          "regime" -> regime.toUpperCase,
           "action" -> action
         )
 

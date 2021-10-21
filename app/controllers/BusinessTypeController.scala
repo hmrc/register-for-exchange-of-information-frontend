@@ -55,6 +55,7 @@ class BusinessTypeController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[BusinessType])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "action" -> routes.BusinessTypeController.onSubmit(mode, regime).url,
       "radios" -> BusinessType.radios(form)
     )

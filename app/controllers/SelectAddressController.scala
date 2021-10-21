@@ -57,6 +57,7 @@ class SelectAddressController @Inject() (
 
     val data = Json.obj(
       "form"             -> form,
+      "regime"           -> regime.toUpperCase,
       "action"           -> routes.SelectAddressController.onSubmit(mode, regime).url,
       "mode"             -> mode,
       "manualAddressUrl" -> manualAddressURL,

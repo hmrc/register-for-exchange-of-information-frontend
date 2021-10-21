@@ -55,6 +55,7 @@ class DoYouLiveInTheUKController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "action" -> routes.DoYouLiveInTheUKController.onSubmit(mode, regime).url,
       "radios" -> Radios.yesNo(form("value"))
     )

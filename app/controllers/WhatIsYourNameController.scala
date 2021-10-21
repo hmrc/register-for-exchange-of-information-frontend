@@ -55,6 +55,7 @@ class WhatIsYourNameController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[Name])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "action" -> routes.WhatIsYourNameController.onSubmit(mode, regime).url
     )
     renderer.render("whatIsYourName.njk", data)

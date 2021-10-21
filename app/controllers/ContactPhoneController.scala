@@ -69,6 +69,7 @@ class ContactPhoneController @Inject() (
 
     val data = Json.obj(
       "form"      -> form,
+      "regime"    -> regime.toUpperCase,
       "name"      -> name,
       "pageTitle" -> pageTitle,
       "heading"   -> heading,

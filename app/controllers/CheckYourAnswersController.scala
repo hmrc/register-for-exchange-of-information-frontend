@@ -66,6 +66,7 @@ class CheckYourAnswersController @Inject() (
           "checkYourAnswers.njk",
           Json.obj(
             "header"              -> header,
+            "regime"              -> regime.toUpperCase,
             "contactHeading"      -> contactHeading,
             "isBusiness"          -> getRegisteringAsBusiness(),
             "businessDetailsList" -> businessDetails,

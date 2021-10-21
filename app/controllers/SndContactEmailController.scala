@@ -55,6 +55,7 @@ class SndContactEmailController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "name"   -> name,
       "action" -> routes.SndContactEmailController.onSubmit(mode, regime).url
     )

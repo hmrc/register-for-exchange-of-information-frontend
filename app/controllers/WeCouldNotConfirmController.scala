@@ -46,6 +46,7 @@ class WeCouldNotConfirmController @Inject() (
       implicit request =>
         val messages = implicitly[Messages]
         val data = Json.obj(
+          "regime"   -> regime.toUpperCase,
           "affinity" -> messages(s"weCouldNotConfirm.$key"),
           "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
         )

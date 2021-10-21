@@ -37,6 +37,7 @@ class NeedContactDetailsController @Inject() (
   def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
       val data = Json.obj(
+        "regime" -> regime.toUpperCase,
         "action" -> routes.ContactNameController.onPageLoad(NormalMode, regime).url
       )
       renderer.render("needContactDetails.njk", data).map(Ok(_))

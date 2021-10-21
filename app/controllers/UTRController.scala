@@ -66,6 +66,7 @@ class UTRController @Inject() (
 
     val data = Json.obj(
       "form"       -> form,
+      "regime"     -> regime.toUpperCase,
       "taxType"    -> taxType,
       "lostUTRUrl" -> appConfig.lostUTRUrl,
       "action"     -> routes.UTRController.onSubmit(mode, regime).url

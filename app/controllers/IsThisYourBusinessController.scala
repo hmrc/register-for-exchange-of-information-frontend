@@ -79,6 +79,7 @@ class IsThisYourBusinessController @Inject() (
   ): Future[Html] = {
     val data = Json.obj(
       "form"    -> form,
+      "regime"  -> regime.toUpperCase,
       "name"    -> name,
       "address" -> address.asList,
       "action"  -> routes.IsThisYourBusinessController.onSubmit(mode, regime).url,
