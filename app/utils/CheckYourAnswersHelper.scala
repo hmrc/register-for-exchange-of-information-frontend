@@ -131,7 +131,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     answer =>
       toRow(
         msgKey = "whatIsTradingName",
-        value = msg"site.edit",
+        value = lit"$answer",
         href = routes.WhatIsTradingNameController.onPageLoad(CheckMode, regime).url
       )
   }
@@ -140,7 +140,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     answer =>
       toRow(
         msgKey = "businessHaveDifferentName",
-        value = msg"site.edit",
+        value = yesOrNo(answer),
         href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
       )
   }
