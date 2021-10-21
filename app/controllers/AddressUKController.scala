@@ -59,6 +59,7 @@ class AddressUKController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"      -> form,
+      "regime"    -> regime.toUpperCase,
       "action"    -> routes.AddressUKController.onSubmit(mode, regime).url,
       "countries" -> countryJsonList
     )

@@ -56,6 +56,7 @@ class SndContactPhoneController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "name"   -> request.userAnswers.get(SndContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
       "action" -> routes.SndContactPhoneController.onSubmit(mode, regime).url
     )

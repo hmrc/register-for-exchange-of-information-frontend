@@ -42,6 +42,7 @@ class SomeInformationIsMissingController @Inject() (
     (identify andThen getData.apply andThen requireData).async {
       implicit request =>
         val data = Json.obj(
+          "regime"   -> regime.toUpperCase,
           "continue" -> routes.NeedContactDetailsController.onPageLoad(regime).url
         )
         renderer.render("someInformationIsMissing.njk", data).map(Ok(_))

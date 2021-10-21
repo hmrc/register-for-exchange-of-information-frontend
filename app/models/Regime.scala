@@ -45,4 +45,8 @@ object Regime {
     string.toLowerCase match {
       case MDR.toString => MDR
     }
+
+  implicit class RegimeExt(regime: Regime) {
+    def toUpperCase: String = regime.toString.toUpperCase
+  }
 }

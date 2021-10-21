@@ -62,6 +62,7 @@ class AddressWithoutIdController @Inject() (
   ): Future[Html] = {
     val data = Json.obj(
       "form"                  -> form,
+      "regime"                -> regime.toUpperCase,
       "action"                -> routes.AddressWithoutIdController.onSubmit(mode, regime).url,
       "registeringAsBusiness" -> registeringAsBusiness,
       "countries"             -> countryJsonList(form.data, countries)

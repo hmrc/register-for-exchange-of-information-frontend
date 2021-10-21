@@ -55,6 +55,7 @@ class SndConHavePhoneController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "name"   -> name,
       "action" -> routes.SndConHavePhoneController.onSubmit(mode, regime).url,
       "radios" -> Radios.yesNo(form("value"))

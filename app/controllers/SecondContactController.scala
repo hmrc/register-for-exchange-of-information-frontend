@@ -55,6 +55,7 @@ class SecondContactController @Inject() (
   private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "action" -> routes.SecondContactController.onSubmit(mode, regime).url,
       "name"   -> name,
       "radios" -> Radios.yesNo(form("value"))
