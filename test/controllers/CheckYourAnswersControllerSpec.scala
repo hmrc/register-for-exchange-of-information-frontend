@@ -31,7 +31,7 @@ import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.SubscriptionService
+import services.{SubscriptionService, TaxEnrolmentService}
 
 import scala.concurrent.Future
 
@@ -47,20 +47,23 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
   val firstContactPhone   = "+44 0808 157 0192"
 
   // second contact
-  val isSecondContact                              = true
-  val secondContactName                            = "second-contact-name"
-  val secondContactEmail                           = "second-contact-email"
-  val isSecondContactPhone                         = true
-  val secondContactPhone                           = "+44 0808 157 0193"
-  val mockSubscriptionService: SubscriptionService = mock[SubscriptionService]
+  val isSecondContact                               = true
+  val secondContactName                             = "second-contact-name"
+  val secondContactEmail                            = "second-contact-email"
+  val isSecondContactPhone                          = true
+  val secondContactPhone                            = "+44 0808 157 0193"
+  val mockSubscriptionService: SubscriptionService  = mock[SubscriptionService]
+  val mockTaxEnrolmentsService: TaxEnrolmentService = mock[TaxEnrolmentService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+      .overrides(bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentsService))
 
   override def beforeEach: Unit = {
     reset(mockSubscriptionService)
+    reset(mockTaxEnrolmentsService)
     super.beforeEach
   }
 
@@ -287,6 +290,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
     "onSubmit" - {
       "must redirect to 'confirmation' page for 'Individual with Id' journey" in {
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -310,6 +314,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       }
 
       "must redirect to 'confirmation' page for 'Business with Id' journey" in {
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -323,6 +328,32 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual NOT_IMPLEMENTED
+
+      }
+
+      "must redirect to 'badRequest' page for 'Business with Id' journey when tax enrolment fails" in {
+        when(mockRenderer.render(any(), any())(any()))
+          .thenReturn(Future.successful(Html("")))
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Left(BAD_REQUEST)))
+        when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
+        val userAnswers = UserAnswers("Id")
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
+
+        retrieveUserAnswersData(userAnswers)
+
+        val request = FakeRequest(POST, submitRoute)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual BAD_REQUEST
+
+        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        templateCaptor.getValue mustEqual "badRequest.njk"
 
       }
 
@@ -350,6 +381,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       }
 
       "must redirect to 'confirmation' page for 'Business without Id' journey" in {
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -410,7 +442,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       }
 
-      "must render 'thereIsAProblem' page when 'createSubscription' fails with BadRequestError" in {
+      "must render 'badRequest' page when 'createSubscription' fails with BadRequestError" in {
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
@@ -439,7 +471,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
         verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-        templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+        templateCaptor.getValue mustEqual "badRequest.njk"
 
       }
 
