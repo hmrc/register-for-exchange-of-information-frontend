@@ -17,19 +17,122 @@
 package utils
 
 import controllers.routes
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, Regime, UserAnswers}
+import pages.{MatchingInfoPage, SelectAddressPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100)(implicit val messages: Messages) extends RowBuilder {
+class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
+  val messages: Messages
+) extends RowBuilder {
+
+  def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
+
+    val pagesToCheck = Tuple4(
+      helper.businessType,
+      helper.nino,
+      helper.businessWithoutIDName,
+      helper.nonUkName
+    )
+
+    pagesToCheck match {
+      case (Some(_), None, None, None) =>
+        //Business with ID (inc. Sole proprietor)
+        Seq(
+          helper.confirmBusiness
+        ).flatten
+
+      case (None, Some(_), None, None) =>
+        //Individual with ID
+        Seq(
+          helper.doYouHaveUniqueTaxPayerReference,
+          helper.whatAreYouRegisteringAs,
+          helper.doYouHaveNIN,
+          helper.nino,
+          helper.whatIsYourName,
+          helper.whatIsYourDateOfBirth
+        ).flatten
+      case (None, None, Some(_), None) =>
+        //Business without ID
+        Seq(
+          helper.doYouHaveUniqueTaxPayerReference,
+          helper.whatAreYouRegisteringAs,
+          helper.businessWithoutIDName,
+          helper.businessHaveDifferentName,
+          helper.whatIsTradingName,
+          helper.addressWithoutIdBusiness
+        ).flatten
+      case (None, None, None, Some(_)) =>
+        //Individual without ID
+        Seq(
+          helper.doYouHaveUniqueTaxPayerReference,
+          helper.whatAreYouRegisteringAs,
+          helper.doYouHaveNIN,
+          helper.nonUkName,
+          helper.whatIsYourDateOfBirth,
+          helper.doYouLiveInTheUK,
+          helper.addressWithoutIdIndividual,
+          helper.addressUK,
+          helper.selectAddress //ToDo hook selectAddress logic
+        ).flatten
+      case _ =>
+        //All pages
+        Seq(
+          helper.doYouHaveUniqueTaxPayerReference,
+          helper.confirmBusiness,
+          helper.nino,
+          helper.whatIsYourName,
+          helper.whatIsYourDateOfBirth,
+          helper.whatAreYouRegisteringAs,
+          helper.businessWithoutIDName,
+          helper.addressUK,
+          helper.doYouHaveNIN,
+          helper.nonUkName,
+          helper.doYouLiveInTheUK,
+          helper.addressUK
+        ).flatten
+    }
+  }
+
+  def confirmBusiness: Option[Row] =
+    userAnswers.get(pages.IsThisYourBusinessPage) match {
+      case Some(true) =>
+        for {
+          matchingInfo <- userAnswers.get(MatchingInfoPage)
+          businessName <- matchingInfo.name
+          address      <- matchingInfo.address
+          countryName  <- countryListFactory.getDescriptionFromCode(address.countryCode)
+        } yield toRow(
+          msgKey = "businessWithoutIDName",
+          value = Html(s"""
+                  $businessName<br><br>
+                  ${address.addressLine1}<br>
+                  ${address.addressLine2.fold("")(
+            address => s"$address<br>"
+          )}<br>
+                  ${address.addressLine3.fold("")(
+            address => s"$address<br>"
+          )}
+                  ${address.addressLine4.fold("")(
+            address => s"$address<br>"
+          )}
+                  ${address.postalCode.fold("")(
+            postcode => s"$postcode<br>"
+          )}
+                  $countryName
+                  """),
+          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
+        )
+      case _ => None
+    }
 
   def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {
     answer =>
       toRow(
         msgKey = "whatIsTradingName",
-        value = msg"site.edit",
-        href = routes.WhatIsTradingNameController.onPageLoad(CheckMode).url
+        value = lit"$answer",
+        href = routes.WhatIsTradingNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -37,8 +140,17 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "businessHaveDifferentName",
-        value = msg"site.edit",
-        href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode).url
+        value = yesOrNo(answer),
+        href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
+      )
+  }
+
+  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
+    answer =>
+      toRow(
+        msgKey = "selectAddress",
+        value = Html(s"${answer.replace(",", "<br>")}"),
+        href = routes.SelectAddressController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -46,8 +158,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "businessWithoutIDName",
-        value = msg"site.edit",
-        href = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode).url
+        value = lit"$answer",
+        href = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -56,7 +168,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "whatIsYourPostcode",
         value = msg"site.edit",
-        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode).url
+        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -64,8 +176,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "nonUkName",
-        value = msg"site.edit",
-        href = routes.NonUkNameController.onPageLoad(CheckMode).url
+        value = lit"${answer.givenName} ${answer.familyName}",
+        href = routes.NonUkNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -74,7 +186,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "soleDateOfBirth",
         value = msg"site.edit",
-        href = routes.SoleDateOfBirthController.onPageLoad(CheckMode).url
+        href = routes.SoleDateOfBirthController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -83,7 +195,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "soleName",
         value = msg"site.edit",
-        href = routes.SoleNameController.onPageLoad(CheckMode).url
+        href = routes.SoleNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -91,17 +203,26 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "addressUK",
-        value = msg"site.edit",
-        href = routes.AddressUKController.onPageLoad(CheckMode).url
+        value = formatAddress(answer),
+        href = routes.AddressUKController.onPageLoad(CheckMode, regime).url
       )
   }
 
-  def addressWithoutId: Option[Row] = userAnswers.get(pages.AddressWithoutIdPage) map {
+  def addressWithoutIdIndividual: Option[Row] = userAnswers.get(pages.AddressWithoutIdPage) map {
     answer =>
       toRow(
-        msgKey = "addressWithoutId",
-        value = msg"site.edit",
-        href = routes.AddressWithoutIdController.onPageLoad(CheckMode).url
+        msgKey = "addressWithoutId.individual",
+        value = formatAddress(answer),
+        href = routes.AddressWithoutIdController.onPageLoad(CheckMode, regime).url
+      )
+  }
+
+  def addressWithoutIdBusiness: Option[Row] = userAnswers.get(pages.AddressWithoutIdPage) map {
+    answer =>
+      toRow(
+        msgKey = "addressWithoutId.business",
+        value = formatAddress(answer),
+        href = routes.AddressWithoutIdController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -109,8 +230,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "doYouLiveInTheUK",
-        value = msg"site.edit",
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
+        value = yesOrNo(answer),
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -119,7 +240,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "nonUkNameController",
         value = msg"site.edit",
-        href = routes.NonUkNameController.onPageLoad(CheckMode).url
+        href = routes.NonUkNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -127,8 +248,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "whatIsYourDateOfBirth",
-        value = msg"site.edit",
-        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode).url
+        value = lit"${answer.format(dateFormatter)}",
+        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -136,17 +257,17 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "whatIsYourName",
-        value = msg"site.edit",
-        href = routes.WhatIsYourNameController.onPageLoad(CheckMode).url
+        value = lit"${answer.firstName} ${answer.lastName}",
+        href = routes.WhatIsYourNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
-  def whatIsYourNationalInsuranceNumber: Option[Row] = userAnswers.get(pages.WhatIsYourNationalInsuranceNumberPage) map {
+  def nino: Option[Row] = userAnswers.get(pages.WhatIsYourNationalInsuranceNumberPage) map {
     answer =>
       toRow(
         msgKey = "whatIsYourNationalInsuranceNumber",
-        value = msg"site.edit",
-        href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode).url
+        value = lit"$answer",
+        href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -155,7 +276,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "isThisYourBusiness",
         value = msg"site.edit",
-        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
+        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -164,7 +285,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "businessName",
         value = msg"site.edit",
-        href = routes.BusinessNameController.onPageLoad(CheckMode).url
+        href = routes.BusinessNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -173,16 +294,16 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "uTR",
         value = msg"site.edit",
-        href = routes.UTRController.onPageLoad(CheckMode).url
+        href = routes.UTRController.onPageLoad(CheckMode, regime).url
       )
   }
 
-  def bussinessType: Option[Row] = userAnswers.get(pages.BusinessTypePage) map {
+  def businessType: Option[Row] = userAnswers.get(pages.BusinessTypePage) map {
     answer =>
       toRow(
         msgKey = "bussinessType",
         value = msg"site.edit",
-        href = routes.BusinessTypeController.onPageLoad(CheckMode).url
+        href = routes.BusinessTypeController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -190,8 +311,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "doYouHaveUniqueTaxPayerReference",
-        value = msg"site.edit",
-        href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
+        value = yesOrNo(answer),
+        href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -199,8 +320,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "whatAreYouRegisteringAs",
-        value = msg"site.edit",
-        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode).url
+        value = msg"whatAreYouRegisteringAs.$answer",
+        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -208,8 +329,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "doYouHaveNIN",
-        value = msg"site.edit",
-        href = routes.DoYouHaveNINController.onPageLoad(CheckMode).url
+        value = yesOrNo(answer),
+        href = routes.DoYouHaveNINController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -256,7 +377,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "sndConHavePhone",
         value = yesOrNo(answer),
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
+        href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -271,7 +392,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "sndContactPhone",
         value = lit"$value",
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
+        href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
       )
     )
 
@@ -280,7 +401,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "sndContactEmail",
         value = lit"$answer",
-        href = routes.SndContactEmailController.onPageLoad(CheckMode).url
+        href = routes.SndContactEmailController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -289,7 +410,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "sndContactName",
         value = lit"$answer",
-        href = routes.SndContactNameController.onPageLoad(CheckMode).url
+        href = routes.SndContactNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -298,7 +419,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "secondContact",
         value = yesOrNo(answer),
-        href = routes.SecondContactController.onPageLoad(CheckMode).url
+        href = routes.SecondContactController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -342,7 +463,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "contactPhone",
         value = lit"$value",
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode, regime).url
       )
     )
 
@@ -351,7 +472,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "isContactTelephone",
         value = yesOrNo(answer),
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -360,7 +481,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "contactName",
         value = lit"$answer",
-        href = routes.ContactNameController.onPageLoad(CheckMode).url
+        href = routes.ContactNameController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -369,7 +490,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "contactEmail",
         value = lit"$answer",
-        href = routes.ContactEmailController.onPageLoad(CheckMode).url
+        href = routes.ContactEmailController.onPageLoad(CheckMode, regime).url
       )
   }
 }

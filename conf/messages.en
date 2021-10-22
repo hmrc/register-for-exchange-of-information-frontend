@@ -15,7 +15,8 @@ site.govuk = GOV.UK
 site.saveAndContinue = Save and continue
 site.getHelpWithThisPage = Get help with this page (opens in a new tab)
 site.confirmAndSend= Confirm and send
-site.service_name = Send a country-by-country report
+site.service_name.country = Send a country-by-country report
+site.service_name = Report cross-border arrangements for {0}
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
 site.homePageLink.text = Back to register for exchange of information
@@ -67,9 +68,15 @@ index.guidance = Register for exchange of information.
 
 checkYourAnswers.title = Check Your Answers
 checkYourAnswers.heading = Check Your Answers
+checkYourAnswers.individualDetails.h2 = Your details
+checkYourAnswers.businessDetails.h2 = Business details
+
 
 thereIsAProblem.title = Sorry, there is a problem with the service
 thereIsAProblem.heading = Sorry, there is a problem with the service
+thereIsAProblem.paragraph.1 = Try again later.
+thereIsAProblem.paragraph.2.a = We are unable to complete your registration. We have not saved your answers. If you need to contact someone about your MDR reporting, you can email
+thereIsAProblem.emailAddress = enquiries.aeoi@hmrc.gov.uk
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
@@ -196,11 +203,13 @@ checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 checkYourAnswers.firstContact.h2 = First contact
 checkYourAnswers.secondContact.h2 = Second contact
+checkYourAnswers.contactDetails.h2 = Contact details
 checkYourAnswers.information.h2 = Now send the contact details
 checkYourAnswers.information.p = By sending these contact details, you are confirming that the information is correct and complete to the best of your knowledge.
 checkYourAnswers.button = Accept and send
 
 doYouHaveUniqueTaxPayerReference.title = Do you have a UK Unique Taxpayer Reference (UTR)?
+doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a UK Unique Taxpayer Reference?
 doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax.
 doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique Taxpayer Reference
@@ -222,11 +231,12 @@ whatAreYouRegisteringAs.error.required = Select registration as a business or as
 
 doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
-doYouHaveNIN.checkYourAnswersLabel = National Insurance number
+doYouHaveNIN.checkYourAnswersLabel =  Do you have a National Insurance number?
 doYouHaveNIN.error.required = Select yes if you have National Insurance number
 
 whatIsYourNationalInsuranceNumber.title = What is your National Insurance number?
 whatIsYourNationalInsuranceNumber.heading = What is your National Insurance number?
+whatIsYourNationalInsuranceNumber.checkYourAnswersLabel = Your National Insurance number
 whatIsYourNationalInsuranceNumber.hint = It is on your National Insurance card, benefit letter, payslip or P60.  For example, ''QQ 12 34 56 C''
 whatIsYourNationalInsuranceNumber.error.required = Enter your National Insurance number
 whatIsYourNationalInsuranceNumber.error.invalid = Enter your National Insurance number in the correct format
@@ -273,7 +283,8 @@ addressWithoutId.addressLine4 = Region (optional)
 addressWithoutId.postCode = Postcode (if applicable)
 addressWithoutId.countryCode = Country
 
-addressWithoutId.checkYourAnswersLabel = Your home address
+addressWithoutId.individual.checkYourAnswersLabel = Your home address
+addressWithoutId.business.checkYourAnswersLabel = Main business address
 addressWithoutId.error.addressLine1.required = Enter address line 1
 addressWithoutId.error.addressLine3.required = Enter city
 addressWithoutId.error.country.required = Choose a country
@@ -431,12 +442,20 @@ whatIsTradingName.error.businessName.required = Enter the trading name of your b
 whatIsTradingName.error.businessName.invalid = Trading name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
 whatIsTradingName.error.businessName.length = Trading name must be 80 characters or less
 
+#Assistant messages
+unauthorisedAssistant.title = Sorry, you’re unable to use this service
+unauthorisedAssistant.heading = Sorry, you’re unable to use this service
+unauthorisedAssistant.paragraph.1 = You’ve signed in as an assistant. To register for the MDR service, you must sign in as an administrator.
+unauthorisedAssistant.paragraph.2a = If you have an administrator’s account,
+unauthorisedAssistant.paragraph.2b = sign in with those Government Gateway details
+unauthorisedAssistant.paragraph.3 = If you do not have an administrator account, ask someone else in your organisation who does. They can then register for the service using their Government Gateway details.
+unauthorisedAssistant.paragraph.4 = Once registered, you can use the service to submit MDR reports using your own Government Gateway credentials.
+
 #Agent messages
 unauthorisedAgent.title = Sorry, you’re unable to use this service
 unauthorisedAgent.heading = Sorry, you’re unable to use this service
 unauthorisedAgent.paragraph.1 = You’ve signed into the Government Gateway as an agent. You will be unable to use the MDR service with these details.
 unauthorisedAgent.paragraph.2.a = You can use the service by
 unauthorisedAgent.paragraph.2.b = signing in with your own or your organisation’s Government Gateway details
-unauthorisedAgent.paragraph.2.c = .
 unauthorisedAgent.paragraph.3 = You cannot report cross-border arrangements for other organisations or individuals, they must do it themselves.
 

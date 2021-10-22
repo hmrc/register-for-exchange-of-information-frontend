@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.AddressUKFormProvider
 import models.requests.DataRequest
-import models.{Address, Country, Mode}
+import models.{Address, Country, Mode, Regime}
 import navigation.MDRNavigator
 import pages.AddressUKPage
 import play.api.Logger
@@ -54,48 +54,51 @@ class AddressUKController @Inject() (
     with NunjucksSupport {
   private val logger: Logger = Logger(this.getClass)
 
-  val countriesList: Option[Seq[Country]] = countryListFactory.getCountryList
+  val countriesList: Option[Seq[Country]] = countryListFactory.countryList
 
-  private def render(mode: Mode, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"      -> form,
-      "action"    -> routes.AddressUKController.onSubmit(mode).url,
+      "regime"    -> regime.toUpperCase,
+      "action"    -> routes.AddressUKController.onSubmit(mode, regime).url,
       "countries" -> countryJsonList
     )
     renderer.render("addressUK.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      countriesList match {
-        case Some(countries) =>
-          val form = formProvider(countries)
-          render(mode, request.userAnswers.get(AddressUKPage).fold(form)(form.fill)).map(Ok(_))
-        case None =>
-          logger.error("Could not retrieve countries list from JSON file.")
-          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-      }
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        countriesList match {
+          case Some(countries) =>
+            val form = formProvider(countries)
+            render(mode, regime, request.userAnswers.get(AddressUKPage).fold(form)(form.fill)).map(Ok(_))
+          case None =>
+            logger.error("Could not retrieve countries list from JSON file.")
+            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
+        }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      countriesList match {
-        case Some(countries) =>
-          formProvider(countries)
-            .bindFromRequest()
-            .fold(
-              formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressUKPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(AddressUKPage, mode, updatedAnswers))
-            )
-        case None =>
-          logger.error("Could not retrieve countries list from JSON file.")
-          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-      }
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        countriesList match {
+          case Some(countries) =>
+            formProvider(countries)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressUKPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(AddressUKPage, mode, regime, updatedAnswers))
+              )
+          case None =>
+            logger.error("Could not retrieve countries list from JSON file.")
+            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
+        }
+    }
 
   private def countryJsonList: Seq[JsObject] = Seq(
     Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> true)

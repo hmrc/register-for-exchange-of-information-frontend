@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -26,9 +25,9 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtures {
+class UnauthorisedAssistantControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  "WeCouldNotConfirm Controller" - {
+  "UnauthorisedAssistant Controller" - {
 
     "return OK and the correct view for a GET" in {
 
@@ -36,7 +35,8 @@ class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtur
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad("identity", MDR).url)
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request        = FakeRequest(GET, routes.UnauthorisedAssistantController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -45,7 +45,7 @@ class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtur
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      templateCaptor.getValue mustEqual "weCouldNotConfirm.njk"
+      templateCaptor.getValue mustEqual "unauthorisedAssistant.njk"
     }
   }
 }

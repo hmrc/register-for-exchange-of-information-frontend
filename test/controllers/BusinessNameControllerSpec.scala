@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{BusinessType, NormalMode, UserAnswers}
+import models.{BusinessType, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessNamePage, BusinessTypePage}
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class BusinessNameControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode, MDR).url
 
   val reqErrKey    = "businessName.error.required.llp"
   val lnErrKey     = "businessName.error.length.llp"
@@ -147,7 +147,9 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
+      redirectLocation(SomeInformationIsMissing.missingInformationResult(MDR)).value mustEqual controllers.routes.SomeInformationIsMissingController
+        .onPageLoad(MDR)
+        .url
     }
   }
 }

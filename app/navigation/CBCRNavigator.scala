@@ -18,7 +18,7 @@ package navigation
 
 import controllers.routes
 import models.BusinessType.Sole
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.WhatAreYouRegisteringAs.{values, RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
 import play.api.mvc.Call
@@ -28,65 +28,65 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class CBCRNavigator @Inject() () extends Navigator {
 
-  override val normalRoutes: Page => UserAnswers => Option[Call] = {
-    case ContactNamePage        => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
-    case ContactEmailPage       => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode))
-    case IsContactTelephonePage => isContactTelephoneRoutes(NormalMode)
-    case ContactPhonePage       => contactTelephoneNumber(NormalMode)
-    case SecondContactPage      => isSecondContact(NormalMode)
-    case SndContactNamePage     => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode))
-    case SndContactEmailPage    => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode))
-    case SndConHavePhonePage    => haveSecondPhone(NormalMode)
-    case SndContactPhonePage    => _ => Some(routes.CheckYourAnswersController.onPageLoad())
-    case _                      => _ => Some(routes.IndexController.onPageLoad())
+  override val normalRoutes: Page => Regime => UserAnswers => Option[Call] = {
+    case ContactNamePage        => regime => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode, regime))
+    case ContactEmailPage       => regime => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode, regime))
+    case IsContactTelephonePage => regime => isContactTelephoneRoutes(NormalMode)(regime)
+    case ContactPhonePage       => regime => contactTelephoneNumber(NormalMode)(regime)
+    case SecondContactPage      => regime => isSecondContact(NormalMode)(regime)
+    case SndContactNamePage     => regime => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode, regime))
+    case SndContactEmailPage    => regime => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode, regime))
+    case SndConHavePhonePage    => regime => haveSecondPhone(NormalMode)(regime)
+    case SndContactPhonePage    => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
+    case _                      => regime => _ => Some(routes.IndexController.onPageLoad())
   }
 
-  override val checkRouteMap: Page => UserAnswers => Option[Call] = {
+  override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
     case IsContactTelephonePage => isContactTelephoneRoutes(CheckMode)
     case SecondContactPage      => isSecondContact(CheckMode)
     case SndConHavePhonePage    => haveSecondPhone(CheckMode)
-    case _                      => _ => Some(Navigator.checkYourAnswers)
+    case _                      => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
-  private def contactTelephoneNumber(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def contactTelephoneNumber(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) match {
       case Some(true) =>
         ua.get(BusinessTypePage) map {
-          case Sole => routes.CheckYourAnswersController.onPageLoad()
-          case _    => routes.SecondContactController.onPageLoad(mode)
+          case Sole => routes.CheckYourAnswersController.onPageLoad(regime)
+          case _    => routes.SecondContactController.onPageLoad(mode, regime)
         }
       case Some(false) =>
         ua.get(WhatAreYouRegisteringAsPage) map {
-          case RegistrationTypeIndividual => routes.CheckYourAnswersController.onPageLoad()
-          case RegistrationTypeBusiness   => routes.SecondContactController.onPageLoad(mode)
+          case RegistrationTypeIndividual => routes.CheckYourAnswersController.onPageLoad(regime)
+          case RegistrationTypeBusiness   => routes.SecondContactController.onPageLoad(mode, regime)
         }
-      case None => Some(routes.SecondContactController.onPageLoad(mode))
+      case None => Some(routes.SecondContactController.onPageLoad(mode, regime))
     }
 
-  private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def isContactTelephoneRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(IsContactTelephonePage) map {
-      case true                       => routes.ContactPhoneController.onPageLoad(mode)
-      case false if mode == CheckMode => routes.CheckYourAnswersController.onPageLoad()
+      case true                       => routes.ContactPhoneController.onPageLoad(mode, regime)
+      case false if mode == CheckMode => routes.CheckYourAnswersController.onPageLoad(regime)
       case false =>
         if (isIndividual(ua)) {
-          routes.CheckYourAnswersController.onPageLoad()
+          routes.CheckYourAnswersController.onPageLoad(regime)
         } else {
-          routes.SecondContactController.onPageLoad(mode)
+          routes.SecondContactController.onPageLoad(mode, regime)
         }
     }
 
-  private def isSecondContact(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def isSecondContact(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(SecondContactPage) map {
       // optimization works only for last sub-journey
-      case true if mode == CheckMode => routes.SndContactNameController.onPageLoad(NormalMode)
-      case true                      => routes.SndContactNameController.onPageLoad(mode)
-      case false                     => routes.CheckYourAnswersController.onPageLoad()
+      case true if mode == CheckMode => routes.SndContactNameController.onPageLoad(NormalMode, regime)
+      case true                      => routes.SndContactNameController.onPageLoad(mode, regime)
+      case false                     => routes.CheckYourAnswersController.onPageLoad(regime)
     }
 
-  private def haveSecondPhone(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def haveSecondPhone(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(SndConHavePhonePage) map {
-      case true  => routes.SndContactPhoneController.onPageLoad(mode)
-      case false => routes.CheckYourAnswersController.onPageLoad()
+      case true  => routes.SndContactPhoneController.onPageLoad(mode, regime)
+      case false => routes.CheckYourAnswersController.onPageLoad(regime)
     }
 
   private def isIndividual(ua: UserAnswers): Boolean = ua.get(DoYouHaveUniqueTaxPayerReferencePage) match {

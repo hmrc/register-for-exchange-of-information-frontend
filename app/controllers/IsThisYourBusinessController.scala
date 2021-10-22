@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.Mode
+import models.{Mode, Regime}
 import models.matching.MatchingInfo
 import models.register.error.ApiError
 import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
@@ -58,7 +58,7 @@ class IsThisYourBusinessController @Inject() (
 
   private val form = formProvider()
 
-  private def result(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]) =
+  private def result(mode: Mode, regime: Regime, form: Form[Boolean])(implicit request: DataRequest[AnyContent]) =
     matchBusinessInfo flatMap {
       case Right(matchingInfo) =>
         (for {
@@ -66,27 +66,30 @@ class IsThisYourBusinessController @Inject() (
           address        <- matchingInfo.address
           updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
           _ = sessionRepository.set(updatedAnswers)
-        } yield render(mode, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill), name, address).map(Ok(_)))
-          .getOrElse(Future.successful(Redirect(Navigator.missingInformation)))
+        } yield render(mode, regime, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill), name, address).map(Ok(_)))
+          .getOrElse(Future.successful(Redirect(Navigator.missingInformation(regime))))
       case Left(NotFoundError) =>
-        Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("organisation")))
+        Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("organisation", regime)))
       case _ =>
         renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
     }
 
-  private def render(mode: Mode, form: Form[Boolean], name: String, address: AddressResponse)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String, address: AddressResponse)(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Html] = {
     val data = Json.obj(
       "form"    -> form,
+      "regime"  -> regime.toUpperCase,
       "name"    -> name,
       "address" -> address.asList,
-      "action"  -> routes.IsThisYourBusinessController.onSubmit(mode).url,
+      "action"  -> routes.IsThisYourBusinessController.onSubmit(mode, regime).url,
       "radios"  -> Radios.yesNo(form("value"))
     )
     renderer.render("isThisYourBusiness.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request => result(mode, form)
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+    implicit request => result(mode, regime, form)
   }
 
   private def matchBusinessInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
@@ -101,17 +104,17 @@ class IsThisYourBusinessController @Inject() (
     } yield matchingService.sendBusinessMatchingInformation(utr, businessName, businessType))
       .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => result(mode, formWithErrors),
+          formWithErrors => result(mode, regime, formWithErrors),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, mode, regime, updatedAnswers))
         )
   }
 }

@@ -19,7 +19,7 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import models.matching.MatchingInfo
 import models.register.response.details.AddressResponse
-import models.{BusinessType, NormalMode, UserAnswers}
+import models.{BusinessType, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessNamePage, BusinessTypePage, IsThisYourBusinessPage, UTRPage}
@@ -36,8 +36,8 @@ import scala.concurrent.Future
 
 class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val loadRoute   = routes.IsThisYourBusinessController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.IsThisYourBusinessController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.IsThisYourBusinessController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.IsThisYourBusinessController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 

@@ -16,10 +16,10 @@
 
 package utils
 
-import models.UserAnswers
+import models.{Address, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
-import uk.gov.hmrc.viewmodels.{Content, MessageInterpolators, Text}
+import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
 
 import java.time.format.DateTimeFormatter
 
@@ -62,5 +62,21 @@ trait RowBuilder {
     val label = if (maxVisibleChars > 0 && text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
     lit"$label"
   }
+
+  private[utils] def formatAddress(answer: Address): Html =
+    Html(s"""
+        ${answer.addressLine1}<br>
+        ${answer.addressLine2.fold("")(
+      address => s"$address<br>"
+    )}
+        ${answer.addressLine3}<br>
+        ${answer.addressLine4.fold("")(
+      address => s"$address<br>"
+    )}
+        ${answer.postCode.fold("")(
+      postcode => s"$postcode<br>"
+    )}
+        ${answer.country.description}
+     """)
 
 }

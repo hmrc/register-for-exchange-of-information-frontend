@@ -12,7 +12,7 @@
   timeout: config.timeout,
   countdown: config.countdown,
   keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
-  signOutUrl: routes.controllers.auth.SignedOutController.signOut().url,
+  signOutUrl: routes.controllers.auth.AuthController.signOut().url,
   timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad().url
 }) }}
   {% include "includes/head.njk" %}
@@ -21,11 +21,11 @@
 {% block header %}
   {{ hmrcHeader({
     homepageUrl: "https://www.gov.uk",
-    serviceName: messages("site.service_name"),
+    serviceName: messages("site.service_name", regime),
     serviceUrl: "/register-for-exchange-of-information",
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",
-    signOutHref: routes.controllers.auth.SignedOutController.signOut().url
+    signOutHref: routes.controllers.auth.AuthController.signOut().url
   }) }}
 
 {% endblock %}

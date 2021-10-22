@@ -25,12 +25,21 @@
         </h1>
 
         <h2 class="govuk-heading-m">
-          {{ messages("checkYourAnswers.firstContact.h2") }}
+          {{ messages(header) }}
+        </h2>
+
+        {{ govukSummaryList({
+          rows: businessDetailsList
+        }) }}
+
+        <h2 class="govuk-heading-m">
+          {{ messages(contactHeading) }}
         </h2>
         {{ govukSummaryList({
           rows: firstContactList
         }) }}
 
+       {% if isBusiness %}
         <div class="govuk-!-padding-top-6">
           <h2 class="govuk-heading-m">
             {{ messages("checkYourAnswers.secondContact.h2") }}
@@ -39,7 +48,8 @@
             rows: secondContactList
           }) }}
         </div>
-  
+       {% endif %}
+
         <div class="govuk-!-padding-top-6">
           <h2 class="govuk-heading-m">
             {{ messages("checkYourAnswers.information.h2") }}

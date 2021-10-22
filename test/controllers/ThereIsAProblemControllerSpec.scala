@@ -20,15 +20,16 @@ import base.{ControllerMockFixtures, SpecBase}
 import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtures {
+class ThereIsAProblemControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  "WeCouldNotConfirm Controller" - {
+  "ThereIsProblem Controller" - {
 
     "return OK and the correct view for a GET" in {
 
@@ -36,16 +37,22 @@ class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtur
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad("identity", MDR).url)
+      val request        = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      templateCaptor.getValue mustEqual "weCouldNotConfirm.njk"
+      val expectedJson = Json.obj(
+        "emailAddress" -> "enquiries.aeoi@hmrc.gov.uk"
+      )
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
   }
 }

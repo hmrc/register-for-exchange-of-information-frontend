@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import controllers.actions._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -26,9 +27,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class UnauthorisedAgentController @Inject() (
+class UnauthorisedAssistantController @Inject() (
   override val messagesApi: MessagesApi,
   frontendAppConfig: FrontendAppConfig,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -41,6 +45,6 @@ class UnauthorisedAgentController @Inject() (
         "regime"   -> "MDR",
         "loginUrl" -> frontendAppConfig.loginUrl
       )
-      renderer.render("unauthorisedAgent.njk", json).map(Ok(_))
+      renderer.render("unauthorisedAssistant.njk", json).map(Ok(_))
   }
 }
