@@ -119,13 +119,15 @@ object PrimaryContact {
 
     val contactNumber = userAnswers.get(ContactPhonePage)
 
-    val individualOrSoleTrader =
+    val individualOrSoleTrader = {
       (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
         case (Some(RegistrationTypeIndividual), _) => true
         case (_, Some(BusinessType.Sole))          => true
         case _                                     => false
       }
+    }
 
+    println("==============================" + IndividualDetails.convertTo(userAnswers))
     for {
       email <- userAnswers.get(ContactEmailPage)
       contactInformation <-

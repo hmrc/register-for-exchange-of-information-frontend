@@ -19,6 +19,7 @@ package controllers
 import controllers.actions._
 import models.{NormalMode, Regime}
 import org.slf4j.LoggerFactory
+import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,9 +38,8 @@ class WeCouldNotConfirmController @Inject() (
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
-
-  private val logger = LoggerFactory.getLogger(getClass)
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
     (identify andThen getData.apply andThen requireData).async {

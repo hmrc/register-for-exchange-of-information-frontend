@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.UserAnswers
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.response.SubscriptionID
@@ -84,7 +83,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -118,7 +117,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -159,7 +158,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -210,7 +209,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -260,7 +259,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -384,7 +383,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad(MDR).url
       }
 
       "must redirect to 'Duplication submission' page when there is duplication submission" in {

@@ -93,12 +93,15 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
       PrimaryContact.convertTo(userAnswers).value mustBe PrimaryContact(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
     }
 
-    "must return PrimaryContact for the input 'UserAnswers with BusinessType as Sole trader' " in {
+    "must return PrimaryContact for the input 'UserAnswers with BusinessType as Sole trader'" in {
       val userAnswers = UserAnswers("id")
-        .set(SoleNamePage, Name("Name", "Name"))
+        .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
         .value
         .set(BusinessTypePage, BusinessType.Sole)
+        .success
+        .value
+        .set(SoleNamePage, Name("Name", "Name"))
         .success
         .value
         .set(ContactEmailPage, "test@test.com")

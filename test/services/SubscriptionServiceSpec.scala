@@ -23,6 +23,7 @@ import connectors.SubscriptionConnector
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
+import models.matching.MatchingInfo
 import models.subscription.response.SubscriptionID
 import models.{Address, Country, NonUkName, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -79,7 +80,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(SafeIDPage, "id")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 
@@ -110,7 +111,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .set(ContactNamePage, "Name Name")
           .success
           .value
-          .set(SafeIDPage, "id")
+          .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
           .success
           .value
 

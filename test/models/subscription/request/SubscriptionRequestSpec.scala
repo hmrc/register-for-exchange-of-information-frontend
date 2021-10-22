@@ -18,10 +18,11 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
+import models.matching.MatchingInfo
 import models.{NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{ContactEmailPage, ContactNamePage, DoYouHaveUniqueTaxPayerReferencePage, NonUkNamePage, SafeIDPage}
+import pages._
 import play.api.libs.json.Json
 
 class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
@@ -51,7 +52,7 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(SafeIDPage, "safeId")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 

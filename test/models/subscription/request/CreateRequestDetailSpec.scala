@@ -19,20 +19,11 @@ package models.subscription.request
 import base.SpecBase
 import generators.Generators
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.matching.MatchingInfo
 import models.{Address, Country, Name, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.{
-  AddressWithoutIdPage,
-  ContactEmailPage,
-  ContactNamePage,
-  DoYouHaveNINPage,
-  DoYouHaveUniqueTaxPayerReferencePage,
-  NonUkNamePage,
-  SafeIDPage,
-  WhatAreYouRegisteringAsPage,
-  WhatIsYourNamePage
-}
+import pages._
 import play.api.libs.json.Json
 
 class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
@@ -101,7 +92,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(SafeIDPage, "safeId")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 
@@ -121,7 +112,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(SafeIDPage, "id")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 
@@ -148,7 +139,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "hello")
         .success
         .value
-        .set(SafeIDPage, "id")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 
@@ -175,7 +166,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, businessAddress)
         .success
         .value
-        .set(SafeIDPage, "id")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 
@@ -202,7 +193,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, businessAddress)
         .success
         .value
-        .set(SafeIDPage, "id")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 
@@ -233,7 +224,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(SafeIDPage, "id")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 
@@ -251,7 +242,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(SafeIDPage, "id")
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
 

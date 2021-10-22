@@ -51,11 +51,11 @@ object CreateRequestDetail {
 
   def convertTo(userAnswers: UserAnswers): Option[CreateRequestDetail] =
     for {
-      safeId         <- userAnswers.get(SafeIDPage)
+      matchingInfo   <- userAnswers.get(MatchingInfoPage)
       primaryContact <- PrimaryContact.convertTo(userAnswers)
     } yield CreateRequestDetail(
       IDType = idType,
-      IDNumber = safeId,
+      IDNumber = matchingInfo.safeId,
       tradingName = None,
       isGBUser = isGBUser(userAnswers),
       primaryContact = primaryContact,

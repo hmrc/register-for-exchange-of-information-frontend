@@ -21,7 +21,7 @@ import models.matching.MatchingInfo
 import models.error.ApiError
 import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
-import pages.{SafeIDPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{MatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import models.{BusinessType, NormalMode, Regime}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -67,7 +67,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
         matchIndividualInfo flatMap {
           case Right(matchingInfo) =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SafeIDPage, matchingInfo.safeId))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(MatchingInfoPage, matchingInfo))
               _              <- sessionRepository.set(updatedAnswers)
               html           <- renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
             } yield html

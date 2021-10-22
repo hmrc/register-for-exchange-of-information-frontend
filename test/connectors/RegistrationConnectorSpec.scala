@@ -24,8 +24,6 @@ import helpers.JsonFixtures.{withIDIndividualResponse, withIDOrganisationRespons
 import helpers.RegisterHelper._
 import helpers.WireMockServerHandler
 import models.error.ApiError.{NotFoundError, ServiceUnavailableError}
-import models.register.request.details.WithIDIndividual
-import models.register.error.ApiError.{NotFoundError, ServiceUnavailableError}
 import models.register.request.details.{WithIDIndividual, WithIDOrganisation}
 import models.register.request.{RegisterWithID, RegisterWithIDRequest, RequestCommon, RequestWithIDDetails}
 import models.shared.Parameters
