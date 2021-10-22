@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{SndContactEmailPage, SndContactNamePage}
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class SndContactEmailControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.SndContactEmailController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.SndContactEmailController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.SndContactEmailController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.SndContactEmailController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.SndContactEmailFormProvider().apply()
 
@@ -145,7 +145,9 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
+      redirectLocation(SomeInformationIsMissing.missingInformationResult(MDR)).value mustEqual controllers.routes.SomeInformationIsMissingController
+        .onPageLoad(MDR)
+        .url
     }
   }
 }

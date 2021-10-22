@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.WhatIsYourNameFormProvider
 import models.requests.DataRequest
-import models.{Mode, Name}
+import models.{Mode, Name, Regime}
 import navigation.MDRNavigator
 import pages.WhatIsYourNamePage
 import play.api.data.Form
@@ -52,30 +52,33 @@ class WhatIsYourNameController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Name])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[Name])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "action" -> routes.WhatIsYourNameController.onSubmit(mode).url
+      "regime" -> regime.toUpperCase,
+      "action" -> routes.WhatIsYourNameController.onSubmit(mode, regime).url
     )
     renderer.render("whatIsYourName.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      render(mode, request.userAnswers.get(WhatIsYourNamePage).fold(form)(form.fill)).map(Ok(_))
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        render(mode, regime, request.userAnswers.get(WhatIsYourNamePage).fold(form)(form.fill)).map(Ok(_))
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, updatedAnswers))
-        )
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers))
+          )
+    }
 }

@@ -21,6 +21,7 @@ import models.UserAnswers
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.response.SubscriptionID
+import models.{MDR, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
@@ -37,8 +38,8 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures with BeforeAndAfterEach {
 
-  lazy val loadRoute   = routes.CheckYourAnswersController.onPageLoad().url
-  lazy val submitRoute = routes.CheckYourAnswersController.onSubmit().url
+  lazy val loadRoute   = routes.CheckYourAnswersController.onPageLoad(MDR).url
+  lazy val submitRoute = routes.CheckYourAnswersController.onSubmit(MDR).url
 
   // first contact
   val firstContactName    = "first-contact-name"
@@ -83,7 +84,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -117,7 +118,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -158,7 +159,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -209,7 +210,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 
@@ -259,7 +260,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+      val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
 
         val result = route(app, request).value
 

@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{BusinessType, NormalMode, UserAnswers}
+import models.{BusinessType, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.BusinessTypePage
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class BusinessTypeControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.BusinessTypeController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.BusinessTypeController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.BusinessTypeController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.BusinessTypeController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.BusinessTypeFormProvider().apply()
 

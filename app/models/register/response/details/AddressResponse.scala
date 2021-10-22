@@ -25,7 +25,11 @@ case class AddressResponse(
   addressLine4: Option[String],
   postalCode: Option[String],
   countryCode: String
-)
+) {
+
+  val asList: List[String] =
+    List(Option(addressLine1), addressLine2, addressLine3, addressLine4, postalCode, Option(countryCode).filterNot(_ == "GB")).filter(_.isDefined).map(_.get)
+}
 
 object AddressResponse {
   implicit val format: Format[AddressResponse] = Json.format[AddressResponse]

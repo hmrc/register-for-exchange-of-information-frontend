@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.ContactNameFormProvider
-import models.Mode
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.CBCRNavigator
 import pages.ContactNamePage
 import play.api.data.Form
@@ -52,30 +52,33 @@ class ContactNameController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "action" -> routes.ContactNameController.onSubmit(mode).url
+      "regime" -> regime.toUpperCase,
+      "action" -> routes.ContactNameController.onSubmit(mode, regime).url
     )
     renderer.render("contactName.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      render(mode, request.userAnswers.get(ContactNamePage).fold(form)(form.fill)).map(Ok(_))
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        render(mode, regime, request.userAnswers.get(ContactNamePage).fold(form)(form.fill)).map(Ok(_))
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(ContactNamePage, mode, updatedAnswers))
-        )
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactNamePage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(ContactNamePage, mode, regime, updatedAnswers))
+          )
+    }
 }

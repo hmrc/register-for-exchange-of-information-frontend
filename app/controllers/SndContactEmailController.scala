@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.SndContactEmailFormProvider
-import models.Mode
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.CBCRNavigator
 import pages.SndContactEmailPage
 import play.api.data.Form
@@ -52,36 +52,39 @@ class SndContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
+      "regime" -> regime.toUpperCase,
       "name"   -> name,
-      "action" -> routes.SndContactEmailController.onSubmit(mode).url
+      "action" -> routes.SndContactEmailController.onSubmit(mode, regime).url
     )
     renderer.render("sndContactEmail.njk", data)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      SomeInformationIsMissing.isMissingSecondContactName {
-        render(mode, request.userAnswers.get(SndContactEmailPage).fold(form)(form.fill), _).map(Ok(_))
-      }
-  }
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        SomeInformationIsMissing.isMissingSecondContactName(regime) {
+          render(mode, regime, request.userAnswers.get(SndContactEmailPage).fold(form)(form.fill), _).map(Ok(_))
+        }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            SomeInformationIsMissing.isMissingSecondContactName {
-              render(mode, request.userAnswers.get(SndContactEmailPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
-            },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactEmailPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(SndContactEmailPage, mode, updatedAnswers))
-        )
-  }
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              SomeInformationIsMissing.isMissingSecondContactName(regime) {
+                render(mode, regime, request.userAnswers.get(SndContactEmailPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
+              },
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactEmailPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(SndContactEmailPage, mode, regime, updatedAnswers))
+          )
+    }
 }

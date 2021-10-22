@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{ContactNamePage, IsContactTelephonePage}
@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.IsContactTelephoneController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.IsContactTelephoneController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.IsContactTelephoneController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.IsContactTelephoneController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.IsContactTelephoneFormProvider().apply()
 
@@ -142,20 +142,6 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
       templateCaptor.getValue mustEqual "isContactTelephone.njk"
       jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must redirect to 'SomeInformationIsMissing' when data is missing" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
     }
   }
 }

@@ -19,7 +19,7 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, MDR, NormalMode, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -34,15 +34,15 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad()
+        navigator.nextPage(UnknownPage, CheckMode, MDR, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad(MDR)
       }
 
       "must go from Contact Name page to CheckYourAnswers page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(ContactNamePage, CheckMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(ContactNamePage, CheckMode, MDR, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -50,8 +50,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(ContactEmailPage, CheckMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(ContactEmailPage, CheckMode, MDR, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -65,8 +65,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, CheckMode, updatedAnswers)
-              .mustBe(routes.ContactPhoneController.onPageLoad(CheckMode))
+              .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+              .mustBe(routes.ContactPhoneController.onPageLoad(CheckMode, MDR))
         }
       }
 
@@ -80,8 +80,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -95,8 +95,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
-              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode))
+              .nextPage(SecondContactPage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -110,8 +110,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(SecondContactPage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(SecondContactPage, CheckMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -119,8 +119,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(SndContactNamePage, CheckMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(SndContactNamePage, CheckMode, MDR, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -128,8 +128,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(SndContactEmailPage, CheckMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(SndContactEmailPage, CheckMode, MDR, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -143,8 +143,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(SndConHavePhonePage, CheckMode, updatedAnswers)
-              .mustBe(routes.SndContactPhoneController.onPageLoad(CheckMode))
+              .nextPage(SndConHavePhonePage, CheckMode, MDR, updatedAnswers)
+              .mustBe(routes.SndContactPhoneController.onPageLoad(CheckMode, MDR))
         }
       }
 
@@ -158,8 +158,8 @@ class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(SndConHavePhonePage, CheckMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(SndConHavePhonePage, CheckMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
     }

@@ -19,6 +19,8 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
+import models.BusinessType.{LimitedCompany, Sole}
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -34,15 +36,15 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(UnknownPage, NormalMode, MDR, UserAnswers("id")) mustBe routes.IndexController.onPageLoad()
       }
 
       "must go from Contact Name page to Contact Email page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(ContactNamePage, NormalMode, answers)
-              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode))
+              .nextPage(ContactNamePage, NormalMode, MDR, answers)
+              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -50,8 +52,8 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(ContactEmailPage, NormalMode, answers)
-              .mustBe(routes.IsContactTelephoneController.onPageLoad(NormalMode))
+              .nextPage(ContactEmailPage, NormalMode, MDR, answers)
+              .mustBe(routes.IsContactTelephoneController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -65,12 +67,12 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactPhoneController.onPageLoad(NormalMode))
+              .nextPage(IsContactTelephonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.ContactPhoneController.onPageLoad(NormalMode, MDR))
         }
       }
 
-      "must go from IsContactTelephone page to Second Contact Phone page if NO is selected" in {
+      "must go from IsContactTelephone page to Second Contact Phone page if NO is selected and they are a business" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -78,10 +80,130 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
                 .set(IsContactTelephonePage, false)
                 .success
                 .value
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, LimitedCompany)
+                .success
+                .value
 
             navigator
-              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
+              .nextPage(IsContactTelephonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode, MDR))
+        }
+      }
+
+      "must go from IsContactTelephone page to to the check your answers page if NO is selected and they are an individual" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(IsContactTelephonePage, false)
+                .success
+                .value
+                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                .success
+                .value
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsContactTelephonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+        }
+      }
+
+      "must go from IsContactTelephone page to to the check your answers page if NO is selected and they are a sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(IsContactTelephonePage, false)
+                .success
+                .value
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, Sole)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsContactTelephonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+        }
+      }
+
+      "must go from telephone number page to second contact name page if they have a UTR and are not a sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, LimitedCompany)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode, MDR))
+        }
+      }
+
+      "must go from telephone number page to the check your answers page if they have a UTR and they are a sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(BusinessTypePage, Sole)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+        }
+      }
+
+      "must go from telephone number page to second contact name page if they do not have a UTR and are registering as a business" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                .success
+                .value
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode, MDR))
+        }
+      }
+
+      "must go from telephone number page to the check you answers page if they do not have a UTR and are registering as an individual" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                .success
+                .value
+                .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+                .success
+                .value
+
+            navigator
+              .nextPage(ContactPhonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -95,8 +217,8 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
                 .value
 
             navigator
-              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
-              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode))
+              .nextPage(SecondContactPage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -110,8 +232,8 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
                 .value
 
             navigator
-              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(SecondContactPage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
@@ -119,8 +241,8 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(SndContactNamePage, NormalMode, answers)
-              .mustBe(routes.SndContactEmailController.onPageLoad(NormalMode))
+              .nextPage(SndContactNamePage, NormalMode, MDR, answers)
+              .mustBe(routes.SndContactEmailController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -128,8 +250,8 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(SndContactEmailPage, NormalMode, answers)
-              .mustBe(routes.SndConHavePhoneController.onPageLoad(NormalMode))
+              .nextPage(SndContactEmailPage, NormalMode, MDR, answers)
+              .mustBe(routes.SndConHavePhoneController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -143,8 +265,8 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
                 .value
 
             navigator
-              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.SndContactPhoneController.onPageLoad(NormalMode))
+              .nextPage(SndConHavePhonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.SndContactPhoneController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -158,8 +280,8 @@ class NormalModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks
                 .value
 
             navigator
-              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(SndConHavePhonePage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
     }

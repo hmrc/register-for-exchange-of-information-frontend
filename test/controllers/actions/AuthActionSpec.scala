@@ -24,11 +24,14 @@ import org.mockito.ArgumentMatchers.any
 import play.api.mvc.{BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.RetrievalOps._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -43,7 +46,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
     }
   }
 
-  type AuthRetrievals = Option[String] ~ Enrolments
+  type AuthRetrievals = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole]
 
   "Auth Action" - {
 
@@ -165,6 +168,27 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad().url)
         }
       }
+
+      "must redirect the user to the unauthorised agent page" in {
+
+        val application                      = applicationBuilder(userAnswers = None).build()
+        val mockAuthConnector: AuthConnector = mock[AuthConnector]
+        val emptyEnrolments: Enrolments      = Enrolments(Set.empty)
+
+        running(application) {
+          val bodyParsers               = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig                 = application.injector.instanceOf[FrontendAppConfig]
+          val retrieval: AuthRetrievals = None ~ emptyEnrolments ~ Some(Agent) ~ None
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAgentController.onPageLoad().url)
+        }
+      }
     }
 
     "the user has an unsupported credential role" - {
@@ -185,6 +209,27 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad().url)
         }
       }
+
+      "must redirect the user to the unauthorised assistant page" in {
+
+        val application                      = applicationBuilder(userAnswers = None).build()
+        val mockAuthConnector: AuthConnector = mock[AuthConnector]
+        val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
+
+        running(application) {
+          val bodyParsers               = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig                 = application.injector.instanceOf[FrontendAppConfig]
+          val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ Some(Assistant)
+          when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val controller = new Harness(authAction)
+          val result     = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad().url)
+        }
+      }
     }
 
     "the user has an mdr enrolment" - {
@@ -198,7 +243,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         running(application) {
           val bodyParsers               = application.injector.instanceOf[BodyParsers.Default]
           val appConfig                 = application.injector.instanceOf[FrontendAppConfig]
-          val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment))
+          val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ None
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
           val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)

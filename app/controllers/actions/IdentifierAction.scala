@@ -18,17 +18,17 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logger
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, credentialRole}
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import uk.gov.hmrc.auth.core.retrieve.~
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,12 +48,16 @@ class AuthenticatedIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised()
-      .retrieve(Retrievals.internalId and Retrievals.allEnrolments) {
-        case _ ~ enrolments if enrolments.enrolments.exists(_.key == config.enrolmentKey("mdr")) =>
+      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
+        case _ ~ _ ~ Some(Agent) ~ _ =>
+          Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad()))
+        case _ ~ _ ~ _ ~ Some(Assistant) =>
+          Future.successful(Redirect(controllers.routes.UnauthorisedAssistantController.onPageLoad()))
+        case _ ~ enrolments ~ _ ~ _ if enrolments.enrolments.exists(_.key == config.enrolmentKey("mdr")) =>
           logger.info("MDR enrolment exists")
           Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
-        case Some(internalID) ~ _ => block(IdentifierRequest(request, internalID))
-        case _                    => throw new UnauthorizedException("Unable to retrieve internal Id")
+        case Some(internalID) ~ _ ~ _ ~ _ => block(IdentifierRequest(request, internalID))
+        case _                            => throw new UnauthorizedException("Unable to retrieve internal Id")
       }
       .recover {
         case _: NoActiveSession =>

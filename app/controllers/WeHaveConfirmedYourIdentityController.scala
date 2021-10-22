@@ -22,8 +22,12 @@ import models.error.ApiError
 import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
 import pages.{SafeIDPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import models.{BusinessType, NormalMode, Regime}
+import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService
@@ -34,33 +38,46 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WeHaveConfirmedYourIdentityController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
-  sessionRepository: SessionRepository,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
-    implicit request =>
-      matchIndividualInfo flatMap {
-        case Right(matchingInfo) =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SafeIDPage, matchingInfo.safeId))
-            _              <- sessionRepository.set(updatedAnswers)
-            html           <- renderer.render("weHaveConfirmedYourIdentity.njk").map(Ok(_))
-          } yield html
-        case Left(NotFoundError) =>
-          Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
-        case _ =>
-          Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
-      }
+  def onPageLoad(regime: Regime): Action[AnyContent] =
+    (identify andThen getData.apply andThen requireData).async {
 
-  }
+      implicit request =>
+        // TODO confirm redirection logic
+        val action: String = request.userAnswers.get(BusinessTypePage) match {
+          case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+          case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
+          case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+        }
+        val json = Json.obj(
+          "regime" -> regime.toUpperCase,
+          "action" -> action
+        )
+
+        matchIndividualInfo flatMap {
+          case Right(matchingInfo) =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SafeIDPage, matchingInfo.safeId))
+              _              <- sessionRepository.set(updatedAnswers)
+              html           <- renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+            } yield html
+          case Left(NotFoundError) =>
+            Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
+          case _ =>
+            renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+        }
+
+    }
 
   private def matchIndividualInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
     (for {

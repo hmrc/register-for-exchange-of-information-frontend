@@ -35,6 +35,13 @@ import uk.gov.hmrc.domain.Nino
 
 trait ModelGenerators {
 
+  implicit lazy val arbitraryWhatIsTradingName: Arbitrary[models.WhatIsTradingName] =
+    Arbitrary {
+      for {
+        businessName <- arbitrary[String]
+      } yield models.WhatIsTradingName(businessName)
+    }
+
   implicit lazy val arbitraryNonUkName: Arbitrary[models.NonUkName] =
     Arbitrary {
       for {

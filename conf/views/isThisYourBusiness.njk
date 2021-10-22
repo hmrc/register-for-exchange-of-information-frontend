@@ -33,16 +33,17 @@
 
           {{ csrf() | safe }}
 
+          <h1 class="govuk-heading-l">{{ messages('isThisYourBusiness.title') }}</h1>
+
+          <div>
+            <div class="govuk-body">{{ name }}</div>
+            {% for line in address %}
+              <p class="govuk-body{% if not loop.last %} govuk-!-margin-bottom-0{% endif %}">{{ line }}</p>
+            {% endfor %}
+          </div>
+
           {{ govukRadios({
-            classes: "govuk-radios--inline",
             name: 'value',
-            fieldset: {
-              legend: {
-                text: messages('isThisYourBusiness.title'),
-                isPageHeading: true,
-                classes: "govuk-fieldset__legend--l text-overflow"
-              }
-            },
             items: radios,
             errorMessage: form.value.error
           }) }}

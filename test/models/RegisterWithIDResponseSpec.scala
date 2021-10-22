@@ -61,7 +61,7 @@ class RegisterWithIDResponseSpec extends SpecBase {
 
   "RegisterWithIDResponse" - {
     "must marshall from json" in {
-      Json.parse(withIDResponse).validate[RegistrationWithIDResponse].get mustBe payloadModel
+      Json.parse(withIDIndividualResponse).validate[RegistrationWithIDResponse].get mustBe payloadModel
     }
 
     "must serialise to json" in {

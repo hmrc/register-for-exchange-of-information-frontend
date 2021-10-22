@@ -17,82 +17,100 @@
 package navigation
 
 import controllers.routes
+import models.BusinessType.Sole
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
 import play.api.mvc.Call
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class MDRNavigator @Inject() () extends Navigator {
 
-  override val normalRoutes: Page => UserAnswers => Option[Call] = {
-    case DoYouHaveUniqueTaxPayerReferencePage  => doYouHaveUniqueTaxPayerReference(NormalMode)
-    case WhatAreYouRegisteringAsPage           => whatAreYouRegisteringAs(NormalMode)
-    case DoYouHaveNINPage                      => doYouHaveNINORoutes(NormalMode)
-    case WhatIsYourNationalInsuranceNumberPage => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
-    case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
+  override val normalRoutes: Page => Regime => UserAnswers => Option[Call] = {
+    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(NormalMode)(regime)
+    case WhatAreYouRegisteringAsPage           => regime => whatAreYouRegisteringAs(NormalMode)(regime)
+    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(NormalMode)(regime)
+    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode, regime))
+    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
     case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
-    case NonUkNamePage                         => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
-    case DoYouLiveInTheUKPage                  => doYouLiveInTheUkRoutes(NormalMode)
-    case AddressUKPage                         => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
-    case AddressWithoutIdPage                  => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
-    case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
-    case SelectAddressPage                     => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
-    case BusinessWithoutIDNamePage             => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode))
-    case BusinessTypePage                      => _ => Some(routes.UTRController.onPageLoad(NormalMode))
+    case BusinessWithoutIDNamePage             => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode, regime))
+    case BusinessHaveDifferentNamePage         => regime => businessHaveDifferentNameRoutes(NormalMode)(regime)
+    case WhatIsTradingNamePage                 => regime => _ => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode, regime))
+    case NonUkNamePage                         => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
+    case DoYouLiveInTheUKPage                  => regime => doYouLiveInTheUkRoutes(NormalMode)(regime)
+    case AddressUKPage                         => regime => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode, regime))
+    case AddressWithoutIdPage                  => regime => addressWithoutID(NormalMode)(regime)
+    case WhatIsYourPostcodePage                => regime => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode, regime))
+    case SelectAddressPage                     => regime => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode, regime))
+    case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
     case UTRPage                               => isSoleProprietor(NormalMode)
-    case SoleNamePage                          => _ => Some(routes.SoleDateOfBirthController.onPageLoad(NormalMode))
-    case SoleDateOfBirthPage                   => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
-    case BusinessNamePage                      => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+    case SoleNamePage                          => regime => _ => Some(routes.SoleDateOfBirthController.onPageLoad(NormalMode, regime))
+    case SoleDateOfBirthPage                   => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
+    case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
-    case _                                     => _ => Some(routes.IndexController.onPageLoad())
+    case _                                     => regime => _ => Some(routes.IndexController.onPageLoad())
   }
 
-  override val checkRouteMap: Page => UserAnswers => Option[Call] = {
-    case _ => _ => Some(Navigator.checkYourAnswers)
+  override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
+    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
-  private def doYouHaveUniqueTaxPayerReference(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+    ua.get(WhatAreYouRegisteringAsPage) match {
+      case Some(RegistrationTypeBusiness)   => Some(routes.ContactNameController.onPageLoad(mode, regime))
+      case Some(RegistrationTypeIndividual) => Some(routes.ContactEmailController.onPageLoad(mode, regime))
+      case None                             => Some(routes.SomeInformationIsMissingController.onPageLoad(regime))
+    }
+
+  private def doYouHaveUniqueTaxPayerReference(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
-      case true  => routes.BusinessTypeController.onPageLoad(mode)
-      case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode)
+      case true  => routes.BusinessTypeController.onPageLoad(mode, regime)
+      case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime)
     }
 
-  private def whatAreYouRegisteringAs(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def businessHaveDifferentNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+    ua.get(BusinessHaveDifferentNamePage) map {
+      case true  => routes.WhatIsTradingNameController.onPageLoad(mode, regime)
+      case false => routes.AddressWithoutIdController.onPageLoad(mode, regime)
+    }
+
+  private def whatAreYouRegisteringAs(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(WhatAreYouRegisteringAsPage) map {
-      case RegistrationTypeBusiness   => routes.BusinessWithoutIDNameController.onPageLoad(mode)
-      case RegistrationTypeIndividual => routes.DoYouHaveNINController.onPageLoad(mode)
+      case RegistrationTypeBusiness   => routes.BusinessWithoutIDNameController.onPageLoad(mode, regime)
+      case RegistrationTypeIndividual => routes.DoYouHaveNINController.onPageLoad(mode, regime)
     }
 
-  private def doYouHaveNINORoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def doYouHaveNINORoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode)
-      case false => routes.NonUkNameController.onPageLoad(mode)
+      case true  => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode, regime)
+      case false => routes.NonUkNameController.onPageLoad(mode, regime)
     }
 
-  private def whatIsYourDateOfBirthRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def whatIsYourDateOfBirthRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad()
-      case false => routes.DoYouLiveInTheUKController.onPageLoad(mode)
+      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime)
+      case false => routes.DoYouLiveInTheUKController.onPageLoad(mode, regime)
     }
 
-  private def doYouLiveInTheUkRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def doYouLiveInTheUkRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouLiveInTheUKPage) map {
-      case true  => routes.WhatIsYourPostcodeController.onPageLoad(mode)
-      case false => routes.AddressWithoutIdController.onPageLoad(mode)
+      case true  => routes.WhatIsYourPostcodeController.onPageLoad(mode, regime)
+      case false => routes.AddressWithoutIdController.onPageLoad(mode, regime)
     }
 
-  private def isSoleProprietor(mode: Mode)(ua: UserAnswers): Option[Call] =
+  private def isSoleProprietor(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(BusinessTypePage) map {
-      case BusinessType.Sole => routes.SoleNameController.onPageLoad(mode)
-      case _                 => routes.BusinessNameController.onPageLoad(mode)
+      case BusinessType.Sole => routes.SoleNameController.onPageLoad(mode, regime)
+      case _                 => routes.BusinessNameController.onPageLoad(mode, regime)
     }
 
-  private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(IsThisYourBusinessPage) map {
-      case true  => routes.IndexController.onPageLoad() // todo replace once impl
-      case false => routes.WeCouldNotConfirmController.onPageLoad("identity")
+  private def isThisYourBusiness(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+    Option(ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) map {
+      case (Some(true), Some(Sole)) => routes.ContactEmailController.onPageLoad(mode, regime)
+      case (Some(true), Some(_))    => routes.ContactNameController.onPageLoad(mode, regime)
+      case _                        => routes.WeCouldNotConfirmController.onPageLoad("organisation", regime)
     }
 }
