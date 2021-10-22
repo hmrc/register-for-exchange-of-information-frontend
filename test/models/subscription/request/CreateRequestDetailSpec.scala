@@ -76,7 +76,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
       val createRequestDetails = CreateRequestDetail(
         IDType = "SAFE",
         IDNumber = "safeId",
-        tradingName = None,
+        tradingName = Some("traderName"),
         isGBUser = true,
         primaryContact = PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None),
         secondaryContact = None
@@ -84,6 +84,12 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
       val updatedUserAnswers = UserAnswers("id")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+        .success
+        .value
+        .set(BusinessHaveDifferentNamePage, true)
+        .success
+        .value
+        .set(WhatIsTradingNamePage, "traderName")
         .success
         .value
         .set(ContactEmailPage, "test@test.com")

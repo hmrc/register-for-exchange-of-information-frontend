@@ -56,7 +56,7 @@ object CreateRequestDetail {
     } yield CreateRequestDetail(
       IDType = idType,
       IDNumber = matchingInfo.safeId,
-      tradingName = None,
+      tradingName = userAnswers.get(WhatIsTradingNamePage),
       isGBUser = isGBUser(userAnswers),
       primaryContact = primaryContact,
       secondaryContact = SecondaryContact.convertTo(userAnswers)

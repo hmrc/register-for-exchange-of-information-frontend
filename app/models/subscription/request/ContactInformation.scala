@@ -127,7 +127,6 @@ object PrimaryContact {
       }
     }
 
-    println("==============================" + IndividualDetails.convertTo(userAnswers))
     for {
       email <- userAnswers.get(ContactEmailPage)
       contactInformation <-
