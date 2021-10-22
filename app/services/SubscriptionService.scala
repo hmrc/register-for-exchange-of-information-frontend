@@ -37,7 +37,8 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
         subscriptionConnector
           .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
           .value
-      case _ => EitherT.leftT(MandatoryInformationMissingError).value
+      case _ =>
+        EitherT.leftT(MandatoryInformationMissingError).value
     }
 
 }

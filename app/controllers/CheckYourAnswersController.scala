@@ -17,22 +17,20 @@
 package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
+import handlers.ErrorHandler
+import models.BusinessType.Sole
+import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError}
 import models.requests.DataRequest
-import pages.{DoYouHaveNINPage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
-import play.api.Logging
-import models.BusinessType.Sole
-import models.{Regime, WhatAreYouRegisteringAs}
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
-import models.requests.DataRequest
+import models.{Regime, UserAnswers, WhatAreYouRegisteringAs}
 import navigation.Navigator
-import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
+import pages.{BusinessTypePage, DoYouHaveNINPage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
-import services.SubscriptionService
+import services.{SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
@@ -48,7 +46,9 @@ class CheckYourAnswersController @Inject() (
   requireData: DataRequiredAction,
   subscriptionService: SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
+  taxEnrolmentsService: TaxEnrolmentService,
   countryFactory: CountryListFactory,
+  errorHandler: ErrorHandler,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -101,13 +101,17 @@ class CheckYourAnswersController @Inject() (
   private def createSubscription(regime: Regime, userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
     subscriptionService.createSubscription(userAnswers) flatMap {
       case Right(subscriptionID) =>
-        logger.info(s"The subscriptionId id $subscriptionID")
-        Future.successful(NotImplemented("Not implemented"))
+        logger.info(s"The subscriptionId id $subscriptionID") //ToDo enrolment here
+        taxEnrolmentsService.createEnrolment(userAnswers, subscriptionID) flatMap {
+          case Right(_) => Future.successful(NotImplemented("Not implemented")) //ToDo put in correct success route
+          case Left(errorStatus) =>
+            errorHandler.onClientError(request, errorStatus)
+        }
       case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
       case Left(DuplicateSubmissionError) =>
         Future.successful(NotImplemented("DuplicateSubmission is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
-      case Left(BadRequestError) => renderer.render("thereIsAProblem.njk").map(BadRequest(_))
-      case _                     => renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
+      case Left(BadRequestError) => errorHandler.onClientError(request, BAD_REQUEST)
+      case _                     => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
     }
 
   def onSubmit(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
