@@ -18,7 +18,9 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.matching.MatchingInfo
-import models.register.error.ApiError.NotFoundError
+import models.error.ApiError.NotFoundError
+import models.{Name, UserAnswers}
+import models.error.ApiError.NotFoundError
 import models.{MDR, Name, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -70,6 +72,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
       val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)

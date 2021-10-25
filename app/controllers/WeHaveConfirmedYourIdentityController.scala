@@ -18,12 +18,14 @@ package controllers
 
 import controllers.actions._
 import models.matching.MatchingInfo
-import models.register.error.ApiError
-import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
+import models.error.ApiError
+import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
+import pages.{MatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import models.{BusinessType, NormalMode, Regime}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -65,9 +67,10 @@ class WeHaveConfirmedYourIdentityController @Inject() (
         matchIndividualInfo flatMap {
           case Right(matchingInfo) =>
             for {
-              updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
-            } yield sessionRepository.set(updatedAnswers)
-            renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(MatchingInfoPage, matchingInfo))
+              _              <- sessionRepository.set(updatedAnswers)
+              html           <- renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+            } yield html
           case Left(NotFoundError) =>
             Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
           case _ =>

@@ -16,10 +16,10 @@
 
 package models.subscription.request
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, OWrites}
 
-case class UpdateSubscriptionForCBCRequest(updateSubscriptionForCBCRequest: UpdateSubscriptionDetails)
+case class CreateSubscriptionForMDRRequest(createSubscriptionForMDRRequest: SubscriptionRequest)
 
-object UpdateSubscriptionForCBCRequest {
-  implicit val format: OFormat[UpdateSubscriptionForCBCRequest] = Json.format[UpdateSubscriptionForCBCRequest]
+object CreateSubscriptionForMDRRequest {
+  implicit val writes: OWrites[CreateSubscriptionForMDRRequest] = Json.writes[CreateSubscriptionForMDRRequest]
 }

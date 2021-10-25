@@ -16,17 +16,14 @@
 
 package models.subscription.response
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{__, Reads}
 
-case class AddressResponse(
-  addressLine1: String,
-  addressLine2: Option[String],
-  addressLine3: Option[String],
-  addressLine4: Option[String],
-  postalCode: Option[String],
-  countryCode: String
-)
+case class SubscriptionID(subscriptionID: String)
 
-object AddressResponse {
-  implicit val format: Format[AddressResponse] = Json.format[AddressResponse]
+object SubscriptionID {
+
+  implicit val reads: Reads[SubscriptionID] = {
+    import play.api.libs.functional.syntax._
+    (__ \ "createSubscriptionForMDRResponse" \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionID.apply
+  }
 }

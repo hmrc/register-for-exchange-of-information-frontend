@@ -16,10 +16,20 @@
 
 package models.subscription.request
 
-import play.api.libs.json.{Json, OFormat}
+import base.SpecBase
+import org.scalatest.matchers.must.Matchers
 
-case class UpdateSubscriptionDetails(requestCommon: RequestCommonForUpdate, requestDetail: RequestDetailForUpdate)
+class SubscriptionRequestCommonSpec extends SpecBase with Matchers {
 
-object UpdateSubscriptionDetails {
-  implicit val format: OFormat[UpdateSubscriptionDetails] = Json.format[UpdateSubscriptionDetails]
+  "SubscriptionRequestCommon" - {
+    "must return create SubscriptionRequestCommon" in {
+      val requestCommon = SubscriptionRequestCommon.createSubscriptionRequestCommon
+
+      requestCommon.regime mustBe "MDR"
+      requestCommon.originatingSystem mustBe "MDTP"
+      requestCommon.requestParameters mustBe None
+      requestCommon.acknowledgementReference.nonEmpty mustBe true
+      requestCommon.receiptDate.nonEmpty mustBe true
+    }
+  }
 }

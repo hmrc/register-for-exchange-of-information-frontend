@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models.subscription.request
+package models.subscription.response
 
+import models.shared.ResponseCommon
 import play.api.libs.json._
 
-case class SubscriptionForCBCRequest(requestCommon: RequestCommonForSubscription, requestDetail: CreateRequestDetail)
+case class DisplaySubscriptionResponse(responseCommon: ResponseCommon, responseDetail: DisplayResponseDetail)
 
-object SubscriptionForCBCRequest {
-  implicit val format: OFormat[SubscriptionForCBCRequest] = Json.format[SubscriptionForCBCRequest]
+object DisplaySubscriptionResponse {
+  implicit val format: OFormat[DisplaySubscriptionResponse] = Json.format[DisplaySubscriptionResponse]
 }

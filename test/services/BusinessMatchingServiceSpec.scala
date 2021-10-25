@@ -21,13 +21,11 @@ import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
-import models.matching.MatchingInfo
-import models.register.error.ApiError
-import models.register.error.ApiError.NotFoundError
-import models.register.response.RegistrationWithIDResponse
-import models.subscription.response._
-import models.subscription.{ContactInformationForOrganisation, OrganisationDetails, PrimaryContact}
 import models.{BusinessType, Name}
+import models.error.ApiError
+import models.error.ApiError.NotFoundError
+import models.matching.MatchingInfo
+import models.register.response.RegistrationWithIDResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}
 import play.api.inject.bind
@@ -60,18 +58,6 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
   val name: Name = Name("First", "Last")
 
   val dob: LocalDate = LocalDate.now
-
-  val displaySubscriptionResponse: DisplaySubscriptionForCBCResponse = DisplaySubscriptionForCBCResponse(
-    SubscriptionForCBCResponse(
-      ResponseCommon("200", None, "2016-08-16T15:55:30Z", Some(Seq(ReturnParameters("REGIME", "MDR")))),
-      ResponseDetail("subscriptionID",
-                     None,
-                     isGBUser = true,
-                     PrimaryContact(ContactInformationForOrganisation(OrganisationDetails("name"), "test@test.org", None, None)),
-                     None
-      )
-    )
-  )
 
   "BusinessMatchingService" - {
 

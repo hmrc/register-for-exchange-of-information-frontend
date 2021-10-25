@@ -14,31 +14,20 @@
  * limitations under the License.
  */
 
-package models.register.error
+package models.subscription.request
 
+import models.UserAnswers
 import play.api.libs.json.{Json, OFormat}
 
-case class SourceDetail(detail: Seq[String])
+case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: CreateRequestDetail)
 
-object SourceDetail {
-  implicit val format: OFormat[SourceDetail] = Json.format[SourceDetail]
-}
+object SubscriptionRequest {
+  implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
 
-case class ErrorDetail(
-  timestamp: String,
-  correlationId: String,
-  errorCode: String,
-  errorMessage: String,
-  source: String,
-  sourceFaultDetail: SourceDetail
-)
+  def convertTo(userAnswers: UserAnswers): Option[SubscriptionRequest] =
+    CreateRequestDetail.convertTo(userAnswers) map {
+      requestDetails =>
+        SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon, requestDetails)
+    }
 
-object ErrorDetail {
-  implicit val format: OFormat[ErrorDetail] = Json.format[ErrorDetail]
-}
-
-case class RegisterWithIDErrorResponse(errorDetail: ErrorDetail)
-
-object RegisterWithIDErrorResponse {
-  implicit val format: OFormat[RegisterWithIDErrorResponse] = Json.format[RegisterWithIDErrorResponse]
 }

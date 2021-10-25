@@ -22,6 +22,7 @@ GET         /:regime/journey-recovery                            controllers.Jou
 GET         /:regime/problem/there-is-a-problem                  controllers.ThereIsAProblemController.onPageLoad(regime: models.Regime)
 
 GET         /:regime/check-answers                               controllers.CheckYourAnswersController.onPageLoad(regime: models.Regime)
+POST        /:regime/check-answers                               controllers.CheckYourAnswersController.onSubmit(regime: models.Regime)
 
 GET         /register/:regime/need-contact-details               controllers.NeedContactDetailsController.onPageLoad(regime: models.Regime)
 

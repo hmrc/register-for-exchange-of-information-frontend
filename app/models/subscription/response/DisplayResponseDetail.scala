@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models.subscription.request
+package models.subscription.response
 
+import models.subscription.request.{PrimaryContact, SecondaryContact}
 import play.api.libs.json.{Json, OFormat}
 
-case class DisplaySubscriptionForCBCRequest(displaySubscriptionForCBCRequest: DisplaySubscriptionDetails)
+case class DisplayResponseDetail(subscriptionID: String,
+                                 tradingName: Option[String],
+                                 isGBUser: Boolean,
+                                 primaryContact: PrimaryContact,
+                                 secondaryContact: Option[SecondaryContact]
+)
 
-object DisplaySubscriptionForCBCRequest {
-  implicit val format: OFormat[DisplaySubscriptionForCBCRequest] = Json.format[DisplaySubscriptionForCBCRequest]
+object DisplayResponseDetail {
+  implicit val format: OFormat[DisplayResponseDetail] = Json.format[DisplayResponseDetail]
 }

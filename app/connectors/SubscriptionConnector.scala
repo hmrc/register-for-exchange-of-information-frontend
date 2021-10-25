@@ -19,11 +19,15 @@ package connectors
 import cats.data.EitherT
 import cats.implicits._
 import config.FrontendAppConfig
-import models.register.error.ApiError
-import models.register.error.ApiError.MandatoryInformationMissingError
-import models.subscription.response.DisplaySubscriptionForCBCResponse
+import models.error.ApiError
+import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEMTPSubscriptionError}
+import models.subscription.request.CreateSubscriptionForMDRRequest
+import models.subscription.response.{DisplaySubscriptionForCBCResponse, SubscriptionID}
 import org.slf4j.LoggerFactory
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.http.Status.CONFLICT
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,4 +40,27 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     // TODO replace with actual implementation
     EitherT.fromEither[Future](Left(MandatoryInformationMissingError))
 
+  def createSubscription(
+    createSubscriptionForMDRRequest: CreateSubscriptionForMDRRequest
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, SubscriptionID] = {
+
+    val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-subscription"
+    EitherT {
+      http
+        .POST[CreateSubscriptionForMDRRequest, HttpResponse](
+          submissionUrl,
+          createSubscriptionForMDRRequest
+        )(wts = CreateSubscriptionForMDRRequest.writes, rds = readRaw, hc = hc, ec = ec)
+        .map {
+          case response if is2xx(response.status) =>
+            response.json.asOpt[SubscriptionID].map(Right(_)).getOrElse(Left(UnableToCreateEMTPSubscriptionError))
+          case response if response.status equals CONFLICT =>
+            logger.warn(s"Duplicate submission to ETMP. ${response.status} response status")
+            Left(DuplicateSubmissionError)
+          case response =>
+            logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
+            Left(UnableToCreateEMTPSubscriptionError)
+        }
+    }
+  }
 }

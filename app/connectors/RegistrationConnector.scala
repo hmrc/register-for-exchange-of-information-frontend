@@ -18,8 +18,8 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
-import models.register.error.ApiError
-import models.register.error.ApiError.{BadRequest, NotFoundError, ServiceUnavailableError}
+import models.error.ApiError
+import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.register.request.RegisterWithID
 import models.register.response.RegistrationWithIDResponse
 import play.api.Logger
@@ -59,8 +59,8 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.error(s"Error in registration with $endpoint: not found.")
           Left(NotFoundError)
         case responseMessage if responseMessage.status == BAD_REQUEST =>
-          logger.error(s"Error in registration with $endpoint: invalid.")
-          Left(BadRequest)
+          logger.error("Error in individual registration with nino: invalid.")
+          Left(BadRequestError)
         case responseMessage =>
           logger.error(s"Error in registration with $endpoint: $responseMessage.")
           Left(ServiceUnavailableError)

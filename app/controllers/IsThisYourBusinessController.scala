@@ -18,12 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.{Mode, Regime}
+import models.error.ApiError
+import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.matching.MatchingInfo
-import models.register.error.ApiError
-import models.register.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
+import models.{Mode, Regime}
 import navigation.{MDRNavigator, Navigator}
 import pages._
 import play.api.data.Form

@@ -16,6 +16,18 @@
 
 package generators
 
+import models.subscription.request.{
+  ContactInformation,
+  CreateRequestDetail,
+  CreateSubscriptionForMDRRequest,
+  IndividualDetails,
+  OrganisationDetails,
+  PrimaryContact,
+  RequestParameter,
+  SecondaryContact,
+  SubscriptionRequest,
+  SubscriptionRequestCommon
+}
 import models.{Address, Country}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -84,4 +96,81 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
     }
+
+  implicit val arbitraryRequestParameter: Arbitrary[RequestParameter] = Arbitrary {
+    for {
+      paramName  <- arbitrary[String]
+      paramValue <- arbitrary[String]
+    } yield RequestParameter(paramName, paramValue)
+  }
+
+  implicit val arbitrarySubscriptionRequestCommon: Arbitrary[SubscriptionRequestCommon] = Arbitrary {
+    for {
+      regime                   <- arbitrary[String]
+      receiptDate              <- arbitrary[String]
+      acknowledgementReference <- arbitrary[String]
+      originatingSystem        <- arbitrary[String]
+      requestParameters        <- Gen.option(arbitrary[Seq[RequestParameter]])
+    } yield SubscriptionRequestCommon(regime, receiptDate, acknowledgementReference, originatingSystem, requestParameters)
+  }
+
+  implicit val arbitraryOrganisationDetails: Arbitrary[OrganisationDetails] = Arbitrary {
+    for {
+      organisationName <- arbitrary[String]
+    } yield OrganisationDetails(organisationName)
+  }
+
+  implicit val arbitraryIndividualDetails: Arbitrary[IndividualDetails] = Arbitrary {
+    for {
+      firstName  <- arbitrary[String]
+      middleName <- Gen.option(arbitrary[String])
+      lastName   <- arbitrary[String]
+    } yield IndividualDetails(firstName, middleName, lastName)
+  }
+
+  implicit lazy val arbitraryContactInformation: Arbitrary[ContactInformation] = Arbitrary {
+    Gen.oneOf[ContactInformation](arbitrary[OrganisationDetails], arbitrary[IndividualDetails])
+  }
+
+  implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
+    for {
+      contactInformation <- arbitrary[ContactInformation]
+      email              <- arbitrary[String]
+      phone              <- Gen.option(arbitrary[String])
+      mobile             <- Gen.option(arbitrary[String])
+    } yield PrimaryContact(contactInformation, email, phone, mobile)
+  }
+
+  implicit val arbitrarySecondaryContact: Arbitrary[SecondaryContact] = Arbitrary {
+    for {
+      contactInformation <- arbitrary[ContactInformation]
+      email              <- arbitrary[String]
+      phone              <- Gen.option(arbitrary[String])
+      mobile             <- Gen.option(arbitrary[String])
+    } yield SecondaryContact(contactInformation, email, phone, mobile)
+  }
+
+  implicit val arbitraryCreateRequestDetail: Arbitrary[CreateRequestDetail] = Arbitrary {
+    for {
+      idType           <- arbitrary[String]
+      idNumber         <- arbitrary[String]
+      tradingName      <- Gen.option(arbitrary[String])
+      isGBUser         <- arbitrary[Boolean]
+      primaryContact   <- arbitrary[PrimaryContact]
+      secondaryContact <- Gen.option(arbitrary[SecondaryContact])
+    } yield CreateRequestDetail(idType, idNumber, tradingName, isGBUser, primaryContact, secondaryContact)
+  }
+
+  implicit val arbitrarySubscriptionRequest: Arbitrary[SubscriptionRequest] = Arbitrary {
+    for {
+      requestCommon  <- arbitrary[SubscriptionRequestCommon]
+      requestDetails <- arbitrary[CreateRequestDetail]
+    } yield SubscriptionRequest(requestCommon, requestDetails)
+  }
+
+  implicit val arbitraryCreateSubscriptionForMDRRequest: Arbitrary[CreateSubscriptionForMDRRequest] = Arbitrary {
+    for {
+      subscriptionRequest <- arbitrary[SubscriptionRequest]
+    } yield CreateSubscriptionForMDRRequest(subscriptionRequest)
+  }
 }

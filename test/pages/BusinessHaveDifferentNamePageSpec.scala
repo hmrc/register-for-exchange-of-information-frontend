@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{UserAnswers, WhatIsTradingName}
+import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 

@@ -14,12 +14,31 @@
  * limitations under the License.
  */
 
-package models.subscription.request
+package models.error
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DisplaySubscriptionDetails(requestCommon: RequestCommonForDisplay, requestDetail: DisplayRequestDetail)
+case class SourceDetail(detail: Seq[String])
 
-object DisplaySubscriptionDetails {
-  implicit val format: OFormat[DisplaySubscriptionDetails] = Json.format[DisplaySubscriptionDetails]
+object SourceDetail {
+  implicit val format: OFormat[SourceDetail] = Json.format[SourceDetail]
+}
+
+case class ErrorDetail(
+  timestamp: String,
+  correlationId: String,
+  errorCode: String,
+  errorMessage: String,
+  source: String,
+  sourceFaultDetail: SourceDetail
+)
+
+object ErrorDetail {
+  implicit val format: OFormat[ErrorDetail] = Json.format[ErrorDetail]
+}
+
+case class ErrorResponse(errorDetail: ErrorDetail)
+
+object ErrorResponse {
+  implicit val format: OFormat[ErrorResponse] = Json.format[ErrorResponse]
 }

@@ -17,6 +17,11 @@
 package controllers
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.UserAnswers
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError}
+import models.requests.DataRequest
+import pages.{DoYouHaveNINPage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
+import play.api.Logging
 import models.BusinessType.Sole
 import models.{Regime, WhatAreYouRegisteringAs}
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
@@ -25,27 +30,31 @@ import navigation.Navigator
 import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
+import services.SubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{CheckYourAnswersHelper, CountryListFactory}
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  subscriptionService: SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   countryFactory: CountryListFactory,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with Logging {
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
     implicit request =>
@@ -88,4 +97,28 @@ class CheckYourAnswersController @Inject() (
       case (Some(RegistrationTypeBusiness), Some(false), _) => true
       case _                                                => false
     }
+
+  private def createSubscription(regime: Regime, userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
+    subscriptionService.createSubscription(userAnswers) flatMap {
+      case Right(subscriptionID) =>
+        logger.info(s"The subscriptionId id $subscriptionID")
+        Future.successful(NotImplemented("Not implemented"))
+      case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
+      case Left(DuplicateSubmissionError) =>
+        Future.successful(NotImplemented("DuplicateSubmission is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
+      case Left(BadRequestError) => renderer.render("thereIsAProblem.njk").map(BadRequest(_))
+      case _                     => renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
+    }
+
+  def onSubmit(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+    implicit request =>
+      (request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
+       request.userAnswers.get(WhatAreYouRegisteringAsPage),
+       request.userAnswers.get(DoYouHaveNINPage)
+      ) match {
+        case (Some(false), _, Some(false) | None) => Future.successful(NotImplemented("Not implemented")) // TODO DAC6-1142
+        case (Some(_), _, Some(true) | None)      => createSubscription(regime, request.userAnswers)
+        case _                                    => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
+      }
+  }
 }
