@@ -50,8 +50,7 @@ class ErrorHandler @Inject() (
       case NOT_FOUND =>
         renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
       case _ =>
-        // TODO create Problem with service page
-        Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
+        renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
     }
   }
 
@@ -64,8 +63,7 @@ class ErrorHandler @Inject() (
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>
-        // TODO create Problem with service page
-        Future.successful(Redirect(controllers.routes.IndexController.onPageLoad()))
+        renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
     }
   }
 
