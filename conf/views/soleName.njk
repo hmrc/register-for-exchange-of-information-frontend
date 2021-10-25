@@ -17,9 +17,7 @@
 {% endblock %}
 
 {% block mainContent %}
-
-  <div class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
+   <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
         {% if form.errors.length > 0 %}
@@ -33,9 +31,13 @@
 
           {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-l">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-3">
           {{ messages("soleName.heading") }}
         </h1>
+
+        <p class="govuk-body">
+          {{ messages("soleName.paragraph") }}
+        </p>
 
           {{ govukInput({
             label: {
@@ -73,7 +75,6 @@
         </form>
 
       </div>
-    </div>
-  </div>
+   </div>
 
 {% endblock %}
