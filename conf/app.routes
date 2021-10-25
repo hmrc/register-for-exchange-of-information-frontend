@@ -184,3 +184,5 @@ POST       /register/:regime/without-id/change-trading-name      controllers.Wha
 GET        /problem/no-agent-service-available           controllers.UnauthorisedAgentController.onPageLoad()
 
 GET        /problem/sign-in-problem                      controllers.UnauthorisedAssistantController.onPageLoad()
+
+GET        /register/:regime/no-records-matched                    controllers.NoRecordsMatchedController.onPageLoad(regime:  models.Regime)

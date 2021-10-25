@@ -461,3 +461,9 @@ unauthorisedAgent.paragraph.2.a = You can use the service by
 unauthorisedAgent.paragraph.2.b = signing in with your own or your organisation’s Government Gateway details
 unauthorisedAgent.paragraph.3 = You cannot report cross-border arrangements for other organisations or individuals, they must do it themselves.
 
+
+noRecordsMatched.title = The details you entered did not match our records
+noRecordsMatched.heading = The details you entered did not match our records
+noRecordsMatched.p1 = We could not match the details you entered with records held by HMRC.
+noRecordsMatched.p2 = If you used the wrong details, you can
+noRecordsMatched.link =  try again using different details

@@ -111,6 +111,6 @@ class MDRNavigator @Inject() () extends Navigator {
     Option(ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) map {
       case (Some(true), Some(Sole)) => routes.ContactEmailController.onPageLoad(mode, regime)
       case (Some(true), Some(_))    => routes.ContactNameController.onPageLoad(mode, regime)
-      case _                        => routes.WeCouldNotConfirmController.onPageLoad("organisation", regime)
+      case _                        => routes.NoRecordsMatchedController.onPageLoad(regime)
     }
 }

@@ -1,15 +1,15 @@
 #!/bin/bash
 
 echo ""
-echo "Applying migration UnauthorisedAgent"
+echo "Applying migration NoRecordsMatched"
 
 echo "Adding routes to conf/app.routes"
 echo "" >> ../conf/app.routes
-echo "GET        /unauthorisedAgent                       controllers.UnauthorisedAgentController.onPageLoad()" >> ../conf/app.routes
+echo "GET        /noRecordsMatched                       controllers.NoRecordsMatchedController.onPageLoad()" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "unauthorisedAgent.title = unauthorisedAgent" >> ../conf/messages.en
-echo "unauthorisedAgent.heading = unauthorisedAgent" >> ../conf/messages.en
+echo "noRecordsMatched.title = noRecordsMatched" >> ../conf/messages.en
+echo "noRecordsMatched.heading = noRecordsMatched" >> ../conf/messages.en
 
-echo "Migration UnauthorisedAgent completed"
+echo "Migration NoRecordsMatched completed"

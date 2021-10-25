@@ -69,7 +69,7 @@ class IsThisYourBusinessController @Inject() (
         } yield render(mode, regime, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill), name, address).map(Ok(_)))
           .getOrElse(Future.successful(Redirect(Navigator.missingInformation(regime))))
       case Left(NotFoundError) =>
-        Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("organisation", regime)))
+        Future.successful(Redirect(routes.NoRecordsMatchedController.onPageLoad(regime)))
       case _ =>
         renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
     }
