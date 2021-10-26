@@ -1,0 +1,33 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("pageNotFound.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+   <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">
+          {{ messages("pageNotFound.heading") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages('pageNotFound.p1') }}</p>
+
+        <ul class="govuk-list govuk-list--bullet" style="padding-left:20px;list-style-type:disc">
+            <li>{{ messages('pageNotFound.bullet1') }}</li>
+            <li>{{ messages('pageNotFound.bullet2') }}</li>
+            <li>{{ messages('pageNotFound.bullet3') }}</li>
+        </ul>
+
+        <p class="govuk-body"> {{ messages("pageNotFound.p2")}}
+            <a href="mailto:{{emailAddress}}" class="govuk-link">{{ messages("thereIsAProblem.emailAddress") }}</a>
+        </p>
+
+        <p class="govuk-body bottom-margin">{{ messages('pageNotFound.p3') }}</p>
+      </div>
+   </div>
+
+{% endblock %}

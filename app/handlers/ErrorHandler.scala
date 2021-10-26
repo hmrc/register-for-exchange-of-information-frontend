@@ -16,7 +16,8 @@
 
 package handlers
 
-import models.Regime
+import controllers.routes
+import models.{MDR, Regime}
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +49,7 @@ class ErrorHandler @Inject() (
       case BAD_REQUEST =>
         renderer.render("badRequest.njk").map(BadRequest(_))
       case NOT_FOUND =>
-        renderer.render("notFound.njk", Json.obj()).map(NotFound(_))
+        Future.successful(Redirect(routes.PageNotFoundController.onPageLoad(MDR)))
       case _ =>
         renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
     }
