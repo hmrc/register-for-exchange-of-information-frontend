@@ -114,7 +114,7 @@ class UTRController @Inject() (
 
   private def hintWithLostUtrLink(taxType: String)(implicit messages: Messages): Html =
     Html(
-      s"${messages("utr.hint", taxType)}<span> You can <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
+      s"${messages("utr.hint", taxType)} <span> <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
         s"${messages("utr.hint.link")}</a>.</span>"
     )
 }
