@@ -18,7 +18,7 @@
 
 {% block mainContent %}
 
-  <div class="govuk-main-wrapper">
+  <div>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
@@ -44,7 +44,7 @@
               }
             },
             hint: {
-              text: messages('doYouHaveUniqueTaxPayerReference.hint')
+              html: hintText
             },
             items: radios,
             errorMessage: form.value.error
