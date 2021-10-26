@@ -35,6 +35,13 @@ class SessionExpiredController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
+  def onPageLoadDef(): Action[AnyContent] = Action.async {
+    implicit request =>
+      renderer
+        .render("sessionExpired.njk", Json.obj("regime" -> "UNDEFINED"))
+        .map(Ok(_).withNewSession)
+  }
+
   def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
       renderer
