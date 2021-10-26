@@ -18,7 +18,7 @@
 
 {% block mainContent %}
 
-  <div class="govuk-main-wrapper">
+  <div>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
@@ -41,8 +41,11 @@
                 text: messages('doYouHaveNIN.title'),
                 isPageHeading: true,
                 classes: "govuk-fieldset__legend--l text-overflow"
-              }
-            },
+                }
+              },
+              hint: {
+                text: messages('doYouHaveNIN.hint')
+              },
             items: radios,
             errorMessage: form.value.error
           }) }}

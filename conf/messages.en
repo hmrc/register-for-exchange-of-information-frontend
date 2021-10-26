@@ -211,7 +211,8 @@ checkYourAnswers.button = Accept and send
 doYouHaveUniqueTaxPayerReference.title = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a UK Unique Taxpayer Reference?
 doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
-doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax.
+doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax. You can
+doYouHaveUniqueTaxPayerReference.hint.link = find a lost UTR number (opens in a new tab)
 doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique Taxpayer Reference
 
 weCouldNotConfirm.title = We could not {0}
@@ -223,6 +224,7 @@ weCouldNotConfirm.button = Try again
 
 whatAreYouRegisteringAs.title = What are you registering as?
 whatAreYouRegisteringAs.heading = What are you registering as?
+whatAreYouRegisteringAs.hint = A business could be a company or a limited liability partnership. An individual could be someone who is self-employed.
 whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
 whatAreYouRegisteringAs.registrationTypeBusiness = A business
 whatAreYouRegisteringAs.registrationTypeIndividual = An individual
@@ -231,6 +233,7 @@ whatAreYouRegisteringAs.error.required = Select registration as a business or as
 
 doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
+doYouHaveNIN.hint = You can find your National Insurance number on your payslip, P60 or letters about tax, pensions and benefits.
 doYouHaveNIN.checkYourAnswersLabel =  Do you have a National Insurance number?
 doYouHaveNIN.error.required = Select yes if you have National Insurance number
 
