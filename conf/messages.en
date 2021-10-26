@@ -256,7 +256,7 @@ whatIsYourName.error.lastName.length = Last name must be 35 characters or less
 
 whatIsYourDateOfBirth.title = What is your date of birth?
 whatIsYourDateOfBirth.heading = What is your date of birth?
-whatIsYourDateOfBirth.hint = For example, 31 3 1980
+whatIsYourDateOfBirth.hint = For example, 31 3 1980.
 whatIsYourDateOfBirth.checkYourAnswersLabel = What is your date of birth?
 whatIsYourDateOfBirth.error.required.all = Enter your date of birth
 whatIsYourDateOfBirth.error.required.two = Date of birth must include {0} and {1}
