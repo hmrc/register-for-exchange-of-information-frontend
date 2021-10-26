@@ -516,6 +516,24 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
               .mustBe(routes.ContactNameController.onPageLoad(NormalMode, MDR))
         }
       }
+
+      "must go from 'Is this your business' page to 'no-records-matched'' page when 'NO' is selected" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessTypePage, LimitedCompany)
+                .success
+                .value
+                .set(IsThisYourBusinessPage, false)
+                .success
+                .value
+
+            navigator
+              .nextPage(IsThisYourBusinessPage, NormalMode, MDR, updatedAnswers)
+              .mustBe(routes.NoRecordsMatchedController.onPageLoad(MDR))
+        }
+      }
     }
   }
 }

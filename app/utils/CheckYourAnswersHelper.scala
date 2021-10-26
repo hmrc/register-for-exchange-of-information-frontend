@@ -117,9 +117,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
                   ${address.addressLine4.fold("")(
             address => s"$address<br>"
           )}
-                  ${address.postalCode.fold("")(
-            postcode => s"$postcode<br>"
-          )}
+                  ${address.postCodeFormatter(address.postalCode).getOrElse("")}<br>
                   $countryName
                   """),
           href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url

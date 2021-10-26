@@ -17,8 +17,6 @@
 {% endblock %}
 
 {% block mainContent %}
-
-  <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
@@ -33,24 +31,20 @@
 
           {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-l text-overflow" id="heading">
-            {{ messages("utr.heading", taxType) }}
-        </h1>
-
-        <div>
-            <p class="govuk-hint text-overflow" id="hint-text">{{ messages("utr.hint", taxType) }}
-            <a href="{{lostUTRUrl}}" class="govuk-link text-overflow" rel="noreferrer noopener" target="_blank">{{messages("utr.hint.link")}}</a></p>
-        </div>
-
             {{ govukInput({
+                label: {
+                  text: messages('utr.heading', taxType),
+                  isPageHeading: true,
+                  classes: "govuk-label--l text-overflow"
+                },
+                classes: "govuk-input--width-10",
                 id: "value",
                 name: "value",
+                hint: {
+                  html: hintText
+                },
                 value: form.value.value,
-                errorMessage: form.value.error,
-                attributes: {
-                    "aria-labelledby" : "heading",
-                    "aria-describedby": "hint-text"
-                }
+                errorMessage: form.value.error
             }) }}
 
           {{ govukButton({
@@ -61,9 +55,7 @@
           }) }}
 
         </form>
-
       </div>
     </div>
-  </div>
 
 {% endblock %}

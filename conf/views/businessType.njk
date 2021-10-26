@@ -17,8 +17,6 @@
 {% endblock %}
 
 {% block mainContent %}
-
-  <div class="govuk-main-wrapper">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
@@ -42,6 +40,9 @@
                 classes: "govuk-fieldset__legend--l text-overflow"
               }
             },
+            hint: {
+              text: messages('businessType.hint')
+            },
             items: radios,
             errorMessage: form.value.error
           }) }}
@@ -57,6 +58,4 @@
 
       </div>
     </div>
-  </div>
-
 {% endblock %}
