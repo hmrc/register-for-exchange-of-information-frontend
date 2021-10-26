@@ -423,7 +423,7 @@ soleName.error.lastName.length = Last name must be 35 characters or less
 
 soleDateOfBirth.title = What is your date of birth?
 soleDateOfBirth.heading = What is your date of birth?
-soleDateOfBirth.hint = For example, 12 11 2007
+soleDateOfBirth.hint = For example, 12 11 2007.
 soleDateOfBirth.checkYourAnswersLabel = What is your date of birth?
 soleDateOfBirth.error.required.all = Enter your date of birth
 soleDateOfBirth.error.required.two = Date of birth must include {0} and {1}
