@@ -17,9 +17,7 @@
 {% endblock %}
 
 {% block mainContent %}
-
-  <div class="govuk-main-wrapper">
-    <div class="govuk-grid-row">
+   <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
 
         {% if form.errors.length > 0 %}
@@ -33,12 +31,14 @@
 
           {{ csrf() | safe }}
 
-        <h1 class="govuk-heading-l">
-          {{ messages("whatIsTradingName.heading") }}
-        </h1>
-
           {{ govukInput({
+            label: {
+              text: messages('whatIsTradingName.heading'),
+              isPageHeading: true,
+              classes: "govuk-label--l"
+            },
             id: "businessName",
+            classes: "govuk-input govuk-!-width-three-quarters",
             name: "businessName",
             value: form.businessName.value,
             errorMessage: form.businessName.error
@@ -54,7 +54,5 @@
         </form>
 
       </div>
-    </div>
-  </div>
-
+   </div>
 {% endblock %}
