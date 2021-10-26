@@ -346,6 +346,7 @@ nonUkName.error.familyName.length = Family name must be 35 characters or less
 
 whatIsYourPostcode.title = What is your postcode?
 whatIsYourPostcode.heading = What is your postcode?
+whatIsYourPostcode.hint = Enter your postcode to find your address automatically.
 whatIsYourPostcode.checkYourAnswersLabel = What is your postcode?
 whatIsYourPostcode.button = Find address
 whatIsYourPostcode.manualLink = Or enter the address manually
