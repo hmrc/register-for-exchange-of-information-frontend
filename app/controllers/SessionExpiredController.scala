@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,8 +35,10 @@ class SessionExpiredController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("sessionExpired.njk").map(Ok(_).withNewSession)
+      renderer
+        .render("sessionExpired.njk", Json.obj("regime" -> regime.toString.toLowerCase))
+        .map(Ok(_).withNewSession)
   }
 }
