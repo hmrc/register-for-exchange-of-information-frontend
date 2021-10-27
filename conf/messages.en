@@ -424,17 +424,6 @@ soleName.error.lastName.required = Enter your last name
 soleName.error.lastName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 soleName.error.lastName.length = Last name must be 35 characters or less
 
-soleDateOfBirth.title = What is your date of birth?
-soleDateOfBirth.heading = What is your date of birth?
-soleDateOfBirth.hint = For example, 12 11 2007.
-soleDateOfBirth.checkYourAnswersLabel = What is your date of birth?
-soleDateOfBirth.error.required.all = Enter your date of birth
-soleDateOfBirth.error.required.two = Date of birth must include {0} and {1}
-soleDateOfBirth.error.required = Your date of birth must include {0}
-soleDateOfBirth.error.invalid = Enter a valid date of birth
-soleDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1909
-soleDateOfBirth.error.futureDate = Date of birth must be before {0}
-
 businessHaveDifferentName.title = Does your business trade under a different name?
 businessHaveDifferentName.heading = Does your business trade under a different name?
 businessHaveDifferentName.checkYourAnswersLabel = Does your business trade under a different name?
