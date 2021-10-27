@@ -32,7 +32,7 @@ class SignedOutController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def signOut: Action[AnyContent] = Action.async {
+  def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(config.exitSurveyUrl).withNewSession)
   }

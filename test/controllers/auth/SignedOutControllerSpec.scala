@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  private def signOutRoute: String = controllers.auth.routes.SignedOutController.signOut().url
+  private def signOutRoute: String = controllers.auth.routes.SignedOutController.onPageLoad().url
 
   "SignOut Controller" - {
 
