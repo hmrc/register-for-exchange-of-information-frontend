@@ -9,8 +9,8 @@ GET         /assets/*file                                controllers.Assets.vers
 
 GET         /:regime/refresh-session                             controllers.KeepAliveController.keepAlive(regime: models.Regime)
 
-GET         /:regime/session-expired                             controllers.SessionExpiredController.onPageLoad(regime: models.Regime)
-GET         /undefined/session-expired                             controllers.SessionExpiredController.onPageLoadDef()
+GET         /register/:regime/problem/sign-out                 controllers.SessionExpiredController.onPageLoad(regime: models.Regime)
+GET         /undefined/session-expired                         controllers.SessionExpiredController.onPageLoadDef()
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey
