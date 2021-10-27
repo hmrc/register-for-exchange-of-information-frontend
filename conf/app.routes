@@ -167,11 +167,6 @@ POST       /register/:regime/your-name                        controllers.SoleNa
 GET        /register/:regime/change-your-name                  controllers.SoleNameController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 POST       /register/:regime/change-your-name                  controllers.SoleNameController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 
-GET        /register/:regime/sole-date-of-birth                        controllers.SoleDateOfBirthController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
-POST       /register/:regime/sole-date-of-birth                        controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
-GET        /register/:regime/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
-POST       /register/:regime/change-sole-date-of-birth                  controllers.SoleDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
-
 GET        /register/:regime/without-id/have-trading-name        controllers.BusinessHaveDifferentNameController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
 POST       /register/:regime/without-id/have-trading-name        controllers.BusinessHaveDifferentNameController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
 GET        /register/:regime/without-id/change-have-trading-name controllers.BusinessHaveDifferentNameController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
