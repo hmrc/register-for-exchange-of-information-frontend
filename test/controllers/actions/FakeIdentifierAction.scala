@@ -39,5 +39,4 @@ class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers)
 
   override def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] = this
 
-  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] = this
 }

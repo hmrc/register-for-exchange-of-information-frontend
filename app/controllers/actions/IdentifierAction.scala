@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction {
   def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
-  def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+  //def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 }
 //trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
@@ -50,8 +50,8 @@ class AuthenticatedIdentifierAction @Inject() (
   override def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
     new AuthenticatedIdentifierActionWithRegime(authConnector, config, parser, regime)
 
-  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
-    new AuthenticatedIdentifierActionImpl(authConnector, config, parser)
+//  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
+//    new AuthenticatedIdentifierActionImpl(authConnector, config, parser)
 }
 
 class AuthenticatedIdentifierActionWithRegime @Inject() (

@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions.IdentifierAction
+import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -33,8 +34,8 @@ class IndexController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify().async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = identify(regime).async {
     implicit request =>
-      renderer.render("index.njk").map(Ok(_))
+      renderer.render("index.njk", regime.toJson).map(Ok(_))
   }
 }
