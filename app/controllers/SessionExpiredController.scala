@@ -45,7 +45,12 @@ class SessionExpiredController @Inject() (
   def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
       renderer
-        .render("sessionExpired.njk", Json.obj("regime" -> regime.toString.toLowerCase))
+        .render(
+          "sessionExpired.njk",
+          Json.obj("regime"   -> regime.toString.toLowerCase,
+                   "startUrl" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(models.NormalMode, regime).url
+          )
+        )
         .map(Ok(_).withNewSession)
   }
 }
