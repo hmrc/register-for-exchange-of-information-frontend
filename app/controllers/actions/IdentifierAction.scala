@@ -18,6 +18,7 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import models.Regime
 import models.requests.IdentifierRequest
 import play.api.Logger
 import play.api.mvc.Results._
@@ -32,7 +33,11 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction {
+  def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+  def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+}
+//trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
@@ -40,6 +45,23 @@ class AuthenticatedIdentifierAction @Inject() (
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
+    with AuthorisedFunctions {
+
+  override def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
+    new AuthenticatedIdentifierActionWithRegime(authConnector, config, parser, regime)
+
+  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
+    new AuthenticatedIdentifierActionImpl(authConnector, config, parser)
+}
+
+class AuthenticatedIdentifierActionWithRegime @Inject() (
+  val authConnector: AuthConnector,
+  config: FrontendAppConfig,
+  val parser: BodyParsers.Default,
+  regime: Regime
+)(implicit val executionContext: ExecutionContext)
+    extends ActionBuilder[IdentifierRequest, AnyContent]
+    with ActionFunction[Request, IdentifierRequest]
     with AuthorisedFunctions {
   private val logger: Logger = Logger(this.getClass)
 
@@ -50,10 +72,10 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised()
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
         case _ ~ _ ~ Some(Agent) ~ _ =>
-          Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad()))
+          Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad(regime)))
         case _ ~ _ ~ _ ~ Some(Assistant) =>
-          Future.successful(Redirect(controllers.routes.UnauthorisedAssistantController.onPageLoad()))
-        case _ ~ enrolments ~ _ ~ _ if enrolments.enrolments.exists(_.key == config.enrolmentKey("mdr")) =>
+          Future.successful(Redirect(controllers.routes.UnauthorisedAssistantController.onPageLoad(regime)))
+        case _ ~ enrolments ~ _ ~ _ if enrolments.enrolments.exists(_.key == config.enrolmentKey(regime.toString)) =>
           logger.info("MDR enrolment exists")
           Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
         case Some(internalID) ~ _ ~ _ ~ _ => block(IdentifierRequest(request, internalID))
@@ -62,9 +84,32 @@ class AuthenticatedIdentifierAction @Inject() (
       .recover {
         case _: NoActiveSession =>
           Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-        case _: InsufficientEnrolments => Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad())
+        case _: InsufficientEnrolments => Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad(regime))
         case _: AuthorisationException =>
-          Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad())
+          Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad(regime))
       }
+  }
+}
+
+class AuthenticatedIdentifierActionImpl @Inject() (
+  val authConnector: AuthConnector,
+  config: FrontendAppConfig,
+  val parser: BodyParsers.Default
+)(implicit val executionContext: ExecutionContext)
+    extends ActionBuilder[IdentifierRequest, AnyContent]
+    with ActionFunction[Request, IdentifierRequest]
+    with AuthorisedFunctions {
+  private val logger: Logger = Logger(this.getClass)
+
+  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    authorised()
+      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
+        case Some(internalID) ~ _ ~ _ ~ _ => block(IdentifierRequest(request, internalID))
+        case _                            => throw new UnauthorizedException("Unable to retrieve internal Id")
+      }
+
   }
 }

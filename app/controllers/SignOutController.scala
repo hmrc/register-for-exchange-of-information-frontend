@@ -18,6 +18,7 @@ package controllers
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -31,7 +32,7 @@ class SignOutController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def signOut: Action[AnyContent] = Action.async {
+  def signOut(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
       Future.successful(Redirect(config.signOutUrl).withNewSession)
   }

@@ -20,8 +20,10 @@ import base.{ControllerMockFixtures, SpecBase}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import matchers.JsonMatchers
+import models.MDR
+import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
-import play.api.mvc.{BodyParsers, Results}
+import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, BodyParsers, Request, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -39,7 +41,9 @@ import utils.RetrievalOps._
 
 class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  class Harness(authAction: IdentifierAction) {
+  type AuthAction = ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+
+  class Harness(authAction: AuthAction) {
 
     def onPageLoad() = authAction {
       _ => Results.Ok
@@ -60,7 +64,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -80,7 +84,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -100,12 +104,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad().url
+          redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url
         }
       }
     }
@@ -120,12 +124,13 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers)
+          val authAction =
+            new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad().url
+          redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url
         }
       }
     }
@@ -140,12 +145,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad().url
+          redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url
         }
       }
     }
@@ -160,12 +165,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url)
         }
       }
 
@@ -181,12 +186,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val retrieval: AuthRetrievals = None ~ emptyEnrolments ~ Some(Agent) ~ None
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAgentController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAgentController.onPageLoad(MDR).url)
         }
       }
     }
@@ -201,12 +206,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url)
         }
       }
 
@@ -222,12 +227,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ Some(Assistant)
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad(MDR).url)
         }
       }
     }
@@ -246,7 +251,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
           val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ None
           when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 

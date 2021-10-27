@@ -41,7 +41,7 @@ class NoRecordsMatchedController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       val data = Json.obj(
         "regime"   -> regime.toUpperCase,

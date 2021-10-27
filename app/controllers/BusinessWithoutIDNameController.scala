@@ -62,13 +62,13 @@ class BusinessWithoutIDNameController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         render(mode, regime, request.userAnswers.get(BusinessWithoutIDNamePage).fold(form)(form.fill)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         form
           .bindFromRequest()

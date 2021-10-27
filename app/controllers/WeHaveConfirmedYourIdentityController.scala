@@ -50,7 +50,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     with I18nSupport {
 
   def onPageLoad(regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
 
       implicit request =>
         // TODO confirm redirection logic

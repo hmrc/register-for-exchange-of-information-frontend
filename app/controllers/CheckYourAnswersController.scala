@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject() (
     with NunjucksSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       val helper                                = new CheckYourAnswersHelper(request.userAnswers, regime, countryListFactory = countryFactory)
       val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
@@ -110,7 +110,7 @@ class CheckYourAnswersController @Inject() (
       case _                     => renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
     }
 
-  def onSubmit(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onSubmit(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       (request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
        request.userAnswers.get(WhatAreYouRegisteringAsPage),

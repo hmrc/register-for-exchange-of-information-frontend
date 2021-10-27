@@ -18,6 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.Regime
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,10 +40,10 @@ class UnauthorisedAssistantController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
-        "regime"   -> "MDR",
+        "regime"   -> regime.toUpperCase,
         "loginUrl" -> frontendAppConfig.loginUrl
       )
       renderer.render("unauthorisedAssistant.njk", json).map(Ok(_))

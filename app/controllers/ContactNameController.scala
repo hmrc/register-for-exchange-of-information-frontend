@@ -41,7 +41,7 @@ class ContactNameController @Inject() (
   navigator: CBCRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction,
+  requireData: DataRequiredAction,
   formProvider: ContactNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -62,13 +62,13 @@ class ContactNameController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         render(mode, regime, request.userAnswers.get(ContactNamePage).fold(form)(form.fill)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         form
           .bindFromRequest()

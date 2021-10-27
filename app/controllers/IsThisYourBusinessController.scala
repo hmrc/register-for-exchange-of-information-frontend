@@ -88,7 +88,7 @@ class IsThisYourBusinessController @Inject() (
     renderer.render("isThisYourBusiness.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request => result(mode, regime, form)
   }
 
@@ -104,7 +104,7 @@ class IsThisYourBusinessController @Inject() (
     } yield matchingService.sendBusinessMatchingInformation(utr, businessName, businessType))
       .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       form
         .bindFromRequest()
