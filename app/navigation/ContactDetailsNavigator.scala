@@ -26,7 +26,7 @@ import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class CBCRNavigator @Inject() () extends Navigator {
+class ContactDetailsNavigator @Inject() () extends Navigator {
 
   override val normalRoutes: Page => Regime => UserAnswers => Option[Call] = {
     case ContactNamePage        => regime => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode, regime))

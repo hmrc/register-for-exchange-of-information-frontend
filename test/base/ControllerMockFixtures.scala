@@ -21,7 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import matchers.JsonMatchers
 import models.UserAnswers
-import navigation.{CBCRFakeNavigator, CBCRNavigator, MDRFakeNavigator, MDRNavigator}
+import navigation.{CBCRFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.{Mockito, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
@@ -39,14 +39,14 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with NunjucksSupport with JsonMatchers {
   self: SpecBase =>
 
-  def onwardRoute: Call                                  = Call("GET", "/foo")
-  final val mockRenderer: NunjucksRenderer               = mock[NunjucksRenderer]
-  final val mockDataRetrievalAction: DataRetrievalAction = mock[DataRetrievalAction]
-  final val mockSessionRepository: SessionRepository     = mock[SessionRepository]
-  final val mockFrontendAppConfig                        = mock[FrontendAppConfig]
-  final val mockAddressLookupConnector                   = mock[AddressLookupConnector]
-  protected val cbcrFakeNavigator: CBCRNavigator         = new CBCRFakeNavigator(onwardRoute)
-  protected val mdrFakeNavigator: MDRNavigator           = new MDRFakeNavigator(onwardRoute)
+  def onwardRoute: Call                                    = Call("GET", "/foo")
+  final val mockRenderer: NunjucksRenderer                 = mock[NunjucksRenderer]
+  final val mockDataRetrievalAction: DataRetrievalAction   = mock[DataRetrievalAction]
+  final val mockSessionRepository: SessionRepository       = mock[SessionRepository]
+  final val mockFrontendAppConfig                          = mock[FrontendAppConfig]
+  final val mockAddressLookupConnector                     = mock[AddressLookupConnector]
+  protected val cbcrFakeNavigator: ContactDetailsNavigator = new CBCRFakeNavigator(onwardRoute)
+  protected val mdrFakeNavigator: MDRNavigator             = new MDRFakeNavigator(onwardRoute)
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
@@ -80,7 +80,7 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
         bind[DataRetrievalAction].toInstance(mockDataRetrievalAction),
         bind[NunjucksRenderer].toInstance(mockRenderer),
         bind[SessionRepository].toInstance(mockSessionRepository),
-        bind[CBCRNavigator].toInstance(cbcrFakeNavigator),
+        bind[ContactDetailsNavigator].toInstance(cbcrFakeNavigator),
         bind[MDRNavigator].toInstance(mdrFakeNavigator),
         bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
       )
