@@ -84,14 +84,4 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
         bind[MDRNavigator].toInstance(mdrFakeNavigator),
         bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
       )
-
-  //@deprecated("Use guiceApplicationBuilder() instead", "")
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalActionProvider(userAnswers)),
-        bind[NunjucksRenderer].toInstance(mockRenderer)
-      )
 }
