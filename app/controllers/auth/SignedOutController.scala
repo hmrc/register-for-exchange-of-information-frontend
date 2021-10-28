@@ -34,6 +34,6 @@ class SignedOutController @Inject() (
 
   def onPageLoad: Action[AnyContent] = Action.async {
     implicit request =>
-      Future.successful(Redirect(config.exitSurveyUrl).withNewSession)
+      Future.successful(Redirect(config.signOutUrl).withNewSession)
   }
 }

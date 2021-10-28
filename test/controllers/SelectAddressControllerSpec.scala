@@ -42,6 +42,7 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
   val formProvider       = new SelectAddressFormProvider()
   val form: Form[String] = formProvider()
 
+  // todo tak testujemy
   val addresses: Seq[AddressLookup] = Seq(
     AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
