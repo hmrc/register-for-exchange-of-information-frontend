@@ -16,8 +16,8 @@
 
 package handlers
 
-import controllers.routes
-import models.{MDR, Regime}
+import config.FrontendAppConfig
+import models.MDR
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,6 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
+  frontendAppConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends HttpErrorHandler
@@ -49,7 +50,14 @@ class ErrorHandler @Inject() (
       case BAD_REQUEST =>
         renderer.render("badRequest.njk").map(BadRequest(_))
       case NOT_FOUND =>
-        Future.successful(Redirect(routes.PageNotFoundController.onPageLoad(MDR)))
+        renderer
+          .render("pageNotFound.njk",
+                  Json.obj(
+                    "regime"       -> MDR.toUpperCase,
+                    "emailAddress" -> frontendAppConfig.emailEnquiries
+                  )
+          )
+          .map(NotFound(_))
       case _ =>
         renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
     }
