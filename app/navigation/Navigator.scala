@@ -31,12 +31,12 @@ trait Navigator {
     case NormalMode =>
       normalRoutes(page)(regime)(userAnswers) match {
         case Some(call) => call
-        case None       => routes.SessionExpiredController.onPageLoad()
+        case None       => routes.SessionExpiredController.onPageLoad(regime)
       }
     case CheckMode =>
       checkRouteMap(page)(regime)(userAnswers) match {
         case Some(call) => call
-        case None       => routes.SessionExpiredController.onPageLoad()
+        case None       => routes.SessionExpiredController.onPageLoad(regime)
       }
   }
 }
