@@ -133,6 +133,111 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           result.futureValue
         }
       }
+
+      def addressesJson: String =
+        s"""[{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "1 Address line 1 Road",
+           |         "Address line 2 Road"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "2 Address line 1 Road",
+           |         "Address line 2 Road"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "3 Address line 1 Road",
+           |         "Address line 2 Road"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |}]""".stripMargin
+
+      "must return sorted addresses" in {
+        stubResponse(addressLookupUrl, OK, addressesJson)
+
+        val addressLookupResult = Seq(
+          AddressLookup(Some("1 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("2 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("3 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode)
+        )
+
+        val result = connector.addressLookupByPostcode(postcode)
+        result.futureValue mustBe addressLookupResult
+      }
     }
   }
 
