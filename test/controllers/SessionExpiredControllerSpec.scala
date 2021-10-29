@@ -38,7 +38,7 @@ class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures 
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.SessionExpiredController.onPageLoad().url)
+      val request        = FakeRequest(GET, routes.SessionExpiredController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
