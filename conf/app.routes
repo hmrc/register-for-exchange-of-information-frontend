@@ -9,7 +9,7 @@ GET         /assets/*file                                controllers.Assets.vers
 
 GET         /:regime/refresh-session                             controllers.KeepAliveController.keepAlive(regime: models.Regime)
 
-GET         /:regime/register/problem/signed-out                 controllers.SessionExpiredController.onPageLoad(regime: models.Regime)
+GET         /:regime/problem/signed-out                 controllers.SessionExpiredController.onPageLoad(regime: models.Regime)
 
 GET         /:regime/account/sign-out-survey                     controllers.auth.AuthController.signOut(regime: models.Regime)
 GET         /:regime/account/sign-out                            controllers.auth.AuthController.signOutNoSurvey(regime: models.Regime)
