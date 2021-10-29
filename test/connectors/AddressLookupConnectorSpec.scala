@@ -135,12 +135,13 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       }
 
       def addressesJson: String =
-        s"""[{
+        s"""[
+           |{
            |  "id": "GB200000698110",
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "1 Address line 1 Road",
+           |         "3 Address line 1 Road",
            |         "Address line 2 Road"
            |     ],
            |     "town": "Town",
@@ -200,7 +201,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "3 Address line 1 Road",
+           |         "1 Address line 1 Road",
            |         "Address line 2 Road"
            |     ],
            |     "town": "Town",
