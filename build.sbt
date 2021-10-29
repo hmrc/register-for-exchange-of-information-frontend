@@ -7,24 +7,6 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "register-for-exchange-of-information-frontend"
 
-lazy val scalaCompilerOptions = Seq(
-  "-Xfatal-warnings",
-  "-Xlint:-missing-interpolator,_",
-  "-Yno-adapted-args",
-  "-Ywarn-unused:imports",
-  "-Ywarn-unused:privates",
-  "-Ywarn-unused:locals",
-  "-Ywarn-unused:explicits",
-  "-Ywarn-unused:implicits",
-  "-Ywarn-value-discard",
-  "-Ywarn-unused:patvars",
-  "-Ywarn-dead-code",
-  "-deprecation",
-  "-feature",
-  "-unchecked",
-  "-language:implicitConversions"
-)
-
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
@@ -52,7 +34,7 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageMinimum := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
-    scalacOptions ++= scalaCompilerOptions,
+    scalacOptions ++= Seq("-feature"),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     update / evictionWarningOptions :=
