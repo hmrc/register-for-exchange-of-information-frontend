@@ -45,7 +45,7 @@ class AddressWithoutIdController @Inject() (
   navigator: MDRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataRequiredAction, // TODO replace with DataRequiredAction when actual flow is ready
+  requireData: DataRequiredAction,
   formProvider: AddressWithoutIdFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer

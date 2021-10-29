@@ -35,9 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction {
   def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
-  //def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 }
-//trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
@@ -49,9 +47,6 @@ class AuthenticatedIdentifierAction @Inject() (
 
   override def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
     new AuthenticatedIdentifierActionWithRegime(authConnector, config, parser, regime)
-
-//  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
-//    new AuthenticatedIdentifierActionImpl(authConnector, config, parser)
 }
 
 class AuthenticatedIdentifierActionWithRegime @Inject() (
@@ -88,28 +83,5 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
         case _: AuthorisationException =>
           Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad(regime))
       }
-  }
-}
-
-class AuthenticatedIdentifierActionImpl @Inject() (
-  val authConnector: AuthConnector,
-  config: FrontendAppConfig,
-  val parser: BodyParsers.Default
-)(implicit val executionContext: ExecutionContext)
-    extends ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
-    with AuthorisedFunctions {
-  private val logger: Logger = Logger(this.getClass)
-
-  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
-
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    authorised()
-      .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
-        case Some(internalID) ~ _ ~ _ ~ _ => block(IdentifierRequest(request, internalID))
-        case _                            => throw new UnauthorizedException("Unable to retrieve internal Id")
-      }
-
   }
 }
