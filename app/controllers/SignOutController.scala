@@ -22,7 +22,7 @@ import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
+import auth.routes.AuthController
 import scala.concurrent.{ExecutionContext, Future}
 
 class SignOutController @Inject() (
@@ -34,6 +34,6 @@ class SignOutController @Inject() (
 
   def signOut(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
-      Future.successful(Redirect(config.signOutUrl).withNewSession)
+      Future.successful(Redirect(AuthController.signOut(regime).url).withNewSession)
   }
 }

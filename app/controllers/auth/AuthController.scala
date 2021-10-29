@@ -42,7 +42,7 @@ class AuthController @Inject() (
         .clear(request.userId)
         .map {
           _ =>
-            Redirect(config.signOutUrl).withNewSession
+            Redirect(routes.AuthController.signOut(regime).url).withNewSession
         }
   }
 
@@ -52,7 +52,7 @@ class AuthController @Inject() (
         .clear(request.userId)
         .map {
           _ =>
-            Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad(regime).url)))
+            Redirect(routes.AuthController.signOutNoSurvey(regime).url, Map("continue" -> Seq(routes.SignedOutController.onPageLoad(regime).url)))
         }
   }
 }
