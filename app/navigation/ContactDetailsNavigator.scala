@@ -18,7 +18,7 @@ package navigation
 
 import controllers.routes
 import models.BusinessType.Sole
-import models.WhatAreYouRegisteringAs.{values, RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
 import play.api.mvc.Call
@@ -38,7 +38,7 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
     case SndContactEmailPage    => regime => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode, regime))
     case SndConHavePhonePage    => regime => haveSecondPhone(NormalMode)(regime)
     case SndContactPhonePage    => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    case _                      => _ => _ => Some(routes.IndexController.onPageLoad())
+    case _                      => regime => _ => Some(routes.IndexController.onPageLoad(regime))
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
