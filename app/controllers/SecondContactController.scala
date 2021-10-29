@@ -64,7 +64,7 @@ class SecondContactController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         SomeInformationIsMissing.isMissingContactName(regime) {
           render(mode, regime, request.userAnswers.get(SecondContactPage).fold(form)(form.fill), _).map(Ok(_))
@@ -72,7 +72,7 @@ class SecondContactController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         form
           .bindFromRequest()

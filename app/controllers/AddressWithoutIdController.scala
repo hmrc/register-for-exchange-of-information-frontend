@@ -45,7 +45,7 @@ class AddressWithoutIdController @Inject() (
   navigator: MDRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction, // TODO replace with DataRequiredAction when actual flow is ready
+  requireData: DataRequiredAction,
   formProvider: AddressWithoutIdFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -71,7 +71,7 @@ class AddressWithoutIdController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         val registeringAsBusiness = getRegisteringAsBusiness()
 
@@ -87,7 +87,7 @@ class AddressWithoutIdController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         val registeringAsBusiness = getRegisteringAsBusiness()
 

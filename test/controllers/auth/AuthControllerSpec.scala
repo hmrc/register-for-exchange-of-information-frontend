@@ -19,6 +19,7 @@ package controllers.auth
 import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import matchers.JsonMatchers
+import models.MDR
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -46,7 +47,7 @@ class AuthControllerSpec extends SpecBase with ControllerMockFixtures with Nunju
       running(application) {
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOut().url)
+        val request   = FakeRequest(GET, routes.AuthController.signOut(MDR).url)
 
         val result = route(application, request).value
 
@@ -74,11 +75,11 @@ class AuthControllerSpec extends SpecBase with ControllerMockFixtures with Nunju
       running(application) {
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
+        val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey(MDR).url)
 
         val result = route(application, request).value
 
-        val encodedContinueUrl  = URLEncoder.encode(routes.SignedOutController.onPageLoad().url, "UTF-8")
+        val encodedContinueUrl  = URLEncoder.encode(routes.SignedOutController.onPageLoad(MDR).url, "UTF-8")
         val expectedRedirectUrl = s"${appConfig.signOutUrl}?continue=$encodedContinueUrl"
 
         status(result) mustEqual SEE_OTHER

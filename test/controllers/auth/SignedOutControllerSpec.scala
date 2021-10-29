@@ -18,7 +18,7 @@ package controllers.auth
 
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
-import models.UserAnswers
+import models.{MDR, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -40,7 +40,7 @@ class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures with 
       val userAnswers = UserAnswers(userAnswersId)
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, controllers.auth.routes.SignedOutController.onPageLoad().url)
+      val request        = FakeRequest(GET, controllers.auth.routes.SignedOutController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

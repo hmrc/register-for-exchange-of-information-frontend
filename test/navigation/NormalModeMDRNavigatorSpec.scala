@@ -39,7 +39,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, MDR, UserAnswers("id")) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(UnknownPage, NormalMode, MDR, UserAnswers("id")) mustBe routes.IndexController.onPageLoad(MDR)
       }
 
       "must go from 'Do You Have Unique Tax Payer Reference?' page to 'What Are You Registering As?' page if NO is selected" in {

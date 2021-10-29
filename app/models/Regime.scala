@@ -16,6 +16,7 @@
 
 package models
 
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.PathBindable
 
 sealed trait Regime
@@ -48,5 +49,6 @@ object Regime {
 
   implicit class RegimeExt(regime: Regime) {
     def toUpperCase: String = regime.toString.toUpperCase
+    def toJson: JsObject    = Json.obj("regime" -> regime.toUpperCase)
   }
 }

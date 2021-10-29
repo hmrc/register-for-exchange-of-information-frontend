@@ -78,7 +78,7 @@ class UTRController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         SomeInformationIsMissing.isMissingBusinessType(regime) {
           businessType =>
@@ -92,7 +92,7 @@ class UTRController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         SomeInformationIsMissing.isMissingBusinessType(regime) {
           businessType =>

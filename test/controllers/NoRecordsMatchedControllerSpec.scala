@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
-import models.MDR
+import models.{MDR, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.{JsObject, Json}
@@ -50,7 +50,7 @@ class NoRecordsMatchedControllerSpec extends SpecBase with ControllerMockFixture
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "startUrl" -> appConfig.startUrlMDR
+        "startUrl" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, MDR).url
       )
 
       templateCaptor.getValue mustEqual "noRecordsMatched.njk"

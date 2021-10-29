@@ -16,6 +16,7 @@
 
 package controllers.auth
 
+import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -31,8 +32,8 @@ class UnauthorisedController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("unauthorised.njk").map(Ok(_))
+      renderer.render("unauthorised.njk", regime.toJson).map(Ok(_))
   }
 }

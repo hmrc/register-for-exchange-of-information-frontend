@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.Regime
+import models.{NormalMode, Regime}
 
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -41,11 +41,11 @@ class NoRecordsMatchedController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       val data = Json.obj(
         "regime"   -> regime.toUpperCase,
-        "startUrl" -> appConfig.startUrlMDR
+        "startUrl" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
       )
       renderer.render("noRecordsMatched.njk", data).map(Ok(_))
   }
