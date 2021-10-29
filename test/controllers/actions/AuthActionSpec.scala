@@ -20,16 +20,17 @@ import base.{ControllerMockFixtures, SpecBase}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import matchers.JsonMatchers
+import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{BodyParsers, Results}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.RetrievalOps._
@@ -39,7 +40,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
 
-  class Harness(authAction: IdentifierAction) {
+  type AuthAction = ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+
+  class Harness(authAction: AuthAction) {
 
     def onPageLoad() = authAction {
       _ => Results.Ok

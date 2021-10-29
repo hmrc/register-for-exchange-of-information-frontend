@@ -18,8 +18,9 @@ package controllers.auth
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
+import models.Regime
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, DefaultActionBuilder, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -35,7 +36,7 @@ class AuthController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def signOut(): Action[AnyContent] = identify.async {
+  def signOut(regime: Regime): Action[AnyContent] = identify(regime).async {
     implicit request =>
       sessionRepository
         .clear(request.userId)
@@ -45,13 +46,13 @@ class AuthController @Inject() (
         }
   }
 
-  def signOutNoSurvey(): Action[AnyContent] = identify.async {
+  def signOutNoSurvey(regime: Regime): Action[AnyContent] = identify(regime).async {
     implicit request =>
       sessionRepository
         .clear(request.userId)
         .map {
           _ =>
-            Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad().url)))
+            Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad(regime).url)))
         }
   }
 }
