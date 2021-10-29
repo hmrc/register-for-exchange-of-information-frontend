@@ -77,6 +77,8 @@ class SelectAddressController @Inject() (
               case None        => form
               case Some(value) => form.fill(value)
             }
+
+            // todo tu sa adresy
             val addressItems: Seq[Radios.Radio] = addresses.map(
               address => Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
             )

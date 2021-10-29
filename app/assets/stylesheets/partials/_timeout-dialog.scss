@@ -57,12 +57,27 @@ html {
   white-space: nowrap;
 }
 
+.hmrc-timeout-dialog__countdown {
+  display: inline-block;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .hmrc-timeout-dialog__link {
   display: inline-block;
+  font-size: 19px;
   @include govuk-media-query($from: tablet) {
     position: relative;
     top: 2px;
-    padding: .526315em .789473em .263157em;
+    padding: 0.526315em 0.789473em 0.263157em;
     line-height: 1.5;
+  }
+}
+
+.hmrc-timeout-dialog__link-wrapper {
+  @include govuk-media-query($from: tablet) {
+    display: inline-block;
+    line-height: 2.5em;
+    vertical-align: baseline;
   }
 }

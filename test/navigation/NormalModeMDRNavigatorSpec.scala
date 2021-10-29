@@ -447,7 +447,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      "must go from 'What is your name?' page for sole proprietor business to 'What is your DOB?' page" in {
+      "must go from 'What is your name?' page for sole proprietor business to 'Is this your business?' page" in {
         val firstName: String = "First Name"
         val lastName: String  = "Last"
         val validAnswer: Name = Name(firstName, lastName)
@@ -462,21 +462,6 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(SoleNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SoleDateOfBirthController.onPageLoad(NormalMode, MDR))
-        }
-      }
-
-      "must go from 'What Is Your DOB?' page for sole proprietor business 'Is this your business?' page when valid DOB is entered" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(SoleDateOfBirthPage, LocalDate.now())
-                .success
-                .value
-
-            navigator
-              .nextPage(SoleDateOfBirthPage, NormalMode, MDR, updatedAnswers)
               .mustBe(routes.IsThisYourBusinessController.onPageLoad(NormalMode, MDR))
         }
       }
