@@ -17,7 +17,6 @@
 package connectors
 
 import base.SpecBase
-import cats.data.EitherT
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, put, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
@@ -29,7 +28,6 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT}
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
@@ -52,8 +50,8 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
 
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", NO_CONTENT)
 
-            val result: EitherT[Future, Int, Int] = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Right(NO_CONTENT)
+            val result = connector.createEnrolment(enrolmentInfo)
+            result.futureValue.status mustBe NO_CONTENT
         }
       }
 
@@ -64,7 +62,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", BAD_REQUEST)
 
             val result = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Left(BAD_REQUEST)
+            result.futureValue.status mustBe BAD_REQUEST
         }
       }
 
@@ -75,7 +73,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", INTERNAL_SERVER_ERROR)
 
             val result = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Left(INTERNAL_SERVER_ERROR)
+            result.futureValue.status mustBe INTERNAL_SERVER_ERROR
         }
       }
     }

@@ -17,30 +17,23 @@
 package services
 
 import base.{ControllerMockFixtures, SpecBase}
-import cats.data.EitherT
 import connectors.TaxEnrolmentsConnector
-import org.scalatest.BeforeAndAfterEach
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
-import cats.implicits.catsStdInstancesForFuture
-import models.{Address, Country, NonUkName, UserAnswers}
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.matching.MatchingInfo
 import models.subscription.response.SubscriptionID
-
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import models.{Address, Country, NonUkName, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{
-  AddressWithoutIdPage,
-  ContactEmailPage,
-  DoYouHaveNINPage,
-  DoYouHaveUniqueTaxPayerReferencePage,
-  MatchingInfoPage,
-  NonUkNamePage,
-  WhatAreYouRegisteringAsPage
-}
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT}
+import org.scalatest.BeforeAndAfterEach
+import pages._
+import play.api.http.Status.{BAD_REQUEST, NO_CONTENT}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpResponse
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with BeforeAndAfterEach {
 
@@ -61,7 +54,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
   "TaxEnrolmentService" - {
     "must create a subscriptionModel from userAnswers and call the taxEnrolmentsConnector returning with a Successful NO_CONTENT" in {
 
-      val response: EitherT[Future, Int, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
+      val response = Future.successful(HttpResponse(NO_CONTENT, Json.obj(), Map.empty[String, Seq[String]]))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
 
@@ -92,12 +85,12 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val result = service.createEnrolment(userAnswers, subscriptionID)
 
-      result.futureValue mustBe Right(NO_CONTENT)
+      result.futureValue.status mustBe NO_CONTENT
     }
 
     "must return BAD_REQUEST when 400 is received from taxEnrolments" in {
 
-      val response: EitherT[Future, Int, Int] = EitherT.fromEither[Future](Left(BAD_REQUEST))
+      val response = Future.successful(HttpResponse(BAD_REQUEST, Json.obj(), Map.empty[String, Seq[String]]))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
 
@@ -128,11 +121,12 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val result = service.createEnrolment(userAnswers, subscriptionID)
 
-      result.futureValue mustBe Left(BAD_REQUEST)
+      result.futureValue.status mustBe BAD_REQUEST
     }
 
     "must return INTERNAL_SERVER_ERROR when MatchingInfo is missing from userAnswers" in {
-      val response: EitherT[Future, Int, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
+
+      val response = Future.successful(HttpResponse(NO_CONTENT, Json.obj(), Map.empty[String, Seq[String]]))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
 
@@ -158,9 +152,10 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.createEnrolment(userAnswers, subscriptionID)
+      assertThrows[Exception] {
+        Await.result(service.createEnrolment(userAnswers, subscriptionID), 2.seconds)
+      }
 
-      result.futureValue mustBe Left(INTERNAL_SERVER_ERROR)
     }
   }
 

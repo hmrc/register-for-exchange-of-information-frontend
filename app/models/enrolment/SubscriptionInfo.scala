@@ -58,17 +58,15 @@ case class SubscriptionInfo(safeID: String,
 object SubscriptionInfo {
   implicit val format = Json.format[SubscriptionInfo]
 
-  def createSubscriptionInfo(userAnswers: UserAnswers, subscriptionId: String): Either[Throwable, SubscriptionInfo] =
-    Try(
-      SubscriptionInfo(
-        safeID = getSafeID(userAnswers),
-        saUtr = getSaUtrIfProvided(userAnswers),
-        ctUtr = getCtUtrIfProvided(userAnswers),
-        nino = getNinoIfProvided(userAnswers),
-        nonUkPostcode = getNonUkPostCodeIfProvided(userAnswers),
-        mdrId = subscriptionId
-      )
-    ).toEither
+  def createSubscriptionInfo(userAnswers: UserAnswers, subscriptionId: String): SubscriptionInfo =
+    SubscriptionInfo(
+      safeID = getSafeID(userAnswers),
+      saUtr = getSaUtrIfProvided(userAnswers),
+      ctUtr = getCtUtrIfProvided(userAnswers),
+      nino = getNinoIfProvided(userAnswers),
+      nonUkPostcode = getNonUkPostCodeIfProvided(userAnswers),
+      mdrId = subscriptionId
+    )
 
   private def getSafeID(userAnswers: UserAnswers): String = userAnswers.get(MatchingInfoPage) match {
     case Some(matchInfo) => matchInfo.safeId

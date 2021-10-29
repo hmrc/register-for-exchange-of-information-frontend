@@ -16,20 +16,12 @@
 
 package connectors
 
-import cats.data.EitherT
 import config.FrontendAppConfig
 import models.enrolment.SubscriptionInfo
-import models.error.ApiError
-import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
-import models.register.response.RegistrationWithIDResponse
-import models.subscription.response.SubscriptionID
 import play.api.Logger
-import play.api.http.Status
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,20 +35,13 @@ class TaxEnrolmentsConnector @Inject() (
 
   def createEnrolment(
     enrolmentInfo: SubscriptionInfo
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, Int, Int] = {
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
 
     val url = s"${config.taxEnrolmentsUrl}"
 
     val json = Json.toJson(enrolmentInfo.convertToEnrolmentRequest)
 
-    EitherT {
-      http.PUT[JsValue, HttpResponse](url, json) map {
-        case responseMessage if is2xx(responseMessage.status) =>
-          Right(responseMessage.status)
-        case responseMessage =>
-          logger.error(s"Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}")
-          Left(responseMessage.status)
-      }
-    }
+    http.PUT[JsValue, HttpResponse](url, json)
+
   }
 }

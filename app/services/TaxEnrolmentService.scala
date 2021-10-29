@@ -22,21 +22,15 @@ import models.UserAnswers
 import models.enrolment.SubscriptionInfo
 import models.subscription.response.SubscriptionID
 import org.slf4j.LoggerFactory
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnector) {
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Int, Int]] =
-    SubscriptionInfo.createSubscriptionInfo(userAnswers, subscriptionId.subscriptionID) match {
-      case Right(subscriptionInfo: SubscriptionInfo) => taxEnrolmentsConnector.createEnrolment(subscriptionInfo).value
-      case Left(throwable: Throwable) =>
-        logger.warn(s"Cannot create subscription info ${throwable.getMessage}")
-        Future.successful(Left(INTERNAL_SERVER_ERROR))
-    }
+  def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID)(implicit hc: HeaderCarrier, ec: ExecutionContext) =
+    taxEnrolmentsConnector.createEnrolment(SubscriptionInfo.createSubscriptionInfo(userAnswers, subscriptionId.subscriptionID))
 
 }
