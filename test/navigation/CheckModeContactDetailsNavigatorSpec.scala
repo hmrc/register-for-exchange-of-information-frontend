@@ -24,8 +24,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 
-class CheckModeCBCRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
-  val navigator: CBCRNavigator = new CBCRNavigator
+class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+  val navigator: ContactDetailsNavigator = new ContactDetailsNavigator
 
   "Navigator" - {
 

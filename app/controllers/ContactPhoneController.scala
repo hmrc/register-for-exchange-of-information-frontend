@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.ContactPhoneFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
-import navigation.CBCRNavigator
+import navigation.ContactDetailsNavigator
 import pages.{ContactNamePage, ContactPhonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ContactPhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: CBCRNavigator,
+  navigator: ContactDetailsNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,

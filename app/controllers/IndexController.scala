@@ -17,25 +17,28 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.Regime
+import models.{MDR, NormalMode, Regime}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  renderer: Renderer
+  identify: IdentifierAction
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(regime: Regime): Action[AnyContent] = identify(regime).async {
     implicit request =>
-      renderer.render("index.njk", regime.toJson).map(Ok(_))
+      val result = regime match {
+        case MDR => Redirect(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime))
+        case _   => NotImplemented("Not Implemented")
+      }
+      Future.successful(result)
   }
 }
