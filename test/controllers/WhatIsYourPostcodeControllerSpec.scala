@@ -100,7 +100,7 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
       )
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+      when(mockAddressLookupConnector.addressLookupByPostcode(any(), any())(any(), any()))
         .thenReturn(Future.successful(addresses))
 
       retrieveUserAnswersData(emptyUserAnswers)
@@ -113,7 +113,7 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any())(any(), any())
+      verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any(), any())(any(), any())
 
     }
 

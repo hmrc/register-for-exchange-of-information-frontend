@@ -79,7 +79,7 @@ class WhatIsYourPostcodeController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             postCode =>
-              addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
+              addressLookupConnector.addressLookupByPostcode(postCode, regime).flatMap {
                 case Nil =>
                   val formError = formReturned.withError(FormError("postCode", List("whatIsYourPostcode.error.notFound")))
                   render(mode, regime, formError).map(BadRequest(_))

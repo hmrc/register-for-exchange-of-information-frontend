@@ -17,9 +17,10 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{AddressLookup, LookupAddressByPostcode}
+import models.{AddressLookup, LookupAddressByPostcode, Regime}
 import play.api.Logger
 import play.api.http.Status._
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http._
 
@@ -29,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) {
   private val logger: Logger = Logger(this.getClass)
 
-  def addressLookupByPostcode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
+  def addressLookupByPostcode(postCode: String, regime: Regime)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 
     val addressLookupUrl: String = s"${config.addressLookUpUrl}/lookup"
 
@@ -37,7 +38,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     val lookupAddressByPostcode = LookupAddressByPostcode(postCode, None)
 
-    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "MDR")) flatMap {
+    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> regime.toUpperCase)) flatMap {
       case response if response.status equals OK =>
         Future.successful(
           response.json
