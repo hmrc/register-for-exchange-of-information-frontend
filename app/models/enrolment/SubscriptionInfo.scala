@@ -16,15 +16,12 @@
 
 package models.enrolment
 
-import cats.data.EitherT
 import models.BusinessType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
 import models.UserAnswers
 import models.error.ApiError
-import models.error.ApiError.SubscriptionCreationError
-import pages.{AddressWithoutIdPage, BusinessTypePage, MatchingInfoPage, UTRPage, WhatIsYourNationalInsuranceNumberPage}
+import models.error.ApiError.SubscriptionInfoCreationError
+import pages._
 import play.api.libs.json.Json
-
-import scala.util.Try
 
 case class SubscriptionInfo(safeID: String,
                             saUtr: Option[String] = None,
@@ -74,7 +71,7 @@ object SubscriptionInfo {
             mdrId = subscriptionId
           )
         )
-      case _ => Left(SubscriptionCreationError)
+      case _ => Left(SubscriptionInfoCreationError)
     }
 
   private def getNinoIfProvided(userAnswers: UserAnswers): Option[String] =

@@ -26,7 +26,7 @@ import cats.implicits.catsStdInstancesForFuture
 import models.{Address, Country, NonUkName, UserAnswers}
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
-import models.error.ApiError.{SubscriptionCreationError, UnableToCreateEnrolmentError}
+import models.error.ApiError.{SubscriptionInfoCreationError, UnableToCreateEnrolmentError}
 import models.matching.MatchingInfo
 import models.subscription.response.SubscriptionID
 
@@ -162,7 +162,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val result = service.createEnrolment(userAnswers, subscriptionID)
 
-      result.futureValue mustBe Left(SubscriptionCreationError)
+      result.futureValue mustBe Left(SubscriptionInfoCreationError)
     }
   }
 

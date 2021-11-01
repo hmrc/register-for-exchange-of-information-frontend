@@ -21,17 +21,12 @@ import connectors.TaxEnrolmentsConnector
 import models.UserAnswers
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
-import models.error.ApiError.SubscriptionCreationError
 import models.subscription.response.SubscriptionID
-import org.slf4j.LoggerFactory
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnector) {
-
-  private val logger = LoggerFactory.getLogger(getClass)
 
   def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID)(implicit
     hc: HeaderCarrier,
