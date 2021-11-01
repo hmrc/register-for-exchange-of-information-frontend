@@ -21,6 +21,7 @@ import models.UserAnswers
 import models.error.ApiError
 import models.error.ApiError.SubscriptionInfoCreationError
 import pages._
+import play.api.Logger
 import play.api.libs.json.Json
 
 case class SubscriptionInfo(safeID: String,

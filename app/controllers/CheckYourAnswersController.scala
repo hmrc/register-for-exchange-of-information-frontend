@@ -109,10 +109,9 @@ class CheckYourAnswersController @Inject() (
       case Right(subscriptionID) =>
         logger.info(s"The subscriptionId id $subscriptionID") //ToDo enrolment here
         taxEnrolmentsService.createEnrolment(userAnswers, subscriptionID) flatMap {
-          case Right(_)                            => Future.successful(NotImplemented("Not implemented")) //ToDo put in correct success route
-          case Left(UnableToCreateEnrolmentError)  => errorHandler.onClientError(request, BAD_REQUEST)
-          case Left(SubscriptionInfoCreationError) => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
-          case Left(_)                             => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
+          case Right(_)                           => Future.successful(NotImplemented("Not implemented")) //ToDo put in correct success route
+          case Left(UnableToCreateEnrolmentError) => errorHandler.onClientError(request, BAD_REQUEST)
+          case Left(_)                            => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
         }
       case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
       case Left(DuplicateSubmissionError) =>
