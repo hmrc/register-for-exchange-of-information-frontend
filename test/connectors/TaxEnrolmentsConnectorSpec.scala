@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, put, urlEqual
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.MDR
 import models.enrolment.{SubscriptionInfo, Verifier}
 import models.error.ApiError
 import models.error.ApiError.{ServiceUnavailableError, UnableToCreateEnrolmentError}
@@ -54,7 +55,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
 
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", NO_CONTENT)
 
-            val result: EitherT[Future, ApiError, Int] = connector.createEnrolment(enrolmentInfo)
+            val result: EitherT[Future, ApiError, Int] = connector.createEnrolment(enrolmentInfo, MDR)
             result.value.futureValue mustBe Right(NO_CONTENT)
         }
       }
@@ -65,7 +66,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
             val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", BAD_REQUEST)
 
-            val result = connector.createEnrolment(enrolmentInfo)
+            val result = connector.createEnrolment(enrolmentInfo, MDR)
             result.value.futureValue mustBe Left(UnableToCreateEnrolmentError)
         }
       }
@@ -76,7 +77,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
             val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", INTERNAL_SERVER_ERROR)
 
-            val result = connector.createEnrolment(enrolmentInfo)
+            val result = connector.createEnrolment(enrolmentInfo, MDR)
             result.value.futureValue mustBe Left(ServiceUnavailableError)
         }
       }

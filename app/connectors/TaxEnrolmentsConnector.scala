@@ -18,18 +18,15 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
+import models.Regime
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
-import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError, UnableToCreateEnrolmentError}
-import models.register.response.RegistrationWithIDResponse
-import models.subscription.response.SubscriptionID
+import models.error.ApiError.{ServiceUnavailableError, UnableToCreateEnrolmentError}
 import play.api.Logger
-import play.api.http.Status
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReads.{is2xx, is4xx}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,10 +39,11 @@ class TaxEnrolmentsConnector @Inject() (
   private val logger: Logger = Logger(this.getClass)
 
   def createEnrolment(
-    enrolmentInfo: SubscriptionInfo
+    enrolmentInfo: SubscriptionInfo,
+    regime: Regime
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, Int] = {
 
-    val url = s"${config.taxEnrolmentsUrl}"
+    val url: String = s"${config.taxEnrolmentsUrl1}HMRC-${regime.toUpperCase}-ORG${config.taxEnrolmentsUrl2}"
 
     val json = Json.toJson(enrolmentInfo.convertToEnrolmentRequest)
 

@@ -33,8 +33,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
 
-  lazy val taxEnrolmentsUrl: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
-    .get[String]("microservice.services.tax-enrolments.url")}"
+  val taxEnrolmentsUrl1: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
+    .get[String]("microservice.services.tax-enrolments.url1")}"
+  val taxEnrolmentsUrl2: String = s"${configuration.get[String]("microservice.services.tax-enrolments.url2")}"
 
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"

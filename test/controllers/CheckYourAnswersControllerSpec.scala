@@ -290,7 +290,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
     "onSubmit" - {
       "must redirect to 'confirmation' page for 'Individual with Id' journey" in {
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -314,7 +314,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       }
 
       "must redirect to 'confirmation' page for 'Business with Id' journey" in {
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -334,7 +334,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       "must redirect to 'badRequest' page for 'Business with Id' journey when tax enrolment fails" in {
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -381,7 +381,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       }
 
       "must redirect to 'confirmation' page for 'Business without Id' journey" in {
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
