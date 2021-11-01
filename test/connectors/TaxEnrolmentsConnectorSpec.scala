@@ -23,6 +23,8 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
 import models.enrolment.{SubscriptionInfo, Verifier}
+import models.error.ApiError
+import models.error.ApiError.{ServiceUnavailableError, UnableToCreateEnrolmentError}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT}
@@ -52,7 +54,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
 
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", NO_CONTENT)
 
-            val result: EitherT[Future, Int, Int] = connector.createEnrolment(enrolmentInfo)
+            val result: EitherT[Future, ApiError, Int] = connector.createEnrolment(enrolmentInfo)
             result.value.futureValue mustBe Right(NO_CONTENT)
         }
       }
@@ -64,7 +66,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", BAD_REQUEST)
 
             val result = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Left(BAD_REQUEST)
+            result.value.futureValue mustBe Left(UnableToCreateEnrolmentError)
         }
       }
 
@@ -75,7 +77,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
             stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", INTERNAL_SERVER_ERROR)
 
             val result = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Left(INTERNAL_SERVER_ERROR)
+            result.value.futureValue mustBe Left(ServiceUnavailableError)
         }
       }
     }

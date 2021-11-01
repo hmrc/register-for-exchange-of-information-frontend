@@ -20,7 +20,13 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import handlers.ErrorHandler
 import models.BusinessType.Sole
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
-import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError}
+import models.error.ApiError.{
+  BadRequestError,
+  DuplicateSubmissionError,
+  MandatoryInformationMissingError,
+  SubscriptionCreationError,
+  UnableToCreateEnrolmentError
+}
 import models.requests.DataRequest
 import models.{Regime, UserAnswers, WhatAreYouRegisteringAs}
 import navigation.Navigator
@@ -103,9 +109,9 @@ class CheckYourAnswersController @Inject() (
       case Right(subscriptionID) =>
         logger.info(s"The subscriptionId id $subscriptionID") //ToDo enrolment here
         taxEnrolmentsService.createEnrolment(userAnswers, subscriptionID) flatMap {
-          case Right(_) => Future.successful(NotImplemented("Not implemented")) //ToDo put in correct success route
-          case Left(errorStatus) =>
-            errorHandler.onClientError(request, errorStatus)
+          case Right(_)                           => Future.successful(NotImplemented("Not implemented")) //ToDo put in correct success route
+          case Left(UnableToCreateEnrolmentError) => errorHandler.onClientError(request, BAD_REQUEST)
+          case Left(SubscriptionCreationError)    => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)
         }
       case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
       case Left(DuplicateSubmissionError) =>

@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
-import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError, UnableToCreateEnrolmentError}
 import models.subscription.response.SubscriptionID
 import models.{MDR, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -334,7 +334,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       "must redirect to 'badRequest' page for 'Business with Id' journey when tax enrolment fails" in {
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Left(BAD_REQUEST)))
+        when(mockTaxEnrolmentsService.createEnrolment(any(), any())(any(), any())).thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
         when(mockSubscriptionService.createSubscription(any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID(""))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)

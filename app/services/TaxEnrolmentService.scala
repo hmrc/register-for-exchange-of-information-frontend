@@ -20,6 +20,8 @@ import com.google.inject.Inject
 import connectors.TaxEnrolmentsConnector
 import models.UserAnswers
 import models.enrolment.SubscriptionInfo
+import models.error.ApiError
+import models.error.ApiError.SubscriptionCreationError
 import models.subscription.response.SubscriptionID
 import org.slf4j.LoggerFactory
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -31,12 +33,13 @@ class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnec
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Int, Int]] =
+  def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Either[ApiError, Int]] =
     SubscriptionInfo.createSubscriptionInfo(userAnswers, subscriptionId.subscriptionID) match {
-      case Right(subscriptionInfo: SubscriptionInfo) => taxEnrolmentsConnector.createEnrolment(subscriptionInfo).value
-      case Left(throwable: Throwable) =>
-        logger.warn(s"Cannot create subscription info ${throwable.getMessage}")
-        Future.successful(Left(INTERNAL_SERVER_ERROR))
+      case Right(subscriptionInfo: SubscriptionInfo) =>
+        taxEnrolmentsConnector.createEnrolment(subscriptionInfo).value
+      case Left(apiError: ApiError) => Future.successful(Left(apiError))
     }
-
 }
