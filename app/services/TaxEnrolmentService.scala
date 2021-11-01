@@ -18,7 +18,7 @@ package services
 
 import com.google.inject.Inject
 import connectors.TaxEnrolmentsConnector
-import models.UserAnswers
+import models.{Regime, UserAnswers}
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
 import models.subscription.response.SubscriptionID
@@ -29,13 +29,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnector) extends Logging {
 
-  def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID)(implicit
+  def createEnrolment(userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, Int]] =
     SubscriptionInfo.createSubscriptionInfo(userAnswers, subscriptionId.subscriptionID) match {
       case Right(subscriptionInfo: SubscriptionInfo) =>
-        taxEnrolmentsConnector.createEnrolment(subscriptionInfo).value
+        taxEnrolmentsConnector.createEnrolment(subscriptionInfo, regime).value
       case Left(apiError: ApiError) =>
         logger.error("Could not create subscription info for enrolment missing Safe ID")
         Future.successful(Left(apiError))

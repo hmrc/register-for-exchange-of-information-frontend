@@ -108,7 +108,7 @@ class CheckYourAnswersController @Inject() (
     subscriptionService.createSubscription(userAnswers) flatMap {
       case Right(subscriptionID) =>
         logger.info(s"The subscriptionId id $subscriptionID") //ToDo enrolment here
-        taxEnrolmentsService.createEnrolment(userAnswers, subscriptionID) flatMap {
+        taxEnrolmentsService.createEnrolment(userAnswers, subscriptionID, regime) flatMap {
           case Right(_)                           => Future.successful(NotImplemented("Not implemented")) //ToDo put in correct success route
           case Left(UnableToCreateEnrolmentError) => errorHandler.onClientError(request, BAD_REQUEST)
           case Left(_)                            => errorHandler.onClientError(request, INTERNAL_SERVER_ERROR)

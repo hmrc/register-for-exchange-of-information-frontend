@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import cats.implicits.catsStdInstancesForFuture
-import models.{Address, Country, NonUkName, UserAnswers}
+import models.{Address, Country, MDR, NonUkName, UserAnswers}
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
 import models.error.ApiError.{SubscriptionInfoCreationError, UnableToCreateEnrolmentError}
@@ -65,7 +65,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
 
-      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
+      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -92,7 +92,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.createEnrolment(userAnswers, subscriptionID)
+      val result = service.createEnrolment(userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Right(NO_CONTENT)
     }
@@ -101,7 +101,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Left(UnableToCreateEnrolmentError))
 
-      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
+      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -128,7 +128,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.createEnrolment(userAnswers, subscriptionID)
+      val result = service.createEnrolment(userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Left(UnableToCreateEnrolmentError)
     }
@@ -136,7 +136,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
     "must return INTERNAL_SERVER_ERROR when MatchingInfo is missing from userAnswers" in {
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
 
-      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
+      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -160,7 +160,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.createEnrolment(userAnswers, subscriptionID)
+      val result = service.createEnrolment(userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Left(SubscriptionInfoCreationError)
     }
