@@ -50,7 +50,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
-    case _                                     => regime => _ => Some(routes.IndexController.onPageLoad(regime))
+    case _                                     => _ => _ => None
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {

@@ -38,7 +38,7 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
     case SndContactEmailPage    => regime => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode, regime))
     case SndConHavePhonePage    => regime => haveSecondPhone(NormalMode)(regime)
     case SndContactPhonePage    => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    case _                      => regime => _ => Some(routes.IndexController.onPageLoad(regime))
+    case _                      => _ => _ => None
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
@@ -99,6 +99,7 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
       ua.get(WhatAreYouRegisteringAsPage) match {
         case Some(RegistrationTypeIndividual) => true
         case Some(RegistrationTypeBusiness)   => false
+        case _                                => false
       }
     case None => false
   }
