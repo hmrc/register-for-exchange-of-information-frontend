@@ -20,14 +20,14 @@ import cats.data.EitherT
 import config.FrontendAppConfig
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
-import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
+import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError, UnableToCreateEnrolmentError}
 import models.register.response.RegistrationWithIDResponse
 import models.subscription.response.SubscriptionID
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.HttpReads.is2xx
+import uk.gov.hmrc.http.HttpReads.{is2xx, is4xx}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
@@ -43,7 +43,7 @@ class TaxEnrolmentsConnector @Inject() (
 
   def createEnrolment(
     enrolmentInfo: SubscriptionInfo
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, Int, Int] = {
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, Int] = {
 
     val url = s"${config.taxEnrolmentsUrl}"
 
@@ -53,9 +53,12 @@ class TaxEnrolmentsConnector @Inject() (
       http.PUT[JsValue, HttpResponse](url, json) map {
         case responseMessage if is2xx(responseMessage.status) =>
           Right(responseMessage.status)
-        case responseMessage =>
+        case responseMessage if is4xx(responseMessage.status) =>
           logger.error(s"Error with tax-enrolments call  ${responseMessage.status} : ${responseMessage.body}")
-          Left(responseMessage.status)
+          Left(UnableToCreateEnrolmentError)
+        case responseMessage =>
+          logger.error(s"Service error when creating enrolment  ${responseMessage.status} : ${responseMessage.body}")
+          Left(ServiceUnavailableError)
       }
     }
   }

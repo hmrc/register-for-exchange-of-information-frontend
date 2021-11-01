@@ -52,8 +52,13 @@ object ApiError {
 
   case object UnableToCreateEMTPSubscriptionError extends ApiError
 
+  case object UnableToCreateEnrolmentError extends ApiError
+
+  case object SubscriptionCreationError extends ApiError
+
   // Enrolment Specific
   case class EnrolmentExistsError(groupIds: GroupIds) extends ApiError
+
   case class MalformedError(status: Int) extends ApiError
 
 }
