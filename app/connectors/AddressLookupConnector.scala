@@ -61,16 +61,18 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
       // group
       .map(
         item =>
-          (item.addressLine3 match {
-            case Some(x) => x
-            case None    => (item.addressLine1.getOrElse(""))
-          },
-            item.addressLine1.map(
-              b => ("""\d+""".r findAllIn b).toList.mkString.toInt
-            ), // int from address_1
-            item // whole address
+          (item.addressLine2 match {
+             case Some(x) => x
+             case None    => (item.addressLine1.getOrElse(""))
+           },
+           item.addressLine1.map(
+             b => ("""\d+""".r findAllIn b).toList.mkString.toInt
+           ), // int from address_1
+           item // whole address
           )
-      ).groupBy(_._1).toSeq
+      )
+      .groupBy(_._1)
+      .toSeq
       // sort groups
       .sortBy(
         x => ("""\d+""".r findAllIn x._1).toList.mkString.toInt

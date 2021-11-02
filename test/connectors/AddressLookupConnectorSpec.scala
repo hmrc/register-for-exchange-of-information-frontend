@@ -142,7 +142,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "address": {
            |     "lines": [
            |         "Flat 3",
-           |         "7 Other place"
+           |         "7 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -172,7 +173,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "address": {
            |     "lines": [
            |         "Flat 2",
-           |         "7 Other place"
+           |         "7 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -201,7 +203,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "5 Other place"
+           |         "5 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -230,7 +233,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "4 Other place"
+           |         "4 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -259,7 +263,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "3 Other place"
+           |         "3 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -289,7 +294,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "address": {
            |     "lines": [
            |         "Flat 1",
-           |         "7 Other place"
+           |         "7 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -318,7 +324,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "2 Other place"
+           |         "2 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -347,7 +354,98 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "8 Other place"
+           |         "8 Other place",
+           |         "Some District"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "9 Other place",
+           |         "Some District"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "10 Other place",
+           |         "Some District"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "6 Other place",
+           |         "Some District"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -372,18 +470,21 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "language": "en"
            |}]""".stripMargin
 
-      "must return sorted addresses" in {
+      "must return sorted addresses v2" in {
         stubResponse(addressLookupUrl, OK, addressesJson)
 
         val addressLookupResult = Vector(
-          AddressLookup(Some("2 Other place"), None, None, None, "Town", Some("County"), postcode),
-          AddressLookup(Some("3 Other place"), None, None, None, "Town", Some("County"), postcode),
-          AddressLookup(Some("4 Other place"), None, None, None, "Town", Some("County"), postcode),
-          AddressLookup(Some("5 Other place"), None, None, None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Flat 1"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Flat 2"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Flat 3"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("8 Other place"), None, None, None, "Town", Some("County"), postcode)
+          AddressLookup(Some("2 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("3 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("4 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("5 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("6 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("Flat 1"), Some("7 Other place"), Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("Flat 2"), Some("7 Other place"), Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("Flat 3"), Some("7 Other place"), Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("8 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("9 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("10 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode)
         )
 
         val result = connector.addressLookupByPostcode(postcode)
