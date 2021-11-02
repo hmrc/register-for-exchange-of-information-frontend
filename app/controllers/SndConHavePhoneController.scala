@@ -21,7 +21,7 @@ import forms.SndConHavePhoneFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
-import pages.SndConHavePhonePage
+import pages.{SndConHavePhonePage, SndContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -66,7 +66,7 @@ class SndConHavePhoneController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingSecondContactName(regime) {
+        SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
           render(mode, regime, request.userAnswers.get(SndConHavePhonePage).fold(form)(form.fill), _).map(Ok(_))
         }
     }
@@ -78,7 +78,7 @@ class SndConHavePhoneController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              SomeInformationIsMissing.isMissingSecondContactName(regime) {
+              SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
                 render(mode, regime, request.userAnswers.get(SndConHavePhonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
               },
             value =>
