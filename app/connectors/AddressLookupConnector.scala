@@ -62,23 +62,23 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
       .map(
         item =>
           (item.addressLine3 match {
-             case Some(x) => x
-             case None    => (item.addressLine1.getOrElse(""))
-           },
-           item.addressLine1.map(
-             b => ("""\d+""".r findAllIn b).toList.mkString.toInt
-           ), // int from address_1
-           item // whole address
+            case Some(x) => x
+            case None    => (item.addressLine1.getOrElse(""))
+          },
+            item.addressLine1.map(
+              b => ("""\d+""".r findAllIn b).toList.mkString.toInt
+            ), // int from address_1
+            item // whole address
           )
+      ).groupBy(_._1).toSeq
+      // sort groups
+      .sortBy(
+        x => ("""\d+""".r findAllIn x._1).toList.mkString.toInt
       )
-      .groupBy(_._1)
       // sort within a group
       .map(
         x => (x._1, x._2.sortBy(_._2))
       )
-      // sort groups
-      .toSeq
-      .sortBy(_._1)
       .flatMap(_._2)
       .map(_._3)
 }

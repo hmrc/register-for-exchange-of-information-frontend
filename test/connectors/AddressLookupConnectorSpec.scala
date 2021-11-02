@@ -341,6 +341,35 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |      -1.4690977
            |  ],
            |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "8 Other place"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
            |}]""".stripMargin
 
       "must return sorted addresses" in {
@@ -353,7 +382,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("5 Other place"), None, None, None, "Town", Some("County"), postcode),
           AddressLookup(Some("Flat 1"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("Flat 2"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Flat 3"), None, Some("7 Other place"), None, "Town", Some("County"), postcode)
+          AddressLookup(Some("Flat 3"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("8 Other place"), None, None, None, "Town", Some("County"), postcode)
         )
 
         val result = connector.addressLookupByPostcode(postcode)
