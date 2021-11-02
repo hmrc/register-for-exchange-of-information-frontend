@@ -45,7 +45,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
             address => address.addressLine1.isEmpty && address.addressLine2.isEmpty
           )
 
-        Future.successful(doubleSort(adrBase))
+        Future.successful(sortAddresses(adrBase))
       case response =>
         val message = s"Address Lookup failed with status ${response.status} Response body: ${response.body}"
         Future.failed(new HttpException(message, response.status))
@@ -56,13 +56,15 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
     }
   }
 
-  private def doubleSort(items: Seq[AddressLookup]): Seq[AddressLookup] =
+  private def sortAddresses(items: Seq[AddressLookup]): Seq[AddressLookup] =
     items
+      // group
       .map(
         item =>
-          (item.addressLine1.map(
-             a => ("""^[a-zA-Z]*""".r findAllIn a).toList.mkString
-           ), // chars from address_1
+          (item.addressLine3 match {
+             case Some(x) => x
+             case None    => (item.addressLine1.getOrElse(""))
+           },
            item.addressLine1.map(
              b => ("""\d+""".r findAllIn b).toList.mkString.toInt
            ), // int from address_1
@@ -70,9 +72,13 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
           )
       )
       .groupBy(_._1)
-      .flatMap(
-        x => x._2.sortBy(_._2)
+      // sort within a group
+      .map(
+        x => (x._1, x._2.sortBy(_._2))
       )
-      .map(_._3)
+      // sort groups
       .toSeq
+      .sortBy(_._1)
+      .flatMap(_._2)
+      .map(_._3)
 }

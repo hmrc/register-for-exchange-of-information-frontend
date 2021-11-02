@@ -141,8 +141,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "3 Address line 1 Road",
-           |         "Address line 2 Road"
+           |         "Flat 3",
+           |         "7 Other place"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -171,8 +171,8 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "2 Address line 1 Road",
-           |         "Address line 2 Road"
+           |         "Flat 2",
+           |         "7 Other place"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -201,8 +201,124 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |  "uprn": 200000706253,
            |  "address": {
            |     "lines": [
-           |         "1 Address line 1 Road",
-           |         "Address line 2 Road"
+           |         "5 Other place"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "4 Other place"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "3 Other place"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "Flat 1",
+           |         "7 Other place"
+           |     ],
+           |     "town": "Town",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "2 Other place"
            |     ],
            |     "town": "Town",
            |     "county": "County",
@@ -230,13 +346,18 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must return sorted addresses" in {
         stubResponse(addressLookupUrl, OK, addressesJson)
 
-        val addressLookupResult = Seq(
-          AddressLookup(Some("1 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("2 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("3 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode)
+        val addressLookupResult = Vector(
+          AddressLookup(Some("2 Other place"), None, None, None, "Town", Some("County"), postcode),
+          AddressLookup(Some("3 Other place"), None, None, None, "Town", Some("County"), postcode),
+          AddressLookup(Some("4 Other place"), None, None, None, "Town", Some("County"), postcode),
+          AddressLookup(Some("5 Other place"), None, None, None, "Town", Some("County"), postcode),
+          AddressLookup(Some("Flat 1"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("Flat 2"), None, Some("7 Other place"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("Flat 3"), None, Some("7 Other place"), None, "Town", Some("County"), postcode)
         )
 
         val result = connector.addressLookupByPostcode(postcode)
+
         result.futureValue mustBe addressLookupResult
       }
     }
