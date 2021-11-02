@@ -59,7 +59,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           helper.doYouHaveUniqueTaxPayerReference,
           helper.whatAreYouRegisteringAs,
           helper.businessWithoutIDName,
-          helper.businessHaveDifferentName,
           helper.whatIsTradingName,
           helper.addressWithoutIdBusiness
         ).flatten
@@ -71,7 +70,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           helper.doYouHaveNIN,
           helper.nonUkName,
           helper.whatIsYourDateOfBirth,
-          helper.doYouLiveInTheUK,
           helper.addressWithoutIdIndividual,
           helper.addressUK,
           helper.selectAddress //ToDo hook selectAddress logic
@@ -95,7 +93,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     }
   }
 
-  def confirmBusiness: Option[Row] =
+  def confirmBusiness: Option[Row] = {
+    val paragraphClass = """govuk-!-margin-0"""
     userAnswers.get(pages.IsThisYourBusinessPage) match {
       case Some(true) =>
         for {
@@ -104,44 +103,53 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           address      <- matchingInfo.address
           countryName  <- countryListFactory.getDescriptionFromCode(address.countryCode)
         } yield toRow(
-          msgKey = "businessWithoutIDName",
+          msgKey = "businessWithIDName",
           value = Html(s"""
-                  $businessName<br><br>
-                  ${address.addressLine1}<br>
+                  <p>$businessName</p>
+                  <p class=$paragraphClass>${address.addressLine1}</p>
                   ${address.addressLine2.fold("")(
-            address => s"$address<br>"
-          )}<br>
+            address => s"<p class=$paragraphClass>$address</p>"
+          )}
                   ${address.addressLine3.fold("")(
-            address => s"$address<br>"
+            address => s"<p class=$paragraphClass>$address</p>"
           )}
                   ${address.addressLine4.fold("")(
-            address => s"$address<br>"
+            address => s"<p class=$paragraphClass>$address</p>"
           )}
-                  ${address.postCodeFormatter(address.postalCode).getOrElse("")}<br>
-                  $countryName
+                 <p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
+                 ${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
                   """),
           href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
         )
       case _ => None
     }
+  }
 
-  def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {
-    answer =>
+  def whatIsTradingName: Option[Row] = {
+
+    val value = userAnswers.get(pages.WhatIsTradingNamePage) match {
+      case Some(answer) => answer
+      case None         => "None"
+    }
+
+    Some(
       toRow(
         msgKey = "whatIsTradingName",
-        value = lit"$answer",
-        href = routes.WhatIsTradingNameController.onPageLoad(CheckMode, regime).url
-      )
-  }
-
-  def businessHaveDifferentName: Option[Row] = userAnswers.get(pages.BusinessHaveDifferentNamePage) map {
-    answer =>
-      toRow(
-        msgKey = "businessHaveDifferentName",
-        value = yesOrNo(answer),
+        value = lit"$value",
         href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
       )
+    )
   }
+
+  def businessHaveDifferentName: Option[Row] =
+    userAnswers.get(pages.BusinessHaveDifferentNamePage) map { //ToDo delete when change routing finalised for WhatIsTradingName
+      answer =>
+        toRow(
+          msgKey = "businessHaveDifferentName",
+          value = yesOrNo(answer),
+          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
+        )
+    }
 
   def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
     answer =>
