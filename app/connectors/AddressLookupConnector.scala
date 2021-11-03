@@ -56,7 +56,10 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
     }
   }
 
-  private def sortAddresses(items: Seq[AddressLookup]): Seq[AddressLookup] =
+  private def sortAddresses(items: Seq[AddressLookup]): Seq[AddressLookup] = {
+
+    println(s"\n\nitems = ${items.toString()}\n\n")
+
     items
       // group
       .map(
@@ -82,5 +85,8 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
         x => (x._1, x._2.sortBy(_._2))
       )
       .flatMap(_._2)
-      .map(_._3)
+      .map(_._3
+  }
+
+  )
 }
