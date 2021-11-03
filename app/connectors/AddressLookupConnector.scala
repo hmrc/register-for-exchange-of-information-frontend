@@ -58,7 +58,8 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
   private def sortAddresses(items: Seq[AddressLookup]): Seq[AddressLookup] = {
 
-    logger.info(s"\n\nDEBUG_MSGS\nitems = ${items.toString()}\n\n")
+    logger.info(s"\n\nDEBUG_MSGS\nitems=${items.toString()}\n\n")
+    logger.debug(s"\n\nDEBUG_MSGS\nitems=${items.toString()}\n\n")
 
     items
       // group
