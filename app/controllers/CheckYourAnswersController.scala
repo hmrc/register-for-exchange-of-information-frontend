@@ -103,7 +103,7 @@ class CheckYourAnswersController @Inject() (
       case Right(subscriptionID) =>
         logger.info(s"The subscriptionId id $subscriptionID")
         Future.successful(NotImplemented("Not implemented"))
-      case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
+      case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
       case Left(DuplicateSubmissionError) =>
         Future.successful(NotImplemented("DuplicateSubmission is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
       case Left(BadRequestError) => renderer.render("thereIsAProblem.njk").map(BadRequest(_))
@@ -118,7 +118,7 @@ class CheckYourAnswersController @Inject() (
       ) match {
         case (Some(false), _, Some(false) | None) => Future.successful(NotImplemented("Not implemented")) // TODO DAC6-1142
         case (Some(_), _, Some(true) | None)      => createSubscription(regime, request.userAnswers)
-        case _                                    => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
+        case _                                    => Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
       }
   }
 }
