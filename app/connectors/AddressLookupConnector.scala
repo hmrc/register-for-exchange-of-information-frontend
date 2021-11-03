@@ -58,11 +58,12 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
   private def sortAddresses(items: Seq[AddressLookup]): Seq[AddressLookup] = {
 
+    // todo hmm dodac 0 na koncu dla kazdego int aby nie wywalalo Ex i wtedy zobacze co jest
     logger.info(s"\n\nDEBUG_MSGS\nitems=${items.toString()}\n\n")
     logger.debug(s"\n\nDEBUG_MSGS\nitems=${items.toString()}\n\n")
 
     items
-      // group
+      // group (gr_key, INT, adrs)
       .map(
         item =>
           (item.addressLine2 match {
@@ -70,7 +71,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
              case None    => (item.addressLine1.getOrElse(""))
            },
            item.addressLine1.map(
-             b => ("""\d+""".r findAllIn b).toList.mkString.toInt
+             b => ("""\d+""".r findAllIn b).toList.mkString.concat("0").toInt // todo del 0 concat
            ), // int from address_1
            item // whole address
           )
@@ -79,7 +80,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
       .toSeq
       // sort groups
       .sortBy(
-        x => ("""\d+""".r findAllIn x._1).toList.mkString.toInt
+        x => ("""\d+""".r findAllIn x._1).toList.mkString.concat("0").toInt // todo del 0 concat
       )
       // sort within a group
       .map(
