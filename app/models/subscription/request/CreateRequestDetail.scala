@@ -16,7 +16,7 @@
 
 package models.subscription.request
 
-import models.UserAnswers
+import models.{BusinessType, UserAnswers}
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import pages._
 import play.api.libs.json.{__, Json, OWrites, Reads}
@@ -49,8 +49,19 @@ object CreateRequestDetail {
   implicit val writes: OWrites[CreateRequestDetail] = Json.writes[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def convertTo(userAnswers: UserAnswers): Option[CreateRequestDetail] =
-    SecondaryContact.convertTo(userAnswers) match {
+  def convertTo(userAnswers: UserAnswers): Option[CreateRequestDetail] = {
+
+    val individualOrSoleTrader = {
+      (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
+        case (Some(RegistrationTypeIndividual), _) => true
+        case (_, Some(BusinessType.Sole))          => true
+        case _                                     => false
+      }
+    }
+    val secondContact = if (individualOrSoleTrader) { Right(None) }
+    else { SecondaryContact.convertTo(userAnswers) }
+
+    secondContact match {
       case Right(secondContact) =>
         for {
           matchingInfo   <- userAnswers.get(MatchingInfoPage)
@@ -65,6 +76,7 @@ object CreateRequestDetail {
         )
       case _ => None
     }
+  }
 
   private def isGBUser(userAnswers: UserAnswers): Boolean =
     userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {

@@ -80,9 +80,6 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(SecondContactPage, false)
-        .success
-        .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
@@ -99,22 +96,19 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+        .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(BusinessHaveDifferentNamePage, true)
         .success
         .value
-        .set(DoYouHaveNINPage, false)
+        .set(WhatIsTradingNamePage, "traderName")
         .success
         .value
-        .set(NonUkNamePage, NonUkName("a", "b"))
+        .set(ContactEmailPage, "test@test.com")
         .success
         .value
-        .set(ContactEmailPage, "test@gmail.com")
-        .success
-        .value
-        .set(AddressWithoutIdPage, address)
+        .set(ContactNamePage, "Name Name")
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
