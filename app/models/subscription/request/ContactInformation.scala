@@ -17,6 +17,8 @@
 package models.subscription.request
 
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
+import models.error.ApiError
+import models.error.ApiError.MandatoryInformationMissingError
 import models.{BusinessType, UserAnswers}
 import pages._
 import play.api.libs.functional.syntax.unlift
@@ -163,16 +165,23 @@ object SecondaryContact {
     )(unlift(SecondaryContact.unapply))
   }
 
-  def convertTo(userAnswers: UserAnswers): Option[SecondaryContact] = {
+  def convertTo(userAnswers: UserAnswers): Either[ApiError, Option[SecondaryContact]] = {
     val secondaryContactNumber = userAnswers.get(SndContactPhonePage)
 
-    userAnswers.get(SndConHavePhonePage) match {
-      case Some(true) =>
-        for {
-          orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
-          secondaryEmail <- userAnswers.get(SndContactEmailPage)
-        } yield SecondaryContact(contactInformation = orgDetails, email = secondaryEmail, phone = secondaryContactNumber, mobile = None)
-      case _ => None
+    (userAnswers.get(SecondContactPage), userAnswers.get(SndConHavePhonePage)) match {
+      case (Some(true), Some(true)) if secondaryContactNumber.isDefined =>
+        Right(secondaryContact(userAnswers, secondaryContactNumber))
+      case (Some(true), Some(false)) =>
+        Right(secondaryContact(userAnswers, None))
+      case (Some(false), _) => Right(None)
+      case _                => Left(MandatoryInformationMissingError)
     }
+
   }
+
+  private def secondaryContact(userAnswers: UserAnswers, secondaryContactNumber: Option[String]) =
+    for {
+      orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
+      secondaryEmail <- userAnswers.get(SndContactEmailPage)
+    } yield SecondaryContact(contactInformation = orgDetails, email = secondaryEmail, phone = secondaryContactNumber, mobile = None)
 }
