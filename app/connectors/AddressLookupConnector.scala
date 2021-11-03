@@ -85,8 +85,6 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
         x => (x._1, x._2.sortBy(_._2))
       )
       .flatMap(_._2)
-      .map(_._3
+      .map(_._3)
   }
-
-  )
 }
