@@ -174,7 +174,7 @@ secondContact.error.required = Select yes if there is someone else we can contac
 
 sndContactName.title = What is the name of the individual or team we should contact?
 sndContactName.heading = What is the name of the individual or team we should contact?
-sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''
+sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 sndContactName.checkYourAnswersLabel = Second contact name
 sndContactName.error.required = Enter the name of the individual or team we should contact
 sndContactName.error.invalid = Name of the individual or team must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
@@ -195,7 +195,7 @@ sndConHavePhone.error.required = Select yes if your second contact has a telepho
 
 sndContactPhone.title = What is the telephone number for {0}?
 sndContactPhone.heading = What is the telephone number for {0}?
-sndContactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001, 07700&nbsp;900&nbsp;982 or +44&nbsp;808&nbsp;157&nbsp;0192
+sndContactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001, 07700&nbsp;900&nbsp;982 or +44&nbsp;808&nbsp;157&nbsp;0192.
 sndContactPhone.checkYourAnswersLabel = Second contact telephone number
 sndContactPhone.error.required = Enter a telephone number
 sndContactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
