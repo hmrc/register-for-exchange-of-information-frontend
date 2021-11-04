@@ -35,6 +35,9 @@
         {{ govukRadios({
           classes: "govuk-radios__inline",
           name: 'value',
+          hint: {
+              text: messages('isContactTelephone.hint')
+          },
           fieldset: {
             legend: {
               text: messages(heading, name),
@@ -47,7 +50,7 @@
         }) }}
 
         {{ govukButton({
-          text: messages("site.saveAndContinue"),
+          text: messages("site.continue"),
           attributes: {
             "id": "submit"
           }
