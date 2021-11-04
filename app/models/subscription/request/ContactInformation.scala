@@ -129,15 +129,22 @@ object PrimaryContact {
       }
     }
 
-    for {
-      email <- userAnswers.get(ContactEmailPage)
+    (for {
+      email     <- userAnswers.get(ContactEmailPage)
+      havePhone <- userAnswers.get(IsContactTelephonePage)
       contactInformation <-
         if (individualOrSoleTrader) {
           IndividualDetails.convertTo(userAnswers)
         } else {
           OrganisationDetails.convertTo(userAnswers.get(ContactNamePage))
         }
-    } yield PrimaryContact(contactInformation = contactInformation, email = email, phone = contactNumber, mobile = None)
+    } yield
+      if (havePhone && userAnswers.get(ContactPhonePage).isEmpty) {
+        None
+      } else {
+        Some(PrimaryContact(contactInformation = contactInformation, email = email, phone = contactNumber, mobile = None))
+      }).flatten
+
   }
 }
 

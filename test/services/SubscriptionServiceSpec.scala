@@ -77,6 +77,9 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(AddressWithoutIdPage, address)
         .success
         .value
@@ -94,7 +97,6 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-      val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
@@ -109,6 +111,9 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, true)
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
@@ -140,6 +145,9 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .success
           .value
           .set(ContactNamePage, "Name Name")
+          .success
+          .value
+          .set(IsContactTelephonePage, false)
           .success
           .value
           .set(SecondContactPage, false)

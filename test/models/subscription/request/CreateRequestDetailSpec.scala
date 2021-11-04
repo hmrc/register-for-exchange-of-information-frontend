@@ -98,6 +98,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(SecondContactPage, false)
         .success
         .value
@@ -119,6 +122,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
         .success
         .value
         .set(SecondContactPage, false)
@@ -151,6 +157,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "hello")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(SecondContactPage, false)
         .success
         .value
@@ -176,6 +185,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
         .success
         .value
         .set(AddressWithoutIdPage, businessAddress)
@@ -206,6 +218,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
         .success
         .value
         .set(AddressWithoutIdPage, businessAddress)
@@ -242,6 +257,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(AddressWithoutIdPage, address)
         .success
         .value
@@ -264,6 +282,12 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, true)
+        .success
+        .value
+        .set(ContactPhonePage, "1122334455")
         .success
         .value
         .set(SecondContactPage, false)

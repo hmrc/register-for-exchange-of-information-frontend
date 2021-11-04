@@ -55,6 +55,9 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
 
       PrimaryContact.convertTo(userAnswers).value mustBe PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None)
     }
@@ -71,6 +74,9 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .success
         .value
         .set(ContactEmailPage, "test@test.com")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
         .success
         .value
 
@@ -91,6 +97,9 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .set(ContactEmailPage, "test@test.com")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
 
       PrimaryContact.convertTo(userAnswers).value mustBe PrimaryContact(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
     }
@@ -107,6 +116,9 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .success
         .value
         .set(ContactEmailPage, "test@test.com")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
         .success
         .value
 

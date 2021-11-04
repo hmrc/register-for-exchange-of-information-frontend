@@ -49,6 +49,9 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(SecondContactPage, false)
         .success
         .value
