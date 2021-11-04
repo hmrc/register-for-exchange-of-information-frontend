@@ -468,12 +468,198 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
            |      -1.4690977
            |  ],
            |  "language": "en"
+           |},
+           |
+           |
+           |
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "Efer House 137a",
+           |         "Back High Street",
+           |         "Gosforth"
+           |     ],
+           |     "town": "Newcastle upon Tyne",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "99-99a",
+           |         "Back High Street",
+           |         "Gosforth"
+           |     ],
+           |     "town": "Newcastle upon Tyne",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "135 Back High Street",
+           |         "Gosforth"
+           |     ],
+           |     "town": "Newcastle upon Tyne",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "141 Back High Street",
+           |         "Gosforth"
+           |     ],
+           |     "town": "Newcastle upon Tyne",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "143 Back High Street",
+           |         "Gosforth"
+           |     ],
+           |     "town": "Newcastle upon Tyne",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
+           |},
+           |{
+           |  "id": "GB200000698110",
+           |  "uprn": 200000706253,
+           |  "address": {
+           |     "lines": [
+           |         "153 Back High Street",
+           |         "Gosforth"
+           |     ],
+           |     "town": "Newcastle upon Tyne",
+           |     "county": "County",
+           |     "postcode": "$postcode",
+           |     "subdivision": {
+           |         "code": "GB-ENG",
+           |         "name": "England"
+           |     },
+           |     "country": {
+           |         "code": "UK",
+           |         "name": "United Kingdom"
+           |     }
+           |  },
+           |  "localCustodian": {
+           |      "code": 1760,
+           |      "name": "Test Valley"
+           |  },
+           |  "location": [
+           |      50.9986451,
+           |      -1.4690977
+           |  ],
+           |  "language": "en"
            |}]""".stripMargin
 
       "must return sorted addresses v2" in {
         stubResponse(addressLookupUrl, OK, addressesJson)
 
         val addressLookupResult = Vector(
+          // todo kladzie sie bo nie ma NR w w 2 mimo ze istnieje
           AddressLookup(Some("2 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("3 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("4 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
@@ -484,7 +670,13 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("Flat 3"), Some("7 Other place"), Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("8 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("9 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("10 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode)
+          AddressLookup(Some("10 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(Some("99-99a"), Some("Back High Street"), Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
+          AddressLookup(Some("135 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
+          AddressLookup(Some("Efer House 137a"), Some("Back High Street"), Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
+          AddressLookup(Some("141 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
+          AddressLookup(Some("143 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
+          AddressLookup(Some("153 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode)
         )
 
         val result = connector.addressLookupByPostcode(postcode)
