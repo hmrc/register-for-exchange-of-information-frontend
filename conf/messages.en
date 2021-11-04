@@ -182,7 +182,7 @@ sndContactName.error.length = Contact name must be 35 characters or less
 
 sndContactEmail.title = What is the email address for {0}?
 sndContactEmail.heading = What is the email address for {0}?
-sndContactEmail.hint = We will use this to send confirmation of your reports and if we have any questions about the them.
+sndContactEmail.hint = We will use this to send confirmation of your reports and if we have any questions about them.
 sndContactEmail.checkYourAnswersLabel = Second contact email address
 sndContactEmail.error.required = Enter an email address
 sndContactEmail.error.length = Email address must be 254 characters or less
