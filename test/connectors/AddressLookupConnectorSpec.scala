@@ -1215,7 +1215,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("Apartment 400"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode)
         )
 
-        val result = connector.addressLookupByPostcode(postcode)
+        val result = connector.addressLookupByPostcode(postcode, MDR)
 
         result.futureValue mustBe addressLookupResult
       }
