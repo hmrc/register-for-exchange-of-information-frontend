@@ -135,7 +135,7 @@ needContactDetails.p2 = We need these before you can send a country-by-country r
 
 contactName.title = Who can we contact if we have questions about your reports?
 contactName.heading = Who can we contact if we have questions about your reports?
-contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
+contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 contactName.checkYourAnswersLabel = Contact name
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
 contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
@@ -162,7 +162,7 @@ contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
 contactPhone.individual.title = What is your telephone number?
 contactPhone.individual.heading = What is your telephone number?
-contactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001, 07700&nbsp;900&nbsp;982 or +44&nbsp;808&nbsp;157&nbsp;0192
+contactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001, 07700&nbsp;900&nbsp;982 or +44&nbsp;808&nbsp;157&nbsp;0192.
 
 contactPhone.checkYourAnswersLabel = Telephone number
 contactPhone.error.required = Enter a telephone number
@@ -245,7 +245,7 @@ doYouHaveNIN.error.required = Select yes if you have National Insurance number
 whatIsYourNationalInsuranceNumber.title = What is your National Insurance number?
 whatIsYourNationalInsuranceNumber.heading = What is your National Insurance number?
 whatIsYourNationalInsuranceNumber.checkYourAnswersLabel = Your National Insurance number
-whatIsYourNationalInsuranceNumber.hint = It is on your National Insurance card, benefit letter, payslip or P60.  For example, ''QQ 12 34 56 C''
+whatIsYourNationalInsuranceNumber.hint = It is on your National Insurance card, benefit letter, payslip or P60.  For example, ''QQ 12 34 56 C''.
 whatIsYourNationalInsuranceNumber.error.required = Enter your National Insurance number
 whatIsYourNationalInsuranceNumber.error.invalid = Enter your National Insurance number in the correct format
 whatIsYourNationalInsuranceNumber.error.length = Your National Insurance Number must be 9 characters or less
