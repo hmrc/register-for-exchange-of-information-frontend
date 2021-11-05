@@ -17,9 +17,10 @@
 package controllers
 
 import models.requests.DataRequest
-import models.{BusinessType, Regime}
+import models.{BusinessType, Regime, UserAnswers}
 import navigation.Navigator
-import pages.{BusinessTypePage, ContactNamePage, SndContactNamePage}
+import pages.{BusinessTypePage, ContactNamePage, QuestionPage, SndContactNamePage}
+import play.api.libs.json.Reads
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 
@@ -29,24 +30,12 @@ object SomeInformationIsMissing {
 
   val missingInformationResult: Regime => Future[Result] = regime => Future.successful(Redirect(Navigator.missingInformation(regime)))
 
-  def isMissingContactName(regime: Regime)(f: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
+  def isMissingInformation[A](regime: Regime, page: QuestionPage[A])(
+    f: A => Future[Result]
+  )(implicit request: DataRequest[AnyContent], rds: Reads[A]): Future[Result] =
     request.userAnswers
-      .get(ContactNamePage)
-      .fold(missingInformationResult(regime)) {
-        name => f(name)
-      }
-
-  def isMissingSecondContactName(regime: Regime)(f: String => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
-    request.userAnswers
-      .get(SndContactNamePage)
-      .fold(missingInformationResult(regime)) {
-        name => f(name)
-      }
-
-  def isMissingBusinessType(regime: Regime)(f: BusinessType => Future[Result])(implicit request: DataRequest[AnyContent]): Future[Result] =
-    request.userAnswers
-      .get(BusinessTypePage)
-      .fold(missingInformationResult(regime)) {
-        name => f(name)
-      }
+      .get(page)
+      .fold(missingInformationResult(regime))(
+        value => f(value)
+      )
 }

@@ -20,6 +20,7 @@ import base.{ControllerMockFixtures, SpecBase}
 import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -39,14 +40,18 @@ class SomeInformationIsMissingControllerSpec extends SpecBase with ControllerMoc
       retrieveUserAnswersData(emptyUserAnswers)
       val request        = FakeRequest(GET, routes.SomeInformationIsMissingController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj("regime" -> MDR.toUpperCase, "continue" -> routes.IndexController.onPageLoad(MDR).url)
 
       templateCaptor.getValue mustEqual "someInformationIsMissing.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
   }
 }

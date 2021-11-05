@@ -34,10 +34,7 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
     }
 
     "must return SubscriptionRequest for the input 'UserAnswers'" in {
-      val subscriptionRequestCommon = SubscriptionRequestCommon("MDR", "2021-10-22T00:40:06Z", "d64d76beb68349d19931035ace5b4582", "MDTP", None)
-      val requestDtls               = CreateRequestDetail("SAFE", "safeId", None, true, PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
-
-      val expectedRequest = SubscriptionRequest(subscriptionRequestCommon, requestDtls)
+      val requestDtls = CreateRequestDetail("SAFE", "safeId", None, true, PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
 
       val userAnswers = UserAnswers("id")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -50,6 +47,12 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
+        .set(SecondContactPage, false)
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))

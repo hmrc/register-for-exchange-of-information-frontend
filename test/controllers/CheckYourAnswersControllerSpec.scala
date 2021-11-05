@@ -383,7 +383,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad(MDR).url
+        redirectLocation(result).value mustEqual routes.SomeInformationIsMissingController.onPageLoad(MDR).url
       }
 
       "must redirect to 'Duplication submission' page when there is duplication submission" in {

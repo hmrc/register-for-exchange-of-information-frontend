@@ -98,6 +98,12 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
+        .set(SecondContactPage, false)
+        .success
+        .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
@@ -116,6 +122,12 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
+        .set(SecondContactPage, false)
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
@@ -145,6 +157,12 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "hello")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
+        .set(SecondContactPage, false)
+        .success
+        .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
         .success
         .value
@@ -169,7 +187,13 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(AddressWithoutIdPage, businessAddress)
+        .success
+        .value
+        .set(SecondContactPage, false)
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
@@ -196,7 +220,13 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(AddressWithoutIdPage, businessAddress)
+        .success
+        .value
+        .set(SecondContactPage, false)
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
@@ -227,7 +257,13 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(AddressWithoutIdPage, address)
+        .success
+        .value
+        .set(SecondContactPage, false)
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
@@ -246,6 +282,15 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, true)
+        .success
+        .value
+        .set(ContactPhonePage, "1122334455")
+        .success
+        .value
+        .set(SecondContactPage, false)
         .success
         .value
         .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
