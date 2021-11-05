@@ -214,7 +214,7 @@ checkYourAnswers.secondContact.h2 = Second contact
 checkYourAnswers.contactDetails.h2 = Contact details
 checkYourAnswers.information.h2 = Now send your registration for MDR
 checkYourAnswers.information.p = By sending these contact details, you are confirming that the information is correct and complete to the best of your knowledge.
-checkYourAnswers.button = Accept and send
+checkYourAnswers.button = Confirm and send
 
 doYouHaveUniqueTaxPayerReference.title = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a UK Unique Taxpayer Reference?
