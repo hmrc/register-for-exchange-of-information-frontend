@@ -40,11 +40,15 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "DAC6")) flatMap {
       case response if response.status equals OK =>
-        Future.successful(sortAddresses(response.json
-          .as[Seq[AddressLookup]]
-          .filterNot(
-            address => address.addressLine1.isEmpty && address.addressLine2.isEmpty
-          )))
+        Future.successful(
+          sortAddresses(
+            response.json
+              .as[Seq[AddressLookup]]
+              .filterNot(
+                address => address.addressLine1.isEmpty && address.addressLine2.isEmpty
+              )
+          )
+        )
       case response =>
         val message = s"Address Lookup failed with status ${response.status} Response body: ${response.body}"
         Future.failed(new HttpException(message, response.status))
