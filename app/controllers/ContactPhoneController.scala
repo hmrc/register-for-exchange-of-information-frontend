@@ -20,26 +20,26 @@ import controllers.actions._
 import forms.ContactPhoneFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
-import navigation.CBCRNavigator
+import navigation.ContactDetailsNavigator
 import pages.{ContactNamePage, ContactPhonePage}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import uk.gov.hmrc.viewmodels._
 import utils.UserAnswersHelper
-
 import javax.inject.Inject
+import play.twirl.api
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactPhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: CBCRNavigator,
+  navigator: ContactDetailsNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -59,7 +59,7 @@ class ContactPhoneController @Inject() (
   private val individualTitleKey   = "contactPhone.individual.heading"
   private val individualHeadingKey = "contactPhone.individual.heading"
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String], name: String = "")(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
 
     val (pageTitle, heading) = if (hasContactName()) {
       (businessTitleKey, businessHeadingKey)
@@ -73,13 +73,14 @@ class ContactPhoneController @Inject() (
       "name"      -> name,
       "pageTitle" -> pageTitle,
       "heading"   -> heading,
+      "hintText"  -> hintWithNoBreakSpaces(),
       "action"    -> routes.ContactPhoneController.onSubmit(mode, regime).url
     )
     renderer.render("contactPhone.njk", data)
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         request.userAnswers
           .get(ContactNamePage) match {
@@ -90,7 +91,7 @@ class ContactPhoneController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         form
           .bindFromRequest()
@@ -103,4 +104,9 @@ class ContactPhoneController @Inject() (
               } yield Redirect(navigator.nextPage(ContactPhonePage, mode, regime, updatedAnswers))
           )
     }
+
+  private def hintWithNoBreakSpaces()(implicit messages: Messages): Html =
+    Html(
+      s"${messages("contactPhone.hint")}"
+    )
 }

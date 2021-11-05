@@ -47,11 +47,10 @@ class MDRNavigator @Inject() () extends Navigator {
     case SelectAddressPage                     => regime => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode, regime))
     case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
     case UTRPage                               => isSoleProprietor(NormalMode)
-    case SoleNamePage                          => regime => _ => Some(routes.SoleDateOfBirthController.onPageLoad(NormalMode, regime))
-    case SoleDateOfBirthPage                   => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
+    case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
-    case _                                     => regime => _ => Some(routes.IndexController.onPageLoad())
+    case _                                     => _ => _ => None
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {

@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject() (
     with NunjucksSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       val helper                                = new CheckYourAnswersHelper(request.userAnswers, regime, countryListFactory = countryFactory)
       val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
@@ -103,14 +103,14 @@ class CheckYourAnswersController @Inject() (
       case Right(subscriptionID) =>
         logger.info(s"The subscriptionId id $subscriptionID")
         Future.successful(NotImplemented("Not implemented"))
-      case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
+      case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
       case Left(DuplicateSubmissionError) =>
         Future.successful(NotImplemented("DuplicateSubmission is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
       case Left(BadRequestError) => renderer.render("thereIsAProblem.njk").map(BadRequest(_))
       case _                     => renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
     }
 
-  def onSubmit(regime: Regime): Action[AnyContent] = (identify andThen getData.apply andThen requireData).async {
+  def onSubmit(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       (request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
        request.userAnswers.get(WhatAreYouRegisteringAsPage),
@@ -118,7 +118,7 @@ class CheckYourAnswersController @Inject() (
       ) match {
         case (Some(false), _, Some(false) | None) => Future.successful(NotImplemented("Not implemented")) // TODO DAC6-1142
         case (Some(_), _, Some(true) | None)      => createSubscription(regime, request.userAnswers)
-        case _                                    => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime, None)))
+        case _                                    => Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
       }
   }
 }

@@ -31,7 +31,7 @@ class SomeInformationIsMissingController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
-  requireData: DataInitializeAction,
+  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -39,11 +39,11 @@ class SomeInformationIsMissingController @Inject() (
     with I18nSupport {
 
   def onPageLoad(regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         val data = Json.obj(
           "regime"   -> regime.toUpperCase,
-          "continue" -> routes.NeedContactDetailsController.onPageLoad(regime).url
+          "continue" -> routes.IndexController.onPageLoad(regime).url
         )
         renderer.render("someInformationIsMissing.njk", data).map(Ok(_))
     }

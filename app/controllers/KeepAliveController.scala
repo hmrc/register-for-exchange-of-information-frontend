@@ -33,7 +33,7 @@ class KeepAliveController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController {
 
-  def keepAlive(regime: Regime): Action[AnyContent] = (identify andThen getData.apply).async {
+  def keepAlive(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply).async {
     implicit request =>
       request.userAnswers
         .map {

@@ -39,7 +39,7 @@ class JourneyRecoveryController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regime: Regime, continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = identify.async {
+  def onPageLoad(regime: Regime, continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = identify(regime).async {
     implicit request =>
       val safeUrl: Option[String] = continueUrl.flatMap {
         unsafeUrl =>

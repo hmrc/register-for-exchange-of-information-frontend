@@ -21,25 +21,25 @@ import exceptions.SomeInformationIsMissingException
 import forms.SndContactPhoneFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
-import navigation.CBCRNavigator
+import navigation.ContactDetailsNavigator
 import pages.{SndContactNamePage, SndContactPhonePage}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
-
+import uk.gov.hmrc.viewmodels._
 import javax.inject.Inject
+import play.twirl.api
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class SndContactPhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: CBCRNavigator,
+  navigator: ContactDetailsNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -53,32 +53,33 @@ class SndContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, regime: Regime, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
     val data = Json.obj(
-      "form"   -> form,
-      "regime" -> regime.toUpperCase,
-      "name"   -> request.userAnswers.get(SndContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
-      "action" -> routes.SndContactPhoneController.onSubmit(mode, regime).url
+      "form"     -> form,
+      "regime"   -> regime.toUpperCase,
+      "name"     -> request.userAnswers.get(SndContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
+      "hintText" -> hintWithNoBreakSpaces(),
+      "action"   -> routes.SndContactPhoneController.onSubmit(mode, regime).url
     )
     renderer.render("sndContactPhone.njk", data)
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingSecondContactName(regime) {
+        SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
           render(mode, regime, request.userAnswers.get(SndContactPhonePage).fold(form)(form.fill), _).map(Ok(_))
         }
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              SomeInformationIsMissing.isMissingSecondContactName(regime) {
+              SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
                 render(mode, regime, request.userAnswers.get(SndContactPhonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
               },
             value =>
@@ -88,4 +89,9 @@ class SndContactPhoneController @Inject() (
               } yield Redirect(navigator.nextPage(SndContactPhonePage, mode, regime, updatedAnswers))
           )
     }
+
+  private def hintWithNoBreakSpaces()(implicit messages: Messages): Html =
+    Html(
+      s"${messages("sndContactPhone.hint")}"
+    )
 }

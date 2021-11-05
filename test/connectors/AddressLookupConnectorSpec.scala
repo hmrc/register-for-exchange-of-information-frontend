@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.AddressLookup
+import models.{AddressLookup, MDR}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
@@ -78,7 +78,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must return 200 (OK) status and an empty list if no match found" in {
         stubResponse(addressLookupUrl, OK, "[]")
 
-        val result = connector.addressLookupByPostcode(postcode)
+        val result = connector.addressLookupByPostcode(postcode, MDR)
         result.futureValue mustBe Nil
       }
 
@@ -90,14 +90,14 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("1 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode)
         )
 
-        val result = connector.addressLookupByPostcode(postcode)
+        val result = connector.addressLookupByPostcode(postcode, MDR)
         result.futureValue mustBe addressLookupResult
       }
 
       "must throw an exception when address lookup returns a 400 (BAD_REQUEST) status" in {
         stubResponse(addressLookupUrl, BAD_REQUEST, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode)
+        val result = connector.addressLookupByPostcode(postcode, MDR)
 
         assertThrows[Exception] {
           result.futureValue
@@ -107,7 +107,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must throw an exception when address lookup returns a 404 (NOT_FOUND) status" in {
         stubResponse(addressLookupUrl, NOT_FOUND, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode)
+        val result = connector.addressLookupByPostcode(postcode, MDR)
 
         assertThrows[Exception] {
           result.futureValue
@@ -117,7 +117,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must throw an exception when address lookup returns a 405 (METHOD_NOT_ALLOWED) status" in {
         stubResponse(addressLookupUrl, METHOD_NOT_ALLOWED, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode)
+        val result = connector.addressLookupByPostcode(postcode, MDR)
 
         assertThrows[Exception] {
           result.futureValue
@@ -127,7 +127,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must throw an exception when address lookup returns a 500 (INTERNAL_SERVER_ERROR) status" in {
         stubResponse(addressLookupUrl, INTERNAL_SERVER_ERROR, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode)
+        val result = connector.addressLookupByPostcode(postcode, MDR)
 
         assertThrows[Exception] {
           result.futureValue

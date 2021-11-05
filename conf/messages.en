@@ -13,6 +13,7 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.saveAndContinue = Save and continue
+site.save = Save
 site.getHelpWithThisPage = Get help with this page (opens in a new tab)
 site.confirmAndSend= Confirm and send
 site.service_name.country = Send a country-by-country report
@@ -98,8 +99,8 @@ needContactDetails.heading = We need your contact details
 needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
 needContactDetails.p2 = We need these before you can send a country-by-country report.
 
-contactName.title = Who can we contact?
-contactName.heading = Who can we contact if we have any questions about the reports?
+contactName.title = Who can we contact if we have questions about your reports?
+contactName.heading = Who can we contact if we have questions about your reports?
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
 contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
@@ -125,16 +126,16 @@ unauthorised.heading = You can’t access this service with this account
 
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out
-sessionExpired.guidance = The details you entered will be saved for 28 days from when you last made changes.
+sessionExpired.guidance = Your answers have not been saved.
 
 needContactDetails.title = We need your contact details
 needContactDetails.heading = We need your contact details
 needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
 needContactDetails.p2 = We need these before you can send a country-by-country report.
 
-contactName.title = Who can we contact?
-contactName.heading = Who can we contact if we have any questions about the reports?
-contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
+contactName.title = Who can we contact if we have questions about your reports?
+contactName.heading = Who can we contact if we have questions about your reports?
+contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 contactName.checkYourAnswersLabel = Contact name
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
 contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
@@ -144,7 +145,7 @@ contactEmail.title = What is the email address for {0}?
 contactEmail.heading = What is the email address for {0}?
 contactEmail.individual.title = What is your email address?
 contactEmail.individual.heading = What is your email address?
-contactEmail.hint = We will use this to send confirmation emails and to contact you if we have questions about the reports.
+contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.error.required = Enter an email address
 contactEmail.error.length = Email address must be 254 characters or less
@@ -152,15 +153,17 @@ contactEmail.error.invalid = Enter an email address in the correct format, like 
 
 isContactTelephone.title = Can we contact {0} by telephone?
 isContactTelephone.heading = Can we contact {0} by telephone?
-isContactTelephone.individual.title = Do you have a telephone number?
-isContactTelephone.individual.heading = Do you have a telephone number?
+isContactTelephone.individual.title = Can we contact you by telephone?
+isContactTelephone.individual.heading = Can we contact you by telephone?
+isContactTelephone.hint = We will use this to keep in touch and if we have any questions about your reports.
 isContactTelephone.error.required = Select yes if there is a telephone number
 
 contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
 contactPhone.individual.title = What is your telephone number?
 contactPhone.individual.heading = What is your telephone number?
-contactPhone.hint = For international numbers include the country code
+contactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001, 07700&nbsp;900&nbsp;982 or +44&nbsp;808&nbsp;157&nbsp;0192.
+
 contactPhone.checkYourAnswersLabel = Telephone number
 contactPhone.error.required = Enter a telephone number
 contactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
@@ -168,12 +171,13 @@ contactPhone.error.length = Contact phone must be 17 characters or less
 
 secondContact.title = Is there someone else we can contact?
 secondContact.heading = Is there someone else we can contact if {0} is not available?
+secondContact.hint = This can be a team mailbox or another contact.
 secondContact.checkYourAnswersLabel = Is there someone else we can contact?
 secondContact.error.required = Select yes if there is someone else we can contact
 
-sndContactName.title = Who else could we contact?
-sndContactName.heading = Who else could we contact?
-sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''
+sndContactName.title = What is the name of the individual or team we should contact?
+sndContactName.heading = What is the name of the individual or team we should contact?
+sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 sndContactName.checkYourAnswersLabel = Second contact name
 sndContactName.error.required = Enter the name of the individual or team we should contact
 sndContactName.error.invalid = Name of the individual or team must only include letters a to z, numbers 0 to 9, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
@@ -181,7 +185,7 @@ sndContactName.error.length = Contact name must be 35 characters or less
 
 sndContactEmail.title = What is the email address for {0}?
 sndContactEmail.heading = What is the email address for {0}?
-sndContactEmail.hint = We will use this to send confirmation emails and to contact you if we have questions about the reports.
+sndContactEmail.hint = We will use this to send confirmation of your reports and if we have any questions about them.
 sndContactEmail.checkYourAnswersLabel = Second contact email address
 sndContactEmail.error.required = Enter an email address
 sndContactEmail.error.length = Email address must be 254 characters or less
@@ -189,11 +193,12 @@ sndContactEmail.error.invalid = Enter an email address in the correct format, li
 
 sndConHavePhone.title = Can we contact {0} by telephone?
 sndConHavePhone.heading = Can we contact {0} by telephone?
+sndConHavePhone.hint = We will use this to keep in touch and if we have any questions about your reports.
 sndConHavePhone.error.required = Select yes if your second contact has a telephone number
 
 sndContactPhone.title = What is the telephone number for {0}?
 sndContactPhone.heading = What is the telephone number for {0}?
-sndContactPhone.hint = For international numbers include the country code
+sndContactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001, 07700&nbsp;900&nbsp;982 or +44&nbsp;808&nbsp;157&nbsp;0192.
 sndContactPhone.checkYourAnswersLabel = Second contact telephone number
 sndContactPhone.error.required = Enter a telephone number
 sndContactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
@@ -240,7 +245,7 @@ doYouHaveNIN.error.required = Select yes if you have National Insurance number
 whatIsYourNationalInsuranceNumber.title = What is your National Insurance number?
 whatIsYourNationalInsuranceNumber.heading = What is your National Insurance number?
 whatIsYourNationalInsuranceNumber.checkYourAnswersLabel = Your National Insurance number
-whatIsYourNationalInsuranceNumber.hint = It is on your National Insurance card, benefit letter, payslip or P60.  For example, ''QQ 12 34 56 C''
+whatIsYourNationalInsuranceNumber.hint = It is on your National Insurance card, benefit letter, payslip or P60.  For example, ''QQ 12 34 56 C''.
 whatIsYourNationalInsuranceNumber.error.required = Enter your National Insurance number
 whatIsYourNationalInsuranceNumber.error.invalid = Enter your National Insurance number in the correct format
 whatIsYourNationalInsuranceNumber.error.length = Your National Insurance Number must be 9 characters or less
@@ -346,6 +351,7 @@ nonUkName.error.familyName.length = Family name must be 35 characters or less
 
 whatIsYourPostcode.title = What is your postcode?
 whatIsYourPostcode.heading = What is your postcode?
+whatIsYourPostcode.hint = Enter your postcode to find your address automatically.
 whatIsYourPostcode.checkYourAnswersLabel = What is your postcode?
 whatIsYourPostcode.button = Find address
 whatIsYourPostcode.manualLink = Or enter the address manually
@@ -424,17 +430,6 @@ soleName.error.lastName.required = Enter your last name
 soleName.error.lastName.invalid = Last name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 soleName.error.lastName.length = Last name must be 35 characters or less
 
-soleDateOfBirth.title = What is your date of birth?
-soleDateOfBirth.heading = What is your date of birth?
-soleDateOfBirth.hint = For example, 12 11 2007.
-soleDateOfBirth.checkYourAnswersLabel = What is your date of birth?
-soleDateOfBirth.error.required.all = Enter your date of birth
-soleDateOfBirth.error.required.two = Date of birth must include {0} and {1}
-soleDateOfBirth.error.required = Your date of birth must include {0}
-soleDateOfBirth.error.invalid = Enter a valid date of birth
-soleDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1909
-soleDateOfBirth.error.futureDate = Date of birth must be before {0}
-
 businessHaveDifferentName.title = Does your business trade under a different name?
 businessHaveDifferentName.heading = Does your business trade under a different name?
 businessHaveDifferentName.checkYourAnswersLabel = Does your business trade under a different name?
@@ -470,3 +465,13 @@ noRecordsMatched.heading = The details you entered did not match our records
 noRecordsMatched.p1 = We could not match the details you entered with records held by HMRC.
 noRecordsMatched.p2 = If you used the wrong details, you can
 noRecordsMatched.link =  try again using different details
+
+pageNotFound.title = Page not found
+pageNotFound.heading = Page not found
+pageNotFound.p1 = This may be because:
+pageNotFound.bullet1 = the link or button you selected is for a page that does not exist
+pageNotFound.bullet2 = you’ve typed or copied a web address for a page that does not exist
+pageNotFound.bullet3 = you’ve typed or copied a web address incorrectly
+pageNotFound.p2 = If the web address is correct or you selected a link or button, and you have queries, you can email
+pageNotFound.email = enquiries.aeoi@hmrc.gov.uk
+pageNotFound.p3 = Check you have entered the correct details.

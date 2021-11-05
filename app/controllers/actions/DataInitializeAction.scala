@@ -16,14 +16,13 @@
 
 package controllers.actions
 
-import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
+import models.{Regime, UserAnswers}
 import play.api.mvc.{ActionRefiner, Result}
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataInitializeActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends DataInitializeAction {
+class DataInitializeActionWithRegime(regime: Regime)(implicit val executionContext: ExecutionContext) extends ActionRefiner[OptionalDataRequest, DataRequest] {
 
   override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     request.userAnswers match {
@@ -34,4 +33,10 @@ class DataInitializeActionImpl @Inject() (implicit val executionContext: Executi
     }
 }
 
-trait DataInitializeAction extends ActionRefiner[OptionalDataRequest, DataRequest]
+class DataInitializeActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends DataInitializeAction {
+  override def apply(regime: Regime): ActionRefiner[OptionalDataRequest, DataRequest] = new DataInitializeActionWithRegime(regime)
+}
+
+trait DataInitializeAction {
+  def apply(regime: Regime): ActionRefiner[OptionalDataRequest, DataRequest]
+}

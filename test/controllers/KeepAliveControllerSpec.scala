@@ -20,10 +20,8 @@ import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import models.MDR
 import org.mockito.ArgumentMatchers.any
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
@@ -36,23 +34,16 @@ class KeepAliveControllerSpec extends SpecBase with ControllerMockFixtures with 
 
       "must keep the answers alive and return OK" in {
 
-        val mockSessionRepository = mock[SessionRepository]
         when(mockSessionRepository.keepAlive(any())) thenReturn Future.successful(true)
 
-        val application =
-          applicationBuilder(Some(emptyUserAnswers))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-            .build()
+        retrieveUserAnswersData(emptyUserAnswers)
 
-        running(application) {
+        val request = FakeRequest(GET, routes.KeepAliveController.keepAlive(MDR).url)
 
-          val request = FakeRequest(GET, routes.KeepAliveController.keepAlive(MDR).url)
+        val result = route(app, request).value
 
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          verify(mockSessionRepository, times(1)).keepAlive(emptyUserAnswers.id)
-        }
+        status(result) mustEqual OK
+        verify(mockSessionRepository, times(1)).keepAlive(emptyUserAnswers.id)
       }
     }
 
@@ -60,23 +51,16 @@ class KeepAliveControllerSpec extends SpecBase with ControllerMockFixtures with 
 
       "must return OK" in {
 
-        val mockSessionRepository = mock[SessionRepository]
         when(mockSessionRepository.keepAlive(any())) thenReturn Future.successful(true)
 
-        val application =
-          applicationBuilder(None)
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-            .build()
+        retrieveNoData()
 
-        running(application) {
+        val request = FakeRequest(GET, routes.KeepAliveController.keepAlive(MDR).url)
 
-          val request = FakeRequest(GET, routes.KeepAliveController.keepAlive(MDR).url)
+        val result = route(app, request).value
 
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          verify(mockSessionRepository, never).keepAlive(any())
-        }
+        status(result) mustEqual OK
+        verify(mockSessionRepository, never).keepAlive(any())
       }
     }
   }

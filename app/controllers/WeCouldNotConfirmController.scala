@@ -42,7 +42,7 @@ class WeCouldNotConfirmController @Inject() (
     with Logging {
 
   def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         val messages = implicitly[Messages]
         val data = Json.obj(

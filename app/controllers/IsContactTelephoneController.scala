@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.IsContactTelephoneFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
-import navigation.CBCRNavigator
+import navigation.ContactDetailsNavigator
 import pages.{ContactNamePage, IsContactTelephonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IsContactTelephoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: CBCRNavigator,
+  navigator: ContactDetailsNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -80,7 +80,7 @@ class IsContactTelephoneController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         request.userAnswers
           .get(ContactNamePage) match {
@@ -90,7 +90,7 @@ class IsContactTelephoneController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         form
           .bindFromRequest()

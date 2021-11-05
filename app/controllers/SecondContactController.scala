@@ -20,8 +20,8 @@ import controllers.actions._
 import forms.SecondContactFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
-import navigation.CBCRNavigator
-import pages.SecondContactPage
+import navigation.ContactDetailsNavigator
+import pages.{ContactNamePage, SecondContactPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecondContactController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: CBCRNavigator,
+  navigator: ContactDetailsNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -64,21 +64,21 @@ class SecondContactController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingContactName(regime) {
+        SomeInformationIsMissing.isMissingInformation(regime, ContactNamePage) {
           render(mode, regime, request.userAnswers.get(SecondContactPage).fold(form)(form.fill), _).map(Ok(_))
         }
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              SomeInformationIsMissing.isMissingContactName(regime) {
+              SomeInformationIsMissing.isMissingInformation(regime, ContactNamePage) {
                 render(mode, regime, request.userAnswers.get(SecondContactPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
               },
             value =>

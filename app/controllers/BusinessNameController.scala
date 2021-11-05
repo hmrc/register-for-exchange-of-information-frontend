@@ -22,7 +22,7 @@ import models.BusinessType._
 import models.requests.DataRequest
 import models.{BusinessType, Mode, Regime}
 import navigation.MDRNavigator
-import pages.BusinessNamePage
+import pages.{BusinessNamePage, BusinessTypePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -98,9 +98,9 @@ class BusinessNameController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingBusinessType(regime) {
+        SomeInformationIsMissing.isMissingInformation(regime, BusinessTypePage) {
           businessType =>
             val form = formProvider(businessType match {
               case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
@@ -112,9 +112,9 @@ class BusinessNameController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingBusinessType(regime) {
+        SomeInformationIsMissing.isMissingInformation(regime, BusinessTypePage) {
           businessType =>
             formProvider(businessType match {
               case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)

@@ -77,6 +77,9 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
         .set(AddressWithoutIdPage, address)
         .success
         .value
@@ -86,6 +89,39 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       val result = service.createSubscription(userAnswers)
       result.futureValue mustBe Right(subscriptionID)
+    }
+
+    "must return 'MandatoryInformationMissingError' when one of the mandatory answers is missing" in {
+      val subscriptionID                                      = SubscriptionID("id")
+      val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Right(subscriptionID))
+
+      when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
+
+      val userAnswers = UserAnswers("")
+        .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+        .success
+        .value
+        .set(BusinessHaveDifferentNamePage, true)
+        .success
+        .value
+        .set(WhatIsTradingNamePage, "traderName")
+        .success
+        .value
+        .set(ContactEmailPage, "test@test.com")
+        .success
+        .value
+        .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(IsContactTelephonePage, true)
+        .success
+        .value
+        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .success
+        .value
+
+      val result = service.createSubscription(userAnswers)
+      result.futureValue mustBe Left(MandatoryInformationMissingError)
     }
 
     "must return MandatoryInformationMissingError when UserAnswers is empty" in {
@@ -109,6 +145,12 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .success
           .value
           .set(ContactNamePage, "Name Name")
+          .success
+          .value
+          .set(IsContactTelephonePage, false)
+          .success
+          .value
+          .set(SecondContactPage, false)
           .success
           .value
           .set(MatchingInfoPage, MatchingInfo("safeId", None, None))

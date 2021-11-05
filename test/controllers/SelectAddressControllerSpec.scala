@@ -36,12 +36,13 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
 
   override def onwardRoute: Call = Call("GET", "/foo")
 
-  val manualAddressURL: String        = "/register-for-exchange-of-information/register/mdr/without-id/address-uk"
+  val manualAddressURL: String        = "/register-for-exchange-of-information/mdr/register/without-id/address-uk"
   lazy val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(NormalMode, MDR).url
 
   val formProvider       = new SelectAddressFormProvider()
   val form: Form[String] = formProvider()
 
+  // todo tak testujemy
   val addresses: Seq[AddressLookup] = Seq(
     AddressLookup(Some("1 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ"),
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")

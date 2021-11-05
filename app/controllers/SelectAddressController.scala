@@ -69,7 +69,7 @@ class SelectAddressController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         request.userAnswers.get(AddressLookupPage) match {
           case Some(addresses) =>
@@ -77,6 +77,8 @@ class SelectAddressController @Inject() (
               case None        => form
               case Some(value) => form.fill(value)
             }
+
+            // todo tu sa adresy
             val addressItems: Seq[Radios.Radio] = addresses.map(
               address => Radios.Radio(label = msg"${formatAddress(address)}", value = s"${formatAddress(address)}")
             )
@@ -89,7 +91,7 @@ class SelectAddressController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify andThen getData.apply andThen requireData).async {
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         request.userAnswers.get(AddressLookupPage) match {
           case Some(addresses) =>

@@ -179,15 +179,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def soleDateOfBirth: Option[Row] = userAnswers.get(pages.SoleDateOfBirthPage) map {
-    answer =>
-      toRow(
-        msgKey = "soleDateOfBirth",
-        value = msg"site.edit",
-        href = routes.SoleDateOfBirthController.onPageLoad(CheckMode, regime).url
-      )
-  }
-
   def soleName: Option[Row] = userAnswers.get(pages.SoleNamePage) map {
     answer =>
       toRow(
