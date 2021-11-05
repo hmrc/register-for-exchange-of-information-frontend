@@ -60,10 +60,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
     }
   }
 
-  def mkString(p: AddressLookup) =
-    List[Option[String]](p.addressLine1, p.addressLine2, p.addressLine3, p.addressLine4)
-      .map(_.mkString(" "))
-      .mkString(" ").toLowerCase
+  def mkString(p: AddressLookup) = List[Option[String]](p.addressLine1, p.addressLine2, p.addressLine3, p.addressLine4).flatten.mkString(" ")
 
   def numbersOnly(adr: AddressLookup): Seq[Option[Int]] =
     "([0-9]+)".r
