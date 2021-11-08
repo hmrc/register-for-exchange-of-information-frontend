@@ -203,6 +203,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(SndContactEmailPage, secondContactEmail)
           .success
           .value
+          .set(SndConHavePhonePage, true)
+          .success
+          .value
           .set(SndContactPhonePage, secondContactPhone)
           .success
           .value
@@ -254,6 +257,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .success
           .value
           .set(SndContactEmailPage, secondContactEmail)
+          .success
+          .value
+          .set(SndConHavePhonePage, false)
           .success
           .value
 
