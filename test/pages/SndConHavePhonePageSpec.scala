@@ -44,7 +44,7 @@ class SndConHavePhonePageSpec extends PageBehaviours {
               .success
               .value
 
-            result.get(ContactPhonePage) must not be defined
+            result.get(SndContactPhonePage) must not be defined
         }
       }
 
@@ -60,7 +60,7 @@ class SndConHavePhonePageSpec extends PageBehaviours {
               .success
               .value
 
-            result.get(ContactPhonePage) mustBe defined
+            result.get(SndContactPhonePage) mustBe defined
         }
       }
     }
