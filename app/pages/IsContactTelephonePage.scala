@@ -28,5 +28,8 @@ case object IsContactTelephonePage extends QuestionPage[Boolean] {
   override def toString: String = "isContactTelephone"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allAfterIsContactTelephonePages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    value match {
+      case Some(false) => PageLists.allAfterIsContactTelephonePages.foldLeft(Try(userAnswers))(PageLists.removePage)
+      case _           => super.cleanup(value, userAnswers)
+    }
 }
