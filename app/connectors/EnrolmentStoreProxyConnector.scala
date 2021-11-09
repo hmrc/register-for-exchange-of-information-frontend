@@ -53,7 +53,12 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
             response.json
               .asOpt[GroupIds]
               .map(
-                groupIds => Left(EnrolmentExistsError(groupIds))
+                groupIds =>
+                  if (groupIds.principalGroupIds.nonEmpty) {
+                    Left(EnrolmentExistsError(groupIds))
+                  } else {
+                    Right(())
+                  }
               )
               .getOrElse(Right())
           case response =>

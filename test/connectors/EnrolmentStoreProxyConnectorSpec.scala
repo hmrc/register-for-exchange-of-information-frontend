@@ -58,6 +58,11 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
       |  ]
       |}""".stripMargin
 
+  val enrolmentStoreProxyResponseNoPrincipalIdJson: String =
+    """{
+      |  "principalGroupIds": []
+      |}""".stripMargin
+
   "EnrolmentStoreProxyConnector" - {
     val regime = MDR
     "when calling enrolmentStatus" - {
@@ -74,6 +79,13 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
         val subscriptionID = SubscriptionID("xxx204")
         stubResponse(enrolmentStoreProxyMDR204Url, NO_CONTENT, "")
 
+        val result = connector.enrolmentStatus(regime, subscriptionID)
+        result.value.futureValue mustBe Right(())
+      }
+
+      "return 204 enrolmentStatus response when principalGroupId is empty seq" in {
+        val subscriptionID = SubscriptionID("xxx204")
+        stubResponse(enrolmentStoreProxyMDR204Url, OK, enrolmentStoreProxyResponseNoPrincipalIdJson)
         val result = connector.enrolmentStatus(regime, subscriptionID)
         result.value.futureValue mustBe Right(())
       }
