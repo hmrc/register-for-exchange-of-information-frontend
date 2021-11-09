@@ -34,7 +34,7 @@ object RegisterWithoutID {
   def apply(regime: Regime, name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
-        RequestCommon(regime.toString),
+        RequestCommon(regime.toUpperCase),
         RequestWithoutIDDetails(None, Option(Individual(name, dob)), AddressRequest(address), contactDetails, None)
       )
     )
@@ -42,7 +42,7 @@ object RegisterWithoutID {
   def apply(regime: Regime, organisationName: String, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
-        RequestCommon(regime.toString),
+        RequestCommon(regime.toUpperCase),
         RequestWithoutIDDetails(Option(organisationName).map(NoIdOrganisation(_)), None, AddressRequest(address), contactDetails, None)
       )
     )

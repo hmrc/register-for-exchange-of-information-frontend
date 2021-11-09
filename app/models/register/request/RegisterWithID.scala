@@ -29,7 +29,7 @@ object RegisterWithID {
   def apply(regime: Regime, name: Name, dob: LocalDate, identifierName: String, identifierValue: String): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
-        RequestCommon(regime.toString),
+        RequestCommon(regime.toUpperCase),
         RequestWithIDDetails(name, dob, identifierName, identifierValue)
       )
     )
@@ -37,7 +37,7 @@ object RegisterWithID {
   def apply(regime: Regime, businessName: String, businessType: BusinessType, identifierName: String, identifierValue: String): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
-        RequestCommon(regime.toString),
+        RequestCommon(regime.toUpperCase),
         RequestWithIDDetails(businessName, businessType.code, "UTR", identifierValue)
       )
     )

@@ -76,7 +76,7 @@ class IsThisYourBusinessController @Inject() (
         },
         fb = RegistrationInfo => {
           val name     = RegistrationInfo.name.getOrElse("")
-          val address  = RegistrationInfo.address.getOrElse(AddressResponse.empty)
+          val address  = RegistrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
           val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
           render(mode, regime, withForm, name, address).map(Ok(_))
         }

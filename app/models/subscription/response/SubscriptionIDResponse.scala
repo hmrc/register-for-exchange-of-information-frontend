@@ -16,8 +16,7 @@
 
 package models.subscription.response
 
-import play.api.libs.json.{__, Reads, Writes}
-import uk.gov.hmrc.domain.SimpleObjectWrites
+import play.api.libs.json.{__, Reads}
 
 case class SubscriptionIDResponse(subscriptionID: String)
 
@@ -27,7 +26,4 @@ object SubscriptionIDResponse {
     import play.api.libs.functional.syntax._
     (__ \ "createSubscriptionForMDRResponse" \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionIDResponse.apply
   }
-
-  implicit lazy val writes: Writes[SubscriptionIDResponse] = new SimpleObjectWrites[SubscriptionIDResponse](_.subscriptionID)
-
 }

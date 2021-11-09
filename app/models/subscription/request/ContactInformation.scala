@@ -185,7 +185,7 @@ object SecondaryContact {
     val secondaryContactNumber = userAnswers.get(SndContactPhonePage)
 
     (individualOrSoleTrader, userAnswers.get(SecondContactPage), userAnswers.get(SndConHavePhonePage)) match {
-      case (true, _, _) if secondaryContactNumber.isDefined =>
+      case (true, _, _) =>
         Right(None)
       case (false, Some(true), Some(true)) if secondaryContactNumber.isDefined =>
         Right(secondaryContact(userAnswers, secondaryContactNumber))
