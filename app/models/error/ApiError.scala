@@ -16,6 +16,7 @@
 
 package models.error
 
+import models.enrolment.GroupIds
 import uk.gov.hmrc.http.HttpReads
 import uk.gov.hmrc.http.HttpReads.{is4xx, is5xx}
 
@@ -50,4 +51,9 @@ object ApiError {
   case object DuplicateSubmissionError extends ApiError
 
   case object UnableToCreateEMTPSubscriptionError extends ApiError
+
+  // Enrolment Specific
+  case class EnrolmentExistsError(groupIds: GroupIds) extends ApiError
+  case class MalformedError(status: Int) extends ApiError
+
 }
