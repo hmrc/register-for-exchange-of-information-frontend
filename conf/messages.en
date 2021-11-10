@@ -152,7 +152,7 @@ isContactTelephone.heading = Can we contact {0} by telephone?
 isContactTelephone.individual.title = Can we contact you by telephone?
 isContactTelephone.individual.heading = Can we contact you by telephone?
 isContactTelephone.hint = We will use this to keep in touch and if we have any questions about your reports.
-isContactTelephone.error.required = Select yes if there is a telephone number
+isContactTelephone.error.required = Select yes if we can contact you by telephone
 
 contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
@@ -278,7 +278,7 @@ whatIsYourDateOfBirth.error.required.all = Enter your date of birth
 whatIsYourDateOfBirth.error.required.two = Date of birth must include {0} and {1}
 whatIsYourDateOfBirth.error.required = Your date of birth must include {0}
 whatIsYourDateOfBirth.error.invalid = Enter a valid date of birth
-whatIsYourDateOfBirth.error.pastDate = Date of birth must be on or after 1 January 1909
+whatIsYourDateOfBirth.error.pastDate = Date of birth must be after 1909
 individualDateOfBirth.error.futureDate = Date of birth must be before {0}
 
 someInformationIsMissing.title = Some information is missing
@@ -307,7 +307,7 @@ addressWithoutId.error.addressLine1.required = Enter address line 1
 addressWithoutId.error.addressLine3.required = Enter city
 addressWithoutId.error.country.required = Choose a country
 addressWithoutId.error.addressLine1.length = Address line 1 must be 35 characters or less
-addressWithoutId.error.addressLine2.length = Address line 2 must be 35 characters or less
+addressWithoutId.error.addressLine2.length = Address line 2 (optional) must be 35 characters or less
 addressWithoutId.error.addressLine3.length = City must be must be 35 characters or less
 addressWithoutId.error.addressLine4.length = Region (optional) must be 35 characters or less
 addressWithoutId.error.addressLine1.invalid = Address line 1 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
@@ -315,7 +315,8 @@ addressWithoutId.error.addressLine2.invalid = Address line 2 must only include l
 addressWithoutId.error.addressLine3.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 addressWithoutId.error.addressLine4.invalid = Region (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 addressWithoutId.error.postcode.required = If the address is in Jersey, Guernsey or the Isle of Man, enter postcode
-addressWithoutId.error.postcode.length = Postcode (if applicable) must be 10 characters or less
+addressWithoutId.error.postcode.length = Postcode must be 10 characters or less
+addressWithoutId.error.postcode.invalid = Enter a postcode, like AA1 1AA
 
 addressUK.title = What is your home address?
 addressUK.heading = What is your home address?
@@ -345,7 +346,7 @@ addressUK.error.postcode.invalid = Enter a postcode, like AA1 1AA
 doYouLiveInTheUK.title = Do you live in the United Kingdom?
 doYouLiveInTheUK.heading = Do you live in the United Kingdom?
 doYouLiveInTheUK.checkYourAnswersLabel = Do you live in the United Kingdom?
-doYouLiveInTheUK.error.required = Select yes if you live in the United Kingdom
+doYouLiveInTheUK.error.required = Select yes if you live in the UK
 
 nonUkName.title = What is your name?
 nonUkName.heading = What is your name?
@@ -481,6 +482,18 @@ noRecordsMatched.heading = The details you entered did not match our records
 noRecordsMatched.p1 = We could not match the details you entered with records held by HMRC.
 noRecordsMatched.p2 = If you used the wrong details, you can
 noRecordsMatched.link =  try again using different details
+
+registrationConfirmation.title = Registration successful
+registrationConfirmation.heading = What happens next
+registrationConfirmation.panel = Registration successful
+registrationConfirmation.panel.html = Your User ID
+registrationConfirmation.subscriptionID.text = If you use the file upload service, you will need to provide your User ID in every file you submit to HMRC.
+registrationConfirmation.email = We will send you an email to confirm you have registered.
+registrationConfirmation.submission.text = You can now
+registrationConfirmation.submission.text.mdr = for Mandatory Disclosure Rules (MDR).
+registrationConfirmation.submission.text.cbc = for Country-by-Country Rules (CBCR).
+registrationConfirmation.submission.link = report cross-border arrangements
+registrationConfirmation.survey.link = What did you think of this service? (opens in a new tab)
 
 pageNotFound.title = Page not found
 pageNotFound.heading = Page not found

@@ -17,8 +17,9 @@
 package utils
 
 import controllers.routes
+import models.matching.RegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
-import pages.{MatchingInfoPage, SelectAddressPage}
+import pages.{RegistrationInfoPage, SelectAddressPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
@@ -98,10 +99,10 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     userAnswers.get(pages.IsThisYourBusinessPage) match {
       case Some(true) =>
         for {
-          matchingInfo <- userAnswers.get(MatchingInfoPage)
-          businessName <- matchingInfo.name
-          address      <- matchingInfo.address
-          countryName  <- countryListFactory.getDescriptionFromCode(address.countryCode)
+          RegistrationInfo <- userAnswers.get(RegistrationInfoPage)
+          businessName     <- RegistrationInfo.name
+          address          <- RegistrationInfo.address
+          countryName      <- countryListFactory.getDescriptionFromCode(address.countryCode)
         } yield toRow(
           msgKey = "businessWithIDName",
           value = Html(s"""

@@ -26,6 +26,7 @@ import uk.gov.hmrc.http._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) {
   private val logger: Logger = Logger(this.getClass)
@@ -41,11 +42,13 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
     http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> regime.toUpperCase)) flatMap {
       case response if response.status equals OK =>
         Future.successful(
-          response.json
-            .as[Seq[AddressLookup]]
-            .filterNot(
-              address => address.addressLine1.isEmpty && address.addressLine2.isEmpty
-            )
+          sortAddresses(
+            response.json
+              .as[Seq[AddressLookup]]
+              .filterNot(
+                address => address.addressLine1.isEmpty && address.addressLine2.isEmpty
+              )
+          )
         )
       case response =>
         val message = s"Address Lookup failed with status ${response.status} Response body: ${response.body}"
@@ -56,4 +59,29 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
         throw e
     }
   }
+
+  def mkString(p: AddressLookup) = List[Option[String]](p.addressLine1, p.addressLine2, p.addressLine3, p.addressLine4).flatten.mkString(" ")
+
+  def numbersOnly(adr: AddressLookup): Seq[Option[Int]] =
+    "([0-9]+)".r
+      .findAllIn(mkString(adr))
+      .map(
+        n => Try(n.toInt).toOption
+      )
+      .toSeq
+      .reverse :+ None
+
+  def sortAddresses(items: Seq[AddressLookup]): Seq[AddressLookup] =
+    items.sortWith {
+      (a, b) =>
+        def sort(zipped: Seq[(Option[Int], Option[Int])]): Boolean = zipped match {
+          case (Some(nA), Some(nB)) :: tail =>
+            if (nA == nB) sort(tail) else nA < nB
+          case (Some(_), None) :: _ => true
+          case (None, Some(_)) :: _ => false
+          case _                    => mkString(a) < mkString(b)
+        }
+
+        sort(numbersOnly(a).zipAll(numbersOnly(b), None, None).toList)
+    }
 }

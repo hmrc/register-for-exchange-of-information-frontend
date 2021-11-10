@@ -196,7 +196,7 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .success
         .value
 
-      SecondaryContact.convertTo(userAnswers).left.value mustBe MandatoryInformationMissingError
+      SecondaryContact.convertTo(userAnswers).left.value mustBe MandatoryInformationMissingError()
     }
   }
 }

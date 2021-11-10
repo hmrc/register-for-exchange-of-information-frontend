@@ -16,15 +16,17 @@
 
 package controllers
 
+import cats.data.EitherT
+import cats.implicits._
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
 import models.error.ApiError
-import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
-import models.matching.MatchingInfo
+import models.error.ApiError.NotFoundError
+import models.matching.RegistrationInfo
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
 import models.{Mode, Regime}
-import navigation.{MDRNavigator, Navigator}
+import navigation.MDRNavigator
 import pages._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -54,25 +56,32 @@ class IsThisYourBusinessController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with WithEitherT {
 
   private val form = formProvider()
 
-  private def result(mode: Mode, regime: Regime, form: Form[Boolean])(implicit request: DataRequest[AnyContent]) =
-    matchBusinessInfo flatMap {
-      case Right(matchingInfo) =>
-        (for {
-          name           <- matchingInfo.name
-          address        <- matchingInfo.address
-          updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
-          _ = sessionRepository.set(updatedAnswers)
-        } yield render(mode, regime, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill), name, address).map(Ok(_)))
-          .getOrElse(Future.successful(Redirect(Navigator.missingInformation(regime))))
-      case Left(NotFoundError) =>
-        Future.successful(Redirect(routes.NoRecordsMatchedController.onPageLoad(regime)))
-      case _ =>
-        renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
-    }
+  private def result(mode: Mode, regime: Regime, form: Form[Boolean])(implicit ec: ExecutionContext, request: DataRequest[AnyContent]) =
+    (for {
+      RegistrationInfo <- EitherT(matchBusinessInfo(regime))
+      updatedAnswers   <- setEither(RegistrationInfoPage, RegistrationInfo)
+      _ = sessionRepository.set(updatedAnswers)
+    } yield RegistrationInfo)
+      .fold(
+        fa = {
+          case NotFoundError =>
+            Future.successful(Redirect(routes.NoRecordsMatchedController.onPageLoad(regime)))
+          case _ =>
+            renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+        },
+        fb = RegistrationInfo => {
+          val name     = RegistrationInfo.name.getOrElse("")
+          val address  = RegistrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
+          val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
+          render(mode, regime, withForm, name, address).map(Ok(_))
+        }
+      )
+      .flatten
 
   private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String, address: AddressResponse)(implicit
     request: DataRequest[AnyContent]
@@ -92,17 +101,13 @@ class IsThisYourBusinessController @Inject() (
     implicit request => result(mode, regime, form)
   }
 
-  private def matchBusinessInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
+  private def matchBusinessInfo(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, RegistrationInfo]] =
     (for {
-      utr <- request.userAnswers.get(UTRPage)
-      businessName <- request.userAnswers
-        .get(BusinessNamePage)
-        .orElse(request.userAnswers.get(SoleNamePage).map {
-          name => s"${name.firstName} ${name.lastName}"
-        })
-      businessType <- request.userAnswers.get(BusinessTypePage)
-    } yield matchingService.sendBusinessMatchingInformation(utr, businessName, businessType))
-      .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
+      utr              <- getEither(UTRPage)
+      businessName     <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
+      businessType     <- getEither(BusinessTypePage)
+      registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, utr, businessName, businessType))
+    } yield registrationInfo).value
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>

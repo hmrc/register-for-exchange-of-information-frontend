@@ -173,15 +173,28 @@ object SecondaryContact {
   }
 
   def convertTo(userAnswers: UserAnswers): Either[ApiError, Option[SecondaryContact]] = {
+
+    val individualOrSoleTrader = {
+      (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
+        case (Some(RegistrationTypeIndividual), _) => true
+        case (_, Some(BusinessType.Sole))          => true
+        case _                                     => false
+      }
+    }
+
     val secondaryContactNumber = userAnswers.get(SndContactPhonePage)
 
-    (userAnswers.get(SecondContactPage), userAnswers.get(SndConHavePhonePage)) match {
-      case (Some(true), Some(true)) if secondaryContactNumber.isDefined =>
+    (individualOrSoleTrader, userAnswers.get(SecondContactPage), userAnswers.get(SndConHavePhonePage)) match {
+      case (true, _, _) =>
+        Right(None)
+      case (false, Some(true), Some(true)) if secondaryContactNumber.isDefined =>
         Right(secondaryContact(userAnswers, secondaryContactNumber))
-      case (Some(true), Some(false)) =>
+      case (false, Some(true), Some(false)) =>
         Right(secondaryContact(userAnswers, None))
-      case (Some(false), _) => Right(None)
-      case _                => Left(MandatoryInformationMissingError)
+      case (false, Some(false), _) =>
+        Right(None)
+      case _ =>
+        Left(MandatoryInformationMissingError())
     }
 
   }

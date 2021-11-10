@@ -18,7 +18,10 @@ package models
 
 import play.api.libs.json._
 
-case class NonUkName(givenName: String, familyName: String)
+case class NonUkName(givenName: String, familyName: String) {
+
+  val toName: Name = Name(givenName, familyName) // TODO possible unification ?
+}
 
 object NonUkName {
   implicit val format = Json.format[NonUkName]

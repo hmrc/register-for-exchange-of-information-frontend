@@ -268,20 +268,31 @@ trait Formatters extends Transforms {
         Map(key -> value.getOrElse(""))
     }
 
-  private[mappings] def optionalPostcodeFormatter(requiredKey: String, lengthKey: String, countryFieldName: String): Formatter[Option[String]] =
+  private[mappings] def optionalPostcodeFormatter(requiredKey: String,
+                                                  lengthKey: String,
+                                                  invalidKey: String,
+                                                  regex: String,
+                                                  countryFieldName: String
+  ): Formatter[Option[String]] =
     new Formatter[Option[String]] {
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-        val postCode          = postCodeDataTransform(data.get(key))
-        val country           = countryDataTransform(data.get(countryFieldName))
-        val maxLengthPostcode = 10
+        val postCode                        = postCodeDataTransform(data.get(key))
+        val country                         = countryDataTransform(data.get(countryFieldName))
+        val maxLengthPostcode               = 10
+        val countryCodesThatRequirePostcode = List("JE", "GG", "IM")
+
         (postCode, country) match {
-          case (None, Some("JE"))                                          => Left(Seq(FormError(key, requiredKey)))
-          case (None, Some("GG"))                                          => Left(Seq(FormError(key, requiredKey)))
-          case (None, Some("IM"))                                          => Left(Seq(FormError(key, requiredKey)))
+          case (Some(postcode), Some(countryCode)) if countryCodesThatRequirePostcode.contains(countryCode) && !stripSpaces(postcode).matches(regex) =>
+            Left(Seq(FormError(key, invalidKey)))
+
+          case (None, Some(countryCode)) if countryCodesThatRequirePostcode.contains(countryCode) => Left(Seq(FormError(key, requiredKey)))
+
           case (Some(postcode), _) if postcode.length <= maxLengthPostcode => Right(Some(postcode))
-          case (Some(_), _)                                                => Left(Seq(FormError(key, lengthKey)))
-          case _                                                           => Right(None)
+
+          case (Some(_), _) => Left(Seq(FormError(key, lengthKey)))
+
+          case _ => Right(None)
         }
       }
 
