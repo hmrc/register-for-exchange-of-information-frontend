@@ -378,7 +378,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val result = route(app, request).value
 
-        status(result) mustEqual NOT_IMPLEMENTED
+        status(result) mustEqual INTERNAL_SERVER_ERROR
       }
 
       "must redirect to 'confirmation' page for 'Individual without Id' journey" in {
