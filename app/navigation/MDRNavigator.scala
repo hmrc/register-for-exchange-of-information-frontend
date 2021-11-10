@@ -53,7 +53,13 @@ class MDRNavigator @Inject() () extends Navigator {
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
+    case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
+    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
+    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
+    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(NormalMode)(regime)
+    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode, regime))
+    case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
@@ -66,7 +72,7 @@ class MDRNavigator @Inject() () extends Navigator {
   private def doYouHaveUniqueTaxPayerReference(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
       case true  => routes.BusinessTypeController.onPageLoad(mode, regime)
-      case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime)
+      case false => jumpToCYA(mode, regime, routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime))
     }
 
   private def businessHaveDifferentNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
