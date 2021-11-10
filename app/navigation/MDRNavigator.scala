@@ -54,7 +54,8 @@ class MDRNavigator @Inject() () extends Navigator {
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case DoYouHaveUniqueTaxPayerReferencePage => doYouHaveUniqueTaxPayerReference(CheckMode)
+    case _                                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =

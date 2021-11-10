@@ -16,10 +16,8 @@
 
 package pages
 
-import models.{Name, UserAnswers}
-import uk.gov.hmrc.domain.Nino
+import models.UserAnswers
 
-import java.time.LocalDate
 import scala.util.Try
 
 object PageLists {
@@ -46,4 +44,43 @@ object PageLists {
     List(BusinessWithoutIDNamePage, WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, AddressUKPage, SelectAddressPage)
 
   val businessWithoutIdJourney = List()
+
+  val allContactDetailPages = List(
+    ContactNamePage,
+    ContactEmailPage,
+    IsContactTelephonePage,
+    ContactPhonePage,
+    SecondContactPage,
+    SndContactNamePage,
+    SndContactEmailPage,
+    SndConHavePhonePage,
+    SndContactPhonePage
+  )
+
+  val allWithIDPages = List(
+    BusinessTypePage,
+    UTRPage,
+    SoleNamePage,
+    IsThisYourBusinessPage,
+    MatchingInfoPage,
+    BusinessNamePage
+  )
+
+  val allWithOutIDPages = List(
+    WhatAreYouRegisteringAsPage,
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage,
+    AddressWithoutIdPage,
+    DoYouHaveNINPage,
+    WhatIsYourNationalInsuranceNumberPage,
+    WhatIsYourNamePage,
+    WhatIsYourDateOfBirthPage,
+    NonUkNamePage,
+    DoYouLiveInTheUKPage,
+    WhatIsYourPostcodePage,
+    AddressLookupPage,
+    AddressUKPage
+  )
+
 }

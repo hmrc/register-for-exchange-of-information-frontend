@@ -85,7 +85,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
+                } yield navigator.checkValueChangedBeforeRedirect(value, DoYouHaveUniqueTaxPayerReferencePage, request.userAnswers, mode, regime)
             )
       }
 

@@ -19,7 +19,9 @@ package navigation
 import controllers.routes
 import models._
 import pages._
-import play.api.mvc.Call
+import play.api.libs.json.Reads
+import play.api.mvc.{Call, Result}
+import play.api.mvc.Results.Redirect
 
 trait Navigator {
 
@@ -39,6 +41,13 @@ trait Navigator {
         case None       => routes.IndexController.onPageLoad(regime)
       }
   }
+
+  def checkValueChangedBeforeRedirect[T](value: T, page: QuestionPage[T], ua: UserAnswers, mode: Mode, regime: Regime)(implicit rds: Reads[T]): Result =
+    ua.get(page) match {
+      case Some(storedAnswer) if mode.equals(CheckMode) && storedAnswer.equals(value) => Redirect(routes.CheckYourAnswersController.onPageLoad(regime))
+      case _                                                                          => Redirect(nextPage(page, mode, regime, ua))
+    }
+
 }
 
 object Navigator {
