@@ -21,5 +21,8 @@ import play.api.libs.json.{Json, OFormat}
 case class Country(state: String, code: String, description: String)
 
 object Country {
+
+  val GB = Country("valid", "GB", "United Kingdom")
+
   implicit val format: OFormat[Country] = Json.format[Country]
 }

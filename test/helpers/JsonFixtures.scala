@@ -177,6 +177,29 @@ object JsonFixtures {
       |}
       |}""".stripMargin
 
+  val withoutIDResponse: String =
+    """{
+      |"registerWithoutIDResponse": {
+      |"responseCommon":{
+      |"status": "OK",
+      |"statusText": "Sample status text",
+      |"processingDate": "2016-08-16T15:55:30Z",
+      |"returnParameters": [
+      |{
+      |"paramName":
+      |"SAP_NUMBER",
+      |"paramValue":
+      |"0123456789"
+      |}
+      |]
+      |},
+      |"responseDetail":{
+      |"SAFEID": "XE0000123456789",
+      |"ARN": "WARN8764123"
+      |}
+      |}
+      |}""".stripMargin
+
   val withIDResponseJson: JsObject = Json.obj(
     "registerWithIDResponse" -> Json.obj(
       "responseCommon" -> Json.obj(
@@ -259,7 +282,7 @@ object JsonFixtures {
   def jsonPayloadForInd(firstName: JsString, lastName: JsString, primaryEmail: JsString): String =
     s"""
        |{
-       |  "createSubscriptionForDACRequest": {
+       |  "createSubscriptionForMDRRequest": {
        |    "requestCommon": {
        |      "regime": "MDR",
        |      "receiptDate": "2020-09-23T16:12:11Z",
@@ -289,9 +312,9 @@ object JsonFixtures {
   def jsonPayloadForOrg(organisationName: JsString, primaryEmail: JsString, phone: JsString): String =
     s"""
       |{
-      |  "createSubscriptionForDACRequest": {
+      |  "createSubscriptionForMDRRequest": {
       |    "requestCommon": {
-      |      "regime": "DAC",
+      |      "regime": "MDR",
       |      "receiptDate": "2020-09-23T16:12:11Z",
       |      "acknowledgementReference": "AB123c",
       |      "originatingSystem": "MDTP",
@@ -326,9 +349,9 @@ object JsonFixtures {
   ): String =
     s"""
        |{
-       |  "createSubscriptionForDACRequest": {
+       |  "createSubscriptionForMDRRequest": {
        |    "requestCommon": {
-       |      "regime": "DAC",
+       |      "regime": "MDR",
        |      "receiptDate": "2020-09-23T16:12:11Z",
        |      "acknowledgementReference": "AB123c",
        |      "originatingSystem": "MDTP"
@@ -366,9 +389,9 @@ object JsonFixtures {
   ): String =
     s"""
        |{
-       |  "createSubscriptionForDACRequest": {
+       |  "createSubscriptionForMDRRequest": {
        |    "requestCommon": {
-       |      "regime": "DAC",
+       |      "regime": "MDR",
        |      "receiptDate": "2020-09-23T16:12:11Z",
        |      "acknowledgementReference": "AB123c",
        |      "originatingSystem": "MDTP"
@@ -399,9 +422,9 @@ object JsonFixtures {
 
   def indRequestJson(firstName: String, lastName: String, primaryEmail: String): JsObject =
     Json.obj(
-      "createSubscriptionForDACRequest" -> Json.obj(
+      "createSubscriptionForMDRRequest" -> Json.obj(
         "requestCommon" -> Json.obj(
-          "regime"                   -> "DAC",
+          "regime"                   -> "MDR",
           "receiptDate"              -> "2020-09-23T16:12:11Z",
           "acknowledgementReference" -> "AB123c",
           "originatingSystem"        -> "MDTP",
@@ -429,9 +452,9 @@ object JsonFixtures {
 
   def orgRequestJson(organisationName: String, primaryEmail: String, phone: String): JsObject =
     Json.obj(
-      "createSubscriptionForDACRequest" -> Json.obj(
+      "createSubscriptionForMDRRequest" -> Json.obj(
         "requestCommon" -> Json.obj(
-          "regime"                   -> "DAC",
+          "regime"                   -> "MDR",
           "receiptDate"              -> "2020-09-23T16:12:11Z",
           "acknowledgementReference" -> "AB123c",
           "originatingSystem"        -> "MDTP",
@@ -466,9 +489,9 @@ object JsonFixtures {
                                   phone: String
   ): JsObject =
     Json.obj(
-      "createSubscriptionForDACRequest" -> Json.obj(
+      "createSubscriptionForMDRRequest" -> Json.obj(
         "requestCommon" -> Json.obj(
-          "regime"                   -> "DAC",
+          "regime"                   -> "MDR",
           "receiptDate"              -> "2020-09-23T16:12:11Z",
           "acknowledgementReference" -> "AB123c",
           "originatingSystem"        -> "MDTP"
@@ -504,9 +527,9 @@ object JsonFixtures {
                                   phone: String
   ): JsObject =
     Json.obj(
-      "createSubscriptionForDACRequest" -> Json.obj(
+      "createSubscriptionForMDRRequest" -> Json.obj(
         "requestCommon" -> Json.obj(
-          "regime"                   -> "DAC",
+          "regime"                   -> "MDR",
           "receiptDate"              -> "2020-09-23T16:12:11Z",
           "acknowledgementReference" -> "AB123c",
           "originatingSystem"        -> "MDTP"

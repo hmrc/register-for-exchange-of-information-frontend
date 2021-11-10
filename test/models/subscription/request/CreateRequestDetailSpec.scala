@@ -19,7 +19,8 @@ package models.subscription.request
 import base.SpecBase
 import generators.Generators
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.matching.MatchingInfo
+import models.matching.RegistrationInfo
+import models.matching.MatchingType.AsIndividual
 import models.{Address, Country, Name, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -98,17 +99,17 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .success
+        .value
         .set(IsContactTelephonePage, false)
         .success
         .value
         .set(SecondContactPage, false)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
-        .success
-        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
       request mustBe createRequestDetails
     }
 
@@ -130,11 +131,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -157,17 +158,17 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "hello")
         .success
         .value
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .success
+        .value
         .set(IsContactTelephonePage, false)
         .success
         .value
         .set(SecondContactPage, false)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
-        .success
-        .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -196,11 +197,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -229,16 +230,16 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }
 
-    "must create a request with the isGBUser flag set to false by Individual without NINO" in {
+    "must create a request with the isGBUser flag set to true by Individual without NINO if address is UK" in {
       val userAnswers = UserAnswers("")
       val address     = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val updatedUserAnswers = userAnswers
@@ -263,14 +264,54 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, address)
         .success
         .value
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .success
+        .value
+        .set(DoYouLiveInTheUKPage, true)
+        .success
+        .value
         .set(SecondContactPage, false)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+
+      request.isGBUser mustBe true
+    }
+
+    "must create a request with the isGBUser flag set to false by Individual without NINO if address is non UK" in {
+      val userAnswers = UserAnswers("")
+      val address     = Address("", None, "", None, None, Country("valid", "FR", "France"))
+      val updatedUserAnswers = userAnswers
+        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+        .success
+        .value
+        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .success
+        .value
+        .set(DoYouHaveNINPage, false)
+        .success
+        .value
+        .set(NonUkNamePage, NonUkName("a", "b"))
+        .success
+        .value
+        .set(ContactEmailPage, "test@gmail.com")
+        .success
+        .value
+        .set(IsContactTelephonePage, false)
+        .success
+        .value
+        .set(AddressWithoutIdPage, address)
+        .success
+        .value
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .success
+        .value
+        .set(SecondContactPage, false)
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }
@@ -293,11 +334,11 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo(updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }

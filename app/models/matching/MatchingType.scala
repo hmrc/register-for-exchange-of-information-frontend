@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package models
+package models.matching
 
-import play.api.libs.json._
+import models.{Enumerable, WithName}
+import play.api.libs.json.Json
 
-case class NonUkName(givenName: String, familyName: String) {
+sealed trait MatchingType
 
-  val toName: Name = Name(givenName, familyName) // TODO possible unification ?
-}
+object MatchingType extends Enumerable.Implicits {
 
-object NonUkName {
-  implicit val format = Json.format[NonUkName]
+  case object AsIndividual extends WithName("individual") with MatchingType
+  case object AsOrganisation extends WithName("organisation") with MatchingType
+  val values: Seq[MatchingType] = Seq(AsIndividual, AsOrganisation)
+
+  implicit val enumerable: Enumerable[MatchingType] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 }

@@ -20,8 +20,8 @@ import cats.data.EitherT
 import config.FrontendAppConfig
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
-import models.register.request.RegisterWithID
-import models.register.response.RegistrationWithIDResponse
+import models.register.request.{RegisterWithID, RegisterWithoutID}
+import models.register.response.{RegistrationWithIDResponse, RegistrationWithoutIDResponse}
 import play.api.Logger
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -55,15 +55,42 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
       http.POST[RegisterWithID, HttpResponse](s"$submissionUrl$endpoint", registration) map {
         case responseMessage if is2xx(responseMessage.status) =>
           Right(responseMessage.json.as[RegistrationWithIDResponse])
-        case responseMessage if responseMessage.status == NOT_FOUND =>
-          logger.error(s"Error in registration with $endpoint: not found.")
-          Left(NotFoundError)
-        case responseMessage if responseMessage.status == BAD_REQUEST =>
-          logger.error("Error in individual registration with nino: invalid.")
-          Left(BadRequestError)
-        case responseMessage =>
-          logger.error(s"Error in registration with $endpoint: $responseMessage.")
-          Left(ServiceUnavailableError)
+        case responseMessage => handleError(responseMessage, endpoint)
       }
+    }
+
+  def withIndividualNoId(
+    registration: RegisterWithoutID
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithoutIDResponse] =
+    registerWithoutID(registration, "/individual/noId")
+
+  def withOrganisationNoId(
+    registration: RegisterWithoutID
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithoutIDResponse] =
+    registerWithoutID(registration, "/organisation/noId")
+
+  private def registerWithoutID(
+    registration: RegisterWithoutID,
+    endpoint: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithoutIDResponse] =
+    EitherT {
+      http.POST[RegisterWithoutID, HttpResponse](s"$submissionUrl$endpoint", registration) map {
+        case responseMessage if is2xx(responseMessage.status) =>
+          Right(responseMessage.json.as[RegistrationWithoutIDResponse])
+        case responseMessage => handleError(responseMessage, endpoint)
+      }
+    }
+
+  def handleError[A](responseMessage: HttpResponse, endpoint: String): Either[ApiError, A] =
+    responseMessage.status match {
+      case NOT_FOUND =>
+        logger.error(s"Error in registration with $endpoint: not found.")
+        Left(NotFoundError)
+      case BAD_REQUEST =>
+        logger.error(s"Error in registration with $endpoint: invalid.")
+        Left(BadRequestError)
+      case responseMessage =>
+        logger.error(s"Error in registration with $endpoint: $responseMessage.")
+        Left(ServiceUnavailableError)
     }
 }

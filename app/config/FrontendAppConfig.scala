@@ -33,6 +33,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
 
+  val taxEnrolmentsUrl1: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
+    .get[String]("microservice.services.tax-enrolments.url1")}"
+  val taxEnrolmentsUrl2: String = s"${configuration.get[String]("microservice.services.tax-enrolments.url2")}"
+
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
@@ -64,6 +68,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val businessMatchingUrl: String =
     s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"
+  lazy val submissionsUrl: String = s"${configuration.get[String]("urls.submissions.host")}${configuration.get[String]("urls.submissions.startUrl")}"
 
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration.get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
