@@ -64,13 +64,13 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
 
     "must return PrimaryContact for the input 'Individual with Id UserAnswers' " in {
       val userAnswers = UserAnswers("id")
+        .set(DoYouHaveNINPage, true)
+        .success
+        .value
         .set(WhatIsYourNamePage, Name("Name", "Name"))
         .success
         .value
         .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-        .success
-        .value
-        .set(DoYouHaveNINPage, true)
         .success
         .value
         .set(ContactEmailPage, "test@test.com")
