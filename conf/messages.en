@@ -103,8 +103,8 @@ contactName.title = Who can we contact if we have questions about your reports?
 contactName.heading = Who can we contact if we have questions about your reports?
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
-contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-contactName.error.length = Name of the individual or team must be 35 characters or less
+contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+contactName.error.length = Name must be 35 characters or less
 
 phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
@@ -138,8 +138,8 @@ contactName.heading = Who can we contact if we have questions about your reports
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 contactName.checkYourAnswersLabel = Contact name
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
-contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-contactName.error.length = Name of the individual or team must be 35 characters or less
+contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+contactName.error.length = Name must be 35 characters or less
 
 contactEmail.title = What is the email address for {0}?
 contactEmail.heading = What is the email address for {0}?
@@ -147,16 +147,16 @@ contactEmail.individual.title = What is your email address?
 contactEmail.individual.heading = What is your email address?
 contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
-contactEmail.error.required = Enter an email address
+contactEmail.error.required = Enter your email address
 contactEmail.error.length = Email address must be 254 characters or less
-contactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
+contactEmail.error.invalid = Enter your email address in the correct format, like name@example.com
 
 isContactTelephone.title = Can we contact {0} by telephone?
 isContactTelephone.heading = Can we contact {0} by telephone?
 isContactTelephone.individual.title = Can we contact you by telephone?
 isContactTelephone.individual.heading = Can we contact you by telephone?
 isContactTelephone.hint = We will use this to keep in touch and if we have any questions about your reports.
-isContactTelephone.error.required = Select yes if there is a telephone number
+isContactTelephone.error.required = Select yes if we can contact you by telephone
 
 contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
@@ -166,7 +166,7 @@ contactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001,
 
 contactPhone.checkYourAnswersLabel = Telephone number
 contactPhone.error.required = Enter a telephone number
-contactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+contactPhone.error.invalid = Enter a telephone number in the correct format
 contactPhone.error.length = Contact phone must be 17 characters or less
 
 secondContact.title = Is there someone else we can contact?
@@ -201,7 +201,7 @@ sndContactPhone.heading = What is the telephone number for {0}?
 sndContactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001, 07700&nbsp;900&nbsp;982 or +44&nbsp;808&nbsp;157&nbsp;0192.
 sndContactPhone.checkYourAnswersLabel = Second contact telephone number
 sndContactPhone.error.required = Enter a telephone number
-sndContactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+sndContactPhone.error.invalid = Enter a telephone number in the correct format
 sndContactPhone.error.length = Contact phone must be 17 characters or less
 
 checkYourAnswers.title = Check your answers
@@ -218,7 +218,7 @@ doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a UK Uniqu
 doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax. You can
 doYouHaveUniqueTaxPayerReference.hint.link = find a lost UTR number (opens in a new tab)
-doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique Taxpayer Reference
+doYouHaveUniqueTaxPayerReference.error.required = Select yes if you have a UTR
 
 weCouldNotConfirm.title = We could not {0}
 weCouldNotConfirm.heading = We could not {0}
@@ -234,7 +234,7 @@ whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
 whatAreYouRegisteringAs.registrationTypeBusiness = A business
 whatAreYouRegisteringAs.registrationTypeIndividual = An individual
 whatAreYouRegisteringAs.checkYourAnswersLabel = What are you registering as
-whatAreYouRegisteringAs.error.required = Select registration as a business or as an individual
+whatAreYouRegisteringAs.error.required = Select business or individual
 
 doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
@@ -304,8 +304,8 @@ addressWithoutId.error.addressLine1.invalid = Address line 1 must only include l
 addressWithoutId.error.addressLine2.invalid = Address line 2 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 addressWithoutId.error.addressLine3.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 addressWithoutId.error.addressLine4.invalid = Region (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-addressWithoutId.error.postcode.required = If the address is in Jersey, Guernsey or the Isle of Man, enter postcode
-addressWithoutId.error.postcode.length = Postcode (if applicable) must be 10 characters or less
+addressWithoutId.error.postcode.required = Enter a postcode
+addressWithoutId.error.postcode.length = Postcode must be 10 characters or less
 
 addressUK.title = What is your home address?
 addressUK.heading = What is your home address?
@@ -335,7 +335,7 @@ addressUK.error.postcode.invalid = Enter a postcode, like AA1 1AA
 doYouLiveInTheUK.title = Do you live in the United Kingdom?
 doYouLiveInTheUK.heading = Do you live in the United Kingdom?
 doYouLiveInTheUK.checkYourAnswersLabel = Do you live in the United Kingdom?
-doYouLiveInTheUK.error.required = Select yes if you live in the United Kingdom
+doYouLiveInTheUK.error.required = Select yes if you live in the UK
 
 nonUkName.title = What is your name?
 nonUkName.heading = What is your name?
