@@ -148,7 +148,7 @@ contactEmail.individual.heading = What is your email address?
 contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.error.required = Enter your email address
-contactEmail.error.length = Email address must be 254 characters or less
+contactEmail.error.length = Email address must be 256 characters or less
 contactEmail.error.invalid = Enter your email address in the correct format, like name@example.com
 
 isContactTelephone.title = Can we contact {0} by telephone?
