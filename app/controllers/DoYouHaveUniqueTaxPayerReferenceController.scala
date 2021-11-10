@@ -20,20 +20,20 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveUniqueTaxPayerReferenceFormProvider
 import models.requests.DataRequest
-import models.{Mode, Regime}
+import models.{CheckMode, Mode, Regime, UserAnswers}
 import navigation.MDRNavigator
-import pages.DoYouHaveUniqueTaxPayerReferencePage
+import pages.{DoYouHaveUniqueTaxPayerReferencePage, QuestionPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
@@ -85,7 +85,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield navigator.checkValueChangedBeforeRedirect(value, DoYouHaveUniqueTaxPayerReferencePage, request.userAnswers, mode, regime)
+                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
             )
       }
 

@@ -16,10 +16,15 @@
 
 package pages
 
-import models.WhatAreYouRegisteringAs
+import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.{Address, AddressLookup, Country, Name, NonUkName, UserAnswers, WhatAreYouRegisteringAs}
 import pages.behaviours.PageBehaviours
+import org.scalacheck.Arbitrary.arbitrary
+import uk.gov.hmrc.domain.Nino
 
-class WhatAreYouRegisteringAsSpec extends PageBehaviours {
+import java.time.LocalDate
+
+class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
 
   "WhatAreYouRegisteringAsPage" - {
 
@@ -28,5 +33,157 @@ class WhatAreYouRegisteringAsSpec extends PageBehaviours {
     beSettable[WhatAreYouRegisteringAs](WhatAreYouRegisteringAsPage)
 
     beRemovable[WhatAreYouRegisteringAs](WhatAreYouRegisteringAsPage)
+  }
+
+  "cleanup" - {
+
+    "must remove 'individual' journey when 'A business' is selected" in {
+
+      forAll(arbitrary[UserAnswers]) {
+        userAnswers =>
+          val result = userAnswers
+            .set(DoYouHaveNINPage, true)
+            .success
+            .value
+            .set(WhatIsYourNationalInsuranceNumberPage, Nino("CS700100A"))
+            .success
+            .value
+            .set(WhatIsYourNamePage, Name("firstName", "lastName"))
+            .success
+            .value
+            .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+            .success
+            .value
+            .set(NonUkNamePage, NonUkName("firstName", "lastName"))
+            .success
+            .value
+            .set(DoYouLiveInTheUKPage, true)
+            .success
+            .value
+            .set(WhatIsYourPostcodePage, "NE324AS")
+            .success
+            .value
+            .set(AddressLookupPage, Seq(AddressLookup(None, None, None, None, "Jarrow", None, "NE324AS")))
+            .success
+            .value
+            .set(AddressUKPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
+            .success
+            .value
+            .set(ContactNamePage, "contactName")
+            .success
+            .value
+            .set(ContactEmailPage, "email@email.com")
+            .success
+            .value
+            .set(IsContactTelephonePage, true)
+            .success
+            .value
+            .set(ContactPhonePage, "07540000000")
+            .success
+            .value
+            .set(SecondContactPage, true)
+            .success
+            .value
+            .set(SndContactNamePage, "secondContactName")
+            .success
+            .value
+            .set(SndContactEmailPage, "email2@email.com")
+            .success
+            .value
+            .set(SndConHavePhonePage, true)
+            .success
+            .value
+            .set(SndContactPhonePage, "07540000000")
+            .success
+            .value
+            .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+            .success
+            .value
+
+          result.get(DoYouHaveNINPage) must not be defined
+          result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
+          result.get(WhatIsYourNamePage) must not be defined
+          result.get(WhatIsYourDateOfBirthPage) must not be defined
+          result.get(NonUkNamePage) must not be defined
+          result.get(DoYouLiveInTheUKPage) must not be defined
+          result.get(WhatIsYourPostcodePage) must not be defined
+          result.get(AddressLookupPage) must not be defined
+          result.get(AddressUKPage) must not be defined
+          result.get(ContactNamePage) must not be defined
+          result.get(ContactEmailPage) must not be defined
+          result.get(IsContactTelephonePage) must not be defined
+          result.get(ContactPhonePage) must not be defined
+          result.get(SecondContactPage) must not be defined
+          result.get(SndContactNamePage) must not be defined
+          result.get(SndContactEmailPage) must not be defined
+          result.get(SndConHavePhonePage) must not be defined
+          result.get(SndContactPhonePage) must not be defined
+      }
+    }
+
+    "must remove 'business' journey when 'an individual' is selected" in {
+
+      forAll(arbitrary[UserAnswers]) {
+        userAnswers =>
+          val result = userAnswers
+            .set(BusinessWithoutIDNamePage, "businessName")
+            .success
+            .value
+            .set(BusinessHaveDifferentNamePage, true)
+            .success
+            .value
+            .set(WhatIsTradingNamePage, "tradingName")
+            .success
+            .value
+            .set(AddressWithoutIdPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
+            .success
+            .value
+            .set(ContactNamePage, "contactName")
+            .success
+            .value
+            .set(ContactEmailPage, "email@email.com")
+            .success
+            .value
+            .set(IsContactTelephonePage, true)
+            .success
+            .value
+            .set(ContactPhonePage, "07540000000")
+            .success
+            .value
+            .set(SecondContactPage, true)
+            .success
+            .value
+            .set(SndContactNamePage, "secondContactName")
+            .success
+            .value
+            .set(SndContactEmailPage, "email2@email.com")
+            .success
+            .value
+            .set(SndConHavePhonePage, true)
+            .success
+            .value
+            .set(SndContactPhonePage, "07540000000")
+            .success
+            .value
+            .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+            .success
+            .value
+
+          result.get(BusinessWithoutIDNamePage) must not be defined
+          result.get(BusinessHaveDifferentNamePage) must not be defined
+          result.get(WhatIsTradingNamePage) must not be defined
+          result.get(WhatIsTradingNamePage) must not be defined
+          result.get(AddressWithoutIdPage) must not be defined
+          result.get(ContactNamePage) must not be defined
+          result.get(ContactEmailPage) must not be defined
+          result.get(IsContactTelephonePage) must not be defined
+          result.get(ContactPhonePage) must not be defined
+          result.get(SecondContactPage) must not be defined
+          result.get(SndContactNamePage) must not be defined
+          result.get(SndContactEmailPage) must not be defined
+          result.get(SndConHavePhonePage) must not be defined
+          result.get(SndContactPhonePage) must not be defined
+      }
+    }
   }
 }

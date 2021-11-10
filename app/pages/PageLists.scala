@@ -66,12 +66,14 @@ object PageLists {
     BusinessNamePage
   )
 
-  val allWithOutIDPages = List(
-    WhatAreYouRegisteringAsPage,
+  val businessWithOutIDPages = List(
     BusinessWithoutIDNamePage,
     BusinessHaveDifferentNamePage,
     WhatIsTradingNamePage,
-    AddressWithoutIdPage,
+    AddressWithoutIdPage
+  )
+
+  val individualWithOutIDPages = List(
     DoYouHaveNINPage,
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,
@@ -82,5 +84,7 @@ object PageLists {
     AddressLookupPage,
     AddressUKPage
   )
+
+  val allWithOutIDPages = List(WhatAreYouRegisteringAsPage) ++ businessWithOutIDPages ++ individualWithOutIDPages
 
 }

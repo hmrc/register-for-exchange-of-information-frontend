@@ -22,7 +22,6 @@ import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTyp
 import models._
 import pages._
 import play.api.mvc.Call
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import javax.inject.{Inject, Singleton}
 
@@ -55,7 +54,25 @@ class MDRNavigator @Inject() () extends Navigator {
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
     case DoYouHaveUniqueTaxPayerReferencePage => doYouHaveUniqueTaxPayerReference(CheckMode)
-    case _                                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case WhatAreYouRegisteringAsPage => regime => whatAreYouRegisteringAs(CheckMode)(regime)
+
+    //Business without ID
+    case BusinessWithoutIDNamePage     => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
+    case BusinessHaveDifferentNamePage => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
+    case WhatIsTradingNamePage         => regime => _ => Some(routes.AddressWithoutIdController.onPageLoad(CheckMode, regime))
+    case AddressWithoutIdPage => regime => addressWithoutID(CheckMode)(regime)
+
+    // Individual without ID
+    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
+    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode, regime))
+    case NonUkNamePage                         => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
+    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(CheckMode)
+    case DoYouLiveInTheUKPage                  => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
+    case WhatIsYourPostcodePage                => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
+    case AddressWithoutIdPage => regime => addressWithoutID(CheckMode)(regime)
+
+    //Default
+    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =

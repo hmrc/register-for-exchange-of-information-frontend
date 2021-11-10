@@ -30,16 +30,11 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(false) =>
-//        val pagesToRemove = (PageLists.allWithIDPages ++ PageLists.allContactDetailPages)
-
         (PageLists.allWithIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case Some(true) =>
-//        val pagesToRemove = (PageLists.allWithOutIDPages ++ PageLists.allContactDetailPages)
-
         (PageLists.allWithOutIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)
     }
-
 }
