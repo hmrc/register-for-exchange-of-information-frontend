@@ -39,6 +39,10 @@ trait Navigator {
         case None       => routes.IndexController.onPageLoad(regime)
       }
   }
+
+  def jumpToCYA(mode: Mode, regime: Regime, route: Call): Call =
+    if (mode == CheckMode) { routes.CheckYourAnswersController.onPageLoad(regime) }
+    else route
 }
 
 object Navigator {
