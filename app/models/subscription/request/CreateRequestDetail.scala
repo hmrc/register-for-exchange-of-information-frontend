@@ -49,7 +49,7 @@ object CreateRequestDetail {
   implicit val writes: OWrites[CreateRequestDetail] = Json.writes[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def convertTo(userAnswers: UserAnswers): Option[CreateRequestDetail] = {
+  def convertTo(safeId: String, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
 
     val individualOrSoleTrader = {
       (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
@@ -64,11 +64,10 @@ object CreateRequestDetail {
     secondContact match {
       case Right(secondContact) =>
         for {
-          matchingInfo   <- userAnswers.get(MatchingInfoPage)
           primaryContact <- PrimaryContact.convertTo(userAnswers)
         } yield CreateRequestDetail(
           IDType = idType,
-          IDNumber = matchingInfo.safeId,
+          IDNumber = safeId,
           tradingName = userAnswers.get(WhatIsTradingNamePage),
           isGBUser = isGBUser(userAnswers),
           primaryContact = primaryContact,
@@ -84,7 +83,11 @@ object CreateRequestDetail {
       case _ =>
         userAnswers.get(WhatAreYouRegisteringAsPage) match {
           case Some(RegistrationTypeIndividual) =>
-            userAnswers.get(DoYouHaveNINPage).contains(true)
+            userAnswers.get(DoYouHaveNINPage) match {
+              case Some(true) => true
+              case _ =>
+                userAnswers.get(DoYouLiveInTheUKPage).contains(true)
+            }
           case Some(RegistrationTypeBusiness) =>
             userAnswers.get(AddressWithoutIdPage).exists(_.isGB)
           case _ => false

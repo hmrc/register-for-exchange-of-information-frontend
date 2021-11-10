@@ -17,7 +17,8 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.matching.MatchingInfo
+import models.matching.MatchingType.AsOrganisation
+import models.matching.RegistrationInfo
 import models.register.response.details.AddressResponse
 import models.{BusinessType, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -72,8 +73,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockMatchingService.sendBusinessMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId", Some("name"), Some(address)))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -101,8 +102,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockMatchingService.sendBusinessMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId", Some("name"), Some(address)))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

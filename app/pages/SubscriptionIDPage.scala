@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import play.api.libs.json._
+import models.SubscriptionID
+import play.api.libs.json.JsPath
 
-case class NonUkName(givenName: String, familyName: String) {
+case object SubscriptionIDPage extends QuestionPage[SubscriptionID] {
 
-  val toName: Name = Name(givenName, familyName) // TODO possible unification ?
-}
+  override def path: JsPath = JsPath \ toString
 
-object NonUkName {
-  implicit val format = Json.format[NonUkName]
+  override def toString: String = "subscriptionID"
 }

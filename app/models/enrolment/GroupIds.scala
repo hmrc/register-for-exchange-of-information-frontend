@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.enrolment
 
-import play.api.libs.json._
+import play.api.libs.json.{Json, Reads}
 
-case class NonUkName(givenName: String, familyName: String) {
+case class GroupIds(principalGroupIds: Seq[String], delegatedGroupIds: Seq[String])
 
-  val toName: Name = Name(givenName, familyName) // TODO possible unification ?
-}
-
-object NonUkName {
-  implicit val format = Json.format[NonUkName]
+object GroupIds {
+  implicit val reads: Reads[GroupIds] = Json.reads[GroupIds]
 }

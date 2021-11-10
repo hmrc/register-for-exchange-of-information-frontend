@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package models
+package models.enrolment
 
-import play.api.libs.json._
+import base.SpecBase
 
-case class NonUkName(givenName: String, familyName: String) {
-
-  val toName: Name = Name(givenName, familyName) // TODO possible unification ?
-}
-
-object NonUkName {
-  implicit val format = Json.format[NonUkName]
-}
+class EnrolmentRequestSpec extends SpecBase {}
