@@ -19,9 +19,8 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import models.matching.MatchingInfo
 import models.error.ApiError.NotFoundError
-import models.{Name, UserAnswers}
+import models.{MDR, Name, NormalMode, UserAnswers}
 import models.error.ApiError.NotFoundError
-import models.{MDR, Name, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
@@ -75,7 +74,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -93,7 +92,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)
-      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
+      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
 
       val result = route(app, request).value
 
@@ -108,7 +107,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

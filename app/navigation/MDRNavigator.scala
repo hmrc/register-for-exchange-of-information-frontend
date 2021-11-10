@@ -53,8 +53,31 @@ class MDRNavigator @Inject() () extends Navigator {
     case _                                     => _ => _ => None
   }
 
+  // todo check and filter if needed only for ticket
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
+    case WhatAreYouRegisteringAsPage           => regime => whatAreYouRegisteringAs(CheckMode)(regime)
+    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
+    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode, regime))
+    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
+    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(CheckMode)
+    case BusinessWithoutIDNamePage             => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
+    case BusinessHaveDifferentNamePage         => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
+    case WhatIsTradingNamePage                 => regime => _ => Some(routes.AddressWithoutIdController.onPageLoad(CheckMode, regime))
+    case NonUkNamePage                         => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
+    case DoYouLiveInTheUKPage                  => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
+    case AddressUKPage                         => regime => _ => Some(routes.ContactEmailController.onPageLoad(CheckMode, regime))
+    case AddressWithoutIdPage                  => regime => addressWithoutID(CheckMode)(regime)
+    case WhatIsYourPostcodePage                => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
+    case SelectAddressPage                     => regime => _ => Some(routes.ContactEmailController.onPageLoad(CheckMode, regime))
+    case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(CheckMode, regime))
+    case UTRPage                               => isSoleProprietor(CheckMode)
+    case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
+    case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
+    case IsThisYourBusinessPage                => isThisYourBusiness(CheckMode)
+
+    case MatchingInfoPage => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case _                => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
@@ -90,7 +113,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def whatIsYourDateOfBirthRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime)
+      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad(mode, regime)
       case false => routes.DoYouLiveInTheUKController.onPageLoad(mode, regime)
     }
 

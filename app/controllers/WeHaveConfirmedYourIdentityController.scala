@@ -22,7 +22,7 @@ import models.error.ApiError
 import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
 import models.requests.DataRequest
 import pages.{MatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
-import models.{BusinessType, NormalMode, Regime}
+import models.{BusinessType, CheckMode, Mode, NormalMode, Regime}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -49,16 +49,21 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] =
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
 
       implicit request =>
         // TODO confirm redirection logic
-        val action: String = request.userAnswers.get(BusinessTypePage) match {
-          case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-          case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
-          case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+        val action = mode match {
+          case NormalMode =>
+            request.userAnswers.get(BusinessTypePage) match {
+              case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+              case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
+              case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+            }
+          case CheckMode => routes.CheckYourAnswersController.onPageLoad(regime).url
         }
+
         val json = Json.obj(
           "regime" -> regime.toUpperCase,
           "action" -> action
