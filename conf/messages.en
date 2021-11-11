@@ -504,3 +504,10 @@ pageNotFound.bullet3 = you’ve typed or copied a web address incorrectly
 pageNotFound.p2 = If the web address is correct or you selected a link or button, and you have queries, you can email
 pageNotFound.email = enquiries.aeoi@hmrc.gov.uk
 pageNotFound.p3 = Check you have entered the correct details.
+
+businessAlreadyRegistered.title = Your Organisation is already registered to use the MDR service
+businessAlreadyRegistered.heading = Your Organisation is already registered to use the MDR service
+businessAlreadyRegistered.withOutID.information = You can access the service using the Government Gateway account you used to register for MDR
+businessAlreadyRegistered.withOutID.GGLink = Sign into your Government Gateway account (opens in a new tab)
+businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the ‘Manage account’ settings within their Business Tax Account.
+businessAlreadyRegistered.help = If you're having problems accessing the service, you can email
