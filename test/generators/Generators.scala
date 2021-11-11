@@ -65,6 +65,14 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validUtr: Gen[String] = RegexpGen.from(utrRegex)
 
+  def validNino: Gen[String] = RegexpGen.from(ninoRegex)
+
+  val subscriptionIDRegex              = "^[X][A-Z][0-9]{13}"
+  def validSubscriptionID: Gen[String] = RegexpGen.from(subscriptionIDRegex)
+
+  val safeIDRegex              = "^[0-9A-Za-z]{1,15}"
+  def validSafeID: Gen[String] = RegexpGen.from(safeIDRegex)
+
   def validArrangementID: Gen[String] = RegexpGen.from(arrangementIDRegex)
 
   def validDisclosureID: Gen[String] = RegexpGen.from(disclosureIDRegex)

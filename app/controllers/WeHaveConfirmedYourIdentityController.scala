@@ -16,18 +16,18 @@
 
 package controllers
 
+import cats.data.EitherT
+import cats.implicits._
 import controllers.actions._
-import models.matching.MatchingInfo
 import models.error.ApiError
-import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
+import models.error.ApiError.NotFoundError
+import models.matching.RegistrationInfo
 import models.requests.DataRequest
-import pages.{MatchingInfoPage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import models.{BusinessType, NormalMode, Regime}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService
@@ -47,7 +47,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with WithEitherT {
 
   def onPageLoad(regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
@@ -64,26 +65,28 @@ class WeHaveConfirmedYourIdentityController @Inject() (
           "action" -> action
         )
 
-        matchIndividualInfo flatMap {
-          case Right(matchingInfo) =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(MatchingInfoPage, matchingInfo))
-              _              <- sessionRepository.set(updatedAnswers)
-              html           <- renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
-            } yield html
-          case Left(NotFoundError) =>
-            Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
-          case _ =>
-            renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
-        }
+        (for {
+          registrationInfo <- EitherT(matchIndividualInfo(regime))
+          updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
+        } yield sessionRepository.set(updatedAnswers))
+          .fold[Future[Result]](
+            fa = {
+              case NotFoundError =>
+                Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
+              case _ =>
+                renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+            },
+            fb = _ => renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+          )
+          .flatten
 
     }
 
-  private def matchIndividualInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
+  private def matchIndividualInfo(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, RegistrationInfo]] =
     (for {
-      nino <- request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
-      name <- request.userAnswers.get(WhatIsYourNamePage).orElse(request.userAnswers.get(SoleNamePage))
-      dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
-    } yield matchingService.sendIndividualMatchingInformation(nino, name, dob))
-      .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
+      nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
+      name             <- getEither(WhatIsYourNamePage).orElse(getEither(SoleNamePage))
+      dob              <- getEither(WhatIsYourDateOfBirthPage)
+      registrationInfo <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, nino, name, dob))
+    } yield registrationInfo).value
 }

@@ -89,7 +89,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
 
   def fieldWithValidatedRegex(form: Form[_], fieldName: String, maxLength: Int, invalidError: FormError): Unit =
-    s"must not bind strings longer than $maxLength characters" in {
+    s"must not bind strings longer than $maxLength characters & invalid regex" in {
 
       forAll(stringsLongerThan(maxLength) -> "longString") {
         string =>

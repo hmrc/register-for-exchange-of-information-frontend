@@ -16,68 +16,64 @@
 
 package controllers
 
+import cats.data.EitherT
+import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
-import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError}
-import models.requests.DataRequest
-import pages.{DoYouHaveNINPage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
-import play.api.Logging
-import models.BusinessType.Sole
-import models.{Regime, WhatAreYouRegisteringAs}
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
-import models.requests.DataRequest
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEnrolmentError}
+import models.{Regime, SubscriptionID, WhatAreYouRegisteringAs}
 import navigation.Navigator
-import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
+import pages._
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.SubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
+import repositories.SessionRepository
+import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
 import utils.{CheckYourAnswersHelper, CountryListFactory}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   subscriptionService: SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
+  taxEnrolmentsService: TaxEnrolmentService,
   countryFactory: CountryListFactory,
+  registrationService: RegistrationService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with Logging {
+    with Logging
+    with WithEitherT {
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       val helper                                = new CheckYourAnswersHelper(request.userAnswers, regime, countryListFactory = countryFactory)
       val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
 
-      val contactHeading = if (getRegisteringAsBusiness()) "checkYourAnswers.firstContact.h2" else "checkYourAnswers.contactDetails.h2"
-
-      val header: String =
-        (request.userAnswers.get(BusinessTypePage), request.userAnswers.get(WhatAreYouRegisteringAsPage)) match {
-          case (Some(_), _)                                                => "checkYourAnswers.businessDetails.h2"
-          case (_, Some(WhatAreYouRegisteringAs.RegistrationTypeBusiness)) => "checkYourAnswers.businessDetails.h2"
-          case _                                                           => "checkYourAnswers.individualDetails.h2"
-        }
+      val isBusiness = registrationService.isRegisteringAsBusiness()
+      val (contactHeading, header) =
+        if (isBusiness) ("firstContact", "businessDetails") else ("contactDetails", "individualDetails")
 
       renderer
         .render(
           "checkYourAnswers.njk",
           Json.obj(
-            "header"              -> header,
             "regime"              -> regime.toUpperCase,
-            "contactHeading"      -> contactHeading,
-            "isBusiness"          -> getRegisteringAsBusiness(),
+            "isBusiness"          -> isBusiness,
+            "header"              -> s"checkYourAnswers.$header.h2",
+            "contactHeading"      -> s"checkYourAnswers.$contactHeading.h2",
             "businessDetailsList" -> businessDetails,
             "firstContactList"    -> helper.buildFirstContact,
             "secondContactList"   -> helper.buildSecondContact,
@@ -87,38 +83,24 @@ class CheckYourAnswersController @Inject() (
         .map(Ok(_))
   }
 
-  private def getRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
-    (request.userAnswers.get(WhatAreYouRegisteringAsPage),
-     request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
-     request.userAnswers.get(BusinessTypePage)
-    ) match { //ToDo defaulting to registering for business change when paths created if necessary
-      case (None, Some(true), Some(Sole))                   => false
-      case (None, Some(true), _)                            => true
-      case (Some(RegistrationTypeBusiness), Some(false), _) => true
-      case _                                                => false
-    }
-
-  private def createSubscription(regime: Regime, userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Result] =
-    subscriptionService.createSubscription(userAnswers) flatMap {
-      case Right(subscriptionID) =>
-        logger.info(s"The subscriptionId id $subscriptionID")
-        Future.successful(NotImplemented("Not implemented"))
-      case Left(MandatoryInformationMissingError) => Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-      case Left(DuplicateSubmissionError) =>
-        Future.successful(NotImplemented("DuplicateSubmission is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
-      case Left(BadRequestError) => renderer.render("thereIsAProblem.njk").map(BadRequest(_))
-      case _                     => renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
-    }
-
   def onSubmit(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
-      (request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
-       request.userAnswers.get(WhatAreYouRegisteringAsPage),
-       request.userAnswers.get(DoYouHaveNINPage)
-      ) match {
-        case (Some(false), _, Some(false) | None) => Future.successful(NotImplemented("Not implemented")) // TODO DAC6-1142
-        case (Some(_), _, Some(true) | None)      => createSubscription(regime, request.userAnswers)
-        case _                                    => Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-      }
+      (for {
+        registrationInfo   <- getEither(RegistrationInfoPage).orElse(EitherT(registrationService.registerWithoutId(regime)))
+        subscriptionID     <- EitherT(subscriptionService.createSubscription(registrationInfo.safeId, request.userAnswers))
+        withSubscriptionID <- setEither(SubscriptionIDPage, SubscriptionID(subscriptionID))
+        _ = sessionRepository.set(withSubscriptionID)
+        _ <- EitherT(taxEnrolmentsService.createEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
+      } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
+        .valueOrF {
+          case MandatoryInformationMissingError(error) =>
+            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
+          case DuplicateSubmissionError =>
+            Future.successful(NotImplemented("Duplicate Submission error page is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
+          case BadRequestError =>
+            renderer.render("thereIsAProblem.njk").map(BadRequest(_))
+          case _ =>
+            renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
+        }
   }
 }
