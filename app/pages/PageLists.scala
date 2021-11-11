@@ -62,7 +62,6 @@ object PageLists {
     UTRPage,
     SoleNamePage,
     IsThisYourBusinessPage,
-    MatchingInfoPage,
     BusinessNamePage
   )
 

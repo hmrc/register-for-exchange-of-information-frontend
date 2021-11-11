@@ -16,7 +16,6 @@
 
 package pages
 
-import models.matching.MatchingInfo
 import models.{Address, AddressLookup, BusinessType, Country, Name, NonUkName, UserAnswers, WhatAreYouRegisteringAs}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
@@ -52,9 +51,6 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .success
             .value
             .set(IsThisYourBusinessPage, true)
-            .success
-            .value
-            .set(MatchingInfoPage, MatchingInfo("safeId", Some("businessName"), None))
             .success
             .value
             .set(BusinessNamePage, "businessName")
@@ -95,7 +91,6 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
           result.get(UTRPage) must not be defined
           result.get(SoleNamePage) must not be defined
           result.get(IsThisYourBusinessPage) must not be defined
-          result.get(MatchingInfoPage) must not be defined
           result.get(BusinessNamePage) must not be defined
           result.get(ContactNamePage) must not be defined
           result.get(ContactEmailPage) must not be defined
