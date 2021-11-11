@@ -69,33 +69,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .set(AddressUKPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
             .success
             .value
-            .set(ContactNamePage, "contactName")
-            .success
-            .value
-            .set(ContactEmailPage, "email@email.com")
-            .success
-            .value
-            .set(IsContactTelephonePage, true)
-            .success
-            .value
-            .set(ContactPhonePage, "07540000000")
-            .success
-            .value
-            .set(SecondContactPage, true)
-            .success
-            .value
-            .set(SndContactNamePage, "secondContactName")
-            .success
-            .value
-            .set(SndContactEmailPage, "email2@email.com")
-            .success
-            .value
-            .set(SndConHavePhonePage, true)
-            .success
-            .value
-            .set(SndContactPhonePage, "07540000000")
-            .success
-            .value
             .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
             .success
             .value
@@ -109,15 +82,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
           result.get(WhatIsYourPostcodePage) must not be defined
           result.get(AddressLookupPage) must not be defined
           result.get(AddressUKPage) must not be defined
-          result.get(ContactNamePage) must not be defined
-          result.get(ContactEmailPage) must not be defined
-          result.get(IsContactTelephonePage) must not be defined
-          result.get(ContactPhonePage) must not be defined
-          result.get(SecondContactPage) must not be defined
-          result.get(SndContactNamePage) must not be defined
-          result.get(SndContactEmailPage) must not be defined
-          result.get(SndConHavePhonePage) must not be defined
-          result.get(SndContactPhonePage) must not be defined
       }
     }
 
@@ -138,33 +102,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .set(AddressWithoutIdPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
             .success
             .value
-            .set(ContactNamePage, "contactName")
-            .success
-            .value
-            .set(ContactEmailPage, "email@email.com")
-            .success
-            .value
-            .set(IsContactTelephonePage, true)
-            .success
-            .value
-            .set(ContactPhonePage, "07540000000")
-            .success
-            .value
-            .set(SecondContactPage, true)
-            .success
-            .value
-            .set(SndContactNamePage, "secondContactName")
-            .success
-            .value
-            .set(SndContactEmailPage, "email2@email.com")
-            .success
-            .value
-            .set(SndConHavePhonePage, true)
-            .success
-            .value
-            .set(SndContactPhonePage, "07540000000")
-            .success
-            .value
             .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
             .success
             .value
@@ -174,15 +111,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
           result.get(WhatIsTradingNamePage) must not be defined
           result.get(WhatIsTradingNamePage) must not be defined
           result.get(AddressWithoutIdPage) must not be defined
-          result.get(ContactNamePage) must not be defined
-          result.get(ContactEmailPage) must not be defined
-          result.get(IsContactTelephonePage) must not be defined
-          result.get(ContactPhonePage) must not be defined
-          result.get(SecondContactPage) must not be defined
-          result.get(SndContactNamePage) must not be defined
-          result.get(SndContactEmailPage) must not be defined
-          result.get(SndConHavePhonePage) must not be defined
-          result.get(SndContactPhonePage) must not be defined
       }
     }
   }

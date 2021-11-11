@@ -21,7 +21,7 @@ import forms.BusinessWithoutIDNameFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.MDRNavigator
-import pages.BusinessWithoutIDNamePage
+import pages.{BusinessWithoutIDNamePage, DoYouHaveUniqueTaxPayerReferencePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -76,9 +76,10 @@ class BusinessWithoutIDNameController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, regime, updatedAnswers))
+                originalUserAnswer: Option[String] <- Future(request.userAnswers.get(BusinessWithoutIDNamePage))
+                updatedAnswers                     <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value))
+                _                                  <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, regime, updatedAnswers, originalUserAnswer))
           )
     }
 }

@@ -59,19 +59,13 @@ class MDRNavigator @Inject() () extends Navigator {
     //Business without ID
     case BusinessWithoutIDNamePage     => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
     case BusinessHaveDifferentNamePage => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
-    case WhatIsTradingNamePage         => regime => _ => Some(routes.AddressWithoutIdController.onPageLoad(CheckMode, regime))
-    case AddressWithoutIdPage => regime => addressWithoutID(CheckMode)(regime)
+    case WhatIsTradingNamePage         => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
+    case AddressWithoutIdPage =>
+      regime =>
+        _ =>
+          Some(routes.CheckYourAnswersController.onPageLoad(regime))
 
-    // Individual without ID
-    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
-    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode, regime))
-    case NonUkNamePage                         => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
-    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(CheckMode)
-    case DoYouLiveInTheUKPage                  => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
-    case WhatIsYourPostcodePage                => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
-    case AddressWithoutIdPage => regime => addressWithoutID(CheckMode)(regime)
-
-    //Default
+      //Default
     case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 

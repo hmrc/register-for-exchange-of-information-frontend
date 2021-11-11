@@ -139,8 +139,8 @@ POST       /:regime/register/change-select-address                 controllers.S
 
 GET        /:regime/register/without-id/business-name            controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
 POST       /:regime/register/without-id/business-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
-GET        /:regime/register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
-POST       /:regime/register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+GET        /:regime/register/without-id/change-business-name     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+POST       /:regime/register/without-id/change-business-name     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 
 GET        /:regime/register/business-type                      controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
 POST       /:regime/register/business-type                      controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)

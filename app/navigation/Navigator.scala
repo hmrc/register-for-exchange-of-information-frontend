@@ -23,27 +23,37 @@ import play.api.libs.json.Reads
 import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
 
+import scala.concurrent.Future
+
 trait Navigator {
 
   val normalRoutes: Page => Regime => UserAnswers => Option[Call]
 
   val checkRouteMap: Page => Regime => UserAnswers => Option[Call]
 
-  def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers, valueHasChanged: Boolean = false): Call = mode match {
-    case NormalMode =>
-      normalRoutes(page)(regime)(userAnswers) match {
-        case Some(call) => call
-        case None       => routes.IndexController.onPageLoad(regime)
-      }
+  def nextPage[A](page: QuestionPage[A], mode: Mode, regime: Regime, userAnswers: UserAnswers, oldValue: Option[A] = None)(implicit rds: Reads[A]): Call = {
 
-    case CheckMode if valueHasChanged =>
-      routes.CheckYourAnswersController.onPageLoad(regime)
+    val userValueUnchanged = userAnswers
+      .get(page)
+      .fold(false)(
+        newUserValue => newUserValue.equals(oldValue.getOrElse(false))
+      )
 
-    case CheckMode =>
-      checkRouteMap(page)(regime)(userAnswers) match {
-        case Some(call) => call
-        case None       => routes.IndexController.onPageLoad(regime)
-      }
+    mode match {
+
+      case NormalMode =>
+        normalRoutes(page)(regime)(userAnswers) match {
+          case Some(call) => call
+          case None       => routes.IndexController.onPageLoad(regime)
+        }
+
+      case CheckMode =>
+        checkRouteMap(page)(regime)(userAnswers) match {
+          case Some(_) if userValueUnchanged => routes.CheckYourAnswersController.onPageLoad(regime)
+          case Some(call)                    => call
+          case None                          => routes.IndexController.onPageLoad(regime)
+        }
+    }
   }
 }
 

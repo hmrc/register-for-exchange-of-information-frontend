@@ -20,12 +20,12 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveUniqueTaxPayerReferenceFormProvider
 import models.requests.DataRequest
-import models.{CheckMode, Mode, Regime, UserAnswers}
+import models.{Mode, Regime, UserAnswers}
 import navigation.MDRNavigator
-import pages.{DoYouHaveUniqueTaxPayerReferencePage, QuestionPage}
+import pages.DoYouHaveUniqueTaxPayerReferencePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api
 import renderer.Renderer
@@ -83,15 +83,12 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-              value => {
-
-                val hasValueChanged = hasUserChangedAnswer(value, DoYouHaveUniqueTaxPayerReferencePage, request.userAnswers, mode)
-
+              value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers, hasValueChanged))
-              }
+                  originalUserAnswer: Option[Boolean] <- Future(request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage))
+                  updatedAnswers: UserAnswers         <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
+                  _                                   <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers, originalUserAnswer))
             )
       }
 

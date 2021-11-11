@@ -28,6 +28,9 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
   override def toString: String = "doYouHaveUniqueTaxPayerReference"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    //TODO - Because we clear down the full journey depending on the answer here
+    // If user comes from CYA page to 'DoYouHaveAUTR?' We need to switch mode from CheckMode back to NormalMode
+    // to ensure full journey is completed if user decides to change their answer
     value match {
       case Some(false) =>
         (PageLists.allWithIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)

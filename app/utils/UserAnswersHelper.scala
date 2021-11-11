@@ -16,19 +16,11 @@
 
 package utils
 
-import models.{CheckMode, Mode, UserAnswers}
 import models.requests.DataRequest
-import pages.{ContactNamePage, QuestionPage}
-import play.api.libs.json.Reads
+import pages.ContactNamePage
 import play.api.mvc.AnyContent
 
 trait UserAnswersHelper {
-
-  def hasUserChangedAnswer[T](value: T, page: QuestionPage[T], ua: UserAnswers, mode: Mode)(implicit rds: Reads[T]): Boolean =
-    ua.get(page) match {
-      case Some(storedAnswer) if mode.equals(CheckMode) && storedAnswer.equals(value) => true
-      case _                                                                          => false
-    }
 
   def hasContactName()(implicit request: DataRequest[AnyContent]): Boolean =
     request.userAnswers.get(ContactNamePage) match {

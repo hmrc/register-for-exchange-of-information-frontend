@@ -33,12 +33,6 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
 
     "in Normal mode" - {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, MDR, UserAnswers("id")) mustBe routes.IndexController.onPageLoad(MDR)
-      }
-
       "must go from Contact Name page to Contact Email page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

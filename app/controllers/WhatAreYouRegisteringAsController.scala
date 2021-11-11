@@ -19,12 +19,12 @@ package controllers
 import controllers.actions._
 import forms.WhatAreYouRegisteringAsFormProvider
 import models.requests.DataRequest
-import models.{Mode, Regime, WhatAreYouRegisteringAs}
+import models.{Mode, Regime, UserAnswers, WhatAreYouRegisteringAs}
 import navigation.MDRNavigator
-import pages.WhatAreYouRegisteringAsPage
+import pages.{DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
@@ -77,9 +77,10 @@ class WhatAreYouRegisteringAsController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
+                originalUserAnswer <- Future(request.userAnswers.get(WhatAreYouRegisteringAsPage))
+                updatedAnswers     <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
+                _                  <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers, originalUserAnswer))
           )
     }
 }

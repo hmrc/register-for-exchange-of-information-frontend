@@ -31,10 +31,10 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
   override def cleanup(value: Option[WhatAreYouRegisteringAs], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(RegistrationTypeBusiness) =>
-        (PageLists.individualWithOutIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+        PageLists.individualWithOutIDPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case Some(RegistrationTypeIndividual) =>
-        (PageLists.businessWithOutIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+        PageLists.businessWithOutIDPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)
     }
