@@ -148,7 +148,7 @@ contactEmail.individual.heading = What is your email address?
 contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.error.required = Enter your email address
-contactEmail.error.length = Email address must be 254 characters or less
+contactEmail.error.length = Email address must be 256 characters or less
 contactEmail.error.invalid = Enter your email address in the correct format, like name@example.com
 
 isContactTelephone.title = Can we contact {0} by telephone?
@@ -188,7 +188,7 @@ sndContactEmail.heading = What is the email address for {0}?
 sndContactEmail.hint = We will use this to send confirmation of your reports and if we have any questions about them.
 sndContactEmail.checkYourAnswersLabel = Second contact email address
 sndContactEmail.error.required = Enter an email address
-sndContactEmail.error.length = Email address must be 254 characters or less
+sndContactEmail.error.length = Email address must be 256 characters or less
 sndContactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
 
 sndConHavePhone.title = Can we contact {0} by telephone?
@@ -304,7 +304,7 @@ addressWithoutId.error.addressLine1.invalid = Address line 1 must only include l
 addressWithoutId.error.addressLine2.invalid = Address line 2 must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 addressWithoutId.error.addressLine3.invalid = City must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
 addressWithoutId.error.addressLine4.invalid = Region (optional) must only include letters a to z, numbers 0 to 9, apostrophes, commas, ampersands, hyphens, full stops and spaces
-addressWithoutId.error.postcode.required = Enter a postcode
+addressWithoutId.error.postcode.required = If the address is in Jersey, Guernsey or the Isle of Man, enter postcode
 addressWithoutId.error.postcode.length = Postcode must be 10 characters or less
 addressWithoutId.error.postcode.invalid = Enter a postcode, like AA1 1AA
 
