@@ -41,8 +41,15 @@ trait RowBuilder {
       .msg()
       .withArgs(((if (isPlural) argIfPlural else argIfSingular) +: msgKey.tail): _*)
 
-  private[utils] def toRow(msgKey: String, value: Content, href: String, columnWidth: String = "govuk-!-width-one-half")(implicit messages: Messages): Row = {
-    val message         = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+  private[utils] def toRow(msgKey: String, value: Content, href: String, columnWidth: String = "govuk-!-width-one-half")(implicit
+    messages: Messages
+  ): Row = {
+    val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+    val hiddenText = if (messages.isDefinedAt(s"$msgKey.checkYourAnswersLabel.hiddenText")) {
+      MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel.hiddenText")).msg()
+    } else {
+      message
+    }
     val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
     Row(
       key = Key(message, classes = Seq(columnWidth)),
@@ -51,7 +58,7 @@ trait RowBuilder {
         Action(
           content = msg"site.edit",
           href = href,
-          visuallyHiddenText = Some(msg"site.edit.hidden".withArgs(message)),
+          visuallyHiddenText = Some(hiddenText),
           attributes = Map("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
         )
       )
