@@ -19,11 +19,12 @@ package utils
 import controllers.routes
 import models.matching.RegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
-import pages.{RegistrationInfoPage, SelectAddressPage}
+import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
+//noinspection ScalaStyle
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
   val messages: Messages
 ) extends RowBuilder {
@@ -332,43 +333,13 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  /** *************
-    *    Second contact
-    * *************
-    */
-
-  def buildSecondContact: Seq[SummaryList.Row] = {
-
-    val pagesToCheck = Tuple4(
+  def buildSecondContact: Seq[SummaryList.Row] =
+    Seq(
       secondContact,
       sndContactName,
       sndContactEmail,
       sndContactPhone
-    )
-
-    pagesToCheck match {
-      case (Some(_), None, None, None) =>
-        //No second contact
-        Seq(
-          secondContact
-        ).flatten
-      case (Some(_), Some(_), Some(_), None) =>
-        //No second contact phone
-        Seq(
-          secondContact,
-          sndContactName,
-          sndContactEmail
-        ).flatten
-      case _ =>
-        //All pages
-        Seq(
-          secondContact,
-          sndContactName,
-          sndContactEmail,
-          sndContactPhone
-        ).flatten
-    }
-  }
+    ).flatten
 
   def sndConHavePhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
     answer =>
@@ -379,20 +350,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndContactPhonePage) match {
-    case Some(answer)                                                      => buildSndContactPhoneRow(answer)
-    case None if userAnswers.get(pages.SecondContactPage).getOrElse(false) => buildSndContactPhoneRow("None")
-    case _                                                                 => None
-  }
-
-  private def buildSndContactPhoneRow(value: String): Option[Row] =
-    Some(
+  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
+    _ =>
+      val value = userAnswers.get(SndContactPhonePage).getOrElse("None")
       toRow(
         msgKey = "sndContactPhone",
         value = lit"$value",
         href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
       )
-    )
+  }
 
   def sndContactEmail: Option[Row] = userAnswers.get(pages.SndContactEmailPage) map {
     answer =>
@@ -421,35 +387,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  /** *************
-    *    First contact
-    * *************
-    */
-
-  def buildFirstContact: Seq[SummaryList.Row] = {
-
-    val pagesToCheck = Tuple3(
+  def buildFirstContact: Seq[SummaryList.Row] =
+    Seq(
       contactName,
       contactEmail,
       contactPhone
-    )
-
-    pagesToCheck match {
-      case (Some(_), Some(_), None) =>
-        //No contact telephone
-        Seq(
-          contactName,
-          contactEmail
-        ).flatten
-      case _ =>
-        //All pages
-        Seq(
-          contactName,
-          contactEmail,
-          contactPhone
-        ).flatten
-    }
-  }
+    ).flatten
 
   def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) match {
     case Some(answer) => buildContactPhoneRow(answer)
