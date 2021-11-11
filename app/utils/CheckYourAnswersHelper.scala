@@ -19,8 +19,7 @@ package utils
 import controllers.routes
 import models.matching.RegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
-import pages.{RegistrationInfoPage, SelectAddressPage}
-import pages.{MatchingInfoPage, SelectAddressPage, SndContactPhonePage}
+import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
