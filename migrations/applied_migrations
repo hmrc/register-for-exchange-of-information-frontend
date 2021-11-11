@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo ""
+echo "Applying migration BusinessAlreadyRegistered"
+
+echo "Adding routes to conf/app.routes"
+echo "" >> ../conf/app.routes
+echo "GET        /businessAlreadyRegistered                       controllers.BusinessAlreadyRegisteredController.onPageLoad()" >> ../conf/app.routes
+
+echo "Adding messages to conf.messages"
+echo "" >> ../conf/messages.en
+echo "businessAlreadyRegistered.title = businessAlreadyRegistered" >> ../conf/messages.en
+echo "businessAlreadyRegistered.heading = businessAlreadyRegistered" >> ../conf/messages.en
+
+echo "Migration BusinessAlreadyRegistered completed"
