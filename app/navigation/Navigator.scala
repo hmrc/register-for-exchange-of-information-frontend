@@ -29,25 +29,22 @@ trait Navigator {
 
   val checkRouteMap: Page => Regime => UserAnswers => Option[Call]
 
-  def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers): Call = mode match {
+  def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers, valueHasChanged: Boolean = false): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(regime)(userAnswers) match {
         case Some(call) => call
         case None       => routes.IndexController.onPageLoad(regime)
       }
+
+    case CheckMode if valueHasChanged =>
+      routes.CheckYourAnswersController.onPageLoad(regime)
+
     case CheckMode =>
       checkRouteMap(page)(regime)(userAnswers) match {
         case Some(call) => call
         case None       => routes.IndexController.onPageLoad(regime)
       }
   }
-
-  def checkValueChangedBeforeRedirect[T](value: T, page: QuestionPage[T], ua: UserAnswers, mode: Mode, regime: Regime)(implicit rds: Reads[T]): Result =
-    ua.get(page) match {
-      case Some(storedAnswer) if mode.equals(CheckMode) && storedAnswer.equals(value) => Redirect(routes.CheckYourAnswersController.onPageLoad(regime))
-      case _                                                                          => Redirect(nextPage(page, mode, regime, ua))
-    }
-
 }
 
 object Navigator {

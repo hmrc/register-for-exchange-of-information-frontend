@@ -77,13 +77,13 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, false)
-                .success
-                .value
                 .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
                 .set(BusinessTypePage, LimitedCompany)
+                .success
+                .value
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
 
@@ -98,13 +98,13 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, false)
-                .success
-                .value
                 .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                 .success
                 .value
                 .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+                .success
+                .value
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
 
@@ -119,13 +119,13 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, false)
-                .success
-                .value
                 .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
                 .set(BusinessTypePage, Sole)
+                .success
+                .value
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
 
