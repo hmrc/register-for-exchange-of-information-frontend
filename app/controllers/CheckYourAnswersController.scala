@@ -95,8 +95,6 @@ class CheckYourAnswersController @Inject() (
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case UnableToCreateEnrolmentError =>
-            Future.successful(NotImplemented("Create Enrolment error page is not implemented")) //TODO create UnableToCreateEnrolment page
           case DuplicateSubmissionError =>
             Future.successful(NotImplemented("Duplicate Submission error page is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
           case BadRequestError =>
