@@ -102,7 +102,7 @@ needContactDetails.p2 = We need these before you can send a country-by-country r
 contactName.title = Who can we contact if we have questions about your reports?
 contactName.heading = Who can we contact if we have questions about your reports?
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
-contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
+contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
 contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 contactName.error.length = Name must be 35 characters or less
 
@@ -137,7 +137,7 @@ contactName.title = Who can we contact if we have questions about your reports?
 contactName.heading = Who can we contact if we have questions about your reports?
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 contactName.checkYourAnswersLabel = Contact name
-contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
+contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
 contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 contactName.error.length = Name must be 35 characters or less
 
@@ -194,7 +194,7 @@ sndContactEmail.error.invalid = Enter an email address in the correct format, li
 sndConHavePhone.title = Can we contact {0} by telephone?
 sndConHavePhone.heading = Can we contact {0} by telephone?
 sndConHavePhone.hint = We will use this to keep in touch and if we have any questions about your reports.
-sndConHavePhone.error.required = Select yes if your second contact has a telephone number
+sndConHavePhone.error.required = Select yes if we can contact by telephone
 
 sndContactPhone.title = What is the telephone number for {0}?
 sndContactPhone.heading = What is the telephone number for {0}?
