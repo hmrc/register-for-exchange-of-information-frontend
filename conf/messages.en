@@ -96,9 +96,9 @@ needContactDetails.p2 = We need these before you can send a country-by-country r
 contactName.title = Who can we contact if we have questions about your reports?
 contactName.heading = Who can we contact if we have questions about your reports?
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
-contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
-contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-contactName.error.length = Name of the individual or team must be 35 characters or less
+contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
+contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+contactName.error.length = Name must be 35 characters or less
 
 phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
@@ -132,9 +132,9 @@ contactName.heading = Who can we contact if we have questions about your reports
 contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 contactName.checkYourAnswersLabel = Contact name
 contactName.checkYourAnswersLabel.hiddenText = contact name
-contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your report
-contactName.error.invalid = Name of individual or team must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-contactName.error.length = Name of the individual or team must be 35 characters or less
+contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
+contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
+contactName.error.length = Name must be 35 characters
 
 contactEmail.title = What is the email address for {0}?
 contactEmail.heading = What is the email address for {0}?
@@ -143,16 +143,16 @@ contactEmail.individual.heading = What is your email address?
 contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.checkYourAnswersLabel.hiddenText = email address
-contactEmail.error.required = Enter an email address
-contactEmail.error.length = Email address must be 254 characters or less
-contactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
+contactEmail.error.required = Enter your email address
+contactEmail.error.length = Email address must be 256 characters or less
+contactEmail.error.invalid = Enter your email address in the correct format, like name@example.com
 
 isContactTelephone.title = Can we contact {0} by telephone?
 isContactTelephone.heading = Can we contact {0} by telephone?
 isContactTelephone.individual.title = Can we contact you by telephone?
 isContactTelephone.individual.heading = Can we contact you by telephone?
 isContactTelephone.hint = We will use this to keep in touch and if we have any questions about your reports.
-isContactTelephone.error.required = Select yes if we can contact you by telephone
+isContactTelephone.error.required = Select yes if they can be contacted by telephone
 
 contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
@@ -163,7 +163,7 @@ contactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001,
 contactPhone.checkYourAnswersLabel = Telephone number
 contactPhone.checkYourAnswersLabel.hiddenText = telephone number
 contactPhone.error.required = Enter a telephone number
-contactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+contactPhone.error.invalid = Enter a telephone number in the correct format
 contactPhone.error.length = Contact phone must be 17 characters or less
 
 secondContact.title = Is there someone else we can contact?
@@ -188,13 +188,13 @@ sndContactEmail.hint = We will use this to send confirmation of your reports and
 sndContactEmail.checkYourAnswersLabel = Second contact email address
 sndContactEmail.checkYourAnswersLabel.hiddenText = second contact email address
 sndContactEmail.error.required = Enter an email address
-sndContactEmail.error.length = Email address must be 254 characters or less
+sndContactEmail.error.length = Email address must be 256 characters or less
 sndContactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
 
 sndConHavePhone.title = Can we contact {0} by telephone?
 sndConHavePhone.heading = Can we contact {0} by telephone?
 sndConHavePhone.hint = We will use this to keep in touch and if we have any questions about your reports.
-sndConHavePhone.error.required = Select yes if your second contact has a telephone number
+sndConHavePhone.error.required = Select yes if they can be contacted by telephone
 
 sndContactPhone.title = What is the telephone number for {0}?
 sndContactPhone.heading = What is the telephone number for {0}?
@@ -202,7 +202,7 @@ sndContactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;0
 sndContactPhone.checkYourAnswersLabel = Second contact telephone number
 sndContactPhone.checkYourAnswersLabel.hiddenText = second contact telephone number
 sndContactPhone.error.required = Enter a telephone number
-sndContactPhone.error.invalid = Enter a telephone number, like 01632 960 001, 07700 900 982 or +44 0808 157 0192
+sndContactPhone.error.invalid = Enter a telephone number in the correct format
 sndContactPhone.error.length = Contact phone must be 17 characters or less
 
 checkYourAnswers.title = Check your answers before you register to report for MDR
@@ -222,7 +222,7 @@ doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel.hiddenText =  if you have
 doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.hint = This is a 10 digit number issued by HMRC and is used to identify individual taxpayers. It will be on tax returns and other letters about Self Assessment or Corporation Tax. You can
 doYouHaveUniqueTaxPayerReference.hint.link = find a lost UTR number (opens in a new tab)
-doYouHaveUniqueTaxPayerReference.error.required = Select yes if have a UK Unique Taxpayer Reference
+doYouHaveUniqueTaxPayerReference.error.required = Select yes if you have a UTR
 
 weCouldNotConfirm.title = We could not {0}
 weCouldNotConfirm.heading = We could not {0}
