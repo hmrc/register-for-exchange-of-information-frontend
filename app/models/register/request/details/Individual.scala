@@ -17,7 +17,7 @@
 package models.register.request.details
 
 import models.Name
-import play.api.libs.json.{Json, OWrites, Reads, _}
+import play.api.libs.json._
 
 import java.time.LocalDate
 
