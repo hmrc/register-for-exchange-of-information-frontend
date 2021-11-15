@@ -216,6 +216,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(SndContactEmailPage, secondContactEmail)
           .success
           .value
+          .set(SndConHavePhonePage, true)
+          .success
+          .value
           .set(SndContactPhonePage, secondContactPhone)
           .success
           .value
@@ -267,6 +270,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .success
           .value
           .set(SndContactEmailPage, secondContactEmail)
+          .success
+          .value
+          .set(SndConHavePhonePage, false)
           .success
           .value
 
@@ -378,7 +384,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val result = route(app, request).value
 
-        status(result) mustEqual NOT_IMPLEMENTED
+        status(result) mustEqual INTERNAL_SERVER_ERROR
       }
 
       "must redirect to 'confirmation' page for 'Individual without Id' journey" in {

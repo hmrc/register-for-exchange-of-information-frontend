@@ -19,11 +19,12 @@ package utils
 import controllers.routes
 import models.matching.RegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
-import pages.{RegistrationInfoPage, SelectAddressPage}
+import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
+//noinspection ScalaStyle
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
   val messages: Messages
 ) extends RowBuilder {
@@ -60,7 +61,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           helper.doYouHaveUniqueTaxPayerReference,
           helper.whatAreYouRegisteringAs,
           helper.businessWithoutIDName,
-          helper.businessHaveDifferentName,
           helper.whatIsTradingName,
           helper.addressWithoutIdBusiness
         ).flatten
@@ -72,7 +72,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           helper.doYouHaveNIN,
           helper.nonUkName,
           helper.whatIsYourDateOfBirth,
-          helper.doYouLiveInTheUK,
           helper.addressWithoutIdIndividual,
           helper.addressUK,
           helper.selectAddress //ToDo hook selectAddress logic
@@ -96,7 +95,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     }
   }
 
-  def confirmBusiness: Option[Row] =
+  def confirmBusiness: Option[Row] = {
+    val paragraphClass = """govuk-!-margin-0"""
     userAnswers.get(pages.IsThisYourBusinessPage) match {
       case Some(true) =>
         for {
@@ -105,44 +105,53 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           address          <- RegistrationInfo.address
           countryName      <- countryListFactory.getDescriptionFromCode(address.countryCode)
         } yield toRow(
-          msgKey = "businessWithoutIDName",
+          msgKey = "businessWithIDName",
           value = Html(s"""
-                  $businessName<br><br>
-                  ${address.addressLine1}<br>
+                  <p>$businessName</p>
+                  <p class=$paragraphClass>${address.addressLine1}</p>
                   ${address.addressLine2.fold("")(
-            address => s"$address<br>"
-          )}<br>
+            address => s"<p class=$paragraphClass>$address</p>"
+          )}
                   ${address.addressLine3.fold("")(
-            address => s"$address<br>"
+            address => s"<p class=$paragraphClass>$address</p>"
           )}
                   ${address.addressLine4.fold("")(
-            address => s"$address<br>"
+            address => s"<p class=$paragraphClass>$address</p>"
           )}
-                  ${address.postCodeFormatter(address.postalCode).getOrElse("")}<br>
-                  $countryName
+                 <p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
+                 ${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
                   """),
           href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
         )
       case _ => None
     }
+  }
 
-  def whatIsTradingName: Option[Row] = userAnswers.get(pages.WhatIsTradingNamePage) map {
-    answer =>
+  def whatIsTradingName: Option[Row] = {
+
+    val value = userAnswers.get(pages.WhatIsTradingNamePage) match {
+      case Some(answer) => answer
+      case None         => "None"
+    }
+
+    Some(
       toRow(
         msgKey = "whatIsTradingName",
-        value = lit"$answer",
-        href = routes.WhatIsTradingNameController.onPageLoad(CheckMode, regime).url
-      )
-  }
-
-  def businessHaveDifferentName: Option[Row] = userAnswers.get(pages.BusinessHaveDifferentNamePage) map {
-    answer =>
-      toRow(
-        msgKey = "businessHaveDifferentName",
-        value = yesOrNo(answer),
+        value = lit"$value",
         href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
       )
+    )
   }
+
+  def businessHaveDifferentName: Option[Row] =
+    userAnswers.get(pages.BusinessHaveDifferentNamePage) map { //ToDo delete when change routing finalised for WhatIsTradingName
+      answer =>
+        toRow(
+          msgKey = "businessHaveDifferentName",
+          value = yesOrNo(answer),
+          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
+        )
+    }
 
   def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
     answer =>
@@ -324,43 +333,13 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  /** *************
-    *    Second contact
-    * *************
-    */
-
-  def buildSecondContact: Seq[SummaryList.Row] = {
-
-    val pagesToCheck = Tuple4(
+  def buildSecondContact: Seq[SummaryList.Row] =
+    Seq(
       secondContact,
       sndContactName,
       sndContactEmail,
       sndContactPhone
-    )
-
-    pagesToCheck match {
-      case (Some(_), None, None, None) =>
-        //No second contact
-        Seq(
-          secondContact
-        ).flatten
-      case (Some(_), Some(_), Some(_), None) =>
-        //No second contact phone
-        Seq(
-          secondContact,
-          sndContactName,
-          sndContactEmail
-        ).flatten
-      case _ =>
-        //All pages
-        Seq(
-          secondContact,
-          sndContactName,
-          sndContactEmail,
-          sndContactPhone
-        ).flatten
-    }
-  }
+    ).flatten
 
   def sndConHavePhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
     answer =>
@@ -371,20 +350,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndContactPhonePage) match {
-    case Some(answer)                                                      => buildSndContactPhoneRow(answer)
-    case None if userAnswers.get(pages.SecondContactPage).getOrElse(false) => buildSndContactPhoneRow("None")
-    case _                                                                 => None
-  }
-
-  private def buildSndContactPhoneRow(value: String): Option[Row] =
-    Some(
+  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
+    _ =>
+      val value = userAnswers.get(SndContactPhonePage).getOrElse("None")
       toRow(
         msgKey = "sndContactPhone",
         value = lit"$value",
         href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
       )
-    )
+  }
 
   def sndContactEmail: Option[Row] = userAnswers.get(pages.SndContactEmailPage) map {
     answer =>
@@ -413,35 +387,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  /** *************
-    *    First contact
-    * *************
-    */
-
-  def buildFirstContact: Seq[SummaryList.Row] = {
-
-    val pagesToCheck = Tuple3(
+  def buildFirstContact: Seq[SummaryList.Row] =
+    Seq(
       contactName,
       contactEmail,
       contactPhone
-    )
-
-    pagesToCheck match {
-      case (Some(_), Some(_), None) =>
-        //No contact telephone
-        Seq(
-          contactName,
-          contactEmail
-        ).flatten
-      case _ =>
-        //All pages
-        Seq(
-          contactName,
-          contactEmail,
-          contactPhone
-        ).flatten
-    }
-  }
+    ).flatten
 
   def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) match {
     case Some(answer) => buildContactPhoneRow(answer)
