@@ -64,21 +64,10 @@ class MDRNavigator @Inject() () extends Navigator {
     case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
-  override val changeRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
-    case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
-    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
-    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
-    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(NormalMode)(regime)
-    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode, regime))
-    case RegistrationInfoPage                  => registrationInfo(ChangeMode)
-    case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
-  }
-
   private def registrationInfo(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(RegistrationInfoPage) match {
-      case Some(info) if info.safeId != ""   => Some(routes.IsThisYourBusinessController.onPageLoad(mode, regime))
-      case _ => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
+      case Some(info) if info.safeId != "" => Some(routes.IsThisYourBusinessController.onPageLoad(mode, regime))
+      case _                               => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =

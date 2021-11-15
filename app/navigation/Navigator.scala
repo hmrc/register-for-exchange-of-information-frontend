@@ -27,8 +27,6 @@ trait Navigator {
 
   val checkRouteMap: Page => Regime => UserAnswers => Option[Call]
 
-  val changeRouteMap: Page => Regime => UserAnswers => Option[Call] = _ => _ => _ => None
-
   def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(regime)(userAnswers) match {
@@ -40,16 +38,11 @@ trait Navigator {
         case Some(call) => call
         case None       => routes.IndexController.onPageLoad(regime)
       }
-    case ChangeMode =>
-      changeRouteMap(page)(regime)(userAnswers) match {
-        case Some(call) => call
-        case None       => routes.IndexController.onPageLoad(regime)
-      }
   }
 
   def jumpToCYA(mode: Mode, regime: Regime, route: Call): Call =
-    if (mode == CheckMode) { routes.CheckYourAnswersController.onPageLoad(regime) }
-    else route
+    if (mode != CheckMode) { route }
+    else { routes.CheckYourAnswersController.onPageLoad(regime) }
 }
 
 object Navigator {

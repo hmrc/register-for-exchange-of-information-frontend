@@ -22,6 +22,7 @@ import models.UserAnswers
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
 import models.requests.DataRequest
+import pages.QuestionPage
 import play.api.libs.json.{Reads, Writes}
 import play.api.mvc.AnyContent
 import queries.{Gettable, Settable}
@@ -37,12 +38,20 @@ trait WithEitherT {
         .toRight(MandatoryInformationMissingError(page.toString))
     }
 
-  def setEither[A](page: Settable[A],
-                   value: A
-  )(implicit ec: ExecutionContext, request: DataRequest[AnyContent], writes: Writes[A]): EitherT[Future, ApiError, UserAnswers] =
+  def getEither[A](value: Option[A], msg: String)(implicit
+    ec: ExecutionContext,
+    request: DataRequest[AnyContent],
+    reads: Reads[A]
+  ): EitherT[Future, ApiError, A] =
+    EitherT.fromOption(value, MandatoryInformationMissingError(msg))
+
+  def setEither[A](page: QuestionPage[A],
+                   value: A,
+                   checkPrevious: Boolean = false
+  )(implicit ec: ExecutionContext, request: DataRequest[AnyContent], writes: Writes[A], reads: Reads[A]): EitherT[Future, ApiError, UserAnswers] =
     EitherT.fromEither {
       request.userAnswers
-        .set(page, value)
+        .set(page, value, checkPrevious)
         .toOption
         .toRight(MandatoryInformationMissingError(page.toString))
     }
