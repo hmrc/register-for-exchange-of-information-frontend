@@ -18,7 +18,7 @@ package models.subscription.response
 
 import play.api.libs.json.{Format, Json}
 
-trait PartnerDetailsResponse
+sealed trait PartnerDetailsResponse
 
 case class IndividualResponse(
   firstName: String,
