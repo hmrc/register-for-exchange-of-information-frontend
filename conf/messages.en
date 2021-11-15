@@ -152,7 +152,7 @@ isContactTelephone.heading = Can we contact {0} by telephone?
 isContactTelephone.individual.title = Can we contact you by telephone?
 isContactTelephone.individual.heading = Can we contact you by telephone?
 isContactTelephone.hint = We will use this to keep in touch and if we have any questions about your reports.
-isContactTelephone.error.required = Select yes if we can contact you by telephone
+isContactTelephone.error.required = Select yes if they can be contacted by telephone
 
 contactPhone.title = What is the telephone number for {0}?
 contactPhone.heading = What is the telephone number for {0}?
