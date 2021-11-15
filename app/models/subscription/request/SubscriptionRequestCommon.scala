@@ -16,7 +16,6 @@
 
 package models.subscription.request
 
-import models.UserAnswers
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.ZonedDateTime

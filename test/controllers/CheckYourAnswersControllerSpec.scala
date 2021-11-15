@@ -582,8 +582,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Left(MandatoryInformationMissingError())))
 
         retrieveUserAnswersData(emptyUserAnswers)
-        val request        = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(MDR).url)
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(MDR).url)
 
         val result = route(app, request).value
 

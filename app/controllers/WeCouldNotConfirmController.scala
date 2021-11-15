@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import models.{NormalMode, Regime}
-import org.slf4j.LoggerFactory
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json

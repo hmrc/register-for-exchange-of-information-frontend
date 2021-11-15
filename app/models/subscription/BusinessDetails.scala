@@ -17,7 +17,7 @@
 package models.subscription
 
 import models.register.response.RegistrationWithIDResponse
-import models.subscription.response.{IndividualResponse, OrganisationResponse}
+import models.register.response.details.{IndividualResponse, OrganisationResponse}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
@@ -39,8 +39,8 @@ object BusinessDetails {
     val nameExtracted: Option[String] =
       payload.registerWithIDResponse.responseDetail.map {
         _.partnerDetails match {
-          case individualResponse: IndividualResponse     => s"${individualResponse.firstName} ${individualResponse.lastName}"
-          case organisationResponse: OrganisationResponse => organisationResponse.organisationName
+          case IndividualResponse(firstName, _, lastName, _)   => s"$firstName $lastName"
+          case OrganisationResponse(organisationName, _, _, _) => organisationName
         }
       }
 

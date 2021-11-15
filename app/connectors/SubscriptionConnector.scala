@@ -19,12 +19,12 @@ package connectors
 import cats.data.EitherT
 import cats.implicits._
 import config.FrontendAppConfig
+import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.CreateSubscriptionForMDRRequest
 import models.subscription.response.{DisplaySubscriptionForCBCResponse, SubscriptionIDResponse}
-import models.SubscriptionID
-import org.slf4j.LoggerFactory
+import play.api.Logging
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -33,9 +33,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) {
-
-  private val logger = LoggerFactory.getLogger(getClass)
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   def readSubscriptionDetails(safeID: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, DisplaySubscriptionForCBCResponse] =
     // TODO replace with actual implementation

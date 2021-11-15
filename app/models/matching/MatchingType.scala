@@ -17,7 +17,6 @@
 package models.matching
 
 import models.{Enumerable, WithName}
-import play.api.libs.json.Json
 
 sealed trait MatchingType
 

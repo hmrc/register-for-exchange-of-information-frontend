@@ -24,7 +24,8 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(
     name := appName,
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.12.12",
+    SilencerSettings(),
     ThisBuild / scalafmtOnCompile := true,
     RoutesKeys.routesImport += "models._",
     PlayKeys.playDefaultPort := 10015,
@@ -43,7 +44,7 @@ lazy val root = (project in file("."))
     Concat.groups := Seq(
       "javascripts/application.js" -> group(Seq("lib/govuk-frontend/govuk/all.js", "lib/hmrc-frontend/hmrc/all.js", "javascripts/app.js"))
     ),
-    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
+    uglifyCompressOptions := Seq("unused=false", "dead_code=false", "warnings=false"),
     Assets / pipelineStages := Seq(concat,uglify)
   )
 

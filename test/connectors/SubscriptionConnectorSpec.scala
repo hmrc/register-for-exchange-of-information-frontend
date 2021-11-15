@@ -26,7 +26,6 @@ import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.CreateSubscriptionForMDRRequest
-import models.subscription.response.SubscriptionIDResponse
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -76,8 +75,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
       }
 
       "must return UnableToCreateEMTPSubscriptionError for invalid response" in {
-        val subMDRRequest    = arbitrary[CreateSubscriptionForMDRRequest].sample.value
-        val expectedResponse = SubscriptionIDResponse("subscriptionID")
+        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
 
         val subscriptionResponse: String =
           s"""

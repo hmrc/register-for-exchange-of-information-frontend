@@ -22,9 +22,7 @@ import connectors.SubscriptionConnector
 import models.UserAnswers
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.RegistrationInfo
 import models.subscription.request.{CreateSubscriptionForMDRRequest, SubscriptionRequest}
-import models.subscription.response.SubscriptionIDResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
