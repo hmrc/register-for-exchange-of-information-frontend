@@ -18,18 +18,17 @@ package connectors
 
 import config.FrontendAppConfig
 import models.{AddressLookup, LookupAddressByPostcode, Regime}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status._
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import play.api.libs.json.Reads
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) {
-  private val logger: Logger = Logger(this.getClass)
+class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) extends Logging {
 
   def addressLookupByPostcode(postCode: String, regime: Regime)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 

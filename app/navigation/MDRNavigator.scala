@@ -22,7 +22,6 @@ import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTyp
 import models._
 import pages._
 import play.api.mvc.Call
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import javax.inject.{Inject, Singleton}
 
@@ -107,9 +106,9 @@ class MDRNavigator @Inject() () extends Navigator {
     }
 
   private def isThisYourBusiness(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    Option(ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) map {
-      case (Some(true), Some(Sole)) => routes.ContactEmailController.onPageLoad(mode, regime)
-      case (Some(true), Some(_))    => routes.ContactNameController.onPageLoad(mode, regime)
-      case _                        => routes.NoRecordsMatchedController.onPageLoad(regime)
+    (ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) match {
+      case (Some(true), Some(Sole)) => Some(routes.ContactEmailController.onPageLoad(mode, regime))
+      case (Some(true), Some(_))    => Some(routes.ContactNameController.onPageLoad(mode, regime))
+      case _                        => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }
 }

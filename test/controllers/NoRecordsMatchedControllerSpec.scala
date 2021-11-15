@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import config.FrontendAppConfig
 import models.{MDR, NormalMode}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -39,7 +38,6 @@ class NoRecordsMatchedControllerSpec extends SpecBase with ControllerMockFixture
 
       retrieveUserAnswersData(emptyUserAnswers)
       val request        = FakeRequest(GET, routes.NoRecordsMatchedController.onPageLoad(regime = MDR).url)
-      val appConfig      = app.injector.instanceOf[FrontendAppConfig]
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 

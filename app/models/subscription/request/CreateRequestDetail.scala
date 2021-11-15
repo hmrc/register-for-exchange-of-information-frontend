@@ -16,8 +16,8 @@
 
 package models.subscription.request
 
-import models.{BusinessType, UserAnswers}
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.{BusinessType, UserAnswers}
 import pages._
 import play.api.libs.json.{__, Json, OWrites, Reads}
 

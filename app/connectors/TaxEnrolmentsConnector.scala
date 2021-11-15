@@ -22,7 +22,7 @@ import models.Regime
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
 import models.error.ApiError.{ServiceUnavailableError, UnableToCreateEnrolmentError}
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReads.{is2xx, is4xx}
@@ -34,9 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxEnrolmentsConnector @Inject() (
   val config: FrontendAppConfig,
   val http: HttpClient
-) {
-
-  private val logger: Logger = Logger(this.getClass)
+) extends Logging {
 
   def createEnrolment(
     enrolmentInfo: SubscriptionInfo,

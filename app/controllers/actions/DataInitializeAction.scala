@@ -19,6 +19,7 @@ package controllers.actions
 import models.requests.{DataRequest, OptionalDataRequest}
 import models.{Regime, UserAnswers}
 import play.api.mvc.{ActionRefiner, Result}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

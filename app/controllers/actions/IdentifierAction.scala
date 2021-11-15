@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import models.Regime
 import models.requests.IdentifierRequest
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -57,8 +57,8 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends ActionBuilder[IdentifierRequest, AnyContent]
     with ActionFunction[Request, IdentifierRequest]
-    with AuthorisedFunctions {
-  private val logger: Logger = Logger(this.getClass)
+    with AuthorisedFunctions
+    with Logging {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 

@@ -17,11 +17,11 @@
 package models.register
 
 import models.register.request.details.Organisation
-import models.{BusinessType, Name, UserAnswers}
+import models.{Name, UserAnswers}
+import pages._
+import play.api.libs.json._
 
 import java.time.LocalDate
-import pages._
-import play.api.libs.json.{Json, OWrites, Reads, _}
 
 trait IndividualAndBusinessMatchingSubmission
 

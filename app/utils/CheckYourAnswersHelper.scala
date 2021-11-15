@@ -17,7 +17,6 @@
 package utils
 
 import controllers.routes
-import models.matching.RegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
 import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
@@ -100,9 +99,9 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     userAnswers.get(pages.IsThisYourBusinessPage) match {
       case Some(true) =>
         for {
-          RegistrationInfo <- userAnswers.get(RegistrationInfoPage)
-          businessName     <- RegistrationInfo.name
-          address          <- RegistrationInfo.address
+          registrationInfo <- userAnswers.get(RegistrationInfoPage)
+          businessName     <- registrationInfo.name
+          address          <- registrationInfo.address
           countryName      <- countryListFactory.getDescriptionFromCode(address.countryCode)
         } yield toRow(
           msgKey = "businessWithIDName",

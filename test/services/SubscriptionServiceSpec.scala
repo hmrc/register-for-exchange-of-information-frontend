@@ -25,7 +25,6 @@ import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
-import models.subscription.response.SubscriptionIDResponse
 import models.{Address, Country, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar

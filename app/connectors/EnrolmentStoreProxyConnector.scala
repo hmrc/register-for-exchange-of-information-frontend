@@ -18,12 +18,11 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
-import models.Regime
+import models.{Regime, SubscriptionID}
 import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MalformedError}
-import models.SubscriptionID
-import org.slf4j.LoggerFactory
+import play.api.Logging
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -32,9 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) {
-
-  private val logger = LoggerFactory.getLogger(getClass)
+class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   def enrolmentStatus(regime: Regime, subscriptionID: SubscriptionID)(implicit
     hc: HeaderCarrier,
@@ -60,7 +57,7 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
                     Right(())
                   }
               )
-              .getOrElse(Right())
+              .getOrElse(Right(()))
           case response =>
             logger.warn(s"Enrolment response not formed. ${response.status} response status")
             Left(MalformedError(response.status))
