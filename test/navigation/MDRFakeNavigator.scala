@@ -18,11 +18,10 @@ package navigation
 
 import models.{Mode, Regime, UserAnswers}
 import pages._
-import play.api.libs.json.Reads
 import play.api.mvc.Call
 
 class MDRFakeNavigator(desiredRoute: Call) extends MDRNavigator {
 
-  override def nextPage[A](page: QuestionPage[A], mode: Mode, regime: Regime, userAnswers: UserAnswers, oldValue: Option[A])(implicit rds: Reads[A]): Call =
+  override def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers): Call =
     desiredRoute
 }
