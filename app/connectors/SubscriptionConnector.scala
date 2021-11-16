@@ -17,13 +17,18 @@
 package connectors
 
 import cats.data.EitherT
-import cats.implicits._
 import config.FrontendAppConfig
-import models.error.ApiError
-import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEMTPSubscriptionError}
-import models.subscription.request.CreateSubscriptionForMDRRequest
-import models.subscription.response.{DisplaySubscriptionForCBCResponse, SubscriptionIDResponse}
 import models.SubscriptionID
+import models.error.ApiError
+import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
+import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest}
+import models.subscription.response.{
+  CreateSubscriptionForMDRResponse,
+  DisplaySubscriptionForCBCResponse,
+  DisplaySubscriptionForMDRResponse,
+  DisplaySubscriptionResponse,
+  SubscriptionIDResponse
+}
 import org.slf4j.LoggerFactory
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -37,9 +42,28 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  def readSubscriptionDetails(safeID: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, DisplaySubscriptionForCBCResponse] =
-    // TODO replace with actual implementation
-    EitherT.fromEither[Future](Left(MandatoryInformationMissingError()))
+  def readSubscription(
+    displaySubscriptionRequest: DisplaySubscriptionRequest
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionID]] = {
+
+    val submissionUrl = s"${config.businessMatchingUrl}/subscription/read-subscription"
+
+    http
+      .POST[DisplaySubscriptionRequest, HttpResponse](submissionUrl, displaySubscriptionRequest)
+      .map {
+        case responseMessage if is2xx(responseMessage.status) =>
+          responseMessage.json.as[DisplaySubscriptionResponse] match {
+            case mdr: DisplaySubscriptionForMDRResponse => Some(SubscriptionID(mdr.displaySubscriptionForMDRResponse.subscriptionID))
+            case cbc: DisplaySubscriptionForCBCResponse => Some(SubscriptionID(cbc.displaySubscriptionForCBCResponse.subscriptionID))
+            case errors =>
+              logger.warn("Validation of display subscription payload failed", errors)
+              None
+          }
+        case errorStatus =>
+          logger.warn(s"Status $errorStatus has been thrown when display subscription was called")
+          None
+      }
+  }
 
   def createSubscription(
     createSubscriptionForMDRRequest: CreateSubscriptionForMDRRequest
@@ -55,9 +79,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         .map {
           case response if is2xx(response.status) =>
             response.json
-              .asOpt[SubscriptionIDResponse]
+              .asOpt[CreateSubscriptionForMDRResponse]
               .map(
-                r => Right(SubscriptionID(r.subscriptionID))
+                r => Right(SubscriptionID(r.createSubscriptionForMDRResponse.subscriptionID))
               )
               .getOrElse(Left(UnableToCreateEMTPSubscriptionError))
           case response if response.status equals CONFLICT =>

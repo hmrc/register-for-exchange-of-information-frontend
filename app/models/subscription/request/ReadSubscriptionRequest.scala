@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.subscription.response
+package models.subscription.request
 
-import play.api.libs.json._
+import play.api.libs.json.{Json, OFormat}
 
-case class DisplaySubscriptionForCBCResponse(displaySubscriptionForCBCResponse: DisplaySubscriptionResponse)
+case class ReadSubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: RequestDetail)
 
-object DisplaySubscriptionForCBCResponse {
-  implicit val format: OFormat[DisplaySubscriptionForCBCResponse] = Json.format[DisplaySubscriptionForCBCResponse]
+object ReadSubscriptionRequest {
+  implicit val format: OFormat[ReadSubscriptionRequest] = Json.format[ReadSubscriptionRequest]
 }

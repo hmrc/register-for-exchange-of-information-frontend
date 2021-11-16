@@ -25,7 +25,7 @@ import helpers.WireMockServerHandler
 import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
-import models.subscription.request.CreateSubscriptionForMDRRequest
+import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionForMDRRequest}
 import models.subscription.response.SubscriptionIDResponse
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -50,6 +50,32 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
   private val errorCodes: Gen[Int]          = Gen.chooseNum(400, 599).suchThat(_ != 409)
 
   "SubscriptionConnector" - {
+    "readSubscription" - {
+      "must return SubscriptionResponse for valid input request" in {
+        val displayMDRRequest = arbitrary[DisplaySubscriptionForMDRRequest].sample.value
+        val expectedResponse  = SubscriptionID("subscriptionID")
+
+        val subscriptionResponse: String =
+          s"""
+             |{
+             | "displaySubscriptionForMDRResponse": {
+             |   "responseCommon": {
+             |     "status": "OK",
+             |     "processingDate": "2020-09-23T16:12:11Z"
+             |   },
+             |   "responseDetail": {
+             |      "subscriptionID": "subscriptionID"
+             |   }
+             | }
+             |}""".stripMargin
+
+        stubPostResponse("/read-subscription", OK, subscriptionResponse)
+
+        val result: Future[Option[SubscriptionID]] = connector.readSubscription(displayMDRRequest)
+        result.futureValue.value mustBe expectedResponse
+      }
+    }
+
     "createSubscription" - {
       "must return SubscriptionResponse for valid input request" in {
         val subMDRRequest    = arbitrary[CreateSubscriptionForMDRRequest].sample.value
