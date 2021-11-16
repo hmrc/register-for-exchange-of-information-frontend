@@ -31,9 +31,11 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class WhatAreYouRegisteringAsController @Inject() (
   override val messagesApi: MessagesApi,
@@ -48,7 +50,8 @@ class WhatAreYouRegisteringAsController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
@@ -77,9 +80,14 @@ class WhatAreYouRegisteringAsController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
+                originalUserAnswer <- Future(request.userAnswers.get(WhatAreYouRegisteringAsPage))
+                updatedAnswers <-
+                  if (!hasValueUnchanged(WhatAreYouRegisteringAsPage, value))
+                    Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
+                  else
+                    Future.fromTry(Try(request.userAnswers))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers, originalUserAnswer))
           )
     }
 }

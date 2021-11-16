@@ -17,10 +17,18 @@
 package utils
 
 import models.requests.DataRequest
-import pages.ContactNamePage
+import pages.{ContactNamePage, Page, QuestionPage}
+import play.api.libs.json.Reads
 import play.api.mvc.AnyContent
 
 trait UserAnswersHelper {
+
+  def hasValueUnchanged[A](page: QuestionPage[A], newValue: A)(implicit request: DataRequest[AnyContent], rds: Reads[A]): Boolean =
+    request.userAnswers
+      .get(page)
+      .fold(false)(
+        newUserValue => newUserValue.equals(newValue)
+      )
 
   def hasContactName()(implicit request: DataRequest[AnyContent]): Boolean =
     request.userAnswers.get(ContactNamePage) match {

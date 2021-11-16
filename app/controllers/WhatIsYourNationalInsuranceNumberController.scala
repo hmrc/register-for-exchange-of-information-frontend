@@ -32,9 +32,11 @@ import repositories.SessionRepository
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class WhatIsYourNationalInsuranceNumberController @Inject() (
   override val messagesApi: MessagesApi,
@@ -49,7 +51,8 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
@@ -84,9 +87,20 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
+                originalUserAnswer <- Future(request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage))
+                updatedAnswers <-
+                  if (!hasValueUnchanged(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
+                    Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
+                  else
+                    Future.fromTry(Try(request.userAnswers))
+                _ <- sessionRepository.set(updatedAnswers)
+
+                /*
+                originalUserAnswer <- Future(request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage))
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers))
+                 */
+              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers, originalUserAnswer))
           )
     }
 }

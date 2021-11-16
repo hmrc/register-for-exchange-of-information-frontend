@@ -31,9 +31,11 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class DoYouHaveNINController @Inject() (
   override val messagesApi: MessagesApi,
@@ -48,7 +50,8 @@ class DoYouHaveNINController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
@@ -77,9 +80,14 @@ class DoYouHaveNINController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, regime, updatedAnswers))
+
+                // todo https://github.com/hmrc/register-for-exchange-of-information-frontend/tree/DAC6-1148
+
+                originalUserAnswer <- Future(request.userAnswers.get(DoYouHaveNINPage))
+                isUnchanged = !hasValueUnchanged(DoYouHaveNINPage, value) 
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value, isUnchanged))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, regime, updatedAnswers, originalUserAnswer))
           )
     }
 }

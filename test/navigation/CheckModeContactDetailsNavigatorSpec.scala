@@ -31,12 +31,6 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
 
     "in Check mode" - {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, MDR, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad(MDR)
-      }
-
       "must go from Contact Name page to CheckYourAnswers page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

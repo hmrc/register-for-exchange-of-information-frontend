@@ -32,9 +32,11 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
-import javax.inject.Inject
+import utils.UserAnswersHelper
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   override val messagesApi: MessagesApi,
@@ -50,7 +52,8 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
@@ -83,9 +86,10 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
               formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
+                  originalUserAnswer <- Future(request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage))
+                  updatedAnswers <- Future.fromTry(request.userAnswers.setCheckCleanup(DoYouHaveUniqueTaxPayerReferencePage, value))
+                  _ <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers, originalUserAnswer))
             )
       }
 

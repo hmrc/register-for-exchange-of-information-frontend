@@ -31,10 +31,12 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+import utils.UserAnswersHelper
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class WhatIsYourDateOfBirthController @Inject() (
   override val messagesApi: MessagesApi,
@@ -49,7 +51,8 @@ class WhatIsYourDateOfBirthController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   val form = formProvider()
 
@@ -78,9 +81,14 @@ class WhatIsYourDateOfBirthController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourDateOfBirthPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers))
+                originalUserAnswer <- Future(request.userAnswers.get(WhatIsYourDateOfBirthPage))
+                updatedAnswers <-
+                  if (!hasValueUnchanged(WhatIsYourDateOfBirthPage, value))
+                    Future.fromTry(request.userAnswers.set(WhatIsYourDateOfBirthPage, value))
+                  else
+                    Future.fromTry(Try(request.userAnswers))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers, originalUserAnswer))
           )
     }
 }

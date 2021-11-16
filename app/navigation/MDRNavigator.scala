@@ -53,31 +53,27 @@ class MDRNavigator @Inject() () extends Navigator {
     case _                                     => _ => _ => None
   }
 
-  // todo check and filter if needed only for ticket
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
-    case WhatAreYouRegisteringAsPage           => regime => whatAreYouRegisteringAs(CheckMode)(regime)
-    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
-    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode, regime))
-    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
-    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(CheckMode)
-    case BusinessWithoutIDNamePage             => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
-    case BusinessHaveDifferentNamePage         => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
-    case WhatIsTradingNamePage                 => regime => _ => Some(routes.AddressWithoutIdController.onPageLoad(CheckMode, regime))
-    case NonUkNamePage                         => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
-    case DoYouLiveInTheUKPage                  => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
-    case AddressUKPage                         => regime => _ => Some(routes.ContactEmailController.onPageLoad(CheckMode, regime))
-    case AddressWithoutIdPage                  => regime => addressWithoutID(CheckMode)(regime)
-    case WhatIsYourPostcodePage                => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
-    case SelectAddressPage                     => regime => _ => Some(routes.ContactEmailController.onPageLoad(CheckMode, regime))
-    case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(CheckMode, regime))
-    case UTRPage                               => isSoleProprietor(CheckMode)
-    case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
-    case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
-    case IsThisYourBusinessPage                => isThisYourBusiness(CheckMode)
+    case DoYouHaveUniqueTaxPayerReferencePage => doYouHaveUniqueTaxPayerReference(CheckMode)
+    case WhatAreYouRegisteringAsPage => regime => whatAreYouRegisteringAs(CheckMode)(regime)
 
-    case MatchingInfoPage => regime => _ => Some(Navigator.checkYourAnswers(regime))
-    case _                => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    // Individual with ID
+    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
+    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode, regime))
+    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
+    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
+
+    //Business without ID
+    case BusinessWithoutIDNamePage     => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
+    case BusinessHaveDifferentNamePage => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
+    case WhatIsTradingNamePage         => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
+    case AddressWithoutIdPage =>
+      regime =>
+        _ =>
+          Some(routes.CheckYourAnswersController.onPageLoad(regime))
+
+      //Default
+    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =

@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.UTRFormProvider
@@ -38,20 +39,21 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UTRController @Inject() (
-  override val messagesApi: MessagesApi,
-  appConfig: FrontendAppConfig,
-  sessionRepository: SessionRepository,
-  navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  formProvider: UTRFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+                                override val messagesApi: MessagesApi,
+                                appConfig: FrontendAppConfig,
+                                sessionRepository: SessionRepository,
+                                navigator: MDRNavigator,
+                                identify: IdentifierAction,
+                                getData: DataRetrievalAction,
+                                requireData: DataRequiredAction,
+                                formProvider: UTRFormProvider,
+                                val controllerComponents: MessagesControllerComponents,
+                                renderer: Renderer
+                              )(implicit ec: ExecutionContext)
+  extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with WithEitherT {
 
   private val ct = "utr.error.ct"
   private val sa = "utr.error.sa"
@@ -59,7 +61,7 @@ class UTRController @Inject() (
   private def readKey(key: String)(implicit messages: Messages) = messages(key)
 
   private def render(mode: Mode, regime: Regime, form: Form[String], businessType: BusinessType)(implicit
-    request: DataRequest[AnyContent]
+                                                                                                 request: DataRequest[AnyContent]
   ): Future[api.Html] = {
     val taxType = businessType match {
       case Partnership | Sole | LimitedPartnership => readKey(sa)
@@ -104,10 +106,13 @@ class UTRController @Inject() (
               .fold(
                 formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
                 value =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
-                    _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
+                  (for {
+                    updatedAnswers <- setEither(UTRPage, value, checkPrevious = true)
+                    _ = sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers)))
+                    .valueOrF(
+                      _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                    )
               )
         }
     }
