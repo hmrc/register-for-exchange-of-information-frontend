@@ -52,27 +52,18 @@ class IsContactTelephoneController @Inject() (
     with NunjucksSupport
     with UserAnswersHelper {
 
-  private val form = formProvider()
-
-  private val businessTitleKey     = "isContactTelephone.title"
-  private val businessHeadingKey   = "isContactTelephone.heading"
-  private val individualTitleKey   = "isContactTelephone.individual.heading"
-  private val individualHeadingKey = "isContactTelephone.individual.heading"
+  def form(suffix: String) = formProvider(suffix)
 
   private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
-    val (pageTitle, heading) = if (hasContactName()) {
-      (businessTitleKey, businessHeadingKey)
-    } else {
-      (individualTitleKey, individualHeadingKey)
-    }
+    val suffix = isBusinessOrIndividual()
 
     val data = Json.obj(
       "form"      -> form,
       "regime"    -> regime.toUpperCase,
       "name"      -> name,
-      "pageTitle" -> pageTitle,
-      "heading"   -> heading,
+      "pageTitle" -> s"isContactTelephone.title.$suffix",
+      "heading"   -> s"isContactTelephone.heading.$suffix",
       "action"    -> routes.IsContactTelephoneController.onSubmit(mode, regime).url,
       "radios"    -> Radios.yesNo(form("value"))
     )
@@ -82,21 +73,24 @@ class IsContactTelephoneController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
+        val suffix       = isBusinessOrIndividual()
+        val preparedForm = request.userAnswers.get(IsContactTelephonePage).fold(form(suffix))(form(suffix).fill)
         request.userAnswers
           .get(ContactNamePage) match {
-          case Some(contactName) => render(mode, regime, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill), contactName).map(Ok(_))
-          case _                 => render(mode, regime, request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)).map(Ok(_))
+          case Some(contactName) =>
+            render(mode, regime, preparedForm, contactName).map(Ok(_))
+          case _ => render(mode, regime, preparedForm).map(Ok(_))
         }
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        form
+        val suffix = isBusinessOrIndividual()
+        form(suffix)
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              render(mode, regime, request.userAnswers.get(IsContactTelephonePage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))

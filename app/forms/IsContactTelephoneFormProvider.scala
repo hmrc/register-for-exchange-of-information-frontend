@@ -23,8 +23,8 @@ import javax.inject.Inject
 
 class IsContactTelephoneFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(suffix: String): Form[Boolean] =
     Form(
-      "value" -> boolean("isContactTelephone.error.required")
+      "value" -> boolean(s"isContactTelephone.error.required.$suffix")
     )
 }

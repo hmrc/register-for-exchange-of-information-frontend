@@ -22,9 +22,9 @@ import play.api.mvc.AnyContent
 
 trait UserAnswersHelper {
 
-  def hasContactName()(implicit request: DataRequest[AnyContent]): Boolean =
+  def isBusinessOrIndividual()(implicit request: DataRequest[AnyContent]): String =
     request.userAnswers.get(ContactNamePage) match {
-      case Some(_) => true
-      case _       => false
+      case Some(_) => "business"
+      case _       => "individual"
     }
 }

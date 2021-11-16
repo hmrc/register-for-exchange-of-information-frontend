@@ -54,25 +54,16 @@ class ContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private val businessTitleKey     = "contactPhone.title"
-  private val businessHeadingKey   = "contactPhone.heading"
-  private val individualTitleKey   = "contactPhone.individual.heading"
-  private val individualHeadingKey = "contactPhone.individual.heading"
-
   private def render(mode: Mode, regime: Regime, form: Form[String], name: String = "")(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
 
-    val (pageTitle, heading) = if (hasContactName()) {
-      (businessTitleKey, businessHeadingKey)
-    } else {
-      (individualTitleKey, individualHeadingKey)
-    }
+    val suffix = isBusinessOrIndividual()
 
     val data = Json.obj(
       "form"      -> form,
       "regime"    -> regime.toUpperCase,
       "name"      -> name,
-      "pageTitle" -> pageTitle,
-      "heading"   -> heading,
+      "pageTitle" -> s"contactPhone.title.$suffix",
+      "heading"   -> s"contactPhone.heading.$suffix",
       "hintText"  -> hintWithNoBreakSpaces(),
       "action"    -> routes.ContactPhoneController.onSubmit(mode, regime).url
     )
