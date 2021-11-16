@@ -16,14 +16,10 @@
 
 package models.subscription.response
 
-import play.api.libs.json.{__, Reads}
+import play.api.libs.json.{Json, Reads}
 
-case class SubscriptionIDResponse(subscriptionID: String)
+case class CreateSubscriptionForMDRResponse(createSubscriptionForMDRResponse: SubscriptionIDResponse)
 
-object SubscriptionIDResponse {
-
-  implicit val reads: Reads[SubscriptionIDResponse] = {
-    import play.api.libs.functional.syntax._
-    (__ \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionIDResponse.apply
-  }
+object CreateSubscriptionForMDRResponse {
+  implicit lazy val reads: Reads[CreateSubscriptionForMDRResponse] = Json.reads[CreateSubscriptionForMDRResponse]
 }

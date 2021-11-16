@@ -19,7 +19,7 @@ package models.subscription.request
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models.{BusinessType, UserAnswers}
 import pages._
-import play.api.libs.json.{__, Json, OWrites, Reads}
+import play.api.libs.json.{Json, OFormat}
 
 case class CreateRequestDetail(IDType: String,
                                IDNumber: String,
@@ -31,22 +31,7 @@ case class CreateRequestDetail(IDType: String,
 
 object CreateRequestDetail {
 
-  implicit val reads: Reads[CreateRequestDetail] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "IDType").read[String] and
-        (__ \ "IDNumber").read[String] and
-        (__ \ "tradingName").readNullable[String] and
-        (__ \ "isGBUser").read[Boolean] and
-        (__ \ "primaryContact").read[PrimaryContact] and
-        (__ \ "secondaryContact").readNullable[SecondaryContact]
-    )(
-      (idType, idNumber, tradingName, isGBUser, primaryContact, secondaryContact) =>
-        CreateRequestDetail(idType, idNumber, tradingName, isGBUser, primaryContact, secondaryContact)
-    )
-  }
-
-  implicit val writes: OWrites[CreateRequestDetail] = Json.writes[CreateRequestDetail]
+  implicit val format: OFormat[CreateRequestDetail] = Json.format[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
   def convertTo(safeId: String, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
