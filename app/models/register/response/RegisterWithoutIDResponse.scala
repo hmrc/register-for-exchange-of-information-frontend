@@ -19,7 +19,10 @@ package models.register.response
 import models.shared.ResponseCommon
 import play.api.libs.json.{Json, OFormat}
 
-case class RegisterWithoutIDResponse(responseCommon: ResponseCommon, responseDetail: Option[RegisterWithoutIDResponseDetail])
+case class RegisterWithoutIDResponse(responseCommon: ResponseCommon, responseDetail: Option[RegisterWithoutIDResponseDetail]) {
+
+  val safeId: Option[String] = responseDetail.map(_.SAFEID)
+}
 
 object RegisterWithoutIDResponse {
   implicit val format: OFormat[RegisterWithoutIDResponse] = Json.format[RegisterWithoutIDResponse]

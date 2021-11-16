@@ -183,3 +183,10 @@ GET        /:regime/problem/no-agent-service-available           controllers.Una
 GET        /:regime/problem/sign-in-problem                      controllers.UnauthorisedAssistantController.onPageLoad(regime: models.Regime)
 
 GET        /:regime/register/no-records-matched                    controllers.NoRecordsMatchedController.onPageLoad(regime:  models.Regime)
+
+GET        /register/:regime/registration-confirmation           controllers.RegistrationConfirmationController.onPageLoad(regime:  models.Regime)
+
+GET        /register/:regime/match-business                      controllers.MatchController.onBusinessMatch(mode: models.Mode = models.NormalMode, regime: models.Regime)
+GET        /register/:regime/match-individual                    controllers.MatchController.onIndividualMatch(mode: models.Mode = models.NormalMode, regime: models.Regime)
+GET        /register/:regime/change-match-business               controllers.MatchController.onBusinessMatch(mode: models.Mode = models.CheckMode, regime: models.Regime)
+GET        /register/:regime/change-match-individual             controllers.MatchController.onIndividualMatch(mode: models.Mode = models.CheckMode, regime: models.Regime)

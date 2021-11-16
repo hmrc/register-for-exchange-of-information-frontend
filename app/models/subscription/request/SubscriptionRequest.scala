@@ -24,8 +24,8 @@ case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, request
 object SubscriptionRequest {
   implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
 
-  def convertTo(userAnswers: UserAnswers): Option[SubscriptionRequest] =
-    CreateRequestDetail.convertTo(userAnswers) map {
+  def convertTo(safeID: String, userAnswers: UserAnswers): Option[SubscriptionRequest] =
+    CreateRequestDetail.convertTo(safeID, userAnswers) map {
       requestDetails =>
         SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon, requestDetails)
     }

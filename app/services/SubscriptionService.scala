@@ -22,8 +22,9 @@ import connectors.SubscriptionConnector
 import models.UserAnswers
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
+import models.matching.RegistrationInfo
 import models.subscription.request.{CreateSubscriptionForMDRRequest, SubscriptionRequest}
-import models.subscription.response.SubscriptionID
+import models.subscription.response.SubscriptionIDResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -31,13 +32,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
 
-  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, SubscriptionID]] =
-    SubscriptionRequest.convertTo(userAnswers) match {
+  def createSubscription(safeID: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, String]] =
+    (SubscriptionRequest.convertTo(safeID, userAnswers) match {
       case Some(subscriptionRequest) =>
         subscriptionConnector
           .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
-          .value
-      case _ => EitherT.leftT(MandatoryInformationMissingError).value
-    }
+          .map(_.value)
+      case _ => EitherT.leftT(MandatoryInformationMissingError())
+    }).value
 
 }

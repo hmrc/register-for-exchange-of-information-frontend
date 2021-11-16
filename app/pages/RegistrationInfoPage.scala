@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package models.matching
+package pages
 
-import models.register.response.details.AddressResponse
-import play.api.libs.json.Json
+import models.matching.RegistrationInfo
+import play.api.libs.json.JsPath
 
-case class MatchingInfo(safeId: String, name: Option[String], address: Option[AddressResponse])
+case object RegistrationInfoPage extends QuestionPage[RegistrationInfo] {
 
-object MatchingInfo {
+  override def path: JsPath = JsPath \ toString
 
-  implicit val format = Json.format[MatchingInfo]
+  override def toString: String = "registrationInfo"
 }

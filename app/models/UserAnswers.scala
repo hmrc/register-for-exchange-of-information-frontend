@@ -16,6 +16,7 @@
 
 package models
 
+import pages.QuestionPage
 import play.api.libs.json._
 import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -32,28 +33,9 @@ final case class UserAnswers(
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
-  /*
-  /**
-   *  Checks if the value has changed IF NOT the cleanup is not performed
-   */
-  def setCheckCleanup[A](page: Settable[A], value: A)(implicit writes: Writes[A], rds: Reads[A]): Try[UserAnswers] = {
-    Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None).fold(set(page, value))(orig => orig == value match {
-      case true => {
-        val updatedData: Try[JsObject] = data.setObject(page.path, Json.toJson(value)) match {
-          case JsSuccess(jsValue, _) =>
-            Success(jsValue)
-          case JsError(errors) =>
-            Failure(JsResultException(errors))
-        }
-
-        updatedData.flatMap { d => Try(copy(data = d)) }
-      }
-      case false => set(page, value)
-    })
-  }
-   */
-
-  def set[A](page: Settable[A], value: A, previousValue: Option[A] = None)(implicit writes: Writes[A]): Try[UserAnswers] = {
+  def set[A](page: QuestionPage[A], value: A, checkPrevious: Boolean = false)(implicit writes: Writes[A], reads: Reads[A]): Try[UserAnswers] = {
+    val previousValue = if (checkPrevious) { get(page) }
+    else { Option(value) }
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
@@ -63,12 +45,14 @@ final case class UserAnswers(
 
     updatedData.flatMap {
       d =>
-        if (previousValue.contains(d)) { Try(copy(data = d))
+        if (previousValue.contains(value)) {
+          Try(copy(data = d))
         } else {
           val updatedAnswers = copy(data = d)
           page.cleanup(Some(value), updatedAnswers)
         }
     }
+  }
 
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 

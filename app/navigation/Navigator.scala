@@ -52,6 +52,10 @@ trait Navigator {
         }
     }
   }
+
+  def jumpToCYA(mode: Mode, regime: Regime, route: Call): Call =
+    if (mode != CheckMode) { route }
+    else { routes.CheckYourAnswersController.onPageLoad(regime) }
 }
 
 object Navigator {

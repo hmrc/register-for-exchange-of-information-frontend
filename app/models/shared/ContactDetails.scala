@@ -28,7 +28,7 @@ case class ContactDetails(
 object ContactDetails {
 
   def apply(phoneNumber: Option[String], emailAddress: Option[String]): ContactDetails =
-    ContactDetails(None, None, None, emailAddress)
+    ContactDetails(phoneNumber, None, None, emailAddress)
 
   implicit val formats = Json.format[ContactDetails]
 }

@@ -16,24 +16,19 @@
 
 package controllers
 
+import cats.implicits.catsStdInstancesForFuture
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.error.ApiError
-import models.error.ApiError.{MandatoryInformationMissingError, NotFoundError}
-import models.matching.MatchingInfo
-import models.register.response.details.AddressResponse
 import models.requests.DataRequest
 import models.{Mode, Regime}
-import navigation.{MDRNavigator, Navigator}
+import navigation.MDRNavigator
 import pages._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -49,67 +44,51 @@ class IsThisYourBusinessController @Inject() (
   requireData: DataRequiredAction,
   formProvider: IsThisYourBusinessFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  matchingService: BusinessMatchingService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with WithEitherT {
 
   private val form = formProvider()
 
-  private def result(mode: Mode, regime: Regime, form: Form[Boolean])(implicit request: DataRequest[AnyContent]) =
-    matchBusinessInfo flatMap {
-      case Right(matchingInfo) =>
-        (for {
-          name           <- matchingInfo.name
-          address        <- matchingInfo.address
-          updatedAnswers <- request.userAnswers.set(MatchingInfoPage, matchingInfo).toOption
-          _ = sessionRepository.set(updatedAnswers)
-        } yield render(mode, regime, request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill), name, address).map(Ok(_)))
-          .getOrElse(Future.successful(Redirect(Navigator.missingInformation(regime))))
-      case Left(NotFoundError) =>
-        Future.successful(Redirect(routes.NoRecordsMatchedController.onPageLoad(regime)))
-      case _ =>
-        renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
-    }
-
-  private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String, address: AddressResponse)(implicit
+  private def render(mode: Mode, regime: Regime, form: Form[Boolean])(implicit
     request: DataRequest[AnyContent]
-  ): Future[Html] = {
-    val data = Json.obj(
-      "form"    -> form,
+  ): Future[Result] = {
+    for {
+      registrationInfo <- getEither(RegistrationInfoPage)
+      name             <- getEither(registrationInfo.name, "Missing registration name.")
+      address          <- getEither(registrationInfo.address, "Missing registration address.")
+      withForm <- getEither(IsThisYourBusinessPage)
+        .map(form.fill)
+        .recover {
+          case _ => form
+        }
+    } yield Json.obj(
+      "form"    -> withForm,
       "regime"  -> regime.toUpperCase,
       "name"    -> name,
       "address" -> address.asList,
       "action"  -> routes.IsThisYourBusinessController.onSubmit(mode, regime).url,
-      "radios"  -> Radios.yesNo(form("value"))
+      "radios"  -> Radios.yesNo(withForm("value"))
     )
-    renderer.render("isThisYourBusiness.njk", data)
-  }
+  }.semiflatMap {
+    s => renderer.render("isThisYourBusiness.njk", s).map(Ok(_))
+  }.valueOrF(
+    _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+  )
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
-    implicit request => result(mode, regime, form)
+    implicit request => render(mode, regime, form)
   }
-
-  private def matchBusinessInfo(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, MatchingInfo]] =
-    (for {
-      utr <- request.userAnswers.get(UTRPage)
-      businessName <- request.userAnswers
-        .get(BusinessNamePage)
-        .orElse(request.userAnswers.get(SoleNamePage).map {
-          name => s"${name.firstName} ${name.lastName}"
-        })
-      businessType <- request.userAnswers.get(BusinessTypePage)
-    } yield matchingService.sendBusinessMatchingInformation(utr, businessName, businessType))
-      .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => result(mode, regime, formWithErrors),
+          formWithErrors => render(mode, regime, formWithErrors),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package models.subscription.response
+package models
 
-import play.api.libs.json.{__, Reads}
+import models.subscription.response.SubscriptionIDResponse
+import play.api.libs.json.Json
 
-case class SubscriptionID(subscriptionID: String)
+case class SubscriptionID(value: String)
 
 object SubscriptionID {
 
-  implicit val reads: Reads[SubscriptionID] = {
-    import play.api.libs.functional.syntax._
-    (__ \ "createSubscriptionForMDRResponse" \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionID.apply
-  }
+  def apply(response: SubscriptionIDResponse): SubscriptionID = new SubscriptionID(response.subscriptionID)
+
+  implicit val format = Json.format[SubscriptionID]
 }

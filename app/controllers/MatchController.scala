@@ -16,14 +16,17 @@
 
 package controllers
 
+import cats.data.EitherT
+import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.{Mode, Regime}
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.MatchingInfo
+import models.matching.RegistrationInfo
 import models.requests.DataRequest
-import models.{BusinessType, CheckMode, Mode, NormalMode, Regime}
 import navigation.MDRNavigator
-import pages.{BusinessTypePage, SoleNamePage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{BusinessNamePage, BusinessTypePage, RegistrationInfoPage, SoleNamePage, UTRPage}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -41,30 +44,33 @@ class MatchController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  matchingService: BusinessMatchingService,
-  navigator: MDRNavigator
+  matchingService: BusinessMatchingService
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with WithEitherT
+    with Logging {
 
-  def onIndividualMatch(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
-      // todo 1 determine which Match (individual, business)
-      // todo 2 redirect Yes/No for biz && Yes/No for individual
-      // todo if In CheckMode || ChangeMode -> redirect CheckYourAsnwers
-      implicit request =>
-        val tmp: matchingService.MatchingResponseType[MatchingInfo] = (for {
-          nino <- request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
-          name <- request.userAnswers.get(WhatIsYourNamePage).orElse(request.userAnswers.get(SoleNamePage))
-          dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
-        } yield matchingService.sendIndividualMatchingInformation(nino, name, dob))
-          .getOrElse(Future.successful(Left(MandatoryInformationMissingError)))
+  def onIndividualMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    implicit request =>
+      ???
+  }
 
-        // userAnswers.set(RegisterInfo, MatchingInfo.safeid)
-        // whenever change enter ChangeMode
-        // changeMode updateNavigator
-        //redirect to navigator pass match in UserAnswers -> for all 3 modes 2 outcomes yes confirmed or no
-        Future.successful(Redirect(routes.CheckYourAnswersController.onPageLoad(regime))) // todo change me
-    }
+  def onBusinessMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    implicit request =>
+      (for {
+        utr              <- getEither(UTRPage)
+        businessName     <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
+        businessType     <- getEither(BusinessTypePage)
+        registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, utr, businessName, businessType))
+        updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
+        _ = sessionRepository.set(updatedAnswers)
+      } yield Redirect(routes.IsThisYourBusinessController.onPageLoad(mode, regime))).valueOr {
+        error =>
+          logger.debug(s"Business not matched with error $error")
+          Redirect(routes.NoRecordsMatchedController.onPageLoad(regime))
+      }
+
+  }
 
 }

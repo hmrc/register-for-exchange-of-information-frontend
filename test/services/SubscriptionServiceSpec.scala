@@ -23,9 +23,10 @@ import connectors.SubscriptionConnector
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
-import models.matching.MatchingInfo
-import models.subscription.response.SubscriptionID
-import models.{Address, Country, NonUkName, UserAnswers}
+import models.matching.MatchingType.{AsIndividual, AsOrganisation}
+import models.matching.RegistrationInfo
+import models.subscription.response.SubscriptionIDResponse
+import models.{Address, Country, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -83,12 +84,12 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
         .success
         .value
 
-      val result = service.createSubscription(userAnswers)
-      result.futureValue mustBe Right(subscriptionID)
+      val result = service.createSubscription("safeId", userAnswers)
+      result.futureValue mustBe Right("id")
     }
 
     "must return 'MandatoryInformationMissingError' when one of the mandatory answers is missing" in {
@@ -116,22 +117,22 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(IsContactTelephonePage, true)
         .success
         .value
-        .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsOrganisation))
         .success
         .value
 
-      val result = service.createSubscription(userAnswers)
-      result.futureValue mustBe Left(MandatoryInformationMissingError)
+      val result = service.createSubscription("safeId", userAnswers)
+      result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
 
     "must return MandatoryInformationMissingError when UserAnswers is empty" in {
-      val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(MandatoryInformationMissingError))
+      val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(MandatoryInformationMissingError()))
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-      val result = service.createSubscription(UserAnswers("id"))
+      val result = service.createSubscription("safeId", UserAnswers("id"))
 
-      result.futureValue mustBe Left(MandatoryInformationMissingError)
+      result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
 
     "must return error when it fails to create subscription" in {
@@ -153,7 +154,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .set(SecondContactPage, false)
           .success
           .value
-          .set(MatchingInfoPage, MatchingInfo("safeId", None, None))
+          .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
           .success
           .value
 
@@ -161,7 +162,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-        val result = service.createSubscription(userAnswers)
+        val result = service.createSubscription("safeId", userAnswers)
 
         result.futureValue mustBe Left(error)
       }

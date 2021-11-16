@@ -17,10 +17,10 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.matching.MatchingInfo
 import models.error.ApiError.NotFoundError
-import models.{MDR, Name, NormalMode, UserAnswers}
-import models.error.ApiError.NotFoundError
+import models.matching.MatchingType.AsIndividual
+import models.matching.RegistrationInfo
+import models.{MDR, Name, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
@@ -66,15 +66,15 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return OK and the correct view for a GET when there is a match" in {
 
-      when(mockMatchingService.sendIndividualMatchingInformation(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(MatchingInfo("safeId", None, None))))
+      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", None, None, AsIndividual))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -88,11 +88,11 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return redirect for a GET when there is no match" in {
 
-      when(mockMatchingService.sendIndividualMatchingInformation(any(), any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)
-      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
+      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
 
       val result = route(app, request).value
 
@@ -107,7 +107,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

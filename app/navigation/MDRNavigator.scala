@@ -22,7 +22,6 @@ import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTyp
 import models._
 import pages._
 import play.api.mvc.Call
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import javax.inject.{Inject, Singleton}
 
@@ -50,6 +49,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
+    case RegistrationInfoPage                  => registrationInfo(NormalMode)
     case _                                     => _ => _ => None
   }
 
@@ -74,7 +74,15 @@ class MDRNavigator @Inject() () extends Navigator {
 
       //Default
     case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case RegistrationInfoPage                  => registrationInfo(CheckMode)
+    case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
+
+  private def registrationInfo(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+    ua.get(RegistrationInfoPage) match {
+      case Some(info) if info.safeId != "" => Some(routes.IsThisYourBusinessController.onPageLoad(mode, regime))
+      case _                               => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
+    }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(WhatAreYouRegisteringAsPage) match {
@@ -86,7 +94,7 @@ class MDRNavigator @Inject() () extends Navigator {
   private def doYouHaveUniqueTaxPayerReference(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
       case true  => routes.BusinessTypeController.onPageLoad(mode, regime)
-      case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime)
+      case false => jumpToCYA(mode, regime, routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime))
     }
 
   private def businessHaveDifferentNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
@@ -109,7 +117,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def whatIsYourDateOfBirthRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad(mode, regime)
+      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime)
       case false => routes.DoYouLiveInTheUKController.onPageLoad(mode, regime)
     }
 
