@@ -32,11 +32,12 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
     // If user comes from CYA page to 'DoYouHaveAUTR?' We need to switch mode from CheckMode back to NormalMode
     // to ensure full journey is completed if user decides to change their answer
     value match {
-      case Some(false) =>
-        (PageLists.allWithIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case Some(true) =>
         (PageLists.allWithOutIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+
+      case Some(false) =>
+        (PageLists.allWithIDPages ++ PageLists.allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)
     }

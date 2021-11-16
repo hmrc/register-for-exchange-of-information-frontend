@@ -77,10 +77,9 @@ class WhatAreYouRegisteringAsController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                originalUserAnswer <- Future(request.userAnswers.get(WhatAreYouRegisteringAsPage))
-                updatedAnswers     <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
-                _                  <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers, originalUserAnswer))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
           )
     }
 }

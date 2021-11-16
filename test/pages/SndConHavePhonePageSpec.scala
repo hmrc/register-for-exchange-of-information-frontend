@@ -40,7 +40,7 @@ class SndConHavePhonePageSpec extends PageBehaviours {
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .set(SndConHavePhonePage, false)
+              .set(SndConHavePhonePage, false, Some(true))
               .success
               .value
 

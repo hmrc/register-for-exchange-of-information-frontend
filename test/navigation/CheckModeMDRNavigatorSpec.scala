@@ -227,7 +227,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
             regime = MDR,
             userAnswers = updatedAnswers
           )
-          .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          .mustBe(routes.AddressWithoutIdController.onPageLoad(CheckMode, MDR))
     }
   }
 

@@ -36,7 +36,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
 
   "cleanup" - {
 
-    "must remove withID journey when 'No' is selected" in {
+    "must remove withID journey when user changes answer from 'Yes' to 'No' " in {
 
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
@@ -83,7 +83,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(SndContactPhonePage, "07540000000")
             .success
             .value
-            .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+            .set(DoYouHaveUniqueTaxPayerReferencePage, false, originalValue = Some(true))
             .success
             .value
 
@@ -104,7 +104,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
       }
     }
 
-    "must remove withOutID journey when 'Yes' is selected" in {
+    "must remove withOutID journey when user changes answer from 'No' to 'Yes' " in {
 
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
@@ -181,7 +181,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(SndContactPhonePage, "07540000000")
             .success
             .value
-            .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+            .set(DoYouHaveUniqueTaxPayerReferencePage, true, originalValue = Some(false))
             .success
             .value
 
