@@ -25,7 +25,16 @@ import models.error.ApiError.MandatoryInformationMissingError
 import models.matching.RegistrationInfo
 import models.requests.DataRequest
 import navigation.MDRNavigator
-import pages.{BusinessNamePage, BusinessTypePage, RegistrationInfoPage, SoleNamePage, UTRPage}
+import pages.{
+  BusinessNamePage,
+  BusinessTypePage,
+  RegistrationInfoPage,
+  SoleNamePage,
+  UTRPage,
+  WhatIsYourDateOfBirthPage,
+  WhatIsYourNamePage,
+  WhatIsYourNationalInsuranceNumberPage
+}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,7 +62,18 @@ class MatchController @Inject() (
 
   def onIndividualMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
-      ???
+      (for {
+        nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
+        name             <- getEither(WhatIsYourNamePage)
+        dob              <- getEither(WhatIsYourDateOfBirthPage)
+        registrationInfo <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, nino, name, dob))
+        updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
+        _ = sessionRepository.set(updatedAnswers)
+      } yield Redirect(routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime))).valueOr {
+        error =>
+          logger.debug(s"Individual not matched with error $error")
+          Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime))
+      }
   }
 
   def onBusinessMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
@@ -70,7 +90,6 @@ class MatchController @Inject() (
           logger.debug(s"Business not matched with error $error")
           Redirect(routes.NoRecordsMatchedController.onPageLoad(regime))
       }
-
   }
 
 }

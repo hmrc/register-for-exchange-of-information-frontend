@@ -54,9 +54,6 @@ class MDRNavigator @Inject() () extends Navigator {
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case DoYouHaveUniqueTaxPayerReferencePage => doYouHaveUniqueTaxPayerReference(CheckMode)
-    case WhatAreYouRegisteringAsPage => regime => whatAreYouRegisteringAs(CheckMode)(regime)
-
     // Individual with ID
     case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
     case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode, regime))
@@ -73,9 +70,8 @@ class MDRNavigator @Inject() () extends Navigator {
           Some(routes.CheckYourAnswersController.onPageLoad(regime))
 
       //Default
-    case _                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
-    case RegistrationInfoPage => registrationInfo(CheckMode)
-    case _                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case WhatAreYouRegisteringAsPage           => regime => whatAreYouRegisteringAs(CheckMode)(regime)
+    case RegistrationInfoPage                  => registrationInfo(CheckMode)
     case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
     case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
     case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
