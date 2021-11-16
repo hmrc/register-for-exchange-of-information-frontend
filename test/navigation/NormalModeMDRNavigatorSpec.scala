@@ -175,7 +175,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
               navigator
                 .nextPage(WhatIsYourDateOfBirthPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR))
+                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR))
           }
         }
 
@@ -195,7 +195,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
               navigator
                 .nextPage(WhatIsYourDateOfBirthPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR))
+                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR))
           }
         }
 

@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import controllers.actions._
 import forms.WhatIsYourNationalInsuranceNumberFormProvider
 import models.requests.DataRequest
@@ -52,7 +53,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with UserAnswersHelper {
+    with WithEitherT {
 
   private val form = formProvider()
 
@@ -86,21 +87,13 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              for {
-                originalUserAnswer <- Future(request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage))
-                updatedAnswers <-
-                  if (!hasValueUnchanged(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
-                    Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
-                  else
-                    Future.fromTry(Try(request.userAnswers))
-                _ <- sessionRepository.set(updatedAnswers)
-
-                /*
-                originalUserAnswer <- Future(request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage))
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
-                _              <- sessionRepository.set(updatedAnswers)
-                 */
-              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers, originalUserAnswer))
+              (for {
+                updatedAnswers <- setEither(WhatIsYourNationalInsuranceNumberPage, Nino(value), checkPrevious = true)
+                _ = sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers)))
+                .valueOrF(
+                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                )
           )
     }
 }

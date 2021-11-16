@@ -73,9 +73,9 @@ class MDRNavigator @Inject() () extends Navigator {
           Some(routes.CheckYourAnswersController.onPageLoad(regime))
 
       //Default
-    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
-    case RegistrationInfoPage                  => registrationInfo(CheckMode)
-    case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case _                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case RegistrationInfoPage => registrationInfo(CheckMode)
+    case _                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def registrationInfo(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =

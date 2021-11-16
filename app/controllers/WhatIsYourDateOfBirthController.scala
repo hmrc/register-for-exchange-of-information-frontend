@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import controllers.actions._
 import forms.WhatIsYourDateOfBirthFormProvider
 import models.requests.DataRequest
@@ -52,7 +53,7 @@ class WhatIsYourDateOfBirthController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with UserAnswersHelper {
+    with WithEitherT {
 
   val form = formProvider()
 
@@ -80,15 +81,13 @@ class WhatIsYourDateOfBirthController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              for {
-                originalUserAnswer <- Future(request.userAnswers.get(WhatIsYourDateOfBirthPage))
-                updatedAnswers <-
-                  if (!hasValueUnchanged(WhatIsYourDateOfBirthPage, value))
-                    Future.fromTry(request.userAnswers.set(WhatIsYourDateOfBirthPage, value))
-                  else
-                    Future.fromTry(Try(request.userAnswers))
-                _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers, originalUserAnswer))
+              (for {
+                updatedAnswers <- setEither(WhatIsYourDateOfBirthPage, value, checkPrevious = true)
+                _ = sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers)))
+                .valueOrF(
+                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                )
           )
     }
 }

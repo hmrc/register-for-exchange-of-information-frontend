@@ -39,18 +39,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UTRController @Inject() (
-                                override val messagesApi: MessagesApi,
-                                appConfig: FrontendAppConfig,
-                                sessionRepository: SessionRepository,
-                                navigator: MDRNavigator,
-                                identify: IdentifierAction,
-                                getData: DataRetrievalAction,
-                                requireData: DataRequiredAction,
-                                formProvider: UTRFormProvider,
-                                val controllerComponents: MessagesControllerComponents,
-                                renderer: Renderer
-                              )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
+  override val messagesApi: MessagesApi,
+  appConfig: FrontendAppConfig,
+  sessionRepository: SessionRepository,
+  navigator: MDRNavigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: UTRFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  renderer: Renderer
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
     with WithEitherT {
@@ -61,7 +61,7 @@ class UTRController @Inject() (
   private def readKey(key: String)(implicit messages: Messages) = messages(key)
 
   private def render(mode: Mode, regime: Regime, form: Form[String], businessType: BusinessType)(implicit
-                                                                                                 request: DataRequest[AnyContent]
+    request: DataRequest[AnyContent]
   ): Future[api.Html] = {
     val taxType = businessType match {
       case Partnership | Sole | LimitedPartnership => readKey(sa)

@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import controllers.actions._
 import forms.DoYouHaveNINFormProvider
 import models.requests.DataRequest
@@ -51,7 +52,7 @@ class DoYouHaveNINController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with UserAnswersHelper {
+    with WithEitherT {
 
   private val form = formProvider()
 
@@ -79,15 +80,13 @@ class DoYouHaveNINController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              for {
-
-                // todo https://github.com/hmrc/register-for-exchange-of-information-frontend/tree/DAC6-1148
-
-                originalUserAnswer <- Future(request.userAnswers.get(DoYouHaveNINPage))
-                isUnchanged = !hasValueUnchanged(DoYouHaveNINPage, value) 
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value, isUnchanged))
-                _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, regime, updatedAnswers, originalUserAnswer))
+              (for {
+                updatedAnswers <- setEither(DoYouHaveNINPage, value, checkPrevious = true)
+                _ = sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, regime, updatedAnswers)))
+                .valueOrF(
+                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                )
           )
     }
 }

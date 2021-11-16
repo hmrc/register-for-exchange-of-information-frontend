@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import controllers.actions._
 import forms.WhatAreYouRegisteringAsFormProvider
 import models.requests.DataRequest
@@ -51,7 +52,7 @@ class WhatAreYouRegisteringAsController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with UserAnswersHelper {
+    with WithEitherT {
 
   private val form = formProvider()
 
@@ -79,15 +80,13 @@ class WhatAreYouRegisteringAsController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              for {
-                originalUserAnswer <- Future(request.userAnswers.get(WhatAreYouRegisteringAsPage))
-                updatedAnswers <-
-                  if (!hasValueUnchanged(WhatAreYouRegisteringAsPage, value))
-                    Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
-                  else
-                    Future.fromTry(Try(request.userAnswers))
-                _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers, originalUserAnswer))
+              (for {
+                updatedAnswers <- setEither(WhatAreYouRegisteringAsPage, value, checkPrevious = true)
+                _ = sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers)))
+                .valueOrF(
+                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                )
           )
     }
 }
