@@ -26,15 +26,8 @@ import models.subscription.response.{
   CreateSubscriptionForMDRResponse,
   DisplaySubscriptionForCBCResponse,
   DisplaySubscriptionForMDRResponse,
-  DisplaySubscriptionResponse,
-  SubscriptionIDResponse
+  DisplaySubscriptionResponse
 }
-import org.slf4j.LoggerFactory
-import models.SubscriptionID
-import models.error.ApiError
-import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEMTPSubscriptionError}
-import models.subscription.request.CreateSubscriptionForMDRRequest
-import models.subscription.response.{DisplaySubscriptionForCBCResponse, SubscriptionIDResponse}
 import play.api.Logging
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -60,12 +53,15 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
             case mdr: DisplaySubscriptionForMDRResponse => Some(SubscriptionID(mdr.displaySubscriptionForMDRResponse.subscriptionID))
             case cbc: DisplaySubscriptionForCBCResponse => Some(SubscriptionID(cbc.displaySubscriptionForCBCResponse.subscriptionID))
             case errors =>
-              logger.warn("Validation of display subscription payload failed", errors)
+              logger.warn(s"Validation of display subscription payload failed with $errors")
               None
           }
         case errorStatus =>
           logger.warn(s"Status $errorStatus has been thrown when display subscription was called")
           None
+      }
+      .recover {
+        case e: Exception => None
       }
   }
 
