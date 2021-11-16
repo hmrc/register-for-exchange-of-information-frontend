@@ -22,7 +22,7 @@ import models.error.ApiError
 import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.register.request.{RegisterWithID, RegisterWithoutID}
 import models.register.response.{RegistrationWithIDResponse, RegistrationWithoutIDResponse}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -31,9 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) {
-
-  private val logger: Logger = Logger(this.getClass)
+class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   val submissionUrl = s"${config.businessMatchingUrl}/registration"
 

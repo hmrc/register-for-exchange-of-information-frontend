@@ -1,0 +1,41 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("businessAlreadyRegistered.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        {{ messages("businessAlreadyRegistered.heading") }}
+      </h1>
+
+    <p class="govuk-body"> 
+          {% if withID %}
+            {{ messages("businessAlreadyRegistered.withID.information") }}
+          {% else %}
+            {{ messages("businessAlreadyRegistered.withOutID.information") }}
+          {% endif %}
+    </p>
+
+    {% if not withID %}
+    <p class="govuk-body">
+      <a href="{{ loginGG }}" class="govuk-link" rel="noreferrer noopener" target="_blank">{{ messages("businessAlreadyRegistered.withOutID.GGLink") }}</a>
+    </p>
+    {% endif %}
+
+
+    <p class="govuk-body">
+      {{ messages("businessAlreadyRegistered.help") }}
+                  <a href="mailto:{{emailAddress}}" class="govuk-link">{{ messages("thereIsAProblem.emailAddress") }}</a>
+    </p>
+
+    </div>
+  </div>
+
+{% endblock %}

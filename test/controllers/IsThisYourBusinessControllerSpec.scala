@@ -154,7 +154,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       retrieveUserAnswersData(emptyUserAnswers)
       val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

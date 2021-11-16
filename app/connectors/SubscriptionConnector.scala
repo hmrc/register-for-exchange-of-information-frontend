@@ -30,6 +30,12 @@ import models.subscription.response.{
   SubscriptionIDResponse
 }
 import org.slf4j.LoggerFactory
+import models.SubscriptionID
+import models.error.ApiError
+import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEMTPSubscriptionError}
+import models.subscription.request.CreateSubscriptionForMDRRequest
+import models.subscription.response.{DisplaySubscriptionForCBCResponse, SubscriptionIDResponse}
+import play.api.Logging
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -38,9 +44,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) {
-
-  private val logger = LoggerFactory.getLogger(getClass)
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   def readSubscription(
     displaySubscriptionRequest: DisplaySubscriptionRequest

@@ -17,38 +17,51 @@
 package controllers
 
 import controllers.actions._
-import models.{NormalMode, Regime}
-import play.api.Logging
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
+import javax.inject.Inject
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import javax.inject.Inject
+import play.api.mvc._
 import scala.concurrent.ExecutionContext
+import uk.gov.hmrc.nunjucks.NunjucksSupport
+import models.Regime
+import play.api.libs.json.Json
+import config.FrontendAppConfig
 
-class WeCouldNotConfirmController @Inject() (
+class BusinessAlreadyRegisteredController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
+  frontendAppConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with Logging {
+    with NunjucksSupport {
 
-  def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
-      implicit request =>
-        val messages = implicitly[Messages]
-        val data = Json.obj(
-          "regime"   -> regime.toUpperCase,
-          "affinity" -> messages(s"weCouldNotConfirm.$key"),
-          "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
-        )
-        renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
-    }
+  def onPageLoadWithID(regime: Regime): Action[AnyContent] = (identify(regime)).async {
+    implicit request =>
+      val json = Json.obj(
+        "withID"       -> true,
+        "emailAddress" -> frontendAppConfig.emailEnquiries
+      )
+
+      renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
+  }
+
+  def onPageLoadWithoutID(regime: Regime): Action[AnyContent] = (identify(regime)).async {
+    implicit request =>
+      val json = Json.obj(
+        "withID"       -> false,
+        "emailAddress" -> frontendAppConfig.emailEnquiries,
+        "loginGG"      -> frontendAppConfig.loginUrl
+      )
+
+      renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
+  }
+
 }

@@ -16,10 +16,8 @@
 
 package pages
 
-import models.{Name, UserAnswers}
-import uk.gov.hmrc.domain.Nino
+import models.UserAnswers
 
-import java.time.LocalDate
 import scala.util.Try
 
 object PageLists {

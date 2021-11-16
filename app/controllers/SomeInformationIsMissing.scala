@@ -16,10 +16,10 @@
 
 package controllers
 
+import models.Regime
 import models.requests.DataRequest
-import models.{BusinessType, Regime, UserAnswers}
 import navigation.Navigator
-import pages.{BusinessTypePage, ContactNamePage, QuestionPage, SndContactNamePage}
+import pages.QuestionPage
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
