@@ -22,7 +22,7 @@ import models.requests.DataRequest
 import models.{Address, Country, Mode, Regime}
 import navigation.MDRNavigator
 import pages.AddressUKPage
-import play.api.Logger
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
@@ -51,8 +51,8 @@ class AddressUKController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
-  private val logger: Logger = Logger(this.getClass)
+    with NunjucksSupport
+    with Logging {
 
   val countriesList: Option[Seq[Country]] = countryListFactory.countryList
 

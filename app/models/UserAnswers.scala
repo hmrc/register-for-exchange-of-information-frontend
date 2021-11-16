@@ -45,7 +45,7 @@ final case class UserAnswers(
 
     updatedData.flatMap {
       d =>
-        if (previousValue.contains(value)) {
+        if (checkPrevious && previousValue.contains(value)) {
           Try(copy(data = d))
         } else {
           val updatedAnswers = copy(data = d)

@@ -76,6 +76,14 @@ class MDRNavigator @Inject() () extends Navigator {
     case _                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
     case RegistrationInfoPage => registrationInfo(CheckMode)
     case _                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
+    case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
+    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
+    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
+    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(NormalMode)(regime)
+    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode, regime))
+    case RegistrationInfoPage                  => registrationInfo(CheckMode)
+    case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def registrationInfo(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
@@ -134,9 +142,9 @@ class MDRNavigator @Inject() () extends Navigator {
     }
 
   private def isThisYourBusiness(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    Option(ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) map {
-      case (Some(true), Some(Sole)) => routes.ContactEmailController.onPageLoad(mode, regime)
-      case (Some(true), Some(_))    => routes.ContactNameController.onPageLoad(mode, regime)
-      case _                        => routes.NoRecordsMatchedController.onPageLoad(regime)
+    (ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) match {
+      case (Some(true), Some(Sole)) => Some(routes.ContactEmailController.onPageLoad(mode, regime))
+      case (Some(true), Some(_))    => Some(routes.ContactNameController.onPageLoad(mode, regime))
+      case _                        => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }
 }

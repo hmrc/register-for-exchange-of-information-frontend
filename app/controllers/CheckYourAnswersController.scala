@@ -19,8 +19,8 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, UnableToCreateEnrolmentError}
-import models.{Regime, SubscriptionID, WhatAreYouRegisteringAs}
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError}
+import models.{Regime, SubscriptionID}
 import navigation.Navigator
 import pages._
 import play.api.Logging
@@ -36,7 +36,6 @@ import utils.{CheckYourAnswersHelper, CountryListFactory}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.postfixOps
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -95,8 +94,6 @@ class CheckYourAnswersController @Inject() (
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case UnableToCreateEnrolmentError =>
-            Future.successful(NotImplemented("Create Enrolment error page is not implemented")) //TODO create UnableToCreateEnrolment page
           case DuplicateSubmissionError =>
             Future.successful(NotImplemented("Duplicate Submission error page is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
           case BadRequestError =>
