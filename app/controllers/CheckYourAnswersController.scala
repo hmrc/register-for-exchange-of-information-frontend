@@ -89,7 +89,7 @@ class CheckYourAnswersController @Inject() (
         subscriptionID     <- EitherT(subscriptionService.createSubscription(registrationInfo.safeId, request.userAnswers))
         withSubscriptionID <- setEither(SubscriptionIDPage, SubscriptionID(subscriptionID))
         _ = sessionRepository.set(withSubscriptionID)
-        _ <- EitherT(taxEnrolmentsService.createEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
+        _ <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(registrationInfo.safeId, withSubscriptionID, SubscriptionID(subscriptionID), regime))
       } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
