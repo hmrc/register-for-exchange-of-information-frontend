@@ -21,7 +21,7 @@ import forms.WhatAreYouRegisteringAsFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime, WhatAreYouRegisteringAs}
 import navigation.MDRNavigator
-import pages.WhatAreYouRegisteringAsPage
+import pages.{BusinessWithoutIDNamePage, WhatAreYouRegisteringAsPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -75,11 +75,15 @@ class WhatAreYouRegisteringAsController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value =>
+            value => {
+
+              val originalAnswer = request.userAnswers.get(WhatAreYouRegisteringAsPage)
+
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPageWithValueCheck(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers, originalAnswer))
+            }
           )
     }
 }

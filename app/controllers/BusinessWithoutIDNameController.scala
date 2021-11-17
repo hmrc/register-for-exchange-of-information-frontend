@@ -78,12 +78,12 @@ class BusinessWithoutIDNameController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value => {
 
-              val valueMatchesOriginalAnswer = compareValues(value, request.userAnswers.get(BusinessWithoutIDNamePage))
+              val originalAnswer = request.userAnswers.get(BusinessWithoutIDNamePage)
 
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(BusinessWithoutIDNamePage, mode, regime, updatedAnswers, valueMatchesOriginalAnswer))
+              } yield Redirect(navigator.nextPageWithValueCheck(BusinessWithoutIDNamePage, mode, regime, updatedAnswers, originalAnswer))
             }
           )
     }

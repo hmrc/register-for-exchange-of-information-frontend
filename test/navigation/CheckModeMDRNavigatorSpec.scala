@@ -58,7 +58,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers
-              .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+              .set(DoYouHaveUniqueTaxPayerReferencePage, false, Some(true))
               .success
               .value
 
@@ -72,7 +72,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers
-              .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+              .set(DoYouHaveUniqueTaxPayerReferencePage, true, Some(false))
               .success
               .value
 
@@ -158,7 +158,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 mode = CheckMode,
                 regime = MDR,
                 userAnswers = updatedAnswers,
-                valueMatchesOriginalAnswer = true
+                originalValue = Some("a business")
               )
               .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
@@ -275,9 +275,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         val updatedAnswers =
           answers
             .set(DoYouHaveNINPage, false)
-            .success
-            .value
-            .set(ContactNamePage, "someName")
             .success
             .value
 

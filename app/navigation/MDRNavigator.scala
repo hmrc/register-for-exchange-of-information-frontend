@@ -74,7 +74,7 @@ class MDRNavigator @Inject() () extends Navigator {
   private def whatIsTradingNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     (ua.get(DoYouHaveUniqueTaxPayerReferencePage), mode) match {
       case (_, CheckMode) if containsContactDetails(ua) => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-      case _                                            => Some(routes.AddressWithoutIdController.onPageLoad(NormalMode, regime))
+      case _                                            => Some(routes.AddressWithoutIdController.onPageLoad(mode, regime))
     }
 
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
@@ -137,6 +137,7 @@ class MDRNavigator @Inject() () extends Navigator {
       case _                        => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }
 
+  // In CHECKMODE we check if contact details have been cleared down if not we can safely Redirec to CYA page
   private def containsContactDetails(ua: UserAnswers): Boolean = {
     val hasContactName = ua
       .get(ContactNamePage)

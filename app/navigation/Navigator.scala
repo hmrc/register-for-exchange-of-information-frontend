@@ -42,7 +42,17 @@ trait Navigator {
       }
   }
 
-  def nextPageWithValueCheck[A](page: QuestionPage[A], mode: Mode, regime: Regime, userAnswers: UserAnswers, valueMatchesOriginalAnswer: Boolean): Call =
+  // In CHECKMODE if new user answer matches old user answer redirect to CYA page
+  def nextPageWithValueCheck[A](page: QuestionPage[A], mode: Mode, regime: Regime, userAnswers: UserAnswers, originalValue: Option[A])(implicit
+    rds: Reads[A]
+  ): Call = {
+
+    val valueMatchesOriginalAnswer = userAnswers
+      .get(page)
+      .fold(false)(
+        newValue => newValue.equals(originalValue.getOrElse(false))
+      )
+
     mode match {
       case NormalMode =>
         normalRoutes(page)(regime)(userAnswers) match {
@@ -52,11 +62,13 @@ trait Navigator {
 
       case CheckMode =>
         checkRouteMap(page)(regime)(userAnswers) match {
-          case Some(_) if valueMatchesOriginalAnswer => routes.CheckYourAnswersController.onPageLoad(regime)
-          case Some(call)                            => call
-          case None                                  => routes.IndexController.onPageLoad(regime)
+          case Some(_) if valueMatchesOriginalAnswer =>
+            routes.CheckYourAnswersController.onPageLoad(regime)
+          case Some(call) => call
+          case None       => routes.IndexController.onPageLoad(regime)
         }
     }
+  }
 }
 
 object Navigator {

@@ -83,7 +83,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(SndContactPhonePage, "07540000000")
             .success
             .value
-            .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+            .set(DoYouHaveUniqueTaxPayerReferencePage, false, Some(true))
             .success
             .value
 

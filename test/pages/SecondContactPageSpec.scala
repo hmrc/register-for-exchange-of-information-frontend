@@ -32,7 +32,7 @@ class SecondContactPageSpec extends PageBehaviours {
 
     "cleanup" - {
 
-      "must remove SecondContactPages when there is a change of the answer to 'No'" in {
+      "must remove SecondContactPages when there is a change of the answer from 'Yes' to 'No'" in {
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
             val result = userAnswers
@@ -48,7 +48,7 @@ class SecondContactPageSpec extends PageBehaviours {
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .set(SecondContactPage, false)
+              .set(SecondContactPage, false, Some(true))
               .success
               .value
 
