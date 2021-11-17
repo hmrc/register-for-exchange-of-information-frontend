@@ -19,7 +19,7 @@ package models.subscription.request
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models.{BusinessType, UserAnswers}
 import pages._
-import play.api.libs.json.{__, Json, OWrites, Reads}
+import play.api.libs.json.{Json, OWrites, Reads, __}
 
 case class CreateRequestDetail(IDType: String,
                                IDNumber: String,

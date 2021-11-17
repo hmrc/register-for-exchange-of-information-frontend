@@ -36,6 +36,10 @@ object PageLists {
 
   val allAfterBusinessTypePage = List(UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage, IsThisYourBusinessPage)
 
+  val allAfterWhatIsYourNationalInsuranceNumberPage = List(WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
+
+  val allAfterWhatIsYourNamePage = List(WhatIsYourDateOfBirthPage)
+
   val individualWithIdJourney = List(WhatIsYourNationalInsuranceNumberPage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
 
   val businessWithIdJourney = BusinessTypePage +: allAfterBusinessTypePage

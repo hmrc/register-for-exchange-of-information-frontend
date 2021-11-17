@@ -20,31 +20,16 @@ import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{Mode, Regime}
-import models.error.ApiError
-import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.RegistrationInfo
-import models.requests.DataRequest
-import navigation.MDRNavigator
-import pages.{
-  BusinessNamePage,
-  BusinessTypePage,
-  RegistrationInfoPage,
-  SoleNamePage,
-  UTRPage,
-  WhatIsYourDateOfBirthPage,
-  WhatIsYourNamePage,
-  WhatIsYourNationalInsuranceNumberPage
-}
+import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class MatchController @Inject() (
   override val messagesApi: MessagesApi,

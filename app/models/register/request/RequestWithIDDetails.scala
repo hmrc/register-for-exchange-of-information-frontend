@@ -19,7 +19,7 @@ package models.register.request
 import models.Name
 import models.register.request
 import models.register.request.details.{PartnerDetails, WithIDIndividual, WithIDOrganisation}
-import play.api.libs.json.{__, Json, OWrites, Reads}
+import play.api.libs.json.{Json, OWrites, Reads, __}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

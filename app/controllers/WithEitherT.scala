@@ -25,7 +25,7 @@ import models.requests.DataRequest
 import pages.QuestionPage
 import play.api.libs.json.{Reads, Writes}
 import play.api.mvc.AnyContent
-import queries.{Gettable, Settable}
+import queries.Gettable
 
 import scala.concurrent.{ExecutionContext, Future}
 
