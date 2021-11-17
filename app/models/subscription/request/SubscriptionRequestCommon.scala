@@ -26,7 +26,8 @@ case class SubscriptionRequestCommon(regime: String,
                                      receiptDate: String,
                                      acknowledgementReference: String,
                                      originatingSystem: String,
-                                     requestParameters: Option[Seq[RequestParameter]]
+                                     requestParameters: Option[Seq[RequestParameter]],
+                                     conversationID: Option[String] = None
 )
 
 object SubscriptionRequestCommon {

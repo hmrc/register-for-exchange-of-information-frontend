@@ -16,18 +16,7 @@
 
 package generators
 
-import models.subscription.request.{
-  ContactInformation,
-  CreateRequestDetail,
-  CreateSubscriptionForMDRRequest,
-  IndividualDetails,
-  OrganisationDetails,
-  PrimaryContact,
-  RequestParameter,
-  SecondaryContact,
-  SubscriptionRequest,
-  SubscriptionRequestCommon
-}
+import models.subscription.request._
 import models.{Address, Country}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
@@ -173,4 +162,35 @@ trait ModelGenerators {
       subscriptionRequest <- arbitrary[SubscriptionRequest]
     } yield CreateSubscriptionForMDRRequest(subscriptionRequest)
   }
+
+  implicit val arbitraryRequestDetail: Arbitrary[RequestDetail] = Arbitrary {
+    for {
+      idType   <- arbitrary[String]
+      idNumber <- arbitrary[String]
+    } yield RequestDetail(idType, idNumber)
+  }
+
+  implicit val arbitraryReadSubscriptionRequest: Arbitrary[ReadSubscriptionRequest] = Arbitrary {
+    for {
+      requestCommon  <- arbitrary[SubscriptionRequestCommon]
+      requestDetails <- arbitrary[RequestDetail]
+    } yield ReadSubscriptionRequest(requestCommon, requestDetails)
+  }
+
+  implicit val arbitraryDisplaySubscriptionForMDRRequest: Arbitrary[DisplaySubscriptionForMDRRequest] = Arbitrary {
+    for {
+      subscriptionRequest <- arbitrary[ReadSubscriptionRequest]
+    } yield DisplaySubscriptionForMDRRequest(subscriptionRequest)
+  }
+
+  implicit val arbitraryDisplaySubscriptionForCBCRequest: Arbitrary[DisplaySubscriptionForCBCRequest] = Arbitrary {
+    for {
+      subscriptionRequest <- arbitrary[ReadSubscriptionRequest]
+    } yield DisplaySubscriptionForCBCRequest(subscriptionRequest)
+  }
+
+  implicit lazy val arbitraryDisplaySubscriptionRequest: Arbitrary[DisplaySubscriptionRequest] = Arbitrary {
+    Gen.oneOf[DisplaySubscriptionRequest](arbitrary[DisplaySubscriptionForMDRRequest], arbitrary[DisplaySubscriptionForCBCRequest])
+  }
+
 }

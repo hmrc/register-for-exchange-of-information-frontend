@@ -16,11 +16,35 @@
 
 package models.subscription.response
 
-import models.shared.ResponseCommon
-import play.api.libs.json._
+import play.api.libs.json.{Json, Reads}
 
-case class DisplaySubscriptionResponse(responseCommon: ResponseCommon, responseDetail: DisplayResponseDetail)
+sealed trait DisplaySubscriptionResponse
 
 object DisplaySubscriptionResponse {
-  implicit val format: OFormat[DisplaySubscriptionResponse] = Json.format[DisplaySubscriptionResponse]
+
+  implicit lazy val reads: Reads[DisplaySubscriptionResponse] = {
+
+    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
+      def or[B >: A](b: Reads[B]): Reads[B] =
+        a.map[B](identity).orElse(b)
+    }
+
+    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
+      a.map(identity)
+
+    DisplaySubscriptionForMDRResponse.reads or
+      DisplaySubscriptionForCBCResponse.reads
+  }
+}
+
+case class DisplaySubscriptionForMDRResponse(displaySubscriptionForMDRResponse: SubscriptionIDResponse) extends DisplaySubscriptionResponse
+
+object DisplaySubscriptionForMDRResponse {
+  implicit lazy val reads: Reads[DisplaySubscriptionForMDRResponse] = Json.reads[DisplaySubscriptionForMDRResponse]
+}
+
+case class DisplaySubscriptionForCBCResponse(displaySubscriptionForCBCResponse: SubscriptionIDResponse) extends DisplaySubscriptionResponse
+
+object DisplaySubscriptionForCBCResponse {
+  implicit lazy val reads: Reads[DisplaySubscriptionForCBCResponse] = Json.reads[DisplaySubscriptionForCBCResponse]
 }

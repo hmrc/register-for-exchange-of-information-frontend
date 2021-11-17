@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models.subscription.request
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.Inject
+case class RequestDetail(IDType: String, IDNumber: String)
 
-class IsContactTelephoneFormProvider @Inject() extends Mappings {
-
-  def apply(suffix: String): Form[Boolean] =
-    Form(
-      "value" -> boolean(s"isContactTelephone.error.required.$suffix")
-    )
+object RequestDetail {
+  implicit val format: OFormat[RequestDetail] = Json.format[RequestDetail]
 }

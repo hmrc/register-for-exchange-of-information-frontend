@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package forms
+package models.subscription.response
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.{Json, Reads}
 
-import javax.inject.Inject
+case class CreateSubscriptionForMDRResponse(createSubscriptionForMDRResponse: SubscriptionIDResponse)
 
-class IsContactTelephoneFormProvider @Inject() extends Mappings {
-
-  def apply(suffix: String): Form[Boolean] =
-    Form(
-      "value" -> boolean(s"isContactTelephone.error.required.$suffix")
-    )
+object CreateSubscriptionForMDRResponse {
+  implicit lazy val reads: Reads[CreateSubscriptionForMDRResponse] = Json.reads[CreateSubscriptionForMDRResponse]
 }

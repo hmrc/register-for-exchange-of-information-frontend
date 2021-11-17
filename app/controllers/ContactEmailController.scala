@@ -54,25 +54,16 @@ class ContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private val businessTitleKey     = "contactEmail.heading"
-  private val businessHeadingKey   = "contactEmail.title"
-  private val individualTitleKey   = "contactEmail.individual.heading"
-  private val individualHeadingKey = "contactEmail.individual.title"
-
   private def render(mode: Mode, regime: Regime, form: Form[String], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
-    val (pageTitle, heading) = if (hasContactName()) {
-      (businessTitleKey, businessHeadingKey)
-    } else {
-      (individualTitleKey, individualHeadingKey)
-    }
+    val suffix = isBusinessOrIndividual()
 
     val data = Json.obj(
       "form"      -> form,
       "regime"    -> regime.toUpperCase,
       "name"      -> name,
-      "pageTitle" -> pageTitle,
-      "heading"   -> heading,
+      "pageTitle" -> s"contactEmail.title.$suffix",
+      "heading"   -> s"contactEmail.heading.$suffix",
       "action"    -> routes.ContactEmailController.onSubmit(mode, regime).url
     )
     renderer.render("contactEmail.njk", data)

@@ -24,6 +24,6 @@ object SubscriptionIDResponse {
 
   implicit val reads: Reads[SubscriptionIDResponse] = {
     import play.api.libs.functional.syntax._
-    (__ \ "createSubscriptionForMDRResponse" \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionIDResponse.apply
+    (__ \ "responseDetail" \ "subscriptionID").read[String] fmap SubscriptionIDResponse.apply
   }
 }
