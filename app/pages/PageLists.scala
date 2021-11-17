@@ -44,4 +44,46 @@ object PageLists {
     List(BusinessWithoutIDNamePage, WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, AddressUKPage, SelectAddressPage)
 
   val businessWithoutIdJourney = List()
+
+  val allContactDetailPages = List(
+    ContactNamePage,
+    ContactEmailPage,
+    IsContactTelephonePage,
+    ContactPhonePage,
+    SecondContactPage,
+    SndContactNamePage,
+    SndContactEmailPage,
+    SndConHavePhonePage,
+    SndContactPhonePage
+  )
+
+  val allWithIDPages = List(
+    BusinessTypePage,
+    UTRPage,
+    SoleNamePage,
+    IsThisYourBusinessPage,
+    BusinessNamePage
+  )
+
+  val businessWithOutIDPages = List(
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage,
+    AddressWithoutIdPage
+  )
+
+  val individualWithOutIDPages = List(
+    DoYouHaveNINPage,
+    WhatIsYourNationalInsuranceNumberPage,
+    WhatIsYourNamePage,
+    WhatIsYourDateOfBirthPage,
+    NonUkNamePage,
+    DoYouLiveInTheUKPage,
+    WhatIsYourPostcodePage,
+    AddressLookupPage,
+    AddressUKPage
+  )
+
+  val allWithOutIDPages = List(WhatAreYouRegisteringAsPage) ++ businessWithOutIDPages ++ individualWithOutIDPages
+
 }

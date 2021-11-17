@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +49,8 @@ class BusinessWithoutIDNameController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
@@ -74,11 +76,15 @@ class BusinessWithoutIDNameController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value =>
+            value => {
+
+              val valueMatchesOriginalAnswer = compareValues(value, request.userAnswers.get(BusinessWithoutIDNamePage))
+
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPageWithValueCheck(BusinessWithoutIDNamePage, mode, regime, updatedAnswers, valueMatchesOriginalAnswer))
+            }
           )
     }
 }

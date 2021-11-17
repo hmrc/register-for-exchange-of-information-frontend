@@ -16,9 +16,11 @@
 
 package utils
 
+import models.{Mode, Regime, UserAnswers}
 import models.requests.DataRequest
-import pages.ContactNamePage
-import play.api.mvc.AnyContent
+import pages.{ContactNamePage, QuestionPage}
+import play.api.libs.json.Reads
+import play.api.mvc.{AnyContent, Call}
 
 trait UserAnswersHelper {
 
@@ -27,4 +29,8 @@ trait UserAnswersHelper {
       case Some(_) => "business"
       case _       => "individual"
     }
+
+  def compareValues[A](newUserValue: A, originalUserValue: Option[A])(implicit rds: Reads[A]): Boolean =
+    newUserValue.equals(originalUserValue.getOrElse(false))
+
 }

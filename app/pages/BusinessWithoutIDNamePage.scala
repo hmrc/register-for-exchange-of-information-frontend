@@ -16,11 +16,16 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
+import utils.UserAnswersHelper
 
-case object BusinessWithoutIDNamePage extends QuestionPage[String] {
+import scala.util.Try
+
+case object BusinessWithoutIDNamePage extends QuestionPage[String] with UserAnswersHelper {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "businessWithoutIDName"
+
 }
