@@ -308,7 +308,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'confirmation' page for 'Individual with Id' journey" in {
 
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right("")))
@@ -340,7 +340,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'confirmation' page for 'Business with Id' journey" in {
 
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right("")))
@@ -370,7 +370,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Html("")))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
         when(mockSubscriptionService.createSubscription(any(), any())(any(), any())).thenReturn(Future.successful(Right("")))
         val userAnswers = UserAnswers("Id")
@@ -389,7 +389,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'confirmation' page for 'Individual without Id' journey" in {
 
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right("")))
@@ -421,7 +421,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'confirmation' page for 'Business without Id' journey" in {
 
-        when(mockTaxEnrolmentsService.createEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
         when(mockSubscriptionService.createSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right("")))
