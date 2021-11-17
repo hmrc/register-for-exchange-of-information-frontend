@@ -19,7 +19,7 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.SubscriptionConnector
-import models.UserAnswers
+import models.{Regime, UserAnswers}
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
 import models.subscription.request.{CreateSubscriptionForMDRRequest, SubscriptionRequest}
@@ -30,8 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
 
-  def createSubscription(safeID: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, String]] =
-    (SubscriptionRequest.convertTo(safeID, userAnswers) match {
+  def createSubscription(regime: Regime, safeID: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Either[ApiError, String]] =
+    (SubscriptionRequest.convertTo(regime, safeID, userAnswers) match {
       case Some(subscriptionRequest) =>
         subscriptionConnector
           .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))

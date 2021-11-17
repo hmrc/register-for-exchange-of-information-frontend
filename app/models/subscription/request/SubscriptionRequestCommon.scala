@@ -16,6 +16,7 @@
 
 package models.subscription.request
 
+import models.Regime
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.ZonedDateTime
@@ -35,14 +36,14 @@ object SubscriptionRequestCommon {
 
   private val mdtp = "MDTP"
 
-  def createSubscriptionRequestCommon: SubscriptionRequestCommon = {
+  def createSubscriptionRequestCommon(regime: Regime): SubscriptionRequestCommon = {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     //Generate a 32 chars UUID without hyphens
     val acknowledgementReference = UUID.randomUUID().toString.replace("-", "")
 
     SubscriptionRequestCommon(
-      regime = "MDR", //TODO regime
+      regime = regime.toUpperCase,
       receiptDate = ZonedDateTime.now().format(formatter),
       acknowledgementReference = acknowledgementReference,
       originatingSystem = mdtp,

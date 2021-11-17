@@ -25,7 +25,7 @@ import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
-import models.{Address, Country, NonUkName, SubscriptionID, UserAnswers}
+import models.{Address, Country, MDR, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -87,7 +87,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .success
         .value
 
-      val result = service.createSubscription("safeId", userAnswers)
+      val result = service.createSubscription(MDR, "safeId", userAnswers)
       result.futureValue mustBe Right("id")
     }
 
@@ -120,7 +120,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .success
         .value
 
-      val result = service.createSubscription("safeId", userAnswers)
+      val result = service.createSubscription(MDR, "safeId", userAnswers)
       result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
 
@@ -129,7 +129,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-      val result = service.createSubscription("safeId", UserAnswers("id"))
+      val result = service.createSubscription(MDR, "safeId", UserAnswers("id"))
 
       result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
@@ -161,7 +161,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-        val result = service.createSubscription("safeId", userAnswers)
+        val result = service.createSubscription(MDR, "safeId", userAnswers)
 
         result.futureValue mustBe Left(error)
       }

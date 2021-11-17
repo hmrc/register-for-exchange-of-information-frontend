@@ -86,7 +86,7 @@ class CheckYourAnswersController @Inject() (
     implicit request =>
       (for {
         registrationInfo   <- getEither(RegistrationInfoPage).orElse(EitherT(registrationService.registerWithoutId(regime)))
-        subscriptionID     <- EitherT(subscriptionService.createSubscription(registrationInfo.safeId, request.userAnswers))
+        subscriptionID     <- EitherT(subscriptionService.createSubscription(regime, registrationInfo.safeId, request.userAnswers))
         withSubscriptionID <- setEither(SubscriptionIDPage, SubscriptionID(subscriptionID))
         _ = sessionRepository.set(withSubscriptionID)
         _ <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(registrationInfo.safeId, withSubscriptionID, SubscriptionID(subscriptionID), regime))
