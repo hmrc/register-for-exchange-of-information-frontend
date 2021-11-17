@@ -19,23 +19,18 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{Mode, Regime}
-import models.error.ApiError
-import models.error.ApiError.MandatoryInformationMissingError
 import models.matching.RegistrationInfo
-import models.requests.DataRequest
-import navigation.MDRNavigator
-import pages.{BusinessNamePage, BusinessTypePage, RegistrationInfoPage, SoleNamePage, UTRPage}
+import models.{BusinessWithID, Mode, Regime}
+import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class MatchController @Inject() (
   override val messagesApi: MessagesApi,
@@ -59,12 +54,15 @@ class MatchController @Inject() (
   def onBusinessMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       (for {
-        utr              <- getEither(UTRPage)
-        businessName     <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
-        businessType     <- getEither(BusinessTypePage)
-        registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, utr, businessName, businessType))
-        updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
-        _ = sessionRepository.set(updatedAnswers)
+        utr          <- getEither(UTRPage)
+        businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
+        businessType <- getEither(BusinessTypePage)
+        dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
+        registrationInfo <- getEither(RegistrationInfoPage).orElse(EitherT.right(RegistrationInfo("", businessName, None, Option(businessType), Option(utr), dateOfBirth)
+          // decision is it the same as before ? yes => CYA, : no => continue
+        response <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, registrationInfo))
+        withInfo         <- setEither(RegistrationInfoPage, response)
+        _ = sessionRepository.set(withInfo)
       } yield Redirect(routes.IsThisYourBusinessController.onPageLoad(mode, regime))).valueOr {
         error =>
           logger.debug(s"Business not matched with error $error")

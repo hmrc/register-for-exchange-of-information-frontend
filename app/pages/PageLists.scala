@@ -44,4 +44,9 @@ object PageLists {
     List(BusinessWithoutIDNamePage, WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, AddressUKPage, SelectAddressPage)
 
   val businessWithoutIdJourney = List()
+
+  val allOtherPages =
+    List(WhatAreYouRegisteringAsPage,
+         DoYouHaveNINPage
+    ) ++ individualWithIdJourney ++ individualWithoutIdJourney ++ businessWithIdJourney ++ businessWithoutIdJourney
 }

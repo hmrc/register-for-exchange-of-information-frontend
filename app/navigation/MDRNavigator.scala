@@ -47,21 +47,21 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
     case UTRPage                               => isSoleProprietor(NormalMode)
     case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
-    case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
+    case BusinessNamePage                      => regime => _ => Some(routes.MatchController.onBusinessMatch(NormalMode, regime))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
     case RegistrationInfoPage                  => registrationInfo(NormalMode)
     case _                                     => _ => _ => None
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
-    case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
-    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, regime))
-    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
-    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(NormalMode)(regime)
-    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode, regime))
-    case RegistrationInfoPage                  => registrationInfo(CheckMode)
-    case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case DoYouHaveUniqueTaxPayerReferencePage => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
+    case BusinessTypePage                     => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
+    case UTRPage                              => isSoleProprietor(CheckMode)
+    case WhatIsYourNamePage                   => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
+    case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
+    case BusinessNamePage                     => regime => _ => Some(routes.MatchController.onBusinessMatch(CheckMode, regime))
+    case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
+    case _                                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def registrationInfo(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
@@ -121,8 +121,9 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def isThisYourBusiness(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     (ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) match {
-      case (Some(true), Some(Sole)) => Some(routes.ContactEmailController.onPageLoad(mode, regime))
-      case (Some(true), Some(_))    => Some(routes.ContactNameController.onPageLoad(mode, regime))
-      case _                        => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
+      case (Some(true), _) if mode == CheckMode => Some(Navigator.checkYourAnswers(regime))
+      case (Some(true), Some(Sole))             => Some(routes.ContactEmailController.onPageLoad(mode, regime))
+      case (Some(true), Some(_))                => Some(routes.ContactNameController.onPageLoad(mode, regime))
+      case _                                    => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }
 }

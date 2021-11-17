@@ -92,8 +92,11 @@ class IsThisYourBusinessController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
+              _ = BusinessWithID()
+              _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, mode, regime, updatedAnswers))
         )
   }
+
+  def toModel(userAnswers: UserAnswers)
 }

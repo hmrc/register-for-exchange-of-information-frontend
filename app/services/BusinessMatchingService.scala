@@ -23,7 +23,7 @@ import models.error.ApiError.MandatoryInformationMissingError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
 import models.register.request.RegisterWithID
-import models.{BusinessType, Name, Regime}
+import models.{Name, Regime}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -49,12 +49,12 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
       }
       .value
 
-  def sendBusinessRegistrationInformation(regime: Regime, utr: String, businessName: String, businessType: BusinessType)(implicit
+  def sendBusinessRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, RegistrationInfo]] =
     registrationConnector
-      .withOrganisationUtr(RegisterWithID(regime, businessName, businessType, "UTR", utr))
+      .withOrganisationUtr(RegisterWithID(regime, registrationInfo))
       .subflatMap {
         response =>
           (for {
