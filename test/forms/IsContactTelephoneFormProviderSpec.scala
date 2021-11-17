@@ -21,10 +21,10 @@ import play.api.data.FormError
 
 class IsContactTelephoneFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "isContactTelephone.error.required"
+  val requiredKey = "isContactTelephone.error.required.business"
   val invalidKey  = "error.boolean"
 
-  val form = new IsContactTelephoneFormProvider()()
+  val form = new IsContactTelephoneFormProvider()("business")
 
   ".value" - {
 
