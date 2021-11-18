@@ -90,7 +90,7 @@ object RegistrationInfo {
             businessType: Option[BusinessType],
             identifier: Option[String],
             dob: Option[LocalDate]
-  ): RegistrationInfo = RegistrationInfo(safeId, name, address, matchedAs, businessType, identifier, dob)
+  ): RegistrationInfo = new RegistrationInfo(safeId, name, address, matchedAs, businessType, identifier, dob)
 
   def build(safeId: String, matchedAs: MatchingType): RegistrationInfo =
     RegistrationInfo(safeId, None, None, matchedAs, None, None, None)

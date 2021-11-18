@@ -55,7 +55,7 @@ class MatchController @Inject() (
         name <- getEither(WhatIsYourNamePage)
         dob = request.userAnswers.get(WhatIsYourDateOfBirthPage)
         _        <- getEither(RegistrationInfoPage).ensure(DuplicateSubmissionError)(_.existing(AsIndividual, name, nino, dob))
-        response <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, RegistrationInfo.build(name, nino, dob)))
+        response <- EitherT(matchingService.sendIndividualRegistrationInformation(regime, RegistrationInfo.build(name, nino, dob)))
         withInfo <- setEither(RegistrationInfoPage, response)
         _ = sessionRepository.set(withInfo)
       } yield Redirect(routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime))).valueOr {

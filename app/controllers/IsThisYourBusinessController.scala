@@ -60,6 +60,9 @@ class IsThisYourBusinessController @Inject() (
       registrationInfo <- getEither(RegistrationInfoPage)
       name             <- getEither(registrationInfo.name, "Missing registration name.")
       address          <- getEither(registrationInfo.address, "Missing registration address.")
+
+      _ = println(s"\nregistrationInfo = $registrationInfo\nname = $name\nadress = $address") // todo del me
+
       withForm <- getEither(IsThisYourBusinessPage)
         .map(form.fill)
         .recover {

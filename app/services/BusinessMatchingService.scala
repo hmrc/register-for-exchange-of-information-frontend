@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
-  def sendIndividualRegistratonInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
+  def sendIndividualRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, RegistrationInfo]] =

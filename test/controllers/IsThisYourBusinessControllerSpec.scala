@@ -42,7 +42,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 
-  val registrationInfo = RegistrationInfo.build("SAFEID", AsIndividual)
+  val address          = AddressResponse("line1", None, None, None, None, "GB")
+  val registrationInfo = RegistrationInfo("safeId", Option("name"), Option(address), AsOrganisation, None, None, None)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(RegistrationInfoPage, registrationInfo)
@@ -65,12 +66,10 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   "IsThisYourBusiness Controller" - {
 
-    val address = AddressResponse("address", None, None, None, None, "GB")
-
     "must return OK and the correct view for a GET" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo.build("safeId", AsOrganisation))))
+        .thenReturn(Future.successful(Right(registrationInfo)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -99,7 +98,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo.build("safeId", AsOrganisation))))
+        .thenReturn(Future.successful(Right(registrationInfo)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

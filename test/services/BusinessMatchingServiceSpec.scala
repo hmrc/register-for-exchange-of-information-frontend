@@ -20,7 +20,7 @@ import base.{MockServiceApp, SpecBase}
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
-import helpers.RegisterHelper._
+import helpers.RegisterHelper.{addressResponse, _}
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
@@ -71,7 +71,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistratonInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
+          service.sendIndividualRegistrationInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
 
         result.futureValue mustBe Right(RegistrationInfo.build("XE0000123456789", AsIndividual))
       }
@@ -83,7 +83,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistratonInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
+          service.sendIndividualRegistrationInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -100,7 +100,16 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", "UTR", Option(dob)))
 
-        result.futureValue mustBe Right(RegistrationInfo.build("XE0000123456789", AsOrganisation))
+        result.futureValue mustBe Right(
+          RegistrationInfo("XE0000123456789",
+                           Option("name"),
+                           Option(addressResponse),
+                           AsOrganisation,
+                           Option(BusinessType.LimitedCompany),
+                           Option("UTR"),
+                           Option(dob)
+          )
+        )
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {

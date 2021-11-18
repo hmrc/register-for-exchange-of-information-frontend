@@ -23,7 +23,7 @@ import models.matching.RegistrationInfo
 import models.{MDR, Name, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{RegistrationInfoPage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -37,14 +37,10 @@ import scala.concurrent.Future
 
 class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with ControllerMockFixtures {
 
+  val registrationInfo = RegistrationInfo.build("safeId", AsIndividual)
+
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
-    .success
-    .value
-    .set(WhatIsYourNamePage, Name("First", "Last"))
-    .success
-    .value
-    .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+    .set(RegistrationInfoPage, registrationInfo)
     .success
     .value
 
@@ -66,8 +62,8 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return OK and the correct view for a GET when there is a match" in {
 
-      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo.build("safeId", AsIndividual))))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(registrationInfo)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -84,21 +80,6 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "weHaveConfirmedYourIdentity.njk"
-    }
-
-    "return redirect for a GET when there is no match" in {
-
-      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Left(NotFoundError)))
-
-      retrieveUserAnswersData(validUserAnswers)
-      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad("identity", MDR).url
     }
 
     "return return Service Unavailable for a GET when there is no data" in {
