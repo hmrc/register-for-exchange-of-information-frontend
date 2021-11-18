@@ -16,10 +16,10 @@
 
 package models.matching
 
-import models.BusinessType
+import models.{BusinessType, Name}
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.register.response.details.AddressResponse
-import play.api.libs.json.{__, OFormat, OWrites, Reads}
+import play.api.libs.json.{OFormat, OWrites, Reads, __}
 
 import java.time.LocalDate
 
@@ -41,6 +41,12 @@ case class RegistrationInfo(safeId: String,
     case AsOrganisation => "UTR"
     case _ => "INVALID"
   }
+
+  def existing(newType: BusinessType, newName: String, newIdentifier: String, newDateOfBirth: Option[LocalDate]): Boolean =
+      businessType.contains(newType) &&
+        name.contains(newName) &&
+        identifier.contains(newIdentifier) &&
+        dob.equals(newDateOfBirth)
 }
 
 object RegistrationInfo {
@@ -68,4 +74,10 @@ object RegistrationInfo {
     )(unlift(RegistrationInfo.unapply))
 
   implicit val format: OFormat[RegistrationInfo] = OFormat(reads, writes)
+
+  def apply(name: Name, nino: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
+    RegistrationInfo("", Option(name.fullName), None, None, Option(nino), dateOfBirth)
+
+  def apply(businessType: BusinessType, businessName: String, utr: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
+    RegistrationInfo("", Option(businessName), None, Option(businessType), Option(utr), dateOfBirth)
 }
