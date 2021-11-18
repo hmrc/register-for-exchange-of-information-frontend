@@ -83,7 +83,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo.build("safeId", AsIndividual))
         .success
         .value
 
@@ -116,7 +116,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(IsContactTelephonePage, true)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsOrganisation))
+        .set(RegistrationInfoPage, RegistrationInfo.build("safeId", AsOrganisation))
         .success
         .value
 
@@ -153,7 +153,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .set(SecondContactPage, false)
           .success
           .value
-          .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+          .set(RegistrationInfoPage, RegistrationInfo.build("safeId", AsIndividual))
           .success
           .value
 

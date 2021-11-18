@@ -73,7 +73,7 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual))
+        result.futureValue mustBe Right(RegistrationInfo.build("XE0000123456789", AsIndividual))
       }
 
       "must return an error when when safeId can't be recovered" in {
@@ -98,7 +98,7 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         val result: Future[Either[ApiError, RegistrationInfo]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsOrganisation))
+        result.futureValue mustBe Right(RegistrationInfo.build("XE0000123456789", AsOrganisation))
       }
 
       "must return an error when when safeId can't be recovered" in {

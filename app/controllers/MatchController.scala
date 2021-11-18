@@ -20,6 +20,7 @@ import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.error.ApiError.DuplicateSubmissionError
+import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
 import models.{CheckMode, Mode, Regime}
 import pages._
@@ -50,24 +51,17 @@ class MatchController @Inject() (
   def onIndividualMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       (for {
-        nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
-        name             <- getEither(WhatIsYourNamePage)
-        dob              <- getEither(WhatIsYourDateOfBirthPage)
-        registrationInfo <- getEither(RegistrationInfoPage).orElse(EitherT.right(RegistrationInfo("", Option(name), None, None, Option(nino), dob))
-          // decision is it the same as before ? yes => CYA, : no => continue
-          response <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, registrationInfo))
-                        withInfo         <- setEither(RegistrationInfoPage, response)
-                      _ = sessionRepository.set(withInfo)
-
-
-        nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
-        name             <- getEither(WhatIsYourNamePage)
-        dob              <- getEither(WhatIsYourDateOfBirthPage)
-        registrationInfo <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, nino, name, dob))
-        updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
-        _ = sessionRepository.set(updatedAnswers)
+        nino <- getEither(WhatIsYourNationalInsuranceNumberPage)
+        name <- getEither(WhatIsYourNamePage)
+        dob = request.userAnswers.get(WhatIsYourDateOfBirthPage)
+        _        <- getEither(RegistrationInfoPage).ensure(DuplicateSubmissionError)(_.existing(AsIndividual, name, nino, dob))
+        response <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, RegistrationInfo.build(name, nino, dob)))
+        withInfo <- setEither(RegistrationInfoPage, response)
+        _ = sessionRepository.set(withInfo)
       } yield Redirect(routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime))).valueOr {
-        error =>
+        case DuplicateSubmissionError if mode == CheckMode =>
+          Redirect(routes.CheckYourAnswersController.onPageLoad(regime))
+        case error =>
           logger.debug(s"Individual not matched with error $error")
           Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime))
       }

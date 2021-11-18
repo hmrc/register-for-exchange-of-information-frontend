@@ -43,13 +43,36 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  matchingService: BusinessMatchingService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with WithEitherT {
 
+  def onPageLoad(regime: Regime): Action[AnyContent] =
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+      implicit request =>
+        val action: String = request.userAnswers.get(BusinessTypePage) match {
+          case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+          case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
+          case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+        }
+
+        (for {
+          registrationInfo <- getEither(RegistrationInfoPage)
+          updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
+          _ = sessionRepository.set(updatedAnswers)
+        } yield Json.obj(
+          "regime" -> regime.toUpperCase,
+          "action" -> action
+        )).semiflatMap {
+          json => renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+        }.valueOrF(
+          _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+        )
+    }
+
+  /*
   def onPageLoad(regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
 
@@ -89,4 +112,5 @@ class WeHaveConfirmedYourIdentityController @Inject() (
       dob              <- getEither(WhatIsYourDateOfBirthPage)
       registrationInfo <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, nino, name, dob))
     } yield registrationInfo).value
+   */
 }
