@@ -16,7 +16,12 @@
 
 package pages
 
+import models.BusinessType.LimitedCompany
+import models.{Name, UserAnswers}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
+
+import java.time.LocalDate
 
 class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
 
@@ -28,4 +33,53 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
 
     beRemovable[Boolean](DoYouHaveUniqueTaxPayerReferencePage)
   }
+
+  val date = LocalDate.now()
+  "must remove pages ahead when user changes this page and check previous is required" in {
+    forAll(arbitrary[UserAnswers]) {
+      answers =>
+        val firstResult = answers
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
+          .set(BusinessTypePage, LimitedCompany)
+          .success
+          .value
+          .set(UTRPage, "UTR")
+          .success
+          .value
+          .set(WhatIsYourNamePage, Name("First", "Last"))
+          .success
+          .value
+          .set(WhatIsYourDateOfBirthPage, date)
+          .success
+          .value
+          .set(BusinessNamePage, "name")
+          .success
+          .value
+
+        val cleanResult = firstResult
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false, true)
+          .success
+          .value
+
+        cleanResult.get(BusinessTypePage) mustBe None
+        cleanResult.get(UTRPage) mustBe None
+        cleanResult.get(WhatIsYourNamePage) mustBe None
+        cleanResult.get(WhatIsYourDateOfBirthPage) mustBe None
+        cleanResult.get(BusinessNamePage) mustBe None
+
+        val sameResult = firstResult
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true, true)
+          .success
+          .value
+
+        sameResult.get(BusinessTypePage) mustBe Some(LimitedCompany)
+        sameResult.get(UTRPage) mustBe Some("UTR")
+        sameResult.get(WhatIsYourNamePage) mustBe Some(Name("First", "Last"))
+        sameResult.get(WhatIsYourDateOfBirthPage) mustBe Some(date)
+        sameResult.get(BusinessNamePage) mustBe Some("name")
+    }
+  }
+
 }

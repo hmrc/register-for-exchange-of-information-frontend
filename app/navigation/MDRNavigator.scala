@@ -47,7 +47,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
     case UTRPage                               => isSoleProprietor(NormalMode)
     case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
-    case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
+    case BusinessNamePage                      => regime => _ => Some(routes.MatchController.onBusinessMatch(NormalMode, regime))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
     case RegistrationInfoPage                  => registrationInfo(NormalMode)
     case _                                     => _ => _ => None
@@ -154,8 +154,9 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def isThisYourBusiness(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     (ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) match {
-      case (Some(true), Some(Sole)) => Some(routes.ContactEmailController.onPageLoad(mode, regime))
-      case (Some(true), Some(_))    => Some(routes.ContactNameController.onPageLoad(mode, regime))
-      case _                        => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
+      case (Some(true), _) if mode == CheckMode => Some(Navigator.checkYourAnswers(regime))
+      case (Some(true), Some(Sole))             => Some(routes.ContactEmailController.onPageLoad(mode, regime))
+      case (Some(true), Some(_))                => Some(routes.ContactNameController.onPageLoad(mode, regime))
+      case _                                    => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }
 }

@@ -16,10 +16,11 @@
 
 package models.register.request
 
-import models.Name
+import models.matching.RegistrationInfo
+import models.{BusinessWithID, Name}
 import models.register.request
 import models.register.request.details.{PartnerDetails, WithIDIndividual, WithIDOrganisation}
-import play.api.libs.json.{__, Json, OWrites, Reads}
+import play.api.libs.json.{Json, OWrites, Reads, __}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -83,12 +84,12 @@ object RequestWithIDDetails {
       WithIDIndividual(name.firstName, None, name.lastName, dob.format(dateFormat))
     )
 
-  def apply(organisationName: String, organisationType: String, identifierName: String, identifierValue: String): RequestWithIDDetails =
+  def apply(registrationInfo: RegistrationInfo): RequestWithIDDetails =
     RequestWithIDDetails(
-      identifierName,
-      identifierValue,
+      registrationInfo.identifierType,
+      registrationInfo.identifier.getOrElse(""),
       requiresNameMatch = true,
       isAnAgent = false, //This may change
-      WithIDOrganisation(organisationName, organisationType)
+      WithIDOrganisation(registrationInfo.name.getOrElse(""), registrationInfo.businessType.map(_.code).getOrElse(""))
     )
 }

@@ -19,7 +19,8 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{Mode, Regime}
+import models.matching.RegistrationInfo
+import models.{BusinessWithID, Mode, Regime}
 import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -64,18 +65,21 @@ class MatchController @Inject() (
   def onBusinessMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       (for {
-        utr              <- getEither(UTRPage)
-        businessName     <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
-        businessType     <- getEither(BusinessTypePage)
-        // todo all above in class BusiessWithId and use it below -> DAC6-1148 fetch pull
-        registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, utr, businessName, businessType))
-        updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
-        _ = sessionRepository.set(updatedAnswers)
+        utr          <- getEither(UTRPage)
+        businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
+        businessType <- getEither(BusinessTypePage)
+        dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
+        registrationInfo <- getEither(RegistrationInfoPage).orElse(EitherT.right(RegistrationInfo("", businessName, None, Option(businessType), Option(utr), dateOfBirth)
+          // decision is it the same as before ? yes => CYA, : no => continue
+        response <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, registrationInfo))
+        withInfo         <- setEither(RegistrationInfoPage, response)
+        _ = sessionRepository.set(withInfo)
       } yield Redirect(routes.IsThisYourBusinessController.onPageLoad(mode, regime))).valueOr {
         error =>
           logger.debug(s"Business not matched with error $error")
           Redirect(routes.NoRecordsMatchedController.onPageLoad(regime))
       }
+
   }
 
 }

@@ -16,14 +16,31 @@
 
 package models.matching
 
+import models.BusinessType
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.register.response.details.AddressResponse
 import play.api.libs.json.{__, OFormat, OWrites, Reads}
 
-case class RegistrationInfo(safeId: String, name: Option[String], address: Option[AddressResponse], matchedAs: MatchingType) {
+import java.time.LocalDate
 
+case class RegistrationInfo(safeId: String,
+                            name: Option[String],
+                            address: Option[AddressResponse],
+                            businessType: Option[BusinessType],
+                            identifier: Option[String] = None,
+                            dob: Option[LocalDate] = None
+) {
+
+  val matchedAs: MatchingType = businessType.fold[MatchingType](AsIndividual)(
+    _ => AsOrganisation
+  )
   val isBusiness: Boolean   = matchedAs == AsOrganisation
   val isIndividual: Boolean = matchedAs == AsIndividual
+  val identifierType: String = matchedAs match {
+    case AsIndividual => "NINO"
+    case AsOrganisation => "UTR"
+    case _ => "INVALID"
+  }
 }
 
 object RegistrationInfo {
@@ -35,7 +52,9 @@ object RegistrationInfo {
       (__ \ "safeId").read[String] and
         (__ \ "name").readNullable[String] and
         (__ \ "address").readNullable[AddressResponse] and
-        (__ \ "matchedAs").read[MatchingType]
+        (__ \ "businessType").readNullable[BusinessType] and
+        (__ \ "identifier").readNullable[String] and
+        (__ \ "dob").readNullable[LocalDate]
     )(RegistrationInfo.apply _)
 
   val writes: OWrites[RegistrationInfo] =
@@ -43,7 +62,9 @@ object RegistrationInfo {
       (__ \ "safeId").write[String] and
         (__ \ "name").writeNullable[String] and
         (__ \ "address").writeNullable[AddressResponse] and
-        (__ \ "matchedAs").write[MatchingType]
+        (__ \ "businessType").writeNullable[BusinessType] and
+        (__ \ "identifier").writeNullable[String] and
+        (__ \ "dob").writeNullable[LocalDate]
     )(unlift(RegistrationInfo.unapply))
 
   implicit val format: OFormat[RegistrationInfo] = OFormat(reads, writes)

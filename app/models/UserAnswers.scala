@@ -35,7 +35,7 @@ final case class UserAnswers(
 
   def set[A](page: QuestionPage[A], value: A, checkPrevious: Boolean = false)(implicit writes: Writes[A], reads: Reads[A]): Try[UserAnswers] = {
     val previousValue = if (checkPrevious) { get(page) }
-    else { Option(value) }
+    else { None }
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
