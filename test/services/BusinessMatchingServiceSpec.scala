@@ -72,7 +72,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistratonInformation(MDR, Nino("CC123456C"), name, dob)
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual))
+        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual, None, None, None))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
@@ -95,9 +95,12 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendBusinessRegistrationInformation(MDR, "UTR", "name", BusinessType.LimitedCompany)
+        val result: Future[Either[ApiError, RegistrationInfo]] =
+          service.sendBusinessRegistrationInformation(MDR,
+                                                      RegistrationInfo("UTR", Some("name"), None, AsOrganisation, Some(BusinessType.LimitedCompany), None, None)
+          )
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", Some("name"), Some(addressResponse), AsOrganisation))
+        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", Some("name"), Some(addressResponse), AsOrganisation, None, None, None))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
@@ -106,7 +109,10 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendBusinessRegistrationInformation(MDR, "UTR", "name", BusinessType.LimitedCompany)
+        val result: Future[Either[ApiError, RegistrationInfo]] =
+          service.sendBusinessRegistrationInformation(MDR,
+                                                      RegistrationInfo("UTR", Some("name"), None, AsOrganisation, Some(BusinessType.LimitedCompany), None, None)
+          )
 
         result.futureValue mustBe Left(NotFoundError)
       }

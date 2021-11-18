@@ -20,10 +20,10 @@ import base.{ControllerMockFixtures, SpecBase}
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
 import models.register.response.details.AddressResponse
-import models.{Address, BusinessType, Country, MDR, NormalMode, UserAnswers}
+import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{BusinessNamePage, BusinessTypePage, IsThisYourBusinessPage, RegistrationInfoPage, UTRPage}
+import pages.{IsThisYourBusinessPage, RegistrationInfoPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
@@ -43,7 +43,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 
   val address          = AddressResponse("line1", None, None, None, None, "GB")
-  val registrationInfo = RegistrationInfo("SAFEID", Some("name"), Some(address), AsIndividual)
+  val registrationInfo = RegistrationInfo("SAFEID", Some("name"), Some(address), AsIndividual, None, None, None)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(RegistrationInfoPage, registrationInfo)
@@ -70,8 +70,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -99,8 +99,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
