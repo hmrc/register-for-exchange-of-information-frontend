@@ -19,7 +19,7 @@ package services
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import controllers.WithEitherT
-import models.BusinessType.Sole
+import models.BusinessType.{LimitedCompany, Sole}
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError
 import models.error.ApiError.{MandatoryInformationMissingError, RegistrationResponseType}
@@ -82,7 +82,7 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield RegistrationInfo(safeId, None, None, AsIndividual)).toRight(MandatoryInformationMissingError())
+          } yield RegistrationInfo.build(safeId, AsIndividual)).toRight(MandatoryInformationMissingError())
       }
 
   def sendBusinessRegistration(regime: Regime, businessName: String, address: Address, contactDetails: ContactDetails)(implicit
@@ -95,6 +95,6 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield RegistrationInfo(safeId, None, None, AsOrganisation)).toRight(MandatoryInformationMissingError())
+          } yield RegistrationInfo.build(safeId, AsOrganisation)).toRight(MandatoryInformationMissingError())
       }
 }

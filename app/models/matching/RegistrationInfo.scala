@@ -19,34 +19,33 @@ package models.matching
 import models.{BusinessType, Name}
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.register.response.details.AddressResponse
-import play.api.libs.json.{OFormat, OWrites, Reads, __}
+import play.api.libs.json.{__, OFormat, OWrites, Reads}
 
 import java.time.LocalDate
 
 case class RegistrationInfo(safeId: String,
                             name: Option[String],
                             address: Option[AddressResponse],
+                            matchedAs: MatchingType,
                             businessType: Option[BusinessType],
                             identifier: Option[String] = None,
                             dob: Option[LocalDate] = None
 ) {
 
-  val matchedAs: MatchingType = businessType.fold[MatchingType](AsIndividual)(
-    _ => AsOrganisation
-  )
   val isBusiness: Boolean   = matchedAs == AsOrganisation
   val isIndividual: Boolean = matchedAs == AsIndividual
+
   val identifierType: String = matchedAs match {
-    case AsIndividual => "NINO"
+    case AsIndividual   => "NINO"
     case AsOrganisation => "UTR"
-    case _ => "INVALID"
+    case _              => "INVALID"
   }
 
   def existing(newType: BusinessType, newName: String, newIdentifier: String, newDateOfBirth: Option[LocalDate]): Boolean =
-      businessType.contains(newType) &&
-        name.contains(newName) &&
-        identifier.contains(newIdentifier) &&
-        dob.equals(newDateOfBirth)
+    businessType.contains(newType) &&
+      name.contains(newName) &&
+      identifier.contains(newIdentifier) &&
+      dob.equals(newDateOfBirth)
 }
 
 object RegistrationInfo {
@@ -58,6 +57,7 @@ object RegistrationInfo {
       (__ \ "safeId").read[String] and
         (__ \ "name").readNullable[String] and
         (__ \ "address").readNullable[AddressResponse] and
+        (__ \ "matchedAs").read[MatchingType] and
         (__ \ "businessType").readNullable[BusinessType] and
         (__ \ "identifier").readNullable[String] and
         (__ \ "dob").readNullable[LocalDate]
@@ -68,6 +68,7 @@ object RegistrationInfo {
       (__ \ "safeId").write[String] and
         (__ \ "name").writeNullable[String] and
         (__ \ "address").writeNullable[AddressResponse] and
+        (__ \ "matchedAs").write[MatchingType] and
         (__ \ "businessType").writeNullable[BusinessType] and
         (__ \ "identifier").writeNullable[String] and
         (__ \ "dob").writeNullable[LocalDate]
@@ -75,9 +76,21 @@ object RegistrationInfo {
 
   implicit val format: OFormat[RegistrationInfo] = OFormat(reads, writes)
 
-  def apply(name: Name, nino: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
-    RegistrationInfo("", Option(name.fullName), None, None, Option(nino), dateOfBirth)
+  def apply(safeId: String,
+            name: Option[String],
+            address: Option[AddressResponse],
+            matchedAs: MatchingType,
+            businessType: Option[BusinessType],
+            identifier: Option[String],
+            dob: Option[LocalDate]
+  ): RegistrationInfo = RegistrationInfo(safeId, name, address, matchedAs, businessType, identifier, dob)
 
-  def apply(businessType: BusinessType, businessName: String, utr: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
-    RegistrationInfo("", Option(businessName), None, Option(businessType), Option(utr), dateOfBirth)
+  def build(safeId: String, matchedAs: MatchingType): RegistrationInfo =
+    RegistrationInfo(safeId, None, None, matchedAs, None, None, None)
+
+  def build(name: Name, nino: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
+    RegistrationInfo("", Option(name.fullName), None, AsIndividual, None, Option(nino), dateOfBirth)
+
+  def build(businessType: BusinessType, businessName: String, utr: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
+    RegistrationInfo("", Option(businessName), None, AsOrganisation, Option(businessType), Option(utr), dateOfBirth)
 }
