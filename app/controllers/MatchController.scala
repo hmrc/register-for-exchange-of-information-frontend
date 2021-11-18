@@ -67,6 +67,7 @@ class MatchController @Inject() (
         utr              <- getEither(UTRPage)
         businessName     <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
         businessType     <- getEither(BusinessTypePage)
+        // todo all above in class BusiessWithId and use it below -> DAC6-1148 fetch pull
         registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, utr, businessName, businessType))
         updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
         _ = sessionRepository.set(updatedAnswers)
