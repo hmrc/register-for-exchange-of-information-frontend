@@ -16,10 +16,18 @@
 
 package models.subscription.request
 
+import models.{Regime, UserAnswers}
 import play.api.libs.json.{Json, OFormat}
 
 case class ReadSubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: RequestDetail)
 
 object ReadSubscriptionRequest {
   implicit val format: OFormat[ReadSubscriptionRequest] = Json.format[ReadSubscriptionRequest]
+
+  private val idType: String = "SAFE"
+
+  def convertTo(regime: Regime, safeID: String, userAnswers: UserAnswers): ReadSubscriptionRequest = {
+    val requestDetail = RequestDetail(idType, safeID)
+    ReadSubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon(regime), requestDetail)
+  }
 }
