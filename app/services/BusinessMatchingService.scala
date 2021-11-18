@@ -20,6 +20,7 @@ import cats.implicits._
 import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
+import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
 import models.register.request.RegisterWithID
 import models.{Name, Regime}
@@ -32,23 +33,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
-  //def sendIndividualRegistratonInformation(regime: Regime, nino: Nino, name: Name, dob: LocalDate)(implicit
-  def sendIndividualRegistratonInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
+  def sendIndividualRegistratonInformation(regime: Regime, nino: Nino, name: Name, dob: LocalDate)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, RegistrationInfo]] =
     registrationConnector
-      .withIndividualNino(RegisterWithID(regime, registrationInfo))
+      .withIndividualNino(RegisterWithID(regime, name, dob, "NINO", nino.nino))
       .subflatMap {
         response =>
           response.safeId
-          (for {
-            safeId <- response.safeId
-            name    = response.organisationName
-            address = response.address
-            nino <- response.registerWithIDResponse.responseDetail.get.
-            // RegistrationInfo("", Option(name), None, None, Option(nino), dob)
-          } yield RegistrationInfo(safeId, name, address, AsIndividual)).toRight(MandatoryInformationMissingError())
+            .map {
+              RegistrationInfo.build(_, AsIndividual)
+            }
+            .toRight(MandatoryInformationMissingError())
       }
       .value
 

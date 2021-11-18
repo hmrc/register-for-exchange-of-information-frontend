@@ -79,11 +79,11 @@ class MatchController @Inject() (
         utr          <- getEither(UTRPage)
         businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
         businessType <- getEither(BusinessTypePage)
-        dateOfBirth  =  request.userAnswers.get(SoleDateOfBirthPage)
-        _            <- getEither(RegistrationInfoPage).ensure(DuplicateSubmissionError)(_.existing(businessType, businessName, utr, dateOfBirth))
-        response     <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, RegistrationInfo(businessType, businessName, utr, dateOfBirth)))
-        withInfo     <- setEither(RegistrationInfoPage, response)
-        _            =  sessionRepository.set(withInfo)
+        dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
+        _        <- getEither(RegistrationInfoPage).ensure(DuplicateSubmissionError)(_.existing(businessType, businessName, utr, dateOfBirth))
+        response <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, RegistrationInfo.build(businessType, businessName, utr, dateOfBirth)))
+        withInfo <- setEither(RegistrationInfoPage, response)
+        _ = sessionRepository.set(withInfo)
       } yield Redirect(routes.IsThisYourBusinessController.onPageLoad(mode, regime))).valueOr {
         case DuplicateSubmissionError if mode == CheckMode =>
           Redirect(routes.CheckYourAnswersController.onPageLoad(regime))
