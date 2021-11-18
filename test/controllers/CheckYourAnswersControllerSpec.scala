@@ -21,7 +21,7 @@ import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError._
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
-import models.{Address, Country, MDR, UserAnswers}
+import models.{Address, Country, MDR, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
@@ -310,8 +310,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right("")))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -342,8 +342,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right("")))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsOrganisation))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -372,7 +372,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right("")))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID("id"))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
@@ -391,8 +391,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right("")))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -423,8 +423,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right("")))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsOrganisation))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -472,7 +472,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'Duplication submission' page when there is duplication submission" in {
 
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(DuplicateSubmissionError)))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
@@ -502,7 +502,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(BadRequestError)))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
@@ -538,7 +538,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
           .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
@@ -574,7 +574,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
-        when(mockSubscriptionService.createSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
