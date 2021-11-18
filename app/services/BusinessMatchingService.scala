@@ -20,7 +20,6 @@ import cats.implicits._
 import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
 import models.register.request.RegisterWithID
 import models.{Name, Regime}
@@ -43,7 +42,7 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
         response =>
           response.safeId
             .map {
-              RegistrationInfo(_, None, None, AsIndividual)
+              RegistrationInfo(_, None, None, None, None, None)
             }
             .toRight(MandatoryInformationMissingError())
       }
@@ -61,7 +60,7 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
             safeId <- response.safeId
             name    = response.organisationName
             address = response.address
-          } yield RegistrationInfo(safeId, name, address, AsOrganisation)).toRight(MandatoryInformationMissingError())
+          } yield registrationInfo.copy(safeId = safeId, name = name, address = address)).toRight(MandatoryInformationMissingError())
       }
       .value
 }

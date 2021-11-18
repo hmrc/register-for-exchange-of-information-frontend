@@ -19,8 +19,9 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.error.ApiError.DuplicateSubmissionError
 import models.matching.RegistrationInfo
-import models.{BusinessWithID, Mode, Regime}
+import models.{CheckMode, Mode, Regime}
 import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -57,18 +58,17 @@ class MatchController @Inject() (
         utr          <- getEither(UTRPage)
         businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
         businessType <- getEither(BusinessTypePage)
-        dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
-        registrationInfo <- getEither(RegistrationInfoPage).orElse(EitherT.right(RegistrationInfo("", businessName, None, Option(businessType), Option(utr), dateOfBirth)
-          // decision is it the same as before ? yes => CYA, : no => continue
-        response <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, registrationInfo))
-        withInfo         <- setEither(RegistrationInfoPage, response)
-        _ = sessionRepository.set(withInfo)
+        dateOfBirth  =  request.userAnswers.get(SoleDateOfBirthPage)
+        _            <- getEither(RegistrationInfoPage).ensure(DuplicateSubmissionError)(_.existing(businessType, businessName, utr, dateOfBirth))
+        response     <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, RegistrationInfo(businessType, businessName, utr, dateOfBirth)))
+        withInfo     <- setEither(RegistrationInfoPage, response)
+        _            =  sessionRepository.set(withInfo)
       } yield Redirect(routes.IsThisYourBusinessController.onPageLoad(mode, regime))).valueOr {
-        error =>
+        case DuplicateSubmissionError if mode == CheckMode =>
+          Redirect(routes.CheckYourAnswersController.onPageLoad(regime))
+        case error =>
           logger.debug(s"Business not matched with error $error")
           Redirect(routes.NoRecordsMatchedController.onPageLoad(regime))
       }
-
   }
-
 }
