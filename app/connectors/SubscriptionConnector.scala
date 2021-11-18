@@ -49,13 +49,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .POST[DisplaySubscriptionRequest, HttpResponse](submissionUrl, displaySubscriptionRequest)
       .map {
         case responseMessage if is2xx(responseMessage.status) =>
-          responseMessage.json.as[DisplaySubscriptionResponse] match {
-            case mdr: DisplaySubscriptionForMDRResponse => Some(SubscriptionID(mdr.displaySubscriptionForMDRResponse.subscriptionID))
-            case cbc: DisplaySubscriptionForCBCResponse => Some(SubscriptionID(cbc.displaySubscriptionForCBCResponse.subscriptionID))
-            case errors =>
-              logger.warn(s"Validation of display subscription payload failed with $errors")
-              None
-          }
+          responseMessage.json
+            .asOpt[DisplaySubscriptionResponse]
+            .map(_.subscriptionID)
         case errorStatus =>
           logger.warn(s"Status $errorStatus has been thrown when display subscription was called")
           None
