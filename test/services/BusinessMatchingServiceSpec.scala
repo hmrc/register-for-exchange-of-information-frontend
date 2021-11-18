@@ -21,6 +21,7 @@ import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
+import models.BusinessType.LimitedCompany
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
@@ -97,10 +98,10 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendBusinessRegistrationInformation(MDR,
-                                                      RegistrationInfo("UTR", Some("name"), None, AsOrganisation, Some(BusinessType.LimitedCompany), None, None)
+                                                      RegistrationInfo("UTR", Some("name"), None, AsOrganisation, Some(LimitedCompany), None, None)
           )
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", Some("name"), Some(addressResponse), AsOrganisation, None, None, None))
+        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", Some("name"), Some(addressResponse), AsOrganisation, Some(LimitedCompany), None, None))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
