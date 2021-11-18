@@ -52,6 +52,16 @@ class MatchController @Inject() (
         nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
         name             <- getEither(WhatIsYourNamePage)
         dob              <- getEither(WhatIsYourDateOfBirthPage)
+        registrationInfo <- getEither(RegistrationInfoPage).orElse(EitherT.right(RegistrationInfo("", Option(name), None, None, Option(nino), dob))
+          // decision is it the same as before ? yes => CYA, : no => continue
+          response <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, registrationInfo))
+                        withInfo         <- setEither(RegistrationInfoPage, response)
+                      _ = sessionRepository.set(withInfo)
+
+
+        nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
+        name             <- getEither(WhatIsYourNamePage)
+        dob              <- getEither(WhatIsYourDateOfBirthPage)
         registrationInfo <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, nino, name, dob))
         updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
         _ = sessionRepository.set(updatedAnswers)
@@ -69,7 +79,7 @@ class MatchController @Inject() (
         businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
         businessType <- getEither(BusinessTypePage)
         dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
-        registrationInfo <- getEither(RegistrationInfoPage).orElse(EitherT.right(RegistrationInfo("", businessName, None, Option(businessType), Option(utr), dateOfBirth)
+        registrationInfo <- getEither(RegistrationInfoPage).orElse(EitherT.right(RegistrationInfo("", Option(businessName), None, Option(businessType), Option(utr), dateOfBirth)
           // decision is it the same as before ? yes => CYA, : no => continue
         response <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, registrationInfo))
         withInfo         <- setEither(RegistrationInfoPage, response)

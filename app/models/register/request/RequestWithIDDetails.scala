@@ -20,7 +20,7 @@ import models.matching.RegistrationInfo
 import models.{BusinessWithID, Name}
 import models.register.request
 import models.register.request.details.{PartnerDetails, WithIDIndividual, WithIDOrganisation}
-import play.api.libs.json.{Json, OWrites, Reads, __}
+import play.api.libs.json.{__, Json, OWrites, Reads}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
