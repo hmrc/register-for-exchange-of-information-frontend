@@ -47,7 +47,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessTypePage                      => regime => _ => Some(routes.UTRController.onPageLoad(NormalMode, regime))
     case UTRPage                               => isSoleProprietor(NormalMode)
     case SoleNamePage                          => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
-    case BusinessNamePage                      => regime => _ => Some(routes.MatchController.onBusinessMatch(NormalMode, regime))
+    case BusinessNamePage                      => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode, regime))
     case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
     case RegistrationInfoPage                  => registrationInfo(NormalMode)
     case _                                     => _ => _ => None
@@ -59,7 +59,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case UTRPage                              => isSoleProprietor(CheckMode)
     case WhatIsYourNamePage                   => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
     case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
-    case BusinessNamePage                     => regime => _ => Some(routes.MatchController.onBusinessMatch(CheckMode, regime))
+    case BusinessNamePage                     => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
     case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
     case _                                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
