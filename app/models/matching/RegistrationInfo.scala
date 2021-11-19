@@ -41,11 +41,12 @@ case class RegistrationInfo(safeId: String,
     case _              => "INVALID"
   }
 
-  def existing(newType: BusinessType, newName: String, newIdentifier: String, newDateOfBirth: Option[LocalDate]): Boolean =
-    businessType.contains(newType) &&
-      name.contains(newName) &&
-      identifier.contains(newIdentifier) &&
-      dob.equals(newDateOfBirth)
+  def sameAs(registrationInfo: RegistrationInfo): Boolean =
+    safeId != "" &&
+      businessType.equals(registrationInfo.businessType) &&
+      name.equals(registrationInfo.name) &&
+      identifier.equals(registrationInfo.identifier) &&
+      dob.equals(registrationInfo.dob)
 }
 
 object RegistrationInfo {

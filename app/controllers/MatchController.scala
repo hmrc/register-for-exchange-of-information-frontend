@@ -19,8 +19,10 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.error.ApiError
 import models.error.ApiError.DuplicateSubmissionError
 import models.matching.RegistrationInfo
+import models.requests.DataRequest
 import models.{CheckMode, Mode, Regime}
 import pages._
 import play.api.Logging
@@ -31,7 +33,7 @@ import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class MatchController @Inject() (
   override val messagesApi: MessagesApi,
@@ -55,12 +57,12 @@ class MatchController @Inject() (
   def onBusinessMatch(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       (for {
-        utr          <- getEither(UTRPage)
-        businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
-        businessType <- getEither(BusinessTypePage)
-        dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
-        _        <- getEither(RegistrationInfoPage).ensure(DuplicateSubmissionError)(_.existing(businessType, businessName, utr, dateOfBirth))
-        response <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, RegistrationInfo.build(businessType, businessName, utr, dateOfBirth)))
+        registrationInfo <- buildBusinessRegistrationInfo
+        orPreviousInfo <- getEither(RegistrationInfoPage).recover {
+          case _ => registrationInfo
+        }
+        orError  <- EitherT.cond[Future](orPreviousInfo.sameAs(registrationInfo), orPreviousInfo, DuplicateSubmissionError)
+        response <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, orError))
         withInfo <- setEither(RegistrationInfoPage, response)
         _ = sessionRepository.set(withInfo)
       } yield Redirect(routes.IsThisYourBusinessController.onPageLoad(mode, regime))).valueOr {
@@ -71,4 +73,13 @@ class MatchController @Inject() (
           Redirect(routes.NoRecordsMatchedController.onPageLoad(regime))
       }
   }
+
+  private def buildBusinessRegistrationInfo(implicit request: DataRequest[AnyContent]): EitherT[Future, ApiError, RegistrationInfo] =
+    for {
+      utr          <- getEither(UTRPage)
+      businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
+      businessType <- getEither(BusinessTypePage)
+      dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
+    } yield RegistrationInfo.build(businessType, businessName, utr, dateOfBirth)
+
 }
