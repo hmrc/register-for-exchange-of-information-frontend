@@ -19,7 +19,7 @@ package services
 import cats.data.EitherT
 import cats.implicits._
 import connectors.RegistrationConnector
-import controllers.{WithEitherT, routes}
+import controllers.{routes, WithEitherT}
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError}
 import models.matching.MatchingType.AsIndividual

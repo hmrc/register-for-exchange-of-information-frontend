@@ -16,7 +16,7 @@
 
 package models.subscription.response
 
-import play.api.libs.json.{Reads, __}
+import play.api.libs.json.{__, Reads}
 
 case class SubscriptionIDResponse(subscriptionID: String)
 
