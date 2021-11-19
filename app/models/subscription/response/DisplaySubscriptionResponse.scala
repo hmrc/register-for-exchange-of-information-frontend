@@ -16,9 +16,12 @@
 
 package models.subscription.response
 
-import play.api.libs.json.{Json, Reads}
+import models.SubscriptionID
+import play.api.libs.json.{JsResult, JsValue, Json, Reads}
 
-sealed trait DisplaySubscriptionResponse
+sealed trait DisplaySubscriptionResponse {
+  def subscriptionID: SubscriptionID
+}
 
 object DisplaySubscriptionResponse {
 
@@ -37,13 +40,17 @@ object DisplaySubscriptionResponse {
   }
 }
 
-case class DisplaySubscriptionForMDRResponse(displaySubscriptionForMDRResponse: SubscriptionIDResponse) extends DisplaySubscriptionResponse
+case class DisplaySubscriptionForMDRResponse(displaySubscriptionForMDRResponse: SubscriptionIDResponse) extends DisplaySubscriptionResponse {
+  override def subscriptionID: SubscriptionID = SubscriptionID(displaySubscriptionForMDRResponse)
+}
 
 object DisplaySubscriptionForMDRResponse {
   implicit lazy val reads: Reads[DisplaySubscriptionForMDRResponse] = Json.reads[DisplaySubscriptionForMDRResponse]
 }
 
-case class DisplaySubscriptionForCBCResponse(displaySubscriptionForCBCResponse: SubscriptionIDResponse) extends DisplaySubscriptionResponse
+case class DisplaySubscriptionForCBCResponse(displaySubscriptionForCBCResponse: SubscriptionIDResponse) extends DisplaySubscriptionResponse {
+  override def subscriptionID: SubscriptionID = SubscriptionID(displaySubscriptionForCBCResponse)
+}
 
 object DisplaySubscriptionForCBCResponse {
   implicit lazy val reads: Reads[DisplaySubscriptionForCBCResponse] = Json.reads[DisplaySubscriptionForCBCResponse]
