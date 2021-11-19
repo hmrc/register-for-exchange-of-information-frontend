@@ -22,12 +22,7 @@ import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest}
-import models.subscription.response.{
-  CreateSubscriptionForMDRResponse,
-  DisplaySubscriptionForCBCResponse,
-  DisplaySubscriptionForMDRResponse,
-  DisplaySubscriptionResponse
-}
+import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionForCBCResponse, DisplaySubscriptionForMDRResponse, DisplaySubscriptionResponse}
 import play.api.Logging
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw

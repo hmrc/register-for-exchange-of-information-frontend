@@ -19,7 +19,7 @@ package models.matching
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.register.response.details.AddressResponse
 import models.{BusinessType, Name}
-import play.api.libs.json.{__, OFormat, OWrites, Reads}
+import play.api.libs.json.{OFormat, OWrites, Reads, __}
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate

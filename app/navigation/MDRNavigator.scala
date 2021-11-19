@@ -74,12 +74,12 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessTypePage                     => regime => _ => Some(routes.UTRController.onPageLoad(CheckMode, regime))
     case WhatIsYourNamePage                   => regime => whatIsYourNameRoutes(CheckMode)(regime)
     case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
-    case RegistrationInfoPage                 => registrationInfo(CheckMode)
     case _                                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
 
   private def registrationInfo(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(RegistrationInfoPage) match {
+      case Some(_) if mode == CheckMode    => Some(routes.CheckYourAnswersController.onPageLoad(regime))
       case Some(info) if info.safeId != "" => Some(routes.IsThisYourBusinessController.onPageLoad(mode, regime))
       case _                               => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }

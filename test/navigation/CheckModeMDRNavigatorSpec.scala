@@ -54,7 +54,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
-      // todo
       "must go from DoYouHaveUniqueTaxPayerReference to WhatAreYouRegisteringAs page if false is set" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -88,7 +87,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
-      // todo
       "must go from DoYouHaveNIN page to WhatIsYourNationalInsuranceNumber page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -122,7 +120,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
-      // todo
       "must go from WhatIsYourNationalInsuranceNumber page to WhatIsYourName page if value is provided" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -138,7 +135,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
-      // todo
       "must go from WhatIsYourName page to CheckYourAnswers page if WhatIsYourDateOfBirthPage is set" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

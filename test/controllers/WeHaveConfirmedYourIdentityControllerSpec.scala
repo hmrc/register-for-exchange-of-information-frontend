@@ -40,7 +40,13 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
   val registrationInfo = RegistrationInfo.build("safeId", AsIndividual)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(RegistrationInfoPage, registrationInfo)
+    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
+    .success
+    .value
+    .set(WhatIsYourNamePage, Name("First", "Last"))
+    .success
+    .value
+    .set(WhatIsYourDateOfBirthPage, LocalDate.now())
     .success
     .value
 

@@ -41,10 +41,6 @@ trait Navigator {
       }
   }
 
-  def jumpToCYA(mode: Mode, regime: Regime, route: Call): Call =
-    if (mode != CheckMode) { route }
-    else { routes.CheckYourAnswersController.onPageLoad(regime) }
-
   def isContinueJourney[A](page: QuestionPage[A], mode: Mode, ua: UserAnswers)(implicit reads: Reads[A]): Boolean =
     (ua.get(page), mode) match {
       case (Some(_), CheckMode) => false
