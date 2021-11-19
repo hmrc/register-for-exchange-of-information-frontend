@@ -26,9 +26,6 @@ trait UserAnswersHelper {
     request.userAnswers.get(ContactNamePage) match {
       case Some(_) => "business"
       case _       => "individual"
+
     }
-
-//  def compareValues[A](newUserValue: A, originalUserValue: Option[A])(implicit rds: Reads[A]): Boolean =
-//    newUserValue.equals(originalUserValue.getOrElse(false))
-
 }
