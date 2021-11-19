@@ -54,6 +54,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
+      // todo
       "must go from DoYouHaveUniqueTaxPayerReference to WhatAreYouRegisteringAs page if false is set" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -87,6 +88,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
+      // todo
       "must go from DoYouHaveNIN page to WhatIsYourNationalInsuranceNumber page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -120,6 +122,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
+      // todo
       "must go from WhatIsYourNationalInsuranceNumber page to WhatIsYourName page if value is provided" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -135,6 +138,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         }
       }
 
+      // todo
       "must go from WhatIsYourName page to CheckYourAnswers page if WhatIsYourDateOfBirthPage is set" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -165,30 +169,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
             navigator
               .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
               .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
-        }
-      }
-
-      "must go from WhatIsYourDateOfBirth page to Match" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveNINPage, true)
-                .success
-                .value
-                .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
-                .success
-                .value
-                .set(WhatIsYourNamePage, Name("name", "surname"))
-                .success
-                .value
-                .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourDateOfBirthPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.MatchController.onIndividualMatch(CheckMode, MDR))
         }
       }
     }

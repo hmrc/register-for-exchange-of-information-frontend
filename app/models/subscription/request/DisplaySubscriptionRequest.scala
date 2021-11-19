@@ -17,6 +17,7 @@
 package models.subscription.request
 
 import play.api.libs.json._
+
 import scala.language.implicitConversions
 
 sealed trait DisplaySubscriptionRequest

@@ -160,26 +160,6 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
       }
 
       //TODO - add this test when logic is added for individual matching
-      "must go from 'What Is Your DOB?' page to 'We have confirmed your identity' page when valid DOB is entered " +
-        "and individual could be matched" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(DoYouHaveNINPage, true)
-                  .success
-                  .value
-                  .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-                  .success
-                  .value
-
-              navigator
-                .nextPage(WhatIsYourDateOfBirthPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.MatchController.onIndividualMatch(NormalMode, MDR))
-          }
-        }
-
-      //TODO - add this test when logic is added for individual matching
       "must go from 'What Is Your DOB?' page to 'We could not confirm your identity' page when valid DOB is entered " +
         "but individual could not be matched" ignore {
           forAll(arbitrary[UserAnswers]) {

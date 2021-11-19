@@ -19,24 +19,23 @@ package services
 import cats.data.EitherT
 import cats.implicits._
 import connectors.RegistrationConnector
-import controllers.{routes, WithEitherT}
+import controllers.{WithEitherT, routes}
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError}
 import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
-import models.{CheckMode, Mode, Name, Regime}
+import models.{CheckMode, Mode, Regime}
 import pages._
 import play.api.mvc.{AnyContent, Call}
 import repositories.SessionRepository
-import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+// todo change name to MatchService -> matching both Biz and Ind better suited name
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector, sessionRepository: SessionRepository)(implicit ec: ExecutionContext)
     extends WithEitherT {
 
@@ -68,22 +67,6 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
       dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
     } yield RegistrationInfo.build(businessType, businessName, utr, dateOfBirth)
 
-  def sendIndividualRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
-  ): Future[Either[ApiError, RegistrationInfo]] =
-    registrationConnector
-      .withIndividualNino(RegisterWithID(regime, registrationInfo))
-      .subflatMap {
-        response =>
-          response.safeId
-            .map {
-              RegistrationInfo.build(_, AsIndividual)
-            }
-            .toRight(MandatoryInformationMissingError())
-      }
-      .value
-
   def sendBusinessRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
@@ -97,6 +80,22 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
             name    = response.organisationName
             address = response.address
           } yield registrationInfo.copy(safeId = safeId, name = name, address = address)).toRight(MandatoryInformationMissingError())
+      }
+      .value
+
+  def sendIndividualRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Either[ApiError, RegistrationInfo]] =
+    registrationConnector
+      .withIndividualNino(RegisterWithID(regime, registrationInfo))
+      .subflatMap {
+        response =>
+          response.safeId
+            .map {
+              RegistrationInfo.build(_, AsIndividual)
+            }
+            .toRight(MandatoryInformationMissingError())
       }
       .value
 }

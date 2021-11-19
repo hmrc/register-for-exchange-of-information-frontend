@@ -16,25 +16,19 @@
 
 package controllers
 
-import cats.data.EitherT
 import cats.implicits._
 import controllers.actions._
-import models.error.ApiError
-import models.error.ApiError.NotFoundError
-import models.matching.RegistrationInfo
-import models.requests.DataRequest
 import models.{BusinessType, NormalMode, Regime}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class WeHaveConfirmedYourIdentityController @Inject() (
   override val messagesApi: MessagesApi,

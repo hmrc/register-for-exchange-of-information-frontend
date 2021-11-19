@@ -19,7 +19,7 @@ package services
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import controllers.WithEitherT
-import models.BusinessType.{LimitedCompany, Sole}
+import models.BusinessType.Sole
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError
 import models.error.ApiError.{MandatoryInformationMissingError, RegistrationResponseType}
