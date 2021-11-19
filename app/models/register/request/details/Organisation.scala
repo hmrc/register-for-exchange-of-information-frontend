@@ -17,7 +17,7 @@
 package models.register.request.details
 
 import models.BusinessType
-import play.api.libs.json.{Json, OWrites, Reads, __}
+import play.api.libs.json.{__, Json, OWrites, Reads}
 
 case class Organisation(organisationName: String, organisationType: BusinessType)
 
