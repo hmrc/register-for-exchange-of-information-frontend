@@ -20,7 +20,8 @@ import base.{MockServiceApp, SpecBase}
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
-import helpers.RegisterHelper.{addressResponse, _}
+import helpers.RegisterHelper._
+import models.BusinessType.LimitedCompany
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
@@ -70,10 +71,9 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
+        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistratonInformation(MDR, Nino("CC123456C"), name, dob)
 
-        result.futureValue mustBe Right(RegistrationInfo.build("XE0000123456789", AsIndividual))
+        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual, None, None, None))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
@@ -82,8 +82,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
+        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistratonInformation(MDR, Nino("CC123456C"), name, dob)
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -98,17 +97,10 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", "UTR", Option(dob)))
+          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo("UTR", Some("name"), None, AsOrganisation, Some(LimitedCompany), None, None))
 
         result.futureValue mustBe Right(
-          RegistrationInfo("XE0000123456789",
-                           Option("name"),
-                           Option(addressResponse),
-                           AsOrganisation,
-                           Option(BusinessType.LimitedCompany),
-                           Option("UTR"),
-                           Option(dob)
-          )
+          RegistrationInfo("XE0000123456789", Some("name"), Some(addressResponse), AsOrganisation, Some(LimitedCompany), None, None)
         )
       }
 
@@ -119,7 +111,9 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", "UTR", Option(dob)))
+          service.sendBusinessRegistrationInformation(MDR,
+                                                      RegistrationInfo("UTR", Some("name"), None, AsOrganisation, Some(BusinessType.LimitedCompany), None, None)
+          )
 
         result.futureValue mustBe Left(NotFoundError)
       }

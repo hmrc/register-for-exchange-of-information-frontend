@@ -20,7 +20,6 @@ import models.{BusinessType, Name}
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.register.response.details.AddressResponse
 import play.api.libs.json.{__, OFormat, OWrites, Reads}
-import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 
@@ -42,17 +41,18 @@ case class RegistrationInfo(safeId: String,
     case _              => "INVALID"
   }
 
-  def existing(newType: BusinessType, newName: String, newIdentifier: String, newDateOfBirth: Option[LocalDate]): Boolean =
-    businessType.contains(newType) &&
-      name.contains(newName) &&
-      identifier.contains(newIdentifier) &&
-      dob.equals(newDateOfBirth)
-
-  def existing(newType: MatchingType, newName: Name, newIdentifier: Nino, newDateOfBirth: Option[LocalDate]): Boolean =
-    matchedAs.equals(newType) &&
-      name.contains(newName.fullName) &&
-      identifier.contains(newIdentifier) &&
-      dob.equals(newDateOfBirth)
+  def sameAs(registrationInfo: RegistrationInfo): Boolean = {
+    println(s"\n\nzzz 1:${safeId != ""} 2:${businessType
+      .equals(registrationInfo.businessType)} 3:${name.map(_.toLowerCase).equals(registrationInfo.name.map(_.toLowerCase))} 4:${identifier
+      .equals(registrationInfo.identifier)} 5:${dob.equals(registrationInfo.dob)}")
+    println(registrationInfo.name)
+    println(this.name)
+    safeId != "" &&
+    businessType.equals(registrationInfo.businessType) &&
+    name.map(_.toLowerCase).equals(registrationInfo.name.map(_.toLowerCase)) &&
+    identifier.equals(registrationInfo.identifier) &&
+    dob.equals(registrationInfo.dob)
+  }
 }
 
 object RegistrationInfo {
@@ -95,8 +95,8 @@ object RegistrationInfo {
   def build(safeId: String, matchedAs: MatchingType): RegistrationInfo =
     RegistrationInfo(safeId, None, None, matchedAs, None, None, None)
 
-  def build(name: Name, nino: Nino, dateOfBirth: Option[LocalDate]): RegistrationInfo =
-    RegistrationInfo("", Option(name.fullName), None, AsIndividual, None, Option(nino.nino), dateOfBirth)
+  def build(name: Name, nino: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
+    RegistrationInfo("", Option(name.fullName), None, AsIndividual, None, Option(nino), dateOfBirth)
 
   def build(businessType: BusinessType, businessName: String, utr: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
     RegistrationInfo("", Option(businessName), None, AsOrganisation, Option(businessType), Option(utr), dateOfBirth)
