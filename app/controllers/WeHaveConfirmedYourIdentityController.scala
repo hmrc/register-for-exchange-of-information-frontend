@@ -58,6 +58,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
           case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
         }
 
+        // todo wogole pozbyc sie for i sam json i chyba nie potrzebuje thereIsAproblem bo juz nie robie tu porownania to jest
+        // todo tylko pass by Controller
         (for {
           registrationInfo <- getEither(RegistrationInfoPage)
           updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)

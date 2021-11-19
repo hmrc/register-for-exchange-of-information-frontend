@@ -54,6 +54,9 @@ class MatchController @Inject() (
         nino <- getEither(WhatIsYourNationalInsuranceNumberPage)
         name <- getEither(WhatIsYourNamePage)
         dob = request.userAnswers.get(WhatIsYourDateOfBirthPage)
+
+        _ = println(s"\nnino = $nino name = $name dob = $dob")
+
         _        <- getEither(RegistrationInfoPage).ensure(DuplicateSubmissionError)(_.existing(AsIndividual, name, nino, dob))
         response <- EitherT(matchingService.sendIndividualRegistrationInformation(regime, RegistrationInfo.build(name, nino, dob)))
         withInfo <- setEither(RegistrationInfoPage, response)
@@ -62,6 +65,7 @@ class MatchController @Inject() (
         case DuplicateSubmissionError if mode == CheckMode =>
           Redirect(routes.CheckYourAnswersController.onPageLoad(regime))
         case error =>
+          println(s"Individual not matched with error $error") // todo del me
           logger.debug(s"Individual not matched with error $error")
           Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime))
       }
