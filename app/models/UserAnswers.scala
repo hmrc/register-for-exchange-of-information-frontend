@@ -33,6 +33,26 @@ final case class UserAnswers(
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
+  def set[A](page: Settable[A], value: A, originalValue: Option[A] = None)(implicit writes: Writes[A]): Try[UserAnswers] = {
+
+    val updatedData = data.setObject(page.path, Json.toJson(value)) match {
+      case JsSuccess(jsValue, _) =>
+        Success(jsValue)
+      case JsError(errors) =>
+        Failure(JsResultException(errors))
+    }
+
+    updatedData.flatMap {
+      d =>
+        // We only clear down answers when an answer changes
+        if (value.equals(originalValue.getOrElse(false))) {
+          Try(copy(data = d))
+        } else {
+          page.cleanup(Some(value), copy(data = d))
+        }
+    }
+  }
+
   def set[A](page: QuestionPage[A], value: A, checkPrevious: Boolean = false)(implicit writes: Writes[A], reads: Reads[A]): Try[UserAnswers] = {
     val previousValue = if (checkPrevious) { get(page) }
     else { None }

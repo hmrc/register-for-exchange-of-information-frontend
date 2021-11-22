@@ -34,11 +34,40 @@ trait Navigator {
         case Some(call) => call
         case None       => routes.IndexController.onPageLoad(regime)
       }
+
     case CheckMode =>
       checkRouteMap(page)(regime)(userAnswers) match {
         case Some(call) => call
         case None       => routes.IndexController.onPageLoad(regime)
       }
+  }
+
+  // In CHECKMODE if new user answer matches old user answer redirect to CYA page
+  def nextPageWithValueCheck[A](page: QuestionPage[A], mode: Mode, regime: Regime, userAnswers: UserAnswers, originalValue: Option[A])(implicit
+    rds: Reads[A]
+  ): Call = {
+
+    val valueMatchesOriginalAnswer = userAnswers
+      .get(page)
+      .fold(false)(
+        newValue => newValue.equals(originalValue.getOrElse(false))
+      )
+
+    mode match {
+      case NormalMode =>
+        normalRoutes(page)(regime)(userAnswers) match {
+          case Some(call) => call
+          case None       => routes.IndexController.onPageLoad(regime)
+        }
+
+      case CheckMode =>
+        checkRouteMap(page)(regime)(userAnswers) match {
+          case Some(_) if valueMatchesOriginalAnswer =>
+            routes.CheckYourAnswersController.onPageLoad(regime)
+          case Some(call) => call
+          case None       => routes.IndexController.onPageLoad(regime)
+        }
+    }
   }
 
   def isContinueJourney[A](page: QuestionPage[A], mode: Mode, ua: UserAnswers)(implicit reads: Reads[A]): Boolean =
@@ -49,6 +78,7 @@ trait Navigator {
 }
 
 object Navigator {
+
   val missingInformation: Regime => Call = (regime: Regime) => controllers.routes.SomeInformationIsMissingController.onPageLoad(regime)
   val checkYourAnswers: Regime => Call   = (regime: Regime) => controllers.routes.CheckYourAnswersController.onPageLoad(regime)
 }

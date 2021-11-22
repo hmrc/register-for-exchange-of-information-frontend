@@ -22,7 +22,7 @@ import forms.WhatIsYourNameFormProvider
 import models.requests.DataRequest
 import models.{Mode, Name, Regime}
 import navigation.MDRNavigator
-import pages.WhatIsYourNamePage
+import pages.{BusinessWithoutIDNamePage, WhatIsYourNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -67,6 +67,25 @@ class WhatIsYourNameController @Inject() (
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         render(mode, regime, request.userAnswers.get(WhatIsYourNamePage).fold(form)(form.fill)).map(Ok(_))
+    }
+
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            value => {
+
+              val originalAnswer = request.userAnswers.get(WhatIsYourNamePage)
+
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPageWithValueCheck(WhatIsYourNamePage, mode, regime, updatedAnswers, originalAnswer))
+            }
+          )
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =

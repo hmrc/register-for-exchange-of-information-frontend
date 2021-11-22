@@ -30,14 +30,14 @@ class BusinessHaveDifferentNamePageSpec extends PageBehaviours {
 
     beRemovable[Boolean](BusinessHaveDifferentNamePage)
 
-    "must remove business trading name when user changes answer to 'No'" in {
+    "must remove business trading name when user changes answer from 'Yes' to 'No'" in {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
             .set(WhatIsTradingNamePage, "differentName")
             .success
             .value
-            .set(BusinessHaveDifferentNamePage, false)
+            .set(BusinessHaveDifferentNamePage, false, Some(true))
             .success
             .value
 
