@@ -18,6 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
+import models.enrolment.GroupIds
 import models.error.ApiError._
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
@@ -364,7 +365,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url
       }
 
-      "must redirect to 'NotImplemented' page for 'Business with Id' journey when tax enrolment fails" in {
+      "must redirect to 'Technical difficulty' page for 'Business with Id' journey when tax enrolment fails" in {
 
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
@@ -495,7 +496,65 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val result = route(app, request).value
 
-        status(result) mustEqual NOT_IMPLEMENTED
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(MDR).url
+      }
+
+      "must redirect to 'Business already registered' page when there is EnrolmentExistsError" in {
+
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
+        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
+
+        val userAnswers = UserAnswers("Id")
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .success
+          .value
+          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+          .success
+          .value
+          .set(DoYouHaveNINPage, true)
+          .success
+          .value
+
+        retrieveUserAnswersData(userAnswers)
+
+        val request = FakeRequest(POST, submitRoute)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(MDR).url
+      }
+
+      "must redirect to 'Business already registered' page when there is EnrolmentExistsError in withId flow" in {
+
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
+
+        val userAnswers = UserAnswers("Id")
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
+          .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+          .success
+          .value
+
+        retrieveUserAnswersData(userAnswers)
+
+        val request = FakeRequest(POST, submitRoute)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithID(MDR).url
       }
 
       "must render 'thereIsAProblem' page when 'createSubscription' fails with BadRequestError" in {

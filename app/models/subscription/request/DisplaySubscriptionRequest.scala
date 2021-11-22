@@ -16,7 +16,7 @@
 
 package models.subscription.request
 
-import models.{MDR, Regime, UserAnswers}
+import models.{MDR, Regime}
 import play.api.libs.json._
 
 import scala.language.implicitConversions
@@ -42,9 +42,9 @@ object DisplaySubscriptionRequest {
     case o: DisplaySubscriptionForCBCRequest => Json.toJson(o)
   }
 
-  def convertTo(regime: Regime, safeId: String, userAnswers: UserAnswers): DisplaySubscriptionRequest =
+  def convertTo(regime: Regime, safeId: String): DisplaySubscriptionRequest =
     regime match {
-      case MDR    => DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.convertTo(regime, safeId, userAnswers))
+      case MDR    => DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
       case regime => throw new RuntimeException(s"Not supporting the regime: $regime ")
     }
 }

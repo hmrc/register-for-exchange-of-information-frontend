@@ -19,7 +19,8 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError}
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, EnrolmentExistsError, MandatoryInformationMissingError}
+import models.matching.RegistrationInfo
 import models.{Regime, SubscriptionID}
 import navigation.Navigator
 import pages._
@@ -94,8 +95,12 @@ class CheckYourAnswersController @Inject() (
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case DuplicateSubmissionError =>
-            Future.successful(NotImplemented("Duplicate Submission error page is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
+          case DuplicateSubmissionError | EnrolmentExistsError(_) =>
+            if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
+            } else {
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
+            }
           case BadRequestError =>
             renderer.render("thereIsAProblem.njk").map(BadRequest(_))
           case _ =>

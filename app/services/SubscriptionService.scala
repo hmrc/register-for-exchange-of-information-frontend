@@ -34,7 +34,7 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, SubscriptionID]] = {
-    val displaySubscription = DisplaySubscriptionRequest.convertTo(regime, safeID, userAnswers)
+    val displaySubscription = DisplaySubscriptionRequest.convertTo(regime, safeID)
     subscriptionConnector.readSubscription(displaySubscription) flatMap {
       case Some(subscriptionID) =>
         EitherT.rightT(subscriptionID).value
@@ -46,7 +46,5 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
           case _ => EitherT.leftT(MandatoryInformationMissingError())
         }).value
     }
-
   }
-
 }
