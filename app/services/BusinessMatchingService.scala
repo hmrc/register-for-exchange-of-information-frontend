@@ -79,34 +79,6 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
       }
       .value
 
-  /*
-  def onIndividualMatch(mode: Mode, regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Call] =
-    (for {
-      registrationInfo <- buildIndividualRegistrationInfo
-      orPreviousInfo <- getEither(RegistrationInfoPage).recover {
-        case _ => registrationInfo
-      }
-      orError  <- EitherT.cond[Future](!orPreviousInfo.sameAs(registrationInfo), orPreviousInfo, DuplicateSubmissionError)
-      response <- EitherT(sendIndividualRegistrationInformation(regime, orError))
-      withInfo <- setEither(RegistrationInfoPage, response)
-      _ = sessionRepository.set(withInfo)
-    } yield routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime)).valueOr {
-      case DuplicateSubmissionError if mode == CheckMode =>
-        routes.CheckYourAnswersController.onPageLoad(regime)
-      case error =>
-        //logger.debug(s"Business not matched with error $error")
-        routes.WeCouldNotConfirmController.onPageLoad("identity", regime)
-    }
-
-  private def buildIndividualRegistrationInfo(implicit request: DataRequest[AnyContent]): EitherT[Future, ApiError, RegistrationInfo] = {
-    for {
-      nino <- getEither(WhatIsYourNationalInsuranceNumberPage)
-      name <- getEither(WhatIsYourNamePage) orElse (getEither(SoleNamePage))
-      dob = request.userAnswers.get(WhatIsYourDateOfBirthPage)
-    } yield RegistrationInfo.build(name, nino, dob)
-  }
-   */
-
   def sendIndividualRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
