@@ -33,9 +33,8 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
   def checkAndCreateSubscription(regime: Regime, safeID: String, userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ApiError, SubscriptionID]] = {
-    val displaySubscription = DisplaySubscriptionRequest.convertTo(regime, safeID)
-    subscriptionConnector.readSubscription(displaySubscription) flatMap {
+  ): Future[Either[ApiError, SubscriptionID]] =
+    getDisplaySubscriptionId(regime, safeID) flatMap {
       case Some(subscriptionID) =>
         EitherT.rightT(subscriptionID).value
       case _ =>
@@ -46,5 +45,12 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
           case _ => EitherT.leftT(MandatoryInformationMissingError())
         }).value
     }
+
+  def getDisplaySubscriptionId(regime: Regime, safeId: String)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Option[SubscriptionID]] = {
+    val displaySubscription = DisplaySubscriptionRequest.convertTo(regime, safeId)
+    subscriptionConnector.readSubscription(displaySubscription)
   }
 }
