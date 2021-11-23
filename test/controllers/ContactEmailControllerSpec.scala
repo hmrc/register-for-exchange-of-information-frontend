@@ -112,7 +112,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(userAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", "some@email.com"))
@@ -120,7 +120,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/register-for-exchange-of-information/mdr/register/have-phone"
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
