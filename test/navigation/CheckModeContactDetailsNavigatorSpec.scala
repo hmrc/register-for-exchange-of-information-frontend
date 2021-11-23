@@ -37,85 +37,93 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
         navigator.nextPage(UnknownPage, CheckMode, MDR, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad(MDR)
       }
 
-      "must go from Contact Name page to CheckYourAnswers page " +
-        "if user has NOT changed their answer" in {
+      "must go from Contact Name page to CheckYourAnswers page if user has changed their answer " +
+        "& answer for next page of journey exists" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
                 .set(ContactNamePage, "someName")
                 .success
                 .value
+                .set(ContactEmailPage, "email@email.com")
+                .success
+                .value
 
               navigator
-                .nextPageWithValueCheck(
+                .nextPage(
                   ContactNamePage,
                   CheckMode,
                   MDR,
-                  updatedAnswers,
-                  originalValue = Some("someName")
+                  updatedAnswers
                 )
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
           }
         }
 
-      "must go from Contact Name page to 'What is the email address for?' page " +
-        "if user has changed their answer" in {
+      "must go from Contact Name page to Contact Email Address page if user has changed their answer " +
+        "& answer for next page of journey does NOT exist" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
                 .set(ContactNamePage, "someName")
                 .success
                 .value
+                .remove(ContactEmailPage)
+                .success
+                .value
 
               navigator
-                .nextPageWithValueCheck(
+                .nextPage(
                   ContactNamePage,
                   CheckMode,
                   MDR,
-                  updatedAnswers,
-                  originalValue = Some("originalName")
+                  updatedAnswers
                 )
                 .mustBe(routes.ContactEmailController.onPageLoad(CheckMode, MDR))
           }
         }
 
-      "must go from Contact Email page to CheckYourAnswers page " +
-        "if user has NOT changed their answer" in {
+      "must go from Contact Email page to CheckYourAnswers page if user has changed their answer " +
+        "& answer for next page of journey exists" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
                 .set(ContactEmailPage, "email@email.com")
                 .success
                 .value
+                .set(IsContactTelephonePage, true)
+                .success
+                .value
 
               navigator
-                .nextPageWithValueCheck(
+                .nextPage(
                   ContactEmailPage,
                   CheckMode,
                   MDR,
-                  updatedAnswers,
-                  originalValue = Some("email@email.com")
+                  updatedAnswers
                 )
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
           }
         }
 
-      "must go from Contact Email page to 'Can we contact person by telephone' page " +
-        "if user has changed their answer" in {
+      "must go from Contact Email page to 'Can we contact person by telephone' page if user has changed their answer" +
+        "& answer for next page of journey does NOT exist" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
                 .set(ContactEmailPage, "email@email.com")
                 .success
                 .value
+                .remove(IsContactTelephonePage)
+                .success
+                .value
 
               navigator
-                .nextPageWithValueCheck(
+                .nextPage(
                   ContactEmailPage,
                   CheckMode,
                   MDR,
-                  updatedAnswers,
-                  originalValue = Some("originalemail@email.com")
+                  updatedAnswers
                 )
                 .mustBe(routes.IsContactTelephoneController.onPageLoad(CheckMode, MDR))
           }
@@ -270,8 +278,8 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
         }
       }
 
-      "must go from Second Contact Name page to CheckYourAnswers page " +
-        "if user has NOT changed their answer " in {
+      "must go from Second Contact Name page to CheckYourAnswers page if user has changed their answer " +
+        "& answer for next page of journey exists" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
@@ -279,15 +287,18 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(SndContactNamePage, "someName")
                   .success
                   .value
+                  .set(SndContactEmailPage, "email@email.com")
+                  .success
+                  .value
 
               navigator
-                .nextPageWithValueCheck(SndContactNamePage, CheckMode, MDR, updatedAnswers, Some("someName"))
+                .nextPage(SndContactNamePage, CheckMode, MDR, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
           }
         }
 
-      "must go from Second Contact Name page to Second Contact Email page " +
-        "if user has changed their answer" in {
+      "must go from Second Contact Name page to Second Contact Email page if user has changed their answer " +
+        "& answer for next page of journey does NOT exist" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
@@ -295,15 +306,18 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(SndContactNamePage, "someName")
                   .success
                   .value
+                  .remove(SndContactEmailPage)
+                  .success
+                  .value
 
               navigator
-                .nextPageWithValueCheck(SndContactNamePage, CheckMode, MDR, updatedAnswers, Some("originalName"))
+                .nextPage(SndContactNamePage, CheckMode, MDR, updatedAnswers)
                 .mustBe(routes.SndContactEmailController.onPageLoad(CheckMode, MDR))
           }
         }
 
-      "must go from Second Contact Email page to CheckYourAnswers page " +
-        "if user has NOT changed their answer" in {
+      "must go from Second Contact Email page to CheckYourAnswers page if user has changed their answer " +
+        "& answer for next page of journey exists " in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
@@ -311,15 +325,18 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(SndContactEmailPage, "email@email.com")
                   .success
                   .value
+                  .set(SndConHavePhonePage, true)
+                  .success
+                  .value
 
               navigator
-                .nextPageWithValueCheck(SndContactEmailPage, CheckMode, MDR, updatedAnswers, Some("email@email.com"))
+                .nextPage(SndContactEmailPage, CheckMode, MDR, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
           }
         }
 
-      "must go from Second Contact Email page to Second Contact have phone page " +
-        "if user has changed their answer" in {
+      "must go from Second Contact Email page to Second Contact have phone page if user has changed their answer " +
+        "& answer for next page of journey does NOT exist" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
@@ -327,9 +344,12 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(SndContactEmailPage, "email@email.com")
                   .success
                   .value
+                  .remove(SndConHavePhonePage)
+                  .success
+                  .value
 
               navigator
-                .nextPageWithValueCheck(SndContactEmailPage, CheckMode, MDR, updatedAnswers, Some("original@email.com"))
+                .nextPage(SndContactEmailPage, CheckMode, MDR, updatedAnswers)
                 .mustBe(routes.SndConHavePhoneController.onPageLoad(CheckMode, MDR))
           }
         }

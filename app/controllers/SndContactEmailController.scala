@@ -80,13 +80,11 @@ class SndContactEmailController @Inject() (
               SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
                 render(mode, regime, request.userAnswers.get(SndContactEmailPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
               },
-            value => {
-              val originalAnswer = request.userAnswers.get(SndContactEmailPage)
+            value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactEmailPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(SndContactEmailPage, mode, regime, updatedAnswers, originalAnswer))
-            }
+              } yield Redirect(navigator.nextPage(SndContactEmailPage, mode, regime, updatedAnswers))
           )
     }
 }

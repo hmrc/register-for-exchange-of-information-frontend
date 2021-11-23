@@ -74,13 +74,11 @@ class SndContactNameController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => {
-              val originalAnswer = request.userAnswers.get(SndContactNamePage)
+            value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactNamePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(SndContactNamePage, mode, regime, updatedAnswers, originalAnswer))
-            }
+              } yield Redirect(navigator.nextPage(SndContactNamePage, mode, regime, updatedAnswers))
           )
     }
 }
