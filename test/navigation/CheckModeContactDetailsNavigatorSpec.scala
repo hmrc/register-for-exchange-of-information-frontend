@@ -19,7 +19,7 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import models.{CheckMode, MDR, NormalMode, UserAnswers}
+import models.{BusinessType, CheckMode, MDR, NormalMode, UserAnswers, WhatAreYouRegisteringAs}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -31,23 +31,95 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
 
     "in Check mode" - {
 
-      "must go from Contact Name page to CheckYourAnswers page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(ContactNamePage, CheckMode, MDR, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-        }
+      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+
+        case object UnknownPage extends Page
+        navigator.nextPage(UnknownPage, CheckMode, MDR, UserAnswers("id")) mustBe routes.CheckYourAnswersController.onPageLoad(MDR)
       }
 
-      "must go from Contact Email page to IsContactTelephone page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(ContactEmailPage, CheckMode, MDR, answers)
-              .mustBe(routes.IsContactTelephoneController.onPageLoad(CheckMode, MDR))
+      "must go from Contact Name page to CheckYourAnswers page " +
+        "if user has NOT changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(ContactNamePage, "someName")
+                .success
+                .value
+
+              navigator
+                .nextPageWithValueCheck(
+                  ContactNamePage,
+                  CheckMode,
+                  MDR,
+                  updatedAnswers,
+                  originalValue = Some("someName")
+                )
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
         }
-      }
+
+      "must go from Contact Name page to 'What is the email address for?' page " +
+        "if user has changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(ContactNamePage, "someName")
+                .success
+                .value
+
+              navigator
+                .nextPageWithValueCheck(
+                  ContactNamePage,
+                  CheckMode,
+                  MDR,
+                  updatedAnswers,
+                  originalValue = Some("originalName")
+                )
+                .mustBe(routes.ContactEmailController.onPageLoad(CheckMode, MDR))
+          }
+        }
+
+      "must go from Contact Email page to CheckYourAnswers page " +
+        "if user has NOT changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(ContactEmailPage, "email@email.com")
+                .success
+                .value
+
+              navigator
+                .nextPageWithValueCheck(
+                  ContactEmailPage,
+                  CheckMode,
+                  MDR,
+                  updatedAnswers,
+                  originalValue = Some("email@email.com")
+                )
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
+        }
+
+      "must go from Contact Email page to 'Can we contact person by telephone' page " +
+        "if user has changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers = answers
+                .set(ContactEmailPage, "email@email.com")
+                .success
+                .value
+
+              navigator
+                .nextPageWithValueCheck(
+                  ContactEmailPage,
+                  CheckMode,
+                  MDR,
+                  updatedAnswers,
+                  originalValue = Some("originalemail@email.com")
+                )
+                .mustBe(routes.IsContactTelephoneController.onPageLoad(CheckMode, MDR))
+          }
+        }
 
       "must go from IsContactTelephone page to Contact Phone page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
@@ -64,20 +136,93 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
         }
       }
 
-      "must go from IsContactTelephone page to CheckYourAnswers page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(IsContactTelephonePage, false)
-                .success
-                .value
+      "must go from IsContactTelephone page to 'is there someone else we can contact' page if NO is selected " +
+        "and user registering as business with ID" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                  .success
+                  .value
+                  .set(BusinessTypePage, BusinessType.LimitedPartnership)
+                  .success
+                  .value
+                  .set(IsContactTelephonePage, false)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              navigator
+                .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.SecondContactController.onPageLoad(CheckMode, MDR))
+          }
         }
-      }
+
+      "must go from IsContactTelephone page to CheckYourAnswers page if NO is selected " +
+        "and user registering as individual without ID" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                  .success
+                  .value
+                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
+                  .success
+                  .value
+                  .set(IsContactTelephonePage, false)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
+        }
+
+      "must go from IsContactTelephone page to CheckYourAnswers page if NO is selected " +
+        "and user registering as individual with ID" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                  .success
+                  .value
+                  .set(BusinessTypePage, BusinessType.Sole)
+                  .success
+                  .value
+                  .set(IsContactTelephonePage, false)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
+        }
+
+      "must go from IsContactTelephone page to 'is there someone else we can contact' page if NO is selected " +
+        "and user registering as business without ID" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                  .success
+                  .value
+                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
+                  .success
+                  .value
+                  .set(IsContactTelephonePage, false)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.SecondContactController.onPageLoad(CheckMode, MDR))
+          }
+        }
 
       "must go from Second Contact page to Second Contact Name page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
@@ -89,10 +234,26 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                 .value
 
             navigator
-              .nextPage(SecondContactPage, NormalMode, MDR, updatedAnswers)
+              .nextPageWithValueCheck(SecondContactPage, NormalMode, MDR, updatedAnswers, None)
               .mustBe(routes.SndContactNameController.onPageLoad(NormalMode, MDR))
         }
       }
+
+      "must go from Second Contact page to CheckYourAnswers page if true is selected " +
+        "if user has NOT changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(SecondContactPage, true)
+                  .success
+                  .value
+
+              navigator
+                .nextPageWithValueCheck(SecondContactPage, CheckMode, MDR, updatedAnswers, Some(true))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
+        }
 
       "must go from Second Contact page to CheckYourAnswers page if NO is selected" in {
         forAll(arbitrary[UserAnswers]) {
@@ -104,28 +265,74 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                 .value
 
             navigator
-              .nextPage(SecondContactPage, CheckMode, MDR, updatedAnswers)
+              .nextPageWithValueCheck(SecondContactPage, CheckMode, MDR, updatedAnswers, None)
               .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }
 
-      "must go from Second Contact Name page to CheckYourAnswers page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(SndContactNamePage, CheckMode, MDR, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-        }
-      }
+      "must go from Second Contact Name page to CheckYourAnswers page " +
+        "if user has NOT changed their answer " in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(SndContactNamePage, "someName")
+                  .success
+                  .value
 
-      "must go from Second Contact Email page to CheckYourAnswers page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(SndContactEmailPage, CheckMode, MDR, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              navigator
+                .nextPageWithValueCheck(SndContactNamePage, CheckMode, MDR, updatedAnswers, Some("someName"))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
         }
-      }
+
+      "must go from Second Contact Name page to Second Contact Email page " +
+        "if user has changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(SndContactNamePage, "someName")
+                  .success
+                  .value
+
+              navigator
+                .nextPageWithValueCheck(SndContactNamePage, CheckMode, MDR, updatedAnswers, Some("originalName"))
+                .mustBe(routes.SndContactEmailController.onPageLoad(CheckMode, MDR))
+          }
+        }
+
+      "must go from Second Contact Email page to CheckYourAnswers page " +
+        "if user has NOT changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(SndContactEmailPage, "email@email.com")
+                  .success
+                  .value
+
+              navigator
+                .nextPageWithValueCheck(SndContactEmailPage, CheckMode, MDR, updatedAnswers, Some("email@email.com"))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
+        }
+
+      "must go from Second Contact Email page to Second Contact have phone page " +
+        "if user has changed their answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(SndContactEmailPage, "email@email.com")
+                  .success
+                  .value
+
+              navigator
+                .nextPageWithValueCheck(SndContactEmailPage, CheckMode, MDR, updatedAnswers, Some("original@email.com"))
+                .mustBe(routes.SndConHavePhoneController.onPageLoad(CheckMode, MDR))
+          }
+        }
 
       "must go from Second Contact Have Phone page to Second Contact Phone page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
