@@ -178,6 +178,21 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         result.futureValue mustBe Left(error)
       }
     }
+
+    "getDisplaySubscriptionId" - {
+
+      "must return 'SubscriptionID' for valid input" in {
+        when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
+        val result = service.getDisplaySubscriptionId(MDR, "safeId")
+        result.futureValue mustBe Some(SubscriptionID("id"))
+      }
+
+      "must return 'None' for any failures of exceptions" in {
+        when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
+        val result = service.getDisplaySubscriptionId(MDR, "safeId")
+        result.futureValue mustBe None
+      }
+    }
   }
 
 }
