@@ -70,7 +70,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistratonInformation(MDR, Nino("CC123456C"), name, dob)
+        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistrationInformation(MDR, Nino("CC123456C"), name, dob)
 
         result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual))
       }
@@ -81,7 +81,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistratonInformation(MDR, Nino("CC123456C"), name, dob)
+        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistrationInformation(MDR, Nino("CC123456C"), name, dob)
 
         result.futureValue mustBe Left(NotFoundError)
       }

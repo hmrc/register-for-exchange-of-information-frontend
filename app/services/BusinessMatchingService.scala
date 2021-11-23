@@ -33,9 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
-  def sendIndividualRegistratonInformation(regime: Regime, nino: Nino, name: Name, dob: LocalDate)(implicit
-    hc: HeaderCarrier,
-    ec: ExecutionContext
+  def sendIndividualRegistrationInformation(regime: Regime, nino: Nino, name: Name, dob: LocalDate)(implicit
+                                                                                                    hc: HeaderCarrier,
+                                                                                                    ec: ExecutionContext
   ): Future[Either[ApiError, RegistrationInfo]] =
     registrationConnector
       .withIndividualNino(RegisterWithID(regime, name, dob, "NINO", nino.nino))

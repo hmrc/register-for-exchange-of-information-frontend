@@ -87,6 +87,6 @@ class WeHaveConfirmedYourIdentityController @Inject() (
       nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
       name             <- getEither(WhatIsYourNamePage).orElse(getEither(SoleNamePage))
       dob              <- getEither(WhatIsYourDateOfBirthPage)
-      registrationInfo <- EitherT(matchingService.sendIndividualRegistratonInformation(regime, nino, name, dob))
+      registrationInfo <- EitherT(matchingService.sendIndividualRegistrationInformation(regime, nino, name, dob))
     } yield registrationInfo).value
 }

@@ -66,7 +66,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return OK and the correct view for a GET when there is a match" in {
 
-      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", None, None, AsIndividual))))
 
       when(mockRenderer.render(any(), any())(any()))
@@ -88,7 +88,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return redirect for a GET when there is no match" in {
 
-      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)
