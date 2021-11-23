@@ -107,14 +107,12 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
-
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
