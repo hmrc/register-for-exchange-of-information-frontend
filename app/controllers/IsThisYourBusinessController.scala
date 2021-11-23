@@ -32,7 +32,7 @@ import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, ControllerHelpers, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -55,7 +55,7 @@ class IsThisYourBusinessController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
   subscriptionService: SubscriptionService,
-  taxEnrolmentService: TaxEnrolmentService,
+  controllerHelper: ControllerHelper,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -65,17 +65,6 @@ class IsThisYourBusinessController @Inject() (
     with Logging {
 
   private val form = formProvider()
-
-  def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
-    hc: HeaderCarrier,
-    request: DataRequest[AnyContent]
-  ): Future[Result] =
-    taxEnrolmentService.checkAndCreateEnrolment(safeId, userAnswers, subscriptionId, regime) flatMap {
-      case Right(_) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
-      case Left(error) =>
-        logger.info(s"Error $error recived while creating an enrolment")
-        renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
-    }
 
   private def result(mode: Mode, regime: Regime, form: Form[Boolean])(implicit ec: ExecutionContext, request: DataRequest[AnyContent]) =
     (for {
@@ -92,12 +81,7 @@ class IsThisYourBusinessController @Inject() (
         },
         fb =>
           subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {
-            case Some(subscriptionId) =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionIDPage, subscriptionId))
-                _              <- sessionRepository.set(updatedAnswers)
-                result         <- createEnrolment(fb.safeId, request.userAnswers, subscriptionId, regime)
-              } yield result
+            case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(fb.safeId, subscriptionId, regime)
             case _ =>
               val name     = fb.name.getOrElse("")
               val address  = fb.address.getOrElse(AddressResponse("", None, None, None, None, ""))
