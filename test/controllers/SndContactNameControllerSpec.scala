@@ -102,7 +102,7 @@ class SndContactNameControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
+      redirectLocation(result).value mustEqual "/register-for-exchange-of-information/mdr/register/second-contact-email"
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
