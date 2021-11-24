@@ -471,35 +471,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         redirectLocation(result).value mustEqual routes.SomeInformationIsMissingController.onPageLoad(MDR).url
       }
 
-      "must redirect to 'Duplication submission' page when there is duplication submission" in {
-
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Left(DuplicateSubmissionError)))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val userAnswers = UserAnswers("Id")
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-          .success
-          .value
-          .set(DoYouHaveNINPage, true)
-          .success
-          .value
-
-        retrieveUserAnswersData(userAnswers)
-
-        val request = FakeRequest(POST, submitRoute)
-
-        val result = route(app, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(MDR).url
-      }
-
       "must redirect to 'Business already registered' page when there is EnrolmentExistsError" in {
 
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))

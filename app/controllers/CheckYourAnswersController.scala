@@ -95,7 +95,7 @@ class CheckYourAnswersController @Inject() (
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case DuplicateSubmissionError | EnrolmentExistsError(_) =>
+          case EnrolmentExistsError(_) =>
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
               Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
             } else {
