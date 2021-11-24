@@ -77,7 +77,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
               case NotFoundError =>
                 Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
               case _ =>
-                renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
+                renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
             },
             fb =>
               subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {

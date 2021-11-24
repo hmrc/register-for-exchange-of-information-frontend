@@ -17,6 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
+import models.error.ApiError.BadRequestError
 import models.matching.MatchingType.AsOrganisation
 import models.matching.RegistrationInfo
 import models.register.response.details.AddressResponse
@@ -126,6 +127,31 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     }
 
+    "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
+
+      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      retrieveUserAnswersData(validUserAnswers)
+      val request = FakeRequest(GET, loadRoute)
+
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SERVICE_UNAVAILABLE
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
@@ -175,7 +201,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "must return internal server error Unavailable and errors when invalid data is submitted" in {
+    "must return Service Unavailable and errors when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -186,7 +212,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val result = route(app, request).value
 
-      status(result) mustEqual INTERNAL_SERVER_ERROR
+      status(result) mustEqual SERVICE_UNAVAILABLE
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
