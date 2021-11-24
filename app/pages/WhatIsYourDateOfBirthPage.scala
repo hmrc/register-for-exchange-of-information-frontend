@@ -16,13 +16,20 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
 
 import java.time.LocalDate
+import scala.util.Try
 
 case object WhatIsYourDateOfBirthPage extends QuestionPage[LocalDate] {
+
+  val dobSubJourneyPages = List(DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage)
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatIsYourDateOfBirth"
+  
+  override def cleanup(value: Option[LocalDate], userAnswers: UserAnswers): Try[UserAnswers] =
+    dobSubJourneyPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 }

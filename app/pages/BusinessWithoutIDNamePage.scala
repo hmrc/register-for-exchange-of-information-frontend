@@ -25,4 +25,6 @@ case object BusinessWithoutIDNamePage extends QuestionPage[String] with UserAnsw
 
   override def toString: String = "businessWithoutIDName"
 
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
+    List(BusinessHaveDifferentNamePage, WhatIsTradingNamePage, AddressWithoutIdPage).foldLeft(Try(userAnswers))(PageLists.removePage)
 }

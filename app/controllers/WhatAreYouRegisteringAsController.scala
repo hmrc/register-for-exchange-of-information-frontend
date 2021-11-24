@@ -83,7 +83,7 @@ class WhatAreYouRegisteringAsController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers, originalAnswer))
+              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
             }
           )
     }

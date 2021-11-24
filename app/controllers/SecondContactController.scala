@@ -86,7 +86,7 @@ class SecondContactController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactPage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(SecondContactPage, mode, regime, updatedAnswers, originalAnswer))
+              } yield Redirect(navigator.nextPage(SecondContactPage, mode, regime, updatedAnswers))
             }
           )
     }

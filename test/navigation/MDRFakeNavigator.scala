@@ -25,10 +25,4 @@ class MDRFakeNavigator(desiredRoute: Call) extends MDRNavigator {
 
   override def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers): Call =
     desiredRoute
-
-  override def nextPageWithValueCheck[A](page: QuestionPage[A], mode: Mode, regime: Regime, userAnswers: UserAnswers, originalValue: Option[A])(implicit
-    rds: Reads[A]
-  ): Call =
-    desiredRoute
-
 }

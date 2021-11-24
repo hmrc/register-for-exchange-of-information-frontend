@@ -242,26 +242,25 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                 .value
 
             navigator
-              .nextPageWithValueCheck(SecondContactPage, NormalMode, MDR, updatedAnswers, None)
+              .nextPage(SecondContactPage, NormalMode, MDR, updatedAnswers)
               .mustBe(routes.SndContactNameController.onPageLoad(NormalMode, MDR))
         }
       }
 
-      "must go from Second Contact page to CheckYourAnswers page if true is selected " +
-        "if user has NOT changed their answer" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(SecondContactPage, true)
-                  .success
-                  .value
+      "must go from Second Contact page to Second Contact Name page if true is selected " in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(SecondContactPage, true)
+                .success
+                .value
 
-              navigator
-                .nextPageWithValueCheck(SecondContactPage, CheckMode, MDR, updatedAnswers, Some(true))
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-          }
+            navigator
+              .nextPage(SecondContactPage, CheckMode, MDR, updatedAnswers)
+              .mustBe(routes.SndContactNameController.onPageLoad(CheckMode, MDR))
         }
+      }
 
       "must go from Second Contact page to CheckYourAnswers page if NO is selected" in {
         forAll(arbitrary[UserAnswers]) {
@@ -273,7 +272,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                 .value
 
             navigator
-              .nextPageWithValueCheck(SecondContactPage, CheckMode, MDR, updatedAnswers, None)
+              .nextPage(SecondContactPage, CheckMode, MDR, updatedAnswers)
               .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
         }
       }

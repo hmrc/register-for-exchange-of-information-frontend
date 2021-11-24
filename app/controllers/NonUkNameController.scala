@@ -76,11 +76,13 @@ class NonUkNameController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value => {
-              val originalAnswer = request.userAnswers.get(NonUkNamePage)
+
+              val originalValue = request.userAnswers.get(NonUkNamePage)
+
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setB(NonUkNamePage, value, true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUkNamePage, value, originalValue))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(NonUkNamePage, mode, regime, updatedAnswers, originalAnswer))
+              } yield Redirect(navigator.nextPage(NonUkNamePage, mode, regime, updatedAnswers))
             }
           )
     }

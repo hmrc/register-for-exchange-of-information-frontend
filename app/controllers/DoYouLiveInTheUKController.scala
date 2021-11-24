@@ -75,11 +75,13 @@ class DoYouLiveInTheUKController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value =>
+            value => {
+              val originalAnswer = request.userAnswers.get(DoYouLiveInTheUKPage)
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouLiveInTheUKPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouLiveInTheUKPage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(DoYouLiveInTheUKPage, mode, regime, updatedAnswers))
+            }
           )
     }
 }

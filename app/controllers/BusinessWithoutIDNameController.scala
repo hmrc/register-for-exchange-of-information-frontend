@@ -83,7 +83,7 @@ class BusinessWithoutIDNameController @Inject() (
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(BusinessWithoutIDNamePage, mode, regime, updatedAnswers, originalAnswer))
+              } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, regime, updatedAnswers))
             }
           )
     }

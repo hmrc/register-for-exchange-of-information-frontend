@@ -44,38 +44,34 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
     case ContactNamePage =>
-      regime => ua => checkNextPageForValueThenRoute(regime, ua, ContactEmailPage, routes.ContactEmailController.onPageLoad(CheckMode, regime))
+      regime => ua => checkNextPageForValueThenRoute(CheckMode, regime, ua, ContactEmailPage, routes.ContactEmailController.onPageLoad(CheckMode, regime))
     case ContactEmailPage =>
-      regime => ua => checkNextPageForValueThenRoute(regime, ua, IsContactTelephonePage, routes.IsContactTelephoneController.onPageLoad(CheckMode, regime))
+      regime =>
+        ua => checkNextPageForValueThenRoute(CheckMode, regime, ua, IsContactTelephonePage, routes.IsContactTelephoneController.onPageLoad(CheckMode, regime))
     case IsContactTelephonePage => isContactTelephoneRoutes(CheckMode)
     case ContactPhonePage       => regime => contactTelephoneNumber(CheckMode)(regime)
     case SecondContactPage      => isSecondContact(CheckMode)
     case SndContactNamePage =>
-      regime => ua => checkNextPageForValueThenRoute(regime, ua, SndContactEmailPage, routes.SndContactEmailController.onPageLoad(CheckMode, regime))
+      regime => ua => checkNextPageForValueThenRoute(CheckMode, regime, ua, SndContactEmailPage, routes.SndContactEmailController.onPageLoad(CheckMode, regime))
     case SndContactEmailPage =>
-      regime => ua => checkNextPageForValueThenRoute(regime, ua, SndConHavePhonePage, routes.SndConHavePhoneController.onPageLoad(CheckMode, regime))
+      regime => ua => checkNextPageForValueThenRoute(CheckMode, regime, ua, SndConHavePhonePage, routes.SndConHavePhoneController.onPageLoad(CheckMode, regime))
     case SndConHavePhonePage => haveSecondPhone(CheckMode)
     case _                   => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
-
-  private def checkNextPageForValueThenRoute[A](regime: Regime, ua: UserAnswers, page: QuestionPage[A], call: Call)(implicit rds: Reads[A]): Option[Call] =
-    if (ua.get(page).fold(false)(_ => true)) {
-      Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    } else {
-      Some(call)
-    }
 
   private def contactTelephoneNumber(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) match {
       case Some(true) =>
         ua.get(BusinessTypePage) map {
           case Sole => routes.CheckYourAnswersController.onPageLoad(regime)
-          case _    => checkNextPageForValueThenRoute(regime, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode, regime)).get
+          case _ =>
+            checkNextPageForValueThenRoute(CheckMode, regime, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode, regime)).get
         }
       case Some(false) =>
         ua.get(WhatAreYouRegisteringAsPage) map {
           case RegistrationTypeIndividual => routes.CheckYourAnswersController.onPageLoad(regime)
-          case _                          => checkNextPageForValueThenRoute(regime, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode, regime)).get
+          case _ =>
+            checkNextPageForValueThenRoute(CheckMode, regime, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode, regime)).get
         }
       case None => Some(routes.SecondContactController.onPageLoad(mode, regime))
     }
@@ -87,7 +83,7 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
         if (isIndividual(ua)) {
           routes.CheckYourAnswersController.onPageLoad(regime)
         } else {
-          checkNextPageForValueThenRoute(regime, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode, regime)).get
+          checkNextPageForValueThenRoute(CheckMode, regime, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode, regime)).get
         }
     }
 
