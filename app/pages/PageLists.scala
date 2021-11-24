@@ -93,7 +93,6 @@ object PageLists {
 
   val allWithOutIDPages = List(WhatAreYouRegisteringAsPage) ++ businessWithOutIDPages ++ individualWithOutIDPages
 
-
   val allOtherPages =
     List(WhatAreYouRegisteringAsPage,
          DoYouHaveNINPage

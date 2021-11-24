@@ -69,6 +69,7 @@ class WhatIsYourNameController @Inject() (
         render(mode, regime, request.userAnswers.get(WhatIsYourNamePage).fold(form)(form.fill)).map(Ok(_))
     }
 
+  /*
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
@@ -87,6 +88,7 @@ class WhatIsYourNameController @Inject() (
             }
           )
     }
+   */
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {

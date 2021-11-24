@@ -78,7 +78,7 @@ class NonUkNameController @Inject() (
             value => {
               val originalAnswer = request.userAnswers.get(NonUkNamePage)
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUkNamePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setB(NonUkNamePage, value, true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPageWithValueCheck(NonUkNamePage, mode, regime, updatedAnswers, originalAnswer))
             }

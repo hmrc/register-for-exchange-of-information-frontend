@@ -89,6 +89,9 @@ class WhatAreYouRegisteringAsController @Inject() (
           )
     }
 
+  // todo eitherT.set and next(..., Boolean)
+
+  /*
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
@@ -106,4 +109,5 @@ class WhatAreYouRegisteringAsController @Inject() (
                 )
           )
     }
+   */
 }

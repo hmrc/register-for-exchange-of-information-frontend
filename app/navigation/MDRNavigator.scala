@@ -53,23 +53,38 @@ class MDRNavigator @Inject() () extends Navigator {
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    case DoYouHaveUniqueTaxPayerReferencePage  => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
-    case WhatAreYouRegisteringAsPage           => regime => whatAreYouRegisteringAs(CheckMode)(regime)
-    case BusinessWithoutIDNamePage             => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
-    case BusinessHaveDifferentNamePage         => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
-    case WhatIsTradingNamePage                 => regime => whatIsTradingNameRoutes(CheckMode)(regime)
-    case AddressWithoutIdPage                  => regime => addressWithoutID(CheckMode)(regime)
+    // Individual with ID
     case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
-    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode, regime))
-    case NonUkNamePage                         => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
-    case WhatIsYourNamePage                    => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
-    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(CheckMode)
-    case DoYouLiveInTheUKPage                  => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
-    case WhatIsYourPostcodePage                => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
-    case SelectAddressPage                     => regime => addressWithoutID(CheckMode)(regime)
-    case AddressUKPage                         => regime => addressWithoutID(CheckMode)(regime)
-    case _                                     => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case WhatIsYourNationalInsuranceNumberPage => regime => whatIsYourNationalInsuranceNumberRoutes(CheckMode)(regime)
+
+    case DoYouHaveUniqueTaxPayerReferencePage => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
+    case WhatAreYouRegisteringAsPage          => regime => whatAreYouRegisteringAs(CheckMode)(regime)
+    case BusinessWithoutIDNamePage            => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
+    case BusinessHaveDifferentNamePage        => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
+    case WhatIsTradingNamePage                => regime => whatIsTradingNameRoutes(CheckMode)(regime)
+    case AddressWithoutIdPage                 => regime => addressWithoutID(CheckMode)(regime)
+    case DoYouHaveNINPage                     => regime => doYouHaveNINORoutes(CheckMode)(regime)
+    case NonUkNamePage                        => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
+    case WhatIsYourNamePage                   => regime => whatIsYourNameRoutes(CheckMode)(regime)
+    case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
+    case DoYouLiveInTheUKPage                 => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
+    case WhatIsYourPostcodePage               => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
+    case SelectAddressPage                    => regime => addressWithoutID(CheckMode)(regime)
+    case AddressUKPage                        => regime => addressWithoutID(CheckMode)(regime)
+    case _                                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
+
+  private def whatIsYourNationalInsuranceNumberRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+    isContinueJourney(WhatIsYourNamePage, mode, ua) match {
+      case true  => Some(routes.WhatIsYourNameController.onPageLoad(mode, regime))
+      case false => Some(routes.CheckYourAnswersController.onPageLoad(regime))
+    }
+
+  private def whatIsYourNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+    isContinueJourney(WhatIsYourDateOfBirthPage, mode, ua) match {
+      case true  => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(mode, regime))
+      case false => Some(routes.CheckYourAnswersController.onPageLoad(regime))
+    }
 
   private def whatIsTradingNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     (ua.get(DoYouHaveUniqueTaxPayerReferencePage), mode) match {
@@ -108,8 +123,10 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def doYouHaveNINORoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode, regime)
-      case false => routes.NonUkNameController.onPageLoad(mode, regime)
+      case true if isContinueJourney(WhatIsYourNationalInsuranceNumberPage, mode, ua) =>
+        routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode, regime)
+      case false if isContinueJourney(NonUkNamePage, mode, ua) => routes.NonUkNameController.onPageLoad(mode, regime)
+      case _                                                   => routes.CheckYourAnswersController.onPageLoad(regime)
     }
 
   private def whatIsYourDateOfBirthRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =

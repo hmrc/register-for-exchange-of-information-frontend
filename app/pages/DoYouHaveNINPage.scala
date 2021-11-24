@@ -28,8 +28,27 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
   override def toString: String = "doYouHaveNIN"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    List(
+      NonUkNamePage,
+      WhatIsYourDateOfBirthPage,
+      DoYouLiveInTheUKPage,
+      WhatIsYourPostcodePage,
+      AddressLookupPage,
+      AddressUKPage,
+      AddressWithoutIdPage,
+      WhatIsYourPostcodePage,
+      AddressUKPage,
+      SelectAddressPage,
+      SelectedAddressLookupPage,
+      WhatIsYourNationalInsuranceNumberPage,
+      WhatIsYourNamePage,
+      WhatIsYourDateOfBirthPage
+    ).foldLeft(
+      Try(userAnswers)
+    )(PageLists.removePage)
+  /*
     value match {
-      case Some(true) =>
+      case Some(false) =>
         List(
           NonUkNamePage,
           WhatIsYourDateOfBirthPage,
@@ -45,7 +64,7 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
         ).foldLeft(
           Try(userAnswers)
         )(PageLists.removePage)
-      case Some(false) =>
+      case Some(true) =>
         List(
           WhatIsYourNationalInsuranceNumberPage,
           WhatIsYourNamePage,
@@ -53,7 +72,12 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
         ).foldLeft(Try(userAnswers))(PageLists.removePage)
       case _ => super.cleanup(value, userAnswers)
     }
+  }
+   */
 
+  /*
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     PageLists.individualWithIdJourney.foldLeft(Try(userAnswers))(PageLists.removePage)
+   */
+
 }

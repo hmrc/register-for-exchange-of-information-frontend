@@ -83,13 +83,13 @@ class WhatIsYourDateOfBirthController @Inject() (
               val originalAnswer = request.userAnswers.get(WhatIsYourDateOfBirthPage)
 
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourDateOfBirthPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setB(WhatIsYourDateOfBirthPage, value, true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPageWithValueCheck(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers, originalAnswer))
             }
           )
     }
-
+  /*
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
@@ -107,4 +107,5 @@ class WhatIsYourDateOfBirthController @Inject() (
                 )
           )
     }
+   */
 }
