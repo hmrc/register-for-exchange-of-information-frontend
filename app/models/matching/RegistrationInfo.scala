@@ -43,11 +43,6 @@ case class RegistrationInfo(safeId: String,
   }
 
   def sameAs(registrationInfo: RegistrationInfo): Boolean = {
-    println(s"\n\nzzz 1:${safeId != ""} 2:${businessType
-      .equals(registrationInfo.businessType)} 3:${name.map(_.toLowerCase).equals(registrationInfo.name.map(_.toLowerCase))} 4:${identifier
-      .equals(registrationInfo.identifier)} 5:${dob.equals(registrationInfo.dob)}")
-    println(registrationInfo.name)
-    println(this.name)
     safeId != "" &&
     businessType.equals(registrationInfo.businessType) &&
     name.map(_.toLowerCase).equals(registrationInfo.name.map(_.toLowerCase)) &&
