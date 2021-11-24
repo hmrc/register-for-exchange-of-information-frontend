@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.error.ApiError.NotFoundError
+import models.error.ApiError.{BadRequestError, NotFoundError}
 import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
 import models.{MDR, Name, SubscriptionID, UserAnswers}
@@ -111,6 +111,30 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad(MDR).url
     }
 
+    "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
+
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", None, None, AsIndividual))))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      retrieveUserAnswersData(validUserAnswers)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SERVICE_UNAVAILABLE
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+    }
+
     "return redirect for a GET when there is no match" in {
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any(), any(), any(), any())(any(), any()))
@@ -126,7 +150,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad("identity", MDR).url
     }
 
-    "return return Internal server error for a GET when there is no data" in {
+    "return return Service Unavailable for a GET when there is no data" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -137,7 +161,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       val result = route(app, request).value
 
-      status(result) mustEqual INTERNAL_SERVER_ERROR
+      status(result) mustEqual SERVICE_UNAVAILABLE
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 

@@ -16,11 +16,12 @@
 
 package controllers
 
+import models.error.ApiError.{EnrolmentExistsError, ServiceUnavailableError}
 import models.{Regime, SubscriptionID, UserAnswers}
 import models.requests.DataRequest
 import pages.SubscriptionIDPage
 import play.api.Logging
-import play.api.mvc.Results.{InternalServerError, Redirect}
+import play.api.mvc.Results.{InternalServerError, Redirect, ServiceUnavailable}
 import play.api.mvc.{AnyContent, Result}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -36,15 +37,18 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
     extends Logging
     with NunjucksSupport {
 
-  def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
+  private def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     request: DataRequest[AnyContent]
   ): Future[Result] =
     taxEnrolmentService.checkAndCreateEnrolment(safeId, userAnswers, subscriptionId, regime) flatMap {
       case Right(_) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
+      case Left(EnrolmentExistsError(groupIds)) =>
+        logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
+        Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
       case Left(error) =>
-        logger.info(s"Error $error recived while creating an enrolment")
-        renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
+        logger.info(s"Error $error received while creating an enrolment")
+        renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
     }
 
   def updateSubscriptionIdAndCreateEnrolment(safeId: String, subscriptionId: SubscriptionID, regime: Regime)(implicit
