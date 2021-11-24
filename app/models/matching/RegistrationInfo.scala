@@ -42,13 +42,12 @@ case class RegistrationInfo(safeId: String,
     case _              => "INVALID"
   }
 
-  def sameAs(registrationInfo: RegistrationInfo): Boolean = {
+  def sameAs(registrationInfo: RegistrationInfo): Boolean =
     safeId.nonEmpty &&
-    businessType.equals(registrationInfo.businessType) &&
-    name.map(_.toLowerCase).equals(registrationInfo.name.map(_.toLowerCase)) &&
-    identifier.equals(registrationInfo.identifier) &&
-    dob.equals(registrationInfo.dob)
-  }
+      businessType.equals(registrationInfo.businessType) &&
+      name.map(_.toLowerCase).equals(registrationInfo.name.map(_.toLowerCase)) &&
+      identifier.equals(registrationInfo.identifier) &&
+      dob.equals(registrationInfo.dob)
 }
 
 object RegistrationInfo {
