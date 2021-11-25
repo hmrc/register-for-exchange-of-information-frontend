@@ -16,13 +16,12 @@
 
 package controllers
 
-import cats.implicits._
 import controllers.actions._
 import forms.WhatAreYouRegisteringAsFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime, WhatAreYouRegisteringAs}
 import navigation.MDRNavigator
-import pages.{BusinessWithoutIDNamePage, WhatAreYouRegisteringAsPage}
+import pages.WhatAreYouRegisteringAsPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json

@@ -16,7 +16,6 @@
 
 package controllers
 
-import cats.implicits._
 import controllers.actions._
 import forms.WhatIsYourDateOfBirthFormProvider
 import models.requests.DataRequest

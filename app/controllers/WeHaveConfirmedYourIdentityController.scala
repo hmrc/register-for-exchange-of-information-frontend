@@ -20,10 +20,10 @@ import cats.data.EitherT
 import cats.implicits._
 import controllers.actions._
 import models.error.ApiError
-import models.error.ApiError.NotFoundError
+import models.error.ApiError.BadRequestError
 import models.matching.RegistrationInfo
 import models.requests.DataRequest
-import models.{BusinessType, NormalMode, Regime}
+import models.{BusinessType, CheckMode, Mode, NormalMode, Regime, UserAnswers}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -50,27 +50,32 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     with I18nSupport
     with WithEitherT {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] =
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
 
       implicit request =>
-        val action: String = request.userAnswers.get(BusinessTypePage) match {
-          case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-          case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
-          case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-        }
+        val action: String =
+          if (containsContactDetails(request.userAnswers) && mode == CheckMode) routes.CheckYourAnswersController.onPageLoad(regime).url
+          else {
+            request.userAnswers.get(BusinessTypePage) match {
+              case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+              case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
+              case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+            }
+          }
         val json = Json.obj(
           "regime" -> regime.toUpperCase,
           "action" -> action
         )
 
+        // todo - when in check mode and changes stuff and DOES NOT MATCH the data is still updated
         (for {
           registrationInfo <- EitherT(matchIndividualInfo(regime))
           updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
         } yield sessionRepository.set(updatedAnswers))
           .fold[Future[Result]](
             fa = {
-              case NotFoundError =>
+              case BadRequestError =>
                 Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
               case _ =>
                 renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
@@ -88,4 +93,20 @@ class WeHaveConfirmedYourIdentityController @Inject() (
       dob              <- getEither(WhatIsYourDateOfBirthPage)
       registrationInfo <- EitherT(matchingService.sendIndividualRegistrationInformation(regime, RegistrationInfo.build(name, nino, Option(dob))))
     } yield registrationInfo).value
+
+  // In CHECKMODE we check if contact details have been cleared down if not we can safely Redirec to CYA page
+  private def containsContactDetails(ua: UserAnswers): Boolean = {
+    val hasContactName = ua
+      .get(ContactNamePage)
+      .fold(false)(
+        _ => true
+      )
+    val hasContactEmail = ua
+      .get(ContactEmailPage)
+      .fold(false)(
+        _ => true
+      )
+
+    hasContactName || hasContactEmail
+  }
 }

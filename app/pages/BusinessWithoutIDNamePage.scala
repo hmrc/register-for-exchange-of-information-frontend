@@ -16,11 +16,8 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 import utils.UserAnswersHelper
-
-import scala.util.Try
 
 case object BusinessWithoutIDNamePage extends QuestionPage[String] with UserAnswersHelper {
 
