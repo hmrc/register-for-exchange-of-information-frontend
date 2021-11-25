@@ -68,7 +68,6 @@ class WeHaveConfirmedYourIdentityController @Inject() (
           "action" -> action
         )
 
-        // todo - when in check mode and changes stuff and DOES NOT MATCH the data is still updated
         (for {
           registrationInfo <- EitherT(matchIndividualInfo(regime))
           updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)

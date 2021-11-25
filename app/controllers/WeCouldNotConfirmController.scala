@@ -17,7 +17,8 @@
 package controllers
 
 import controllers.actions._
-import models.{NormalMode, Regime}
+import models.{NormalMode, Regime, UserAnswers}
+import pages.PageLists
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -27,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
+import scala.util.Try
 
 class WeCouldNotConfirmController @Inject() (
   override val messagesApi: MessagesApi,
@@ -39,7 +41,7 @@ class WeCouldNotConfirmController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with Logging {
-
+  
   def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
@@ -49,6 +51,14 @@ class WeCouldNotConfirmController @Inject() (
           "affinity" -> messages(s"weCouldNotConfirm.$key"),
           "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
         )
+        // clean invalid data
+        clean(request.userAnswers)
         renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
     }
+
+  private def clean(userAnswers: UserAnswers): Unit = {
+    PageLists.individualWithIdJourney.foldLeft(
+      Try(userAnswers)
+    )(PageLists.removePage)
+  }
 }
