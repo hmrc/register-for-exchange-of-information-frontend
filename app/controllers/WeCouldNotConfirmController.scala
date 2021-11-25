@@ -41,7 +41,7 @@ class WeCouldNotConfirmController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with Logging {
-  
+
   def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
@@ -56,9 +56,8 @@ class WeCouldNotConfirmController @Inject() (
         renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
     }
 
-  private def clean(userAnswers: UserAnswers): Unit = {
+  private def clean(userAnswers: UserAnswers): Unit =
     PageLists.individualWithIdJourney.foldLeft(
       Try(userAnswers)
     )(PageLists.removePage)
-  }
 }
