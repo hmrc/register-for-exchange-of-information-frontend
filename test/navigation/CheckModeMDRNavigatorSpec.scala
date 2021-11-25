@@ -464,7 +464,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
           navigator
             .nextPage(WhatIsYourDateOfBirthPage, CheckMode, MDR, updatedAnswers)
-            .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR))
+            .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(CheckMode, MDR))
       }
     }
 
