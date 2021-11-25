@@ -25,17 +25,19 @@ import models.error.ApiError.NotFoundError
 import models.matching.RegistrationInfo
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
-import models.{Mode, Regime}
+import models.{Mode, Regime, SubscriptionID, UserAnswers}
 import navigation.MDRNavigator
 import pages._
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerHelpers, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
-import services.BusinessMatchingService
+import services.{BusinessMatchingService, SubscriptionService, TaxEnrolmentService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -52,21 +54,24 @@ class IsThisYourBusinessController @Inject() (
   formProvider: IsThisYourBusinessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
+  subscriptionService: SubscriptionService,
+  controllerHelper: ControllerHelper,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with WithEitherT {
+    with WithEitherT
+    with Logging {
 
   private val form = formProvider()
 
   private def result(mode: Mode, regime: Regime, form: Form[Boolean])(implicit ec: ExecutionContext, request: DataRequest[AnyContent]) =
     (for {
-      RegistrationInfo <- EitherT(matchBusinessInfo(regime))
-      updatedAnswers   <- setEither(RegistrationInfoPage, RegistrationInfo)
+      registrationInfo <- EitherT(matchBusinessInfo(regime))
+      updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
       _ = sessionRepository.set(updatedAnswers)
-    } yield RegistrationInfo)
+    } yield registrationInfo)
       .fold(
         fa = {
           case NotFoundError =>
@@ -74,12 +79,15 @@ class IsThisYourBusinessController @Inject() (
           case _ =>
             renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
         },
-        fb = RegistrationInfo => {
-          val name     = RegistrationInfo.name.getOrElse("")
-          val address  = RegistrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
-          val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
-          render(mode, regime, withForm, name, address).map(Ok(_))
-        }
+        fb =>
+          subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {
+            case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(fb.safeId, subscriptionId, regime)
+            case _ =>
+              val name     = fb.name.getOrElse("")
+              val address  = fb.address.getOrElse(AddressResponse("", None, None, None, None, ""))
+              val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
+              render(mode, regime, withForm, name, address).map(Ok(_))
+          }
       )
       .flatten
 

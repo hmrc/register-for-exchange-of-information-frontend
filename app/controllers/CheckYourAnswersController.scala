@@ -19,7 +19,8 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError}
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, EnrolmentExistsError, MandatoryInformationMissingError}
+import models.matching.RegistrationInfo
 import models.{Regime, SubscriptionID}
 import navigation.Navigator
 import pages._
@@ -86,16 +87,20 @@ class CheckYourAnswersController @Inject() (
     implicit request =>
       (for {
         registrationInfo   <- getEither(RegistrationInfoPage).orElse(EitherT(registrationService.registerWithoutId(regime)))
-        subscriptionID     <- EitherT(subscriptionService.createSubscription(registrationInfo.safeId, request.userAnswers))
-        withSubscriptionID <- setEither(SubscriptionIDPage, SubscriptionID(subscriptionID))
+        subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, registrationInfo.safeId, request.userAnswers))
+        withSubscriptionID <- setEither(SubscriptionIDPage, subscriptionID)
         _ = sessionRepository.set(withSubscriptionID)
-        _ <- EitherT(taxEnrolmentsService.createEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
+        _ <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
       } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case DuplicateSubmissionError =>
-            Future.successful(NotImplemented("Duplicate Submission error page is not implemented")) //TODO create OrganisationHasAlreadyBeenRegistered page
+          case EnrolmentExistsError(_) =>
+            if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
+            } else {
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
+            }
           case BadRequestError =>
             renderer.render("thereIsAProblem.njk").map(BadRequest(_))
           case _ =>
