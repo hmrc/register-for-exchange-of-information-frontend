@@ -78,8 +78,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockRenderer.render(any(), any())(any()))
@@ -108,8 +108,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
@@ -129,8 +129,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
 
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
@@ -154,8 +154,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 

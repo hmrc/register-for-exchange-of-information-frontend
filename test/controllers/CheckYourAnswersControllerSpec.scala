@@ -370,7 +370,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
+          .thenReturn(Future.successful(Right(RegistrationInfo.build("SAFEID", AsIndividual))))
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID("id"))))
@@ -514,7 +514,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+          .set(RegistrationInfoPage, RegistrationInfo.build("SAFEID", AsIndividual))
           .success
           .value
 

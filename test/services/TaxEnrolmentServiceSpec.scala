@@ -160,7 +160,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo.build("safeId", AsIndividual))
         .success
         .value
 
