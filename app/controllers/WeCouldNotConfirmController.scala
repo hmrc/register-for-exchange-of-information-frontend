@@ -24,6 +24,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -32,6 +33,7 @@ import scala.util.Try
 
 class WeCouldNotConfirmController @Inject() (
   override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
@@ -51,13 +53,16 @@ class WeCouldNotConfirmController @Inject() (
           "affinity" -> messages(s"weCouldNotConfirm.$key"),
           "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
         )
-        // clean invalid data
-        clean(request.userAnswers)
+
+        (for {
+          cleaned <- clean(request.userAnswers)
+        } yield sessionRepository.set(cleaned))
+
         renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
     }
 
-  private def clean(userAnswers: UserAnswers): Unit =
-    PageLists.individualWithIdJourney.foldLeft(
+  private def clean(userAnswers: UserAnswers) =
+    PageLists.allPages.foldLeft(
       Try(userAnswers)
     )(PageLists.removePage)
 }

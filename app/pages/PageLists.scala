@@ -97,4 +97,8 @@ object PageLists {
     List(WhatAreYouRegisteringAsPage,
          DoYouHaveNINPage
     ) ++ individualWithIdJourney ++ individualWithoutIdJourney ++ businessWithIdJourney ++ businessWithoutIdJourney
+
+  val allPages = List(DoYouHaveUniqueTaxPayerReferencePage,
+                      WhatAreYouRegisteringAsPage
+  ) ++ allContactDetailPages ++ allWithIDPages ++ businessWithOutIDPages ++ individualWithOutIDPages
 }
