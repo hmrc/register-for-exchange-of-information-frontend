@@ -56,7 +56,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
 
       implicit request =>
-        val action: String =
+        val action: String = {
           if (containsContactDetails(request.userAnswers) && mode == CheckMode) routes.CheckYourAnswersController.onPageLoad(regime).url
           else {
             request.userAnswers.get(BusinessTypePage) match {
@@ -65,6 +65,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
               case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
             }
           }
+        }
         val json = Json.obj(
           "regime" -> regime.toUpperCase,
           "action" -> action
