@@ -140,7 +140,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     "return redirect for a GET when there is no match" in {
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Left(BadRequestError)))
+        .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)
       val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)

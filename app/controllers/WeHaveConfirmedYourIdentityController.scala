@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits._
 import controllers.actions._
 import models.error.ApiError
-import models.error.ApiError.BadRequestError
+import models.error.ApiError.{BadRequestError, NotFoundError}
 import models.matching.RegistrationInfo
 import models.requests.DataRequest
 import models.{BusinessType, CheckMode, Mode, NormalMode, Regime, UserAnswers}
@@ -77,7 +77,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
         } yield registrationInfo)
           .fold[Future[Result]](
             fa = {
-              case BadRequestError =>
+              case NotFoundError =>
                 Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
               case _ =>
                 renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
