@@ -19,13 +19,14 @@ package services
 import base.{ControllerMockFixtures, SpecBase}
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
-import connectors.TaxEnrolmentsConnector
+import connectors.{EnrolmentStoreProxyConnector, TaxEnrolmentsConnector}
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
+import models.enrolment.GroupIds
 import models.error.ApiError
-import models.error.ApiError.UnableToCreateEnrolmentError
+import models.error.ApiError.{EnrolmentExistsError, UnableToCreateEnrolmentError}
 import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
-import models.{Address, Country, MDR, NonUkName, UserAnswers}
+import models.{Address, Country, MDR, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages._
@@ -38,7 +39,8 @@ import scala.concurrent.Future
 
 class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with BeforeAndAfterEach {
 
-  val mockTaxEnrolmentsConnector = mock[TaxEnrolmentsConnector]
+  val mockTaxEnrolmentsConnector       = mock[TaxEnrolmentsConnector]
+  val mockEnrolmentStoreProxyConnector = mock[EnrolmentStoreProxyConnector]
 
   val service: TaxEnrolmentService = app.injector.instanceOf[TaxEnrolmentService]
 
@@ -46,9 +48,10 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
     super
       .guiceApplicationBuilder()
       .overrides(bind[TaxEnrolmentsConnector].toInstance(mockTaxEnrolmentsConnector))
+      .overrides(bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector))
 
   override def beforeEach: Unit = {
-    reset(mockTaxEnrolmentsConnector)
+    reset(mockTaxEnrolmentsConnector, mockEnrolmentStoreProxyConnector)
     super.beforeEach
   }
 
@@ -58,8 +61,9 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any(), any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
 
-      val subscriptionID = "id"
+      val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -84,7 +88,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.createEnrolment("safeId", userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment("safeId", userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Right(NO_CONTENT)
     }
@@ -94,8 +98,9 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Left(UnableToCreateEnrolmentError))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any(), any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
 
-      val subscriptionID = "id"
+      val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -120,9 +125,48 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.createEnrolment("safeId", userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment("safeId", userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Left(UnableToCreateEnrolmentError)
+    }
+
+    "must return EnrolmentExistsError when there is already an enrolment" in {
+
+      val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Left(UnableToCreateEnrolmentError))
+      val groupIds                                 = GroupIds(Seq("groupId"), Seq.empty)
+
+      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any(), any())(any(), any()))
+        .thenReturn(EitherT.fromEither[Future](Left(EnrolmentExistsError(groupIds))))
+
+      val subscriptionID = SubscriptionID("id")
+      val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
+      val userAnswers = UserAnswers("")
+        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+        .success
+        .value
+        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .success
+        .value
+        .set(DoYouHaveNINPage, false)
+        .success
+        .value
+        .set(NonUkNamePage, NonUkName("a", "b"))
+        .success
+        .value
+        .set(ContactEmailPage, "test@gmail.com")
+        .success
+        .value
+        .set(AddressWithoutIdPage, address)
+        .success
+        .value
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .success
+        .value
+
+      val result = service.checkAndCreateEnrolment("safeId", userAnswers, subscriptionID, MDR)
+
+      result.futureValue mustBe Left(EnrolmentExistsError(groupIds))
     }
   }
 

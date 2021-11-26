@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.BusinessMatchingService
+import services.{BusinessMatchingService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -44,6 +44,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
+  subscriptionService: SubscriptionService,
+  controllerHelper: ControllerHelper,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -71,7 +73,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
         (for {
           registrationInfo <- EitherT(matchIndividualInfo(regime))
           updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
-        } yield sessionRepository.set(updatedAnswers))
+          _ = sessionRepository.set(updatedAnswers)
+        } yield registrationInfo)
           .fold[Future[Result]](
             fa = {
               case BadRequestError =>
@@ -79,7 +82,11 @@ class WeHaveConfirmedYourIdentityController @Inject() (
               case _ =>
                 renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
             },
-            fb = _ => renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+            fb =>
+              subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {
+                case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(fb.safeId, subscriptionId, regime)
+                case _                    => renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+              }
           )
           .flatten
 

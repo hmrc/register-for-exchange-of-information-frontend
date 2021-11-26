@@ -17,10 +17,10 @@
 package models.enrolment
 
 import models.BusinessType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
-import models.UserAnswers
+import models.{SubscriptionID, UserAnswers}
 import models.error.ApiError
 import pages._
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionInfo(safeID: String,
                             saUtr: Option[String] = None,
@@ -31,7 +31,7 @@ case class SubscriptionInfo(safeID: String,
 ) {
 
   def convertToEnrolmentRequest: EnrolmentRequest =
-    EnrolmentRequest(identifiers = Seq(Identifier("MDRID", mdrId)), verifiers = buildVerifiers) //ToDo confirm MDRID as identifier
+    EnrolmentRequest(identifiers = Seq(Identifier("MDRID", mdrId)), verifiers = buildVerifiers)
 
   def buildVerifiers: Seq[Verifier] = {
 
@@ -55,9 +55,9 @@ case class SubscriptionInfo(safeID: String,
 }
 
 object SubscriptionInfo {
-  implicit val format = Json.format[SubscriptionInfo]
+  implicit val format: OFormat[SubscriptionInfo] = Json.format[SubscriptionInfo]
 
-  def createSubscriptionInfo(safeId: String, userAnswers: UserAnswers, subscriptionId: String): Either[ApiError, SubscriptionInfo] =
+  def createSubscriptionInfo(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID): Either[ApiError, SubscriptionInfo] =
     Right(
       SubscriptionInfo(
         safeID = safeId,
@@ -65,13 +65,12 @@ object SubscriptionInfo {
         ctUtr = getCtUtrIfProvided(userAnswers),
         nino = getNinoIfProvided(userAnswers),
         nonUkPostcode = getNonUkPostCodeIfProvided(userAnswers),
-        mdrId = subscriptionId
+        mdrId = subscriptionId.value
       )
     )
 
   private def getNinoIfProvided(userAnswers: UserAnswers): Option[String] =
     userAnswers.get(WhatIsYourNationalInsuranceNumberPage) match {
-
       case Some(nino) => Some(nino.nino)
       case _          => None
     }
@@ -90,7 +89,6 @@ object SubscriptionInfo {
 
   private def getNonUkPostCodeIfProvided(userAnswers: UserAnswers): Option[String] =
     userAnswers.get(AddressWithoutIdPage) match {
-
       case Some(address) => address.postCode
       case _             => None
     }
