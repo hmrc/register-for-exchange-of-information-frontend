@@ -54,6 +54,7 @@ trait Navigator {
     } else {
       Some(call)
     }
+
 }
 
 object Navigator {

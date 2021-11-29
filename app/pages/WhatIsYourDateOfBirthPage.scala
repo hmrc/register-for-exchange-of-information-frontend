@@ -29,7 +29,7 @@ case object WhatIsYourDateOfBirthPage extends QuestionPage[LocalDate] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatIsYourDateOfBirth"
-  
+
   override def cleanup(value: Option[LocalDate], userAnswers: UserAnswers): Try[UserAnswers] =
     dobSubJourneyPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 }

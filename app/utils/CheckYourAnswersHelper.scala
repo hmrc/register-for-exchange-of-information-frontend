@@ -79,7 +79,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "selectAddress",
         value = Html(s"${answer.replace(",", "<br>")}"),
-        href = routes.SelectAddressController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -142,7 +142,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "addressWithoutId.business",
         value = formatAddress(answer),
-        href = routes.AddressWithoutIdController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
       )
   }
 
