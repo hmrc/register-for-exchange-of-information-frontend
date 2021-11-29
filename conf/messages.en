@@ -14,7 +14,6 @@ site.signIn = Sign in
 site.govuk = GOV.UK
 site.saveAndContinue = Save and continue
 site.save = Save
-site.getHelpWithThisPage = Get help with this page (opens in a new tab)
 site.confirmAndSend= Confirm and send
 site.service_name.country = Send a country-by-country report
 site.service_name = Report cross-border arrangements for {0}
@@ -110,6 +109,8 @@ footer.links.cookies = Cookies
 footer.links.accessibility = Accessibility
 footer.links.privacy = Privacy policy
 footer.links.terms = Terms and conditions
+footer.links.contact = Contact
+footer.links.welsh = Rhestr o Wasanaethau Cymraeg
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
