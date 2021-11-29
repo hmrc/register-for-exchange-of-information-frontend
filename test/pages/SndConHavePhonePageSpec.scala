@@ -32,7 +32,7 @@ class SndConHavePhonePageSpec extends PageBehaviours {
 
     "cleanup" - {
 
-      "must remove SndContactPhonePage when there is a change of the answer to 'No'" in {
+      "must remove SndContactPhonePage when there is a change of the answer from 'Yes' to 'No'" in {
 
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
@@ -40,7 +40,7 @@ class SndConHavePhonePageSpec extends PageBehaviours {
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .set(SndConHavePhonePage, false)
+              .set(SndConHavePhonePage, false, Some(true))
               .success
               .value
 

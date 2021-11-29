@@ -46,5 +46,4 @@ object Mode {
   implicit val normalWrites: Writes[NormalMode.type] = Writes {
     _ => JsString("NormalMode")
   }
-
 }

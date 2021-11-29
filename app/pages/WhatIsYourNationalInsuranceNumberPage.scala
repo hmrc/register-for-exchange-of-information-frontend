@@ -16,12 +16,18 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
 import uk.gov.hmrc.domain.Nino
+
+import scala.util.Try
 
 case object WhatIsYourNationalInsuranceNumberPage extends QuestionPage[Nino] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatIsYourNationalInsuranceNumber"
+
+  override def cleanup(value: Option[Nino], userAnswers: UserAnswers): Try[UserAnswers] =
+    PageLists.allAfterWhatIsYourNationalInsuranceNumberPage.foldLeft(Try(userAnswers))(PageLists.removePage)
 }

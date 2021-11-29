@@ -99,7 +99,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
         .set(IsContactTelephonePage, false)
@@ -131,7 +131,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
 
@@ -158,7 +158,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactEmailPage, "hello")
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
         .set(IsContactTelephonePage, false)
@@ -197,7 +197,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
 
@@ -230,7 +230,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
 
@@ -264,7 +264,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
         .set(DoYouLiveInTheUKPage, true)
@@ -304,7 +304,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
         .set(SecondContactPage, false)
@@ -334,7 +334,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
 

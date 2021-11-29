@@ -16,11 +16,34 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
+
+import scala.util.Try
 
 case object DoYouHaveNINPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "doYouHaveNIN"
+
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
+    (List(
+      NonUkNamePage,
+      WhatIsYourDateOfBirthPage,
+      DoYouLiveInTheUKPage,
+      WhatIsYourPostcodePage,
+      AddressLookupPage,
+      AddressUKPage,
+      AddressWithoutIdPage,
+      WhatIsYourPostcodePage,
+      AddressUKPage,
+      SelectAddressPage,
+      SelectedAddressLookupPage,
+      WhatIsYourNationalInsuranceNumberPage,
+      WhatIsYourNamePage,
+      WhatIsYourDateOfBirthPage
+    ) ++ PageLists.allContactDetailPages).foldLeft(
+      Try(userAnswers)
+    )(PageLists.removePage)
 }

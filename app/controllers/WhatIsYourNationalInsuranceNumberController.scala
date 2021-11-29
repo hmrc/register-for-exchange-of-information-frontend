@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import controllers.actions._
 import forms.WhatIsYourNationalInsuranceNumberFormProvider
 import models.requests.DataRequest
@@ -49,7 +50,8 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with WithEitherT {
 
   private val form = formProvider()
 
@@ -83,10 +85,13 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers))
+              (for {
+                updatedAnswers <- setEither(WhatIsYourNationalInsuranceNumberPage, Nino(value), checkPrevious = true)
+                _ = sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers)))
+                .valueOrF(
+                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                )
           )
     }
 }

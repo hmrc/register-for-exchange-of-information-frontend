@@ -111,10 +111,11 @@ class IsThisYourBusinessController @Inject() (
 
   private def matchBusinessInfo(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, RegistrationInfo]] =
     (for {
-      utr              <- getEither(UTRPage)
-      businessName     <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
-      businessType     <- getEither(BusinessTypePage)
-      registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, utr, businessName, businessType))
+      utr          <- getEither(UTRPage)
+      businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
+      businessType <- getEither(BusinessTypePage)
+      dob = request.userAnswers.get(SoleDateOfBirthPage)
+      registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, RegistrationInfo.build(businessType, businessName, utr, dob)))
     } yield registrationInfo).value
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {

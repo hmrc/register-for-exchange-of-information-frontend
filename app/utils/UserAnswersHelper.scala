@@ -26,5 +26,6 @@ trait UserAnswersHelper {
     request.userAnswers.get(ContactNamePage) match {
       case Some(_) => "business"
       case _       => "individual"
+
     }
 }

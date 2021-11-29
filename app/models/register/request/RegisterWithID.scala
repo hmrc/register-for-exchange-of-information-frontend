@@ -16,7 +16,8 @@
 
 package models.register.request
 
-import models.{BusinessType, Name, Regime}
+import models.matching.RegistrationInfo
+import models.{Name, Regime}
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
@@ -34,11 +35,11 @@ object RegisterWithID {
       )
     )
 
-  def apply(regime: Regime, businessName: String, businessType: BusinessType, identifierName: String, identifierValue: String): RegisterWithID =
+  def apply(regime: Regime, registrationInfo: RegistrationInfo): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
         RequestCommon(regime.toUpperCase),
-        RequestWithIDDetails(businessName, businessType.code, "UTR", identifierValue)
+        RequestWithIDDetails(registrationInfo)
       )
     )
 }
