@@ -137,7 +137,6 @@ contactName.error.required = Enter the name of the individual or team we should 
 contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 contactName.error.length = Name must be 35 characters
 
-
 contactEmail.title.business = What is the email address for {0}?
 contactEmail.heading.business = What is the email address for {0}?
 contactEmail.title.individual = What is your email address?
@@ -145,7 +144,6 @@ contactEmail.heading.individual = What is your email address?
 contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.checkYourAnswersLabel.hiddenText = email address
-
 contactEmail.error.required = Enter your email address
 contactEmail.error.length = Email address must be 256 characters or less
 contactEmail.error.invalid = Enter your email address in the correct format, like name@example.com

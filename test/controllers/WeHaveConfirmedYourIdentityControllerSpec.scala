@@ -20,9 +20,7 @@ import base.{ControllerMockFixtures, SpecBase}
 import models.error.ApiError.{BadRequestError, NotFoundError}
 import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
-
 import models.{MDR, Name, NormalMode, SubscriptionID, UserAnswers}
-
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{RegistrationInfoPage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
@@ -97,7 +95,6 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
-
       when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
@@ -108,7 +105,6 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
-
       val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
 
       val result = route(app, request).value
@@ -118,7 +114,6 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     }
 
     "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
-
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
@@ -130,7 +125,6 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
-
       val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
@@ -144,7 +138,6 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     }
 
     "return redirect for a GET when there is no match" in {
-
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))

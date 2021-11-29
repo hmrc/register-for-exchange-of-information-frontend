@@ -17,9 +17,6 @@
 package models.subscription.response
 
 import models.SubscriptionID
-
-import play.api.libs.json.{JsResult, JsValue, Json, Reads}
-
 import play.api.libs.json.{Json, Reads}
 
 import scala.language.implicitConversions

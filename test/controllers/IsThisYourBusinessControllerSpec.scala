@@ -108,9 +108,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
-
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
+
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -129,9 +129,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
 
-
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
+
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -156,8 +156,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation, None, None, None))))
-
-      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 

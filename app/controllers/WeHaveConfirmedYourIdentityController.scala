@@ -90,6 +90,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
               }
           )
           .flatten
+
     }
 
   private def matchIndividualInfo(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, RegistrationInfo]] =
