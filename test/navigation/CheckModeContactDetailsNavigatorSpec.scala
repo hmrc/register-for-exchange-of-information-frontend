@@ -40,12 +40,12 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
         }
       }
 
-      "must go from Contact Email page to CheckYourAnswers page" in {
+      "must go from Contact Email page to IsContactTelephone page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
               .nextPage(ContactEmailPage, CheckMode, MDR, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .mustBe(routes.IsContactTelephoneController.onPageLoad(CheckMode, MDR))
         }
       }
 
