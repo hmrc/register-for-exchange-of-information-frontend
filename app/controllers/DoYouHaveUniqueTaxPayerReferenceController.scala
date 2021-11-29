@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveUniqueTaxPayerReferenceFormProvider
@@ -50,7 +51,8 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with WithEitherT {
 
   private val form = formProvider()
 
@@ -82,10 +84,13 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
             .fold(
               formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
               value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
+                (for {
+                  updatedAnswers <- setEither(DoYouHaveUniqueTaxPayerReferencePage, value, checkPrevious = true)
+                  _ = sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers)))
+                  .valueOrF(
+                    _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                  )
             )
       }
 

@@ -36,12 +36,6 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
     "in Normal mode" - {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, MDR, UserAnswers("id")) mustBe routes.IndexController.onPageLoad(MDR)
-      }
-
       "must go from 'Do You Have Unique Tax Payer Reference?' page to 'What Are You Registering As?' page if NO is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -166,26 +160,6 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
       }
 
       //TODO - add this test when logic is added for individual matching
-      "must go from 'What Is Your DOB?' page to 'We have confirmed your identity' page when valid DOB is entered " +
-        "and individual could be matched" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(DoYouHaveNINPage, true)
-                  .success
-                  .value
-                  .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-                  .success
-                  .value
-
-              navigator
-                .nextPage(WhatIsYourDateOfBirthPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR))
-          }
-        }
-
-      //TODO - add this test when logic is added for individual matching
       "must go from 'What Is Your DOB?' page to 'We could not confirm your identity' page when valid DOB is entered " +
         "but individual could not be matched" ignore {
           forAll(arbitrary[UserAnswers]) {
@@ -201,7 +175,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
               navigator
                 .nextPage(WhatIsYourDateOfBirthPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR))
+                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR))
           }
         }
 

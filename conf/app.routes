@@ -1,6 +1,5 @@
 # microservice specific routes
 
-->          /govuk-frontend                              govuk.Routes
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
 GET         /:regime                                            controllers.IndexController.onPageLoad(regime: models.Regime)
@@ -115,7 +114,8 @@ POST       /:regime/register/without-id/address-uk                     controlle
 GET        /:regime/register/without-id/change-address-uk              controllers.AddressUKController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 POST       /:regime/register/without-id/change-address-uk              controllers.AddressUKController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 
-GET        /:regime/register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad(regime:  models.Regime)
+GET        /:regime/register/confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
+GET        /:regime/register/change-confirmed-identity                  controllers.WeHaveConfirmedYourIdentityController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 
 GET        /:regime/register/live-in-uk                         controllers.DoYouLiveInTheUKController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
 POST       /:regime/register/live-in-uk                         controllers.DoYouLiveInTheUKController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)

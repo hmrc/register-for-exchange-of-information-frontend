@@ -22,14 +22,8 @@ import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest}
-import models.subscription.response.{
-  CreateSubscriptionForMDRResponse,
-  DisplaySubscriptionForCBCResponse,
-  DisplaySubscriptionForMDRResponse,
-  DisplaySubscriptionResponse,
-  SubscriptionIDResponse
-}
-import org.slf4j.LoggerFactory
+import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionResponse}
+import play.api.Logging
 import play.api.http.Status.CONFLICT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
@@ -38,9 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) {
-
-  private val logger = LoggerFactory.getLogger(getClass)
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
   def readSubscription(
     displaySubscriptionRequest: DisplaySubscriptionRequest
@@ -52,15 +44,16 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .POST[DisplaySubscriptionRequest, HttpResponse](submissionUrl, displaySubscriptionRequest)
       .map {
         case responseMessage if is2xx(responseMessage.status) =>
-          responseMessage.json.as[DisplaySubscriptionResponse] match {
-            case mdr: DisplaySubscriptionForMDRResponse => Some(SubscriptionID(mdr.displaySubscriptionForMDRResponse.subscriptionID))
-            case cbc: DisplaySubscriptionForCBCResponse => Some(SubscriptionID(cbc.displaySubscriptionForCBCResponse.subscriptionID))
-            case errors =>
-              logger.warn("Validation of display subscription payload failed", errors)
-              None
-          }
+          responseMessage.json
+            .asOpt[DisplaySubscriptionResponse]
+            .map(_.subscriptionID)
         case errorStatus =>
           logger.warn(s"Status $errorStatus has been thrown when display subscription was called")
+          None
+      }
+      .recover {
+        case e: Exception =>
+          logger.warn(s"S${e.getMessage} has been thrown when display subscription was called")
           None
       }
   }

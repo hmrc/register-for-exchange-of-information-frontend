@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.UTRFormProvider
@@ -51,7 +52,8 @@ class UTRController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with WithEitherT {
 
   private val ct = "utr.error.ct"
   private val sa = "utr.error.sa"
@@ -104,10 +106,13 @@ class UTRController @Inject() (
               .fold(
                 formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
                 value =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
-                    _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
+                  (for {
+                    updatedAnswers <- setEither(UTRPage, value, checkPrevious = true)
+                    _ = sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers)))
+                    .valueOrF(
+                      _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                    )
               )
         }
     }

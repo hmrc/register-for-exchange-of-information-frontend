@@ -25,8 +25,7 @@ import helpers.WireMockServerHandler
 import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
-import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionForMDRRequest}
-import models.subscription.response.SubscriptionIDResponse
+import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionForCBCRequest, DisplaySubscriptionForMDRRequest}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -51,7 +50,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
   "SubscriptionConnector" - {
     "readSubscription" - {
-      "must return SubscriptionResponse for valid input request" in {
+      "must return SubscriptionID for valid input request for MDR" in {
         val displayMDRRequest = arbitrary[DisplaySubscriptionForMDRRequest].sample.value
         val expectedResponse  = SubscriptionID("subscriptionID")
 
@@ -73,6 +72,73 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         val result: Future[Option[SubscriptionID]] = connector.readSubscription(displayMDRRequest)
         result.futureValue.value mustBe expectedResponse
+      }
+
+      "must return SubscriptionID for valid input request for CBC" in {
+        val displayMDRRequest = arbitrary[DisplaySubscriptionForCBCRequest].sample.value
+        val expectedResponse  = SubscriptionID("subscriptionID")
+
+        val subscriptionResponse: String =
+          s"""
+             |{
+             | "displaySubscriptionForCBCResponse": {
+             |   "responseCommon": {
+             |     "status": "OK",
+             |     "processingDate": "2020-09-23T16:12:11Z"
+             |   },
+             |   "responseDetail": {
+             |      "subscriptionID": "subscriptionID"
+             |   }
+             | }
+             |}""".stripMargin
+
+        stubPostResponse("/read-subscription", OK, subscriptionResponse)
+
+        val result: Future[Option[SubscriptionID]] = connector.readSubscription(displayMDRRequest)
+        result.futureValue.value mustBe expectedResponse
+      }
+
+      "must return None for invalid json response" in {
+        val mdrRequest = arbitrary[DisplaySubscriptionForMDRRequest].sample.value
+
+        val subscriptionResponse: String =
+          s"""
+             |{
+             | "displaySubscriptionForMDRResponse": {
+             |   "responseCommon": {
+             |     "status": "OK",
+             |     "processingDate": "2020-09-23T16:12:11Z"
+             |   },
+             |   "responseDetail": {}
+             | }
+             |}""".stripMargin
+
+        stubPostResponse("/read-subscription", OK, subscriptionResponse)
+
+        val result = connector.readSubscription(mdrRequest)
+        result.futureValue mustBe None
+      }
+
+      "must return None when read subscription fails" in {
+        val subMDRRequest = arbitrary[DisplaySubscriptionForMDRRequest].sample.value
+        forAll(errorCodes) {
+          errorCode =>
+            val subscriptionErrorResponse: String =
+              s"""
+                 | "errorDetail": {
+                 |    "timestamp": "2016-08-16T18:15:41Z",
+                 |    "correlationId": "f058ebd6-02f7-4d3f-942e-904344e8cde5",
+                 |    "errorCode": "$errorCode",
+                 |    "errorMessage": "Internal error",
+                 |    "source": "Internal error"
+                 |  }
+                 |""".stripMargin
+
+            stubPostResponse("/read-subscription", errorCode, subscriptionErrorResponse)
+
+            val result = connector.readSubscription(subMDRRequest)
+            result.futureValue mustBe None
+        }
       }
     }
 
@@ -102,8 +168,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
       }
 
       "must return UnableToCreateEMTPSubscriptionError for invalid response" in {
-        val subMDRRequest    = arbitrary[CreateSubscriptionForMDRRequest].sample.value
-        val expectedResponse = SubscriptionIDResponse("subscriptionID")
+        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
 
         val subscriptionResponse: String =
           s"""

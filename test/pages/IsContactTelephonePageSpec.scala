@@ -32,7 +32,7 @@ class IsContactTelephonePageSpec extends PageBehaviours {
 
     "cleanup" - {
 
-      "must remove ContactPhonePage when there is a change of the answer to 'No'" in {
+      "must remove ContactPhonePage when there is a change of the answer from 'Yes' to 'No'" in {
 
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
@@ -40,7 +40,7 @@ class IsContactTelephonePageSpec extends PageBehaviours {
               .set(ContactPhonePage, "112233445566")
               .success
               .value
-              .set(IsContactTelephonePage, false)
+              .set(IsContactTelephonePage, false, Some(true))
               .success
               .value
 

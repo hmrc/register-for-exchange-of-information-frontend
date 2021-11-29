@@ -16,6 +16,7 @@
 
 package controllers
 
+import cats.implicits._
 import controllers.actions._
 import forms.WhatIsYourNameFormProvider
 import models.requests.DataRequest
@@ -48,7 +49,8 @@ class WhatIsYourNameController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with WithEitherT {
 
   private val form = formProvider()
 
@@ -67,6 +69,27 @@ class WhatIsYourNameController @Inject() (
         render(mode, regime, request.userAnswers.get(WhatIsYourNamePage).fold(form)(form.fill)).map(Ok(_))
     }
 
+  /*
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
+    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            value => {
+
+              val originalAnswer = request.userAnswers.get(WhatIsYourNamePage)
+
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPageWithValueCheck(WhatIsYourNamePage, mode, regime, updatedAnswers, originalAnswer))
+            }
+          )
+    }
+   */
+
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
@@ -75,10 +98,13 @@ class WhatIsYourNameController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers))
+              (for {
+                updatedAnswers <- setEither(WhatIsYourNamePage, value, checkPrevious = true)
+                _ = sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers)))
+                .valueOrF(
+                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                )
           )
     }
 }

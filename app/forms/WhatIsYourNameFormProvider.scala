@@ -16,12 +16,13 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
+import models.Name
 import play.api.data.Form
 import play.api.data.Forms._
-import models.Name
 import utils.RegexConstants
+
+import javax.inject.Inject
 
 class WhatIsYourNameFormProvider @Inject() extends Mappings with RegexConstants {
 

@@ -84,9 +84,6 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
           .set(ContactEmailPage, "some@email.com")
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-          .success
-          .value
 
       retrieveUserAnswersData(userAnswers2)
       val request        = FakeRequest(GET, loadRoute)

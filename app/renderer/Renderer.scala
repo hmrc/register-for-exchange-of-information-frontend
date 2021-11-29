@@ -49,6 +49,8 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
       "timeout"                        -> appConfig.timeoutSeconds,
       "countdown"                      -> appConfig.countdownSeconds,
       "trackingConsentScriptUrl"       -> trackingConfig.trackingUrl().get,
-      "gtmContainer"                   -> trackingConfig.gtmContainer.get
+      "gtmContainer"                   -> trackingConfig.gtmContainer.get,
+      "serviceIdentifier"              -> appConfig.contactFormServiceIdentifier,
+      "contactHost"                    -> appConfig.contactHost
     )
 }
