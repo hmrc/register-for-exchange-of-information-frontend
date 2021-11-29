@@ -16,12 +16,12 @@
 
 package controllers
 
-import models.error.ApiError.{EnrolmentExistsError, ServiceUnavailableError}
-import models.{Regime, SubscriptionID, UserAnswers}
+import models.error.ApiError.EnrolmentExistsError
 import models.requests.DataRequest
+import models.{Regime, SubscriptionID, UserAnswers}
 import pages.SubscriptionIDPage
 import play.api.Logging
-import play.api.mvc.Results.{InternalServerError, Redirect, ServiceUnavailable}
+import play.api.mvc.Results.{Redirect, ServiceUnavailable}
 import play.api.mvc.{AnyContent, Result}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -30,8 +30,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import javax.inject.Inject
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, renderer: Renderer, sessionRepository: SessionRepository)
     extends Logging

@@ -24,9 +24,8 @@ import navigation.ContactDetailsNavigator
 import pages.{ContactEmailPage, ContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -54,28 +53,32 @@ class ContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Option[JsObject] = {
 
-    val suffix = isBusinessOrIndividual()
-
-    val data = Json.obj(
-      "form"      -> form,
-      "regime"    -> regime.toUpperCase,
-      "name"      -> name,
-      "pageTitle" -> s"contactEmail.title.$suffix",
-      "heading"   -> s"contactEmail.heading.$suffix",
-      "action"    -> routes.ContactEmailController.onSubmit(mode, regime).url
-    )
-    renderer.render("contactEmail.njk", data)
+    val suffix       = isBusinessOrIndividual()
+    val orIndividual = if (suffix == "individual") Some("") else None
+    request.userAnswers.get(ContactNamePage).orElse(orIndividual).map {
+      name =>
+        Json.obj(
+          "form"      -> request.userAnswers.get(ContactEmailPage).fold(form)(form.fill),
+          "regime"    -> regime.toUpperCase,
+          "name"      -> name,
+          "pageTitle" -> s"contactEmail.title.$suffix",
+          "heading"   -> s"contactEmail.heading.$suffix",
+          "action"    -> routes.ContactEmailController.onSubmit(mode, regime).url
+        )
+    }
   }
+
+  private def thereIsAProblem(implicit request: DataRequest[AnyContent]): Future[Result] =
+    renderer.render("thereIsAProblem.njk").map(BadRequest(_))
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        request.userAnswers
-          .get(ContactNamePage) match {
-          case Some(contactName) => render(mode, regime, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill), contactName).map(Ok(_))
-          case _                 => render(mode, regime, request.userAnswers.get(ContactEmailPage).fold(form)(form.fill)).map(Ok(_))
+        data(mode, regime, form).fold(thereIsAProblem) {
+          data =>
+            renderer.render("contactEmail.njk", data).map(Ok(_))
         }
     }
 
@@ -85,7 +88,11 @@ class ContactEmailController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, request.userAnswers.get(ContactEmailPage).fold(formWithErrors)(formWithErrors.fill)).map(BadRequest(_)),
+            formWithErrors =>
+              data(mode, regime, formWithErrors).fold(thereIsAProblem) {
+                data =>
+                  renderer.render("contactEmail.njk", data).map(BadRequest(_))
+              },
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))

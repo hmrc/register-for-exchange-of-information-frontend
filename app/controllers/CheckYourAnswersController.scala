@@ -19,9 +19,8 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, EnrolmentExistsError, MandatoryInformationMissingError}
-import models.matching.RegistrationInfo
-import models.{Regime, SubscriptionID}
+import models.Regime
+import models.error.ApiError.{BadRequestError, EnrolmentExistsError, MandatoryInformationMissingError}
 import navigation.Navigator
 import pages._
 import play.api.Logging
