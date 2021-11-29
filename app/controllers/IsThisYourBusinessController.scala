@@ -25,19 +25,18 @@ import models.error.ApiError.NotFoundError
 import models.matching.RegistrationInfo
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
-import models.{Mode, Regime, SubscriptionID, UserAnswers}
+import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages._
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerHelpers, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{BusinessMatchingService, SubscriptionService, TaxEnrolmentService}
-import uk.gov.hmrc.http.HeaderCarrier
+import services.{BusinessMatchingService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
