@@ -55,8 +55,9 @@ class ContactPhoneController @Inject() (
 
   private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Option[JsObject] = {
 
-    val suffix = isBusinessOrIndividual()
-    request.userAnswers.get(ContactNamePage).map {
+    val suffix       = isBusinessOrIndividual()
+    val orIndividual = if (suffix == "individual") Some("") else None
+    request.userAnswers.get(ContactNamePage).orElse(orIndividual).map {
       name =>
         Json.obj(
           "form"      -> request.userAnswers.get(ContactPhonePage).fold(form)(form.fill),
