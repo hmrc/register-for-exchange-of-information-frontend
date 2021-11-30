@@ -272,7 +272,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(SndContactEmailPage, secondContactEmail)
           .success
           .value
-          .set(SndConHavePhonePage, false)
+          .set(SndConHavePhonePage, !isSecondContactPhone)
           .success
           .value
 
@@ -299,8 +299,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
         secondContactDetails.contains("Second contact name") mustBe true
         secondContactDetails.contains("Second contact email address") mustBe true
-        secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
-        ((json \ "secondContactList")(3) \ "value" \ "text").get.as[String] mustEqual "None"
+        secondContactDetails.contains("Second contact telephone number") mustBe !isSecondContactPhone
       }
     }
 

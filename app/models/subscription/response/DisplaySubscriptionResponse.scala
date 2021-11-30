@@ -17,7 +17,7 @@
 package models.subscription.response
 
 import models.SubscriptionID
-import play.api.libs.json.{JsResult, JsValue, Json, Reads}
+import play.api.libs.json.{Json, Reads}
 
 sealed trait DisplaySubscriptionResponse {
   def subscriptionID: SubscriptionID

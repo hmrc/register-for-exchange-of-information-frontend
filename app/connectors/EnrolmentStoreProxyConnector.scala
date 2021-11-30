@@ -18,10 +18,10 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
-import models.{Regime, SubscriptionID}
 import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MalformedError}
+import models.{Regime, SubscriptionID}
 import play.api.Logging
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw

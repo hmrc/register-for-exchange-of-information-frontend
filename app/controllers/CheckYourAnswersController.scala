@@ -32,7 +32,7 @@ import repositories.SessionRepository
 import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.{CheckYourAnswersHelper, CountryListFactory}
+import utils.CountryListFactory
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -58,8 +58,8 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
-      val helper                                = new CheckYourAnswersHelper(request.userAnswers, regime, countryListFactory = countryFactory)
-      val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
+      val helper                                = new CheckYourAnswersViewModel(request.userAnswers, regime, countryListFactory = countryFactory)
+      val businessDetails: Seq[SummaryList.Row] = helper.buildDetails.asRowSeq
 
       val isBusiness = registrationService.isRegisteringAsBusiness()
       val (contactHeading, header) =
@@ -74,8 +74,8 @@ class CheckYourAnswersController @Inject() (
             "header"              -> s"checkYourAnswers.$header.h2",
             "contactHeading"      -> s"checkYourAnswers.$contactHeading.h2",
             "businessDetailsList" -> businessDetails,
-            "firstContactList"    -> helper.buildFirstContact,
-            "secondContactList"   -> helper.buildSecondContact,
+            "firstContactList"    -> helper.buildFirstContact.asRowSeq,
+            "secondContactList"   -> helper.buildSecondContact.asRowSeq,
             "action"              -> Navigator.checkYourAnswers(regime).url // todo change once backend for onSubmit is implemented
           )
         )

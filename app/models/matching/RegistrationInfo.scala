@@ -18,7 +18,7 @@ package models.matching
 
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.register.response.details.AddressResponse
-import play.api.libs.json.{__, OFormat, OWrites, Reads}
+import play.api.libs.json.{OFormat, OWrites, Reads, __}
 
 case class RegistrationInfo(safeId: String, name: Option[String], address: Option[AddressResponse], matchedAs: MatchingType) {
 
