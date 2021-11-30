@@ -59,8 +59,6 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessHaveDifferentNamePage        => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
     case AddressWithoutIdPage                 => regime => addressWithoutID(CheckMode)(regime)
     case DoYouHaveNINPage                     => regime => doYouHaveNINORoutes(CheckMode)(regime)
-    case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode, regime))
-    case WhatIsYourNamePage                   => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
     case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
     case DoYouLiveInTheUKPage                 => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
     case WhatIsYourPostcodePage               => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
@@ -70,6 +68,11 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessWithoutIDNamePage => regime => ua =>
       checkNextPageForValueThenRoute(
         CheckMode, regime, ua, BusinessHaveDifferentNamePage, routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime)
+      )
+
+    case WhatIsYourNationalInsuranceNumberPage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, WhatIsYourNamePage, routes.WhatIsYourNameController.onPageLoad(CheckMode, regime)
       )
 
     case WhatIsTradingNamePage => regime => ua =>
@@ -82,9 +85,14 @@ class MDRNavigator @Inject() () extends Navigator {
         CheckMode, regime, ua, WhatIsYourDateOfBirthPage, routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime)
       )
 
+    case WhatIsYourNamePage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, WhatIsYourDateOfBirthPage, routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime)
+      )
+
     case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
-
+  
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(WhatAreYouRegisteringAsPage) map {
       case  RegistrationTypeBusiness =>
@@ -129,7 +137,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def whatIsYourDateOfBirthRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true => routes.WeHaveConfirmedYourIdentityController.onPageLoad(regime)
+      case true => routes.WeHaveConfirmedYourIdentityController.onPageLoad(mode, regime)
       case false =>
         checkNextPageForValueThenRoute(mode, regime, ua, DoYouLiveInTheUKPage, routes.DoYouLiveInTheUKController.onPageLoad(mode, regime)).get
     }
