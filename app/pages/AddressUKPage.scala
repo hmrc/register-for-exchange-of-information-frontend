@@ -31,5 +31,4 @@ case object AddressUKPage extends QuestionPage[Address] {
     value.fold(Try(userAnswers))(
       _ => userAnswers.remove(SelectAddressPage)
     )
-
 }
