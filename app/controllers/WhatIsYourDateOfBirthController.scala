@@ -77,13 +77,11 @@ class WhatIsYourDateOfBirthController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => {
-              val originalAnswer = request.userAnswers.get(WhatIsYourDateOfBirthPage)
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourDateOfBirthPage, value, originalAnswer))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourDateOfBirthPage, value, checkPreviousUserAnswer = true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers))
-            }
           )
     }
 }

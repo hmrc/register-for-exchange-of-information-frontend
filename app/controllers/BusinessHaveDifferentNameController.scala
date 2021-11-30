@@ -73,15 +73,11 @@ class BusinessHaveDifferentNameController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-          value => {
-
-            val originalAnswer = request.userAnswers.get(BusinessHaveDifferentNamePage)
-
+          value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessHaveDifferentNamePage, value, originalAnswer))
+              updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessHaveDifferentNamePage, value, checkPreviousUserAnswer = true))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(BusinessHaveDifferentNamePage, mode, regime, updatedAnswers))
-          }
         )
   }
 }

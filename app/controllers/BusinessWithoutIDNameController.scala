@@ -76,15 +76,11 @@ class BusinessWithoutIDNameController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => {
-
-              val originalAnswer = request.userAnswers.get(BusinessWithoutIDNamePage)
-
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value, originalAnswer))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessWithoutIDNamePage, value, checkPreviousUserAnswer = true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, regime, updatedAnswers))
-            }
           )
     }
 }

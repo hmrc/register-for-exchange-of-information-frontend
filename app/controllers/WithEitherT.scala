@@ -51,7 +51,7 @@ trait WithEitherT {
   )(implicit ec: ExecutionContext, request: DataRequest[AnyContent], writes: Writes[A], reads: Reads[A]): EitherT[Future, ApiError, UserAnswers] =
     EitherT.fromEither {
       request.userAnswers
-        .setB(page, value, checkPrevious)
+        .setOrCleanup(page, value, checkPrevious)
         .toOption
         .toRight(MandatoryInformationMissingError(page.toString))
     }

@@ -76,7 +76,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(DoYouHaveUniqueTaxPayerReferencePage, true, Some(false))
+                .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
                 .remove(BusinessTypePage)

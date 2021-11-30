@@ -81,13 +81,11 @@ class SndConHavePhoneController @Inject() (
               SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
                 render(mode, regime, request.userAnswers.get(SndConHavePhonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
               },
-            value => {
-              val originalAnswer = request.userAnswers.get(SndConHavePhonePage)
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SndConHavePhonePage, value, originalAnswer))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(SndConHavePhonePage, value, checkPreviousUserAnswer = true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(SndConHavePhonePage, mode, regime, updatedAnswers))
-            }
           )
     }
 }
