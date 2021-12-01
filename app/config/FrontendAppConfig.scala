@@ -28,8 +28,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val host: String    = configuration.get[String]("host")
   val appName: String = configuration.get[String]("appName")
 
-  private val contactHost                  = configuration.get[String]("contact-frontend.host")
-  private val contactFormServiceIdentifier = "register-for-exchange-of-information-frontend"
+  val contactHost                  = configuration.get[String]("contact-frontend.host")
+  val contactFormServiceIdentifier = "register-for-exchange-of-information-frontend"
 
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
 

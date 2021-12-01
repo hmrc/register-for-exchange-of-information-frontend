@@ -42,6 +42,7 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
+    case ContactEmailPage       => regime => _ => Some(routes.IsContactTelephoneController.onPageLoad(CheckMode, regime))
     case IsContactTelephonePage => isContactTelephoneRoutes(CheckMode)
     case SecondContactPage      => isSecondContact(CheckMode)
     case SndConHavePhonePage    => haveSecondPhone(CheckMode)

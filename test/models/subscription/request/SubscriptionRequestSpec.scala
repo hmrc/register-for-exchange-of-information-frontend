@@ -20,7 +20,7 @@ import base.SpecBase
 import generators.Generators
 import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
-import models.{NonUkName, UserAnswers}
+import models.{MDR, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -56,11 +56,11 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .set(SecondContactPage, false)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual, None, None, None))
         .success
         .value
 
-      val subscriptionRequest = SubscriptionRequest.convertTo("safeId", userAnswers).value
+      val subscriptionRequest = SubscriptionRequest.convertTo(MDR, "safeId", userAnswers).value
       subscriptionRequest.requestCommon.regime mustBe "MDR"
       subscriptionRequest.requestCommon.originatingSystem mustBe "MDTP"
       subscriptionRequest.requestDetail mustBe requestDtls
@@ -69,7 +69,7 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
     "must return None for missing 'UserAnswers'" in {
       val userAnswers = UserAnswers("id")
 
-      val subscriptionRequest = SubscriptionRequest.convertTo("safeId", userAnswers)
+      val subscriptionRequest = SubscriptionRequest.convertTo(MDR, "safeId", userAnswers)
       subscriptionRequest mustBe None
     }
   }

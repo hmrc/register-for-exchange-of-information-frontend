@@ -17,26 +17,34 @@
 package services
 
 import com.google.inject.Inject
-import connectors.TaxEnrolmentsConnector
+import connectors.{EnrolmentStoreProxyConnector, TaxEnrolmentsConnector}
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
-import models.{Regime, UserAnswers}
+import models.{Regime, SubscriptionID, UserAnswers}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnector) extends Logging {
+class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnector, enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector)
+    extends Logging {
 
-  def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: String, regime: Regime)(implicit
+  def checkAndCreateEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, Int]] =
-    SubscriptionInfo.createSubscriptionInfo(safeId, userAnswers, subscriptionId) match {
-      case Right(subscriptionInfo: SubscriptionInfo) =>
-        taxEnrolmentsConnector.createEnrolment(subscriptionInfo, regime).value
+    enrolmentStoreProxyConnector.enrolmentStatus(regime, subscriptionId).value flatMap {
+      case Right(_) =>
+        SubscriptionInfo.createSubscriptionInfo(safeId, userAnswers, subscriptionId) match {
+          case Right(subscriptionInfo: SubscriptionInfo) =>
+            taxEnrolmentsConnector.createEnrolment(subscriptionInfo, regime).value
+          case Left(apiError: ApiError) =>
+            logger.error("Could not create subscription info for enrolment missing Safe ID")
+            Future.successful(Left(apiError))
+        }
       case Left(apiError: ApiError) =>
         logger.error("Could not create subscription info for enrolment missing Safe ID")
         Future.successful(Left(apiError))
     }
+
 }

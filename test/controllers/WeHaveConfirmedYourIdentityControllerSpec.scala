@@ -17,25 +17,27 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.error.ApiError.NotFoundError
+import models.error.ApiError.{BadRequestError, NotFoundError}
 import models.matching.MatchingType.AsIndividual
 import models.matching.RegistrationInfo
-import models.{MDR, Name, UserAnswers}
+import models.{MDR, Name, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
+import pages.{RegistrationInfoPage, WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.BusinessMatchingService
+import services.{BusinessMatchingService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with ControllerMockFixtures {
+
+  val registrationInfo = RegistrationInfo.build("safeId", AsIndividual)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
@@ -49,16 +51,20 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     .value
 
   val mockMatchingService: BusinessMatchingService = mock[BusinessMatchingService]
+  val mockSubscriptionService: SubscriptionService = mock[SubscriptionService]
+  val mockTaxEnrolmentService: TaxEnrolmentService = mock[TaxEnrolmentService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[BusinessMatchingService].toInstance(mockMatchingService)
+        bind[BusinessMatchingService].toInstance(mockMatchingService),
+        bind[SubscriptionService].toInstance(mockSubscriptionService),
+        bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
       )
 
   override def beforeEach: Unit = {
-    reset(mockMatchingService)
+    reset(mockMatchingService, mockSubscriptionService, mockTaxEnrolmentService)
     super.beforeEach
   }
 
@@ -66,15 +72,16 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return OK and the correct view for a GET when there is a match" in {
 
-      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", None, None, AsIndividual))))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(registrationInfo)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -86,13 +93,57 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       templateCaptor.getValue mustEqual "weHaveConfirmedYourIdentity.njk"
     }
 
+    "must redirect to 'confirmation' page when there is an existing subscription" in {
+
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(registrationInfo)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      retrieveUserAnswersData(validUserAnswers)
+      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad(MDR).url
+    }
+
+    "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
+
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(registrationInfo)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      retrieveUserAnswersData(validUserAnswers)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SERVICE_UNAVAILABLE
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+    }
+
     "return redirect for a GET when there is no match" in {
 
-      when(mockMatchingService.sendIndividualRegistratonInformation(any(), any(), any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)
-      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
+      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
 
       val result = route(app, request).value
 
@@ -107,7 +158,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

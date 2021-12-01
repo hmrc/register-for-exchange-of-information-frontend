@@ -17,10 +17,12 @@
 package pages
 
 import play.api.libs.json.JsPath
+import utils.UserAnswersHelper
 
-case object BusinessWithoutIDNamePage extends QuestionPage[String] {
+case object BusinessWithoutIDNamePage extends QuestionPage[String] with UserAnswersHelper {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "businessWithoutIDName"
+
 }

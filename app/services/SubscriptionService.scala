@@ -19,10 +19,10 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.SubscriptionConnector
-import models.UserAnswers
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.subscription.request.{CreateSubscriptionForMDRRequest, SubscriptionRequest}
+import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest, SubscriptionRequest}
+import models.{Regime, SubscriptionID, UserAnswers}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -30,13 +30,27 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
 
-  def createSubscription(safeID: String, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, String]] =
-    (SubscriptionRequest.convertTo(safeID, userAnswers) match {
-      case Some(subscriptionRequest) =>
-        subscriptionConnector
-          .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
-          .map(_.value)
-      case _ => EitherT.leftT(MandatoryInformationMissingError())
-    }).value
+  def checkAndCreateSubscription(regime: Regime, safeID: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Either[ApiError, SubscriptionID]] =
+    getDisplaySubscriptionId(regime, safeID) flatMap {
+      case Some(subscriptionID) =>
+        EitherT.rightT(subscriptionID).value
+      case _ =>
+        (SubscriptionRequest.convertTo(regime, safeID, userAnswers) match {
+          case Some(subscriptionRequest) =>
+            subscriptionConnector
+              .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
+          case _ => EitherT.leftT(MandatoryInformationMissingError())
+        }).value
+    }
 
+  def getDisplaySubscriptionId(regime: Regime, safeId: String)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Option[SubscriptionID]] = {
+    val displaySubscription = DisplaySubscriptionRequest.convertTo(regime, safeId)
+    subscriptionConnector.readSubscription(displaySubscription)
+  }
 }

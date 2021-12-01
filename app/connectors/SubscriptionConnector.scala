@@ -52,7 +52,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           None
       }
       .recover {
-        case e: Exception => None
+        case e: Exception =>
+          logger.warn(s"S${e.getMessage} has been thrown when display subscription was called")
+          None
       }
   }
 

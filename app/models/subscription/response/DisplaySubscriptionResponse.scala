@@ -19,6 +19,8 @@ package models.subscription.response
 import models.SubscriptionID
 import play.api.libs.json.{Json, Reads}
 
+import scala.language.implicitConversions
+
 sealed trait DisplaySubscriptionResponse {
   def subscriptionID: SubscriptionID
 }

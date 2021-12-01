@@ -33,12 +33,6 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
 
     "in Normal mode" - {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, MDR, UserAnswers("id")) mustBe routes.IndexController.onPageLoad(MDR)
-      }
-
       "must go from Contact Name page to Contact Email page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -77,10 +71,10 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, false)
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
-                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
                 .set(BusinessTypePage, LimitedCompany)
@@ -98,13 +92,13 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, false)
-                .success
-                .value
                 .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                 .success
                 .value
                 .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+                .success
+                .value
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
 
@@ -119,10 +113,10 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, false)
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
-                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
                 .set(BusinessTypePage, Sole)

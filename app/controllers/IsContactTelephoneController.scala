@@ -24,9 +24,8 @@ import navigation.ContactDetailsNavigator
 import pages.{ContactNamePage, IsContactTelephonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -54,32 +53,33 @@ class IsContactTelephoneController @Inject() (
 
   def form(suffix: String) = formProvider(suffix)
 
-  private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String = "")(implicit request: DataRequest[AnyContent]): Future[Html] = {
-
-    val suffix = isBusinessOrIndividual()
-
-    val data = Json.obj(
-      "form"      -> form,
-      "regime"    -> regime.toUpperCase,
-      "name"      -> name,
-      "pageTitle" -> s"isContactTelephone.title.$suffix",
-      "heading"   -> s"isContactTelephone.heading.$suffix",
-      "action"    -> routes.IsContactTelephoneController.onSubmit(mode, regime).url,
-      "radios"    -> Radios.yesNo(form("value"))
-    )
-    renderer.render("isContactTelephone.njk", data)
+  private def data(mode: Mode, regime: Regime, form: Form[Boolean], suffix: String)(implicit request: DataRequest[AnyContent]): Option[JsObject] = {
+    val orIndividual = if (suffix == "individual") Some("") else None
+    request.userAnswers.get(ContactNamePage).orElse(orIndividual).map {
+      name =>
+        val filledForm = request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)
+        Json.obj(
+          "form"      -> filledForm,
+          "regime"    -> regime.toUpperCase,
+          "name"      -> name,
+          "pageTitle" -> s"isContactTelephone.title.$suffix",
+          "heading"   -> s"isContactTelephone.heading.$suffix",
+          "action"    -> routes.IsContactTelephoneController.onSubmit(mode, regime).url,
+          "radios"    -> Radios.yesNo(filledForm("value"))
+        )
+    }
   }
+
+  private def thereIsAProblem(implicit request: DataRequest[AnyContent]): Future[Result] =
+    renderer.render("thereIsAProblem.njk").map(BadRequest(_))
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        val suffix       = isBusinessOrIndividual()
-        val preparedForm = request.userAnswers.get(IsContactTelephonePage).fold(form(suffix))(form(suffix).fill)
-        request.userAnswers
-          .get(ContactNamePage) match {
-          case Some(contactName) =>
-            render(mode, regime, preparedForm, contactName).map(Ok(_))
-          case _ => render(mode, regime, preparedForm).map(Ok(_))
+        val suffix = isBusinessOrIndividual()
+        data(mode, regime, form(suffix), suffix).fold(thereIsAProblem) {
+          data =>
+            renderer.render("isContactTelephone.njk", data).map(Ok(_))
         }
     }
 
@@ -90,12 +90,18 @@ class IsContactTelephoneController @Inject() (
         form(suffix)
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value =>
+            formWithErrors =>
+              data(mode, regime, formWithErrors, suffix).fold(thereIsAProblem) {
+                data =>
+                  renderer.render("isContactTelephone.njk", data).map(BadRequest(_))
+              },
+            value => {
+              val originalAnswer = request.userAnswers.get(IsContactTelephonePage)
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, regime, updatedAnswers))
+            }
           )
     }
 }

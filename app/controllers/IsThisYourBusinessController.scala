@@ -28,6 +28,7 @@ import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages._
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -35,7 +36,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
-import services.BusinessMatchingService
+import services.{BusinessMatchingService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -52,21 +53,24 @@ class IsThisYourBusinessController @Inject() (
   formProvider: IsThisYourBusinessFormProvider,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
+  subscriptionService: SubscriptionService,
+  controllerHelper: ControllerHelper,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with WithEitherT {
+    with WithEitherT
+    with Logging {
 
   private val form = formProvider()
 
   private def result(mode: Mode, regime: Regime, form: Form[Boolean])(implicit ec: ExecutionContext, request: DataRequest[AnyContent]) =
     (for {
-      RegistrationInfo <- EitherT(matchBusinessInfo(regime))
-      updatedAnswers   <- setEither(RegistrationInfoPage, RegistrationInfo)
+      registrationInfo <- EitherT(matchBusinessInfo(regime))
+      updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
       _ = sessionRepository.set(updatedAnswers)
-    } yield RegistrationInfo)
+    } yield registrationInfo)
       .fold(
         fa = {
           case NotFoundError =>
@@ -74,12 +78,15 @@ class IsThisYourBusinessController @Inject() (
           case _ =>
             renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
         },
-        fb = RegistrationInfo => {
-          val name     = RegistrationInfo.name.getOrElse("")
-          val address  = RegistrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
-          val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
-          render(mode, regime, withForm, name, address).map(Ok(_))
-        }
+        fb =>
+          subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {
+            case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(fb.safeId, subscriptionId, regime)
+            case _ =>
+              val name     = fb.name.getOrElse("")
+              val address  = fb.address.getOrElse(AddressResponse("", None, None, None, None, ""))
+              val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
+              render(mode, regime, withForm, name, address).map(Ok(_))
+          }
       )
       .flatten
 
@@ -103,10 +110,11 @@ class IsThisYourBusinessController @Inject() (
 
   private def matchBusinessInfo(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, RegistrationInfo]] =
     (for {
-      utr              <- getEither(UTRPage)
-      businessName     <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
-      businessType     <- getEither(BusinessTypePage)
-      registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, utr, businessName, businessType))
+      utr          <- getEither(UTRPage)
+      businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
+      businessType <- getEither(BusinessTypePage)
+      dob = request.userAnswers.get(SoleDateOfBirthPage)
+      registrationInfo <- EitherT(matchingService.sendBusinessRegistrationInformation(regime, RegistrationInfo.build(businessType, businessName, utr, dob)))
     } yield registrationInfo).value
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
