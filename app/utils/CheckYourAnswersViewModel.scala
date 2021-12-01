@@ -16,6 +16,7 @@
 
 package utils
 
+import models.matching.RegistrationInfo
 import models.{Address, Name, NonUkName, WhatAreYouRegisteringAs}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.viewmodels._
@@ -28,10 +29,11 @@ sealed trait AsRowSeq {
 
 object CheckYourAnswersViewModel {
 
-  case class BusinessWithID(confirmBusiness: Option[Boolean])(implicit check: CheckYourAnswersHelper) extends AsRowSeq {
+  case class BusinessWithID(confirmBusiness: Option[Boolean], registrationInfo: Option[RegistrationInfo])(implicit check: CheckYourAnswersHelper)
+      extends AsRowSeq {
 
     def asRowSeq: Seq[SummaryList.Row] =
-      Seq(check.confirmBusiness(confirmBusiness)).flatten
+      Seq(check.confirmBusinessRow(confirmBusiness, registrationInfo)).flatten
   }
 
   case class BusinessWithoutID(doYouHaveUniqueTaxPayerReference: Option[Boolean],
@@ -44,11 +46,11 @@ object CheckYourAnswersViewModel {
 
     def asRowSeq: Seq[SummaryList.Row] =
       Seq(
-        check.doYouHaveUniqueTaxPayerReference(doYouHaveUniqueTaxPayerReference),
-        check.whatAreYouRegisteringAs(whatAreYouRegisteringAs),
-        check.businessWithoutIDName(businessWithoutIDName),
-        check.whatIsTradingName(whatIsTradingName),
-        check.addressWithoutIdBusiness(addressWithoutIdBusiness)
+        check.doYouHaveUniqueTaxPayerReferenceRow(doYouHaveUniqueTaxPayerReference),
+        check.whatAreYouRegisteringAsRow(whatAreYouRegisteringAs),
+        check.businessWithoutIDNameRow(businessWithoutIDName),
+        check.whatIsTradingNameRow(whatIsTradingName),
+        check.addressWithoutIdBusinessRow(addressWithoutIdBusiness)
       ).flatten
   }
 
@@ -63,12 +65,12 @@ object CheckYourAnswersViewModel {
 
     def asRowSeq: Seq[SummaryList.Row] =
       Seq(
-        check.doYouHaveUniqueTaxPayerReference(doYouHaveUniqueTaxPayerReference),
-        check.whatAreYouRegisteringAs(whatAreYouRegisteringAs),
-        check.doYouHaveNIN(doYouHaveNIN),
-        check.nino(nino),
-        check.whatIsYourName(whatIsYourName),
-        check.whatIsYourDateOfBirth(whatIsYourDateOfBirth)
+        check.doYouHaveUniqueTaxPayerReferenceRow(doYouHaveUniqueTaxPayerReference),
+        check.whatAreYouRegisteringAsRow(whatAreYouRegisteringAs),
+        check.doYouHaveNINRow(doYouHaveNIN),
+        check.ninoRow(nino),
+        check.whatIsYourNameRow(whatIsYourName),
+        check.whatIsYourDateOfBirthRow(whatIsYourDateOfBirth)
       ).flatten
   }
 
@@ -85,19 +87,20 @@ object CheckYourAnswersViewModel {
 
     def asRowSeq: Seq[SummaryList.Row] =
       Seq(
-        check.doYouHaveUniqueTaxPayerReference(doYouHaveUniqueTaxPayerReference),
-        check.whatAreYouRegisteringAs(whatAreYouRegisteringAs),
-        check.doYouHaveNIN(doYouHaveNIN),
-        check.nonUkName(nonUkName),
-        check.whatIsYourDateOfBirth(whatIsYourDateOfBirth),
-        check.addressWithoutIdIndividual(addressWithoutIdIndividual),
-        check.addressUK(addressUK),
-        check.selectAddress(selectAddress)
+        check.doYouHaveUniqueTaxPayerReferenceRow(doYouHaveUniqueTaxPayerReference),
+        check.whatAreYouRegisteringAsRow(whatAreYouRegisteringAs),
+        check.doYouHaveNINRow(doYouHaveNIN),
+        check.nonUkNameRow(nonUkName),
+        check.whatIsYourDateOfBirthRow(whatIsYourDateOfBirth),
+        check.addressWithoutIdIndividualRow(addressWithoutIdIndividual),
+        check.addressUKRow(addressUK),
+        check.selectAddressRow(selectAddress)
       ).flatten
   }
 
   case class AllPages(doYouHaveUniqueTaxPayerReference: Option[Boolean],
                       confirmBusiness: Option[Boolean],
+                      registrationInfo: Option[RegistrationInfo],
                       nino: Option[Nino],
                       whatIsYourName: Option[Name],
                       whatIsYourDateOfBirth: Option[LocalDate],
@@ -112,16 +115,16 @@ object CheckYourAnswersViewModel {
 
     def asRowSeq: Seq[SummaryList.Row] =
       Seq(
-        check.doYouHaveUniqueTaxPayerReference(doYouHaveUniqueTaxPayerReference),
-        check.confirmBusiness(confirmBusiness),
-        check.nino(nino),
-        check.whatIsYourName(whatIsYourName),
-        check.whatIsYourDateOfBirth(whatIsYourDateOfBirth),
-        check.whatAreYouRegisteringAs(whatAreYouRegisteringAs),
-        check.businessWithoutIDName(businessWithoutIDName),
-        check.addressUK(addressUK),
-        check.doYouHaveNIN(doYouHaveNIN),
-        check.nonUkName(nonUkName),
+        check.doYouHaveUniqueTaxPayerReferenceRow(doYouHaveUniqueTaxPayerReference),
+        check.confirmBusinessRow(confirmBusiness, registrationInfo),
+        check.ninoRow(nino),
+        check.whatIsYourNameRow(whatIsYourName),
+        check.whatIsYourDateOfBirthRow(whatIsYourDateOfBirth),
+        check.whatAreYouRegisteringAsRow(whatAreYouRegisteringAs),
+        check.businessWithoutIDNameRow(businessWithoutIDName),
+        check.addressUKRow(addressUK),
+        check.doYouHaveNINRow(doYouHaveNIN),
+        check.nonUkNameRow(nonUkName),
         check.doYouLiveInTheUK(doYouLiveInTheUK)
       ).flatten
   }
@@ -130,7 +133,7 @@ object CheckYourAnswersViewModel {
       extends AsRowSeq {
 
     def asRowSeq: Seq[SummaryList.Row] =
-      Seq(check.contactName(contactName), check.contactEmail(contactEmail), check.contactPhone(contactPhone)).flatten
+      Seq(check.contactNameRow(contactName), check.contactEmailRow(contactEmail), check.contactPhoneRow(contactPhone)).flatten
   }
 
   case class SecondContact(secondContact: Option[Boolean], sndContactName: Option[String], sndContactEmail: Option[String], sndContactPhone: Option[String])(
@@ -138,10 +141,11 @@ object CheckYourAnswersViewModel {
   ) extends AsRowSeq {
 
     def asRowSeq: Seq[SummaryList.Row] =
-      Seq(check.secondContact(secondContact),
-          check.sndContactName(sndContactName),
-          check.sndContactEmail(sndContactEmail),
-          check.sndContactPhone(sndContactPhone)
+      Seq(
+        check.secondContactRow(secondContact),
+        check.sndContactNameRow(sndContactName),
+        check.sndContactEmailRow(sndContactEmail),
+        check.sndContactPhoneRow(sndContactPhone)
       ).flatten
   }
 }

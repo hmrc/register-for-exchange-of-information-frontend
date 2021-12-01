@@ -17,8 +17,9 @@
 package utils
 
 import controllers.routes
+import models.matching.RegistrationInfo
 import models.{Address, CheckMode, Name, NonUkName, Regime, UserAnswers, WhatAreYouRegisteringAs}
-import pages.{RegistrationInfoPage, SndContactPhonePage}
+import pages.{SndContactPhonePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.viewmodels.SummaryList._
@@ -31,7 +32,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   val messages: Messages
 ) extends RowBuilder {
 
-  def buildBusinessWithID = BusinessWithID(userAnswers.get(pages.IsThisYourBusinessPage))(this)
+  def buildBusinessWithID = BusinessWithID(userAnswers.get(pages.IsThisYourBusinessPage), userAnswers.get(pages.RegistrationInfoPage))(this)
 
   def buildBusinessWithoutID = BusinessWithoutID(
     userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage),
@@ -64,6 +65,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   def buildAllPages = AllPages(
     userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage),
     userAnswers.get(pages.IsThisYourBusinessPage),
+    userAnswers.get(pages.RegistrationInfoPage),
     userAnswers.get(pages.WhatIsYourNationalInsuranceNumberPage),
     userAnswers.get(pages.WhatIsYourNamePage),
     userAnswers.get(pages.WhatIsYourDateOfBirthPage),
@@ -104,12 +106,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     userAnswers.get(pages.SndContactPhonePage)
   )(this)
 
-  def confirmBusiness(confirmBusiness: Option[Boolean]): Option[Row] = {
+  def confirmBusinessRow(confirmBusiness: Option[Boolean], registrationInfo: Option[RegistrationInfo]): Option[Row] = {
     val paragraphClass = """govuk-!-margin-0"""
     confirmBusiness match {
       case Some(true) =>
         for {
-          registrationInfo <- userAnswers.get(RegistrationInfoPage)
+          registrationInfo <- registrationInfo
           businessName     <- registrationInfo.name
           address          <- registrationInfo.address
           countryName      <- countryListFactory.getDescriptionFromCode(address.countryCode)
@@ -136,7 +138,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     }
   }
 
-  def doYouHaveUniqueTaxPayerReference(doYouHaveUniqueTaxPayerReference: Option[Boolean]) = doYouHaveUniqueTaxPayerReference map {
+  def doYouHaveUniqueTaxPayerReferenceRow(doYouHaveUniqueTaxPayerReference: Option[Boolean]) = doYouHaveUniqueTaxPayerReference map {
     answer =>
       toRow(
         msgKey = "doYouHaveUniqueTaxPayerReference",
@@ -145,7 +147,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def whatAreYouRegisteringAs(whatAreYouRegisteringAs: Option[WhatAreYouRegisteringAs]): Option[Row] = whatAreYouRegisteringAs map {
+  def whatAreYouRegisteringAsRow(whatAreYouRegisteringAs: Option[WhatAreYouRegisteringAs]): Option[Row] = whatAreYouRegisteringAs map {
     answer =>
       toRow(
         msgKey = "whatAreYouRegisteringAs",
@@ -154,7 +156,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def businessWithoutIDName(businessWithoutIDName: Option[String]) = businessWithoutIDName map {
+  def businessWithoutIDNameRow(businessWithoutIDName: Option[String]) = businessWithoutIDName map {
     answer =>
       toRow(
         msgKey = "businessWithoutIDName",
@@ -163,7 +165,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def whatIsTradingName(whatIsTradingName: Option[String]): Option[Row] = {
+  def whatIsTradingNameRow(whatIsTradingName: Option[String]): Option[Row] = {
 
     val value = whatIsTradingName match {
       case Some(answer) => answer
@@ -179,7 +181,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     )
   }
 
-  def addressWithoutIdBusiness(addressWithoutIdBusiness: Option[Address]): Option[Row] = addressWithoutIdBusiness map {
+  def addressWithoutIdBusinessRow(addressWithoutIdBusiness: Option[Address]): Option[Row] = addressWithoutIdBusiness map {
     answer =>
       toRow(
         msgKey = "addressWithoutId.business",
@@ -188,7 +190,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def doYouHaveNIN(doYouHaveNIN: Option[Boolean]) = doYouHaveNIN map {
+  def doYouHaveNINRow(doYouHaveNIN: Option[Boolean]) = doYouHaveNIN map {
     answer =>
       toRow(
         msgKey = "doYouHaveNIN",
@@ -197,7 +199,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def nino(nino: Option[Nino]): Option[Row] = nino map {
+  def ninoRow(nino: Option[Nino]): Option[Row] = nino map {
     answer =>
       toRow(
         msgKey = "whatIsYourNationalInsuranceNumber",
@@ -206,7 +208,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def whatIsYourName(whatIsYourName: Option[Name]) = whatIsYourName map {
+  def whatIsYourNameRow(whatIsYourName: Option[Name]) = whatIsYourName map {
     answer =>
       toRow(
         msgKey = "whatIsYourName",
@@ -215,7 +217,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def whatIsYourDateOfBirth(whatIsYourDateOfBirth: Option[LocalDate]) = whatIsYourDateOfBirth map {
+  def whatIsYourDateOfBirthRow(whatIsYourDateOfBirth: Option[LocalDate]) = whatIsYourDateOfBirth map {
     answer =>
       toRow(
         msgKey = "whatIsYourDateOfBirth",
@@ -224,7 +226,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def nonUkName(nonUkName: Option[NonUkName]) = nonUkName map {
+  def nonUkNameRow(nonUkName: Option[NonUkName]) = nonUkName map {
     answer =>
       toRow(
         msgKey = "nonUkName",
@@ -233,7 +235,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def addressWithoutIdIndividual(addressWithoutIdIndividual: Option[Address]) = addressWithoutIdIndividual map {
+  def addressWithoutIdIndividualRow(addressWithoutIdIndividual: Option[Address]) = addressWithoutIdIndividual map {
     answer =>
       toRow(
         msgKey = "addressWithoutId.individual",
@@ -242,7 +244,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def addressUK(addressUK: Option[Address]) = addressUK map {
+  def addressUKRow(addressUK: Option[Address]) = addressUK map {
     answer =>
       toRow(
         msgKey = "addressUK",
@@ -251,7 +253,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def selectAddress(selectAddress: Option[String]) = selectAddress map {
+  def selectAddressRow(selectAddress: Option[String]) = selectAddress map {
     answer =>
       toRow(
         msgKey = "selectAddress",
@@ -272,7 +274,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   /*
     First contact
    */
-  def contactName(contactName: Option[String]): Option[Row] = contactName map {
+  def contactNameRow(contactName: Option[String]): Option[Row] = contactName map {
     answer =>
       toRow(
         msgKey = "contactName",
@@ -281,7 +283,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def contactEmail(contactEmail: Option[String]) = contactEmail map {
+  def contactEmailRow(contactEmail: Option[String]) = contactEmail map {
     answer =>
       toRow(
         msgKey = "contactEmail",
@@ -290,7 +292,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def contactPhone(contactPhone: Option[String]) = contactPhone match {
+  def contactPhoneRow(contactPhone: Option[String]) = contactPhone match {
     case Some(answer) => buildContactPhoneRow(answer)
     case None         => buildContactPhoneRow("None")
   }
@@ -307,7 +309,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   /*
     Second Contact
    */
-  def secondContact(secondContact: Option[Boolean]) = secondContact map {
+  def secondContactRow(secondContact: Option[Boolean]) = secondContact map {
     answer =>
       toRow(
         msgKey = "secondContact",
@@ -316,7 +318,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def sndContactName(sndContactName: Option[String]) = sndContactName map {
+  def sndContactNameRow(sndContactName: Option[String]) = sndContactName map {
     answer =>
       toRow(
         msgKey = "sndContactName",
@@ -325,7 +327,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def sndContactEmail(sndContactEmail: Option[String]) = sndContactEmail map {
+  def sndContactEmailRow(sndContactEmail: Option[String]) = sndContactEmail map {
     answer =>
       toRow(
         msgKey = "sndContactEmail",
@@ -334,7 +336,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def sndContactPhone(sndContactPhone: Option[String]) = sndContactPhone map {
+  def sndContactPhoneRow(sndContactPhone: Option[String]) = sndContactPhone map {
     _ =>
       val value = userAnswers.get(SndContactPhonePage).getOrElse("None")
       toRow(
