@@ -55,7 +55,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with ControllerMockFixtures {
   val nino             = Nino("CC123456C")
   val name             = Name("firstName", "lastName")
   val addressResponse  = AddressResponse("adr", None, None, None, None, "XX")
-  val registrationInfo = RegistrationInfo("safeId", Some("name"), Some(addressResponse), MatchingType.AsIndividual)
+  val registrationInfo = RegistrationInfo("safeId", Some("name"), Some(addressResponse), MatchingType.AsIndividual, None, None, None)
 
   "CheckYourAnswersHelper  must " - {
     "build IndividualWithID" in {
@@ -215,50 +215,50 @@ class CheckYourAnswersHelperSpec extends SpecBase with ControllerMockFixtures {
       when(env.resourceAsStream(any())).thenReturn(Some(is))
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+        .set(DoYouHaveUniqueTaxPayerReferencePage, false, Some(false))
         .success
         .value
-        .set(IsThisYourBusinessPage, true)
+        .set(IsThisYourBusinessPage, true, Some(true))
         .success
         .value
-        .set(RegistrationInfoPage, registrationInfo)
+        .set(RegistrationInfoPage, registrationInfo, Some(registrationInfo))
         .success
         .value
-        .set(WhatIsYourNationalInsuranceNumberPage, nino)
+        .set(WhatIsYourNamePage, name, Some(name))
         .success
         .value
-        .set(WhatIsYourNamePage, name)
+        .set(WhatIsYourDateOfBirthPage, dob, Some(dob))
         .success
         .value
-        .set(WhatIsYourDateOfBirthPage, dob)
+        .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness, Some(WhatAreYouRegisteringAs.RegistrationTypeBusiness))
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
+        .set(BusinessWithoutIDNamePage, "businessWithoutIDNamePage", Some("businessWithoutIDNamePage"))
         .success
         .value
-        .set(BusinessWithoutIDNamePage, "businessWithoutIDNamePage")
+        .set(AddressUKPage, address, Some(address))
         .success
         .value
-        .set(AddressUKPage, address)
+        .set(DoYouHaveNINPage, false, Some(false))
         .success
         .value
-        .set(DoYouHaveNINPage, false)
+        .set(NonUkNamePage, nonUkName, Some(nonUkName))
         .success
         .value
-        .set(NonUkNamePage, nonUkName)
+        .set(DoYouLiveInTheUKPage, true, Some(true))
         .success
         .value
-        .set(DoYouLiveInTheUKPage, true)
+        .set(WhatIsYourNationalInsuranceNumberPage, nino, Some(nino))
         .success
         .value
 
       val helper   = new CheckYourAnswersHelper(userAnswers, MDR, countryListFactory = countryListFactory)
       val allPages = helper.buildAllPages
+
       allPages.confirmBusiness.get mustEqual true
       allPages.registrationInfo.get mustEqual registrationInfo
       allPages.nino.get mustEqual nino
       allPages.whatIsYourName.get mustEqual name
-      // todo here rest of above
 
       val asRow = allPages.asRowSeq
       asRow.length mustEqual 11
