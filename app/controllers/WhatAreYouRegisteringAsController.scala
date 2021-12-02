@@ -87,26 +87,4 @@ class WhatAreYouRegisteringAsController @Inject() (
             }
           )
     }
-
-  // todo eitherT.set and next(..., Boolean)
-
-  /*
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value =>
-              (for {
-                updatedAnswers <- setEither(WhatAreYouRegisteringAsPage, value, checkPrevious = true)
-                _ = sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers)))
-                .valueOrF(
-                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
-                )
-          )
-    }
-   */
 }

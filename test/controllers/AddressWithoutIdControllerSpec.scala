@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.ControllerNoDataSpecBase
+import base.ControllerSpecBase
 import forms.AddressWithoutIdFormProvider
 import models.{Address, Country, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -30,7 +30,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AddressWithoutIdControllerSpec extends ControllerNoDataSpecBase { // TODO replace with ControllerSpecBase when actual flow is ready
+class AddressWithoutIdControllerSpec extends ControllerSpecBase {
 
   lazy val loadRoute   = routes.AddressWithoutIdController.onPageLoad(NormalMode, MDR).url
   lazy val submitRoute = routes.AddressWithoutIdController.onSubmit(NormalMode, MDR).url
