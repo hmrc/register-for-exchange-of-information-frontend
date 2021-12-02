@@ -16,7 +16,8 @@ import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{DateInput, NunjucksSupport}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.DateInput
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
