@@ -18,6 +18,7 @@ package controllers
 
 import cats.data.EitherT
 import cats.implicits._
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
 import models.error.ApiError
@@ -51,6 +52,7 @@ class IsThisYourBusinessController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: IsThisYourBusinessFormProvider,
+  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
   subscriptionService: SubscriptionService,
@@ -76,7 +78,9 @@ class IsThisYourBusinessController @Inject() (
           case NotFoundError =>
             Future.successful(Redirect(routes.NoRecordsMatchedController.onPageLoad(regime)))
           case _ =>
-            renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+            renderer
+              .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+              .map(ServiceUnavailable(_))
         },
         fb =>
           subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {

@@ -111,7 +111,10 @@ class UTRController @Inject() (
                     _ = sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers)))
                     .valueOrF(
-                      _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                      _ =>
+                        renderer
+                          .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+                          .map(ServiceUnavailable(_))
                     )
               )
         }

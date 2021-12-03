@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.IsContactTelephoneFormProvider
 import models.requests.DataRequest
@@ -43,6 +44,7 @@ class IsContactTelephoneController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: IsContactTelephoneFormProvider,
+  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -70,14 +72,16 @@ class IsContactTelephoneController @Inject() (
     }
   }
 
-  private def thereIsAProblem(implicit request: DataRequest[AnyContent]): Future[Result] =
-    renderer.render("thereIsAProblem.njk").map(BadRequest(_))
+  private def thereIsAProblem(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Result] =
+    renderer
+      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+      .map(BadRequest(_))
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
         val suffix = isBusinessOrIndividual()
-        data(mode, regime, form(suffix), suffix).fold(thereIsAProblem) {
+        data(mode, regime, form(suffix), suffix).fold(thereIsAProblem(regime)) {
           data =>
             renderer.render("isContactTelephone.njk", data).map(Ok(_))
         }
@@ -91,7 +95,7 @@ class IsContactTelephoneController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              data(mode, regime, formWithErrors, suffix).fold(thereIsAProblem) {
+              data(mode, regime, formWithErrors, suffix).fold(thereIsAProblem(regime)) {
                 data =>
                   renderer.render("isContactTelephone.njk", data).map(BadRequest(_))
               },

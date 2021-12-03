@@ -17,6 +17,7 @@
 package controllers
 
 import cats.implicits._
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.WhatIsYourNameFormProvider
 import models.requests.DataRequest
@@ -44,6 +45,7 @@ class WhatIsYourNameController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: WhatIsYourNameFormProvider,
+  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -103,7 +105,10 @@ class WhatIsYourNameController @Inject() (
                 _ = sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers)))
                 .valueOrF(
-                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
+                  _ =>
+                    renderer
+                      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+                      .map(ServiceUnavailable(_))
                 )
           )
     }
