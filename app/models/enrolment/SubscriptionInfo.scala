@@ -17,8 +17,8 @@
 package models.enrolment
 
 import models.BusinessType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
-import models.{SubscriptionID, UniqueTaxpayerReference, UserAnswers}
 import models.error.ApiError
+import models.{SubscriptionID, UserAnswers}
 import pages._
 import play.api.libs.json.{Json, OFormat}
 

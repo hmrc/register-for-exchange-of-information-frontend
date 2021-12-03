@@ -21,7 +21,7 @@ import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
 import models.error.ApiError
-import models.error.ApiError.{BadRequestError, NotFoundError}
+import models.error.ApiError.NotFoundError
 import models.matching.RegistrationInfo
 import models.requests.DataRequest
 import models.{BusinessType, CheckMode, Mode, NormalMode, Regime, UserAnswers}

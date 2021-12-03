@@ -22,7 +22,6 @@ import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Regime
 import models.error.ApiError.{BadRequestError, EnrolmentExistsError, MandatoryInformationMissingError}
-import navigation.Navigator
 import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
