@@ -142,16 +142,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     )
   }
 
-  def businessHaveDifferentName: Option[Row] =
-    userAnswers.get(pages.BusinessHaveDifferentNamePage) map { //ToDo delete when change routing finalised for WhatIsTradingName
-      answer =>
-        toRow(
-          msgKey = "businessHaveDifferentName",
-          value = yesOrNo(answer),
-          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
-        )
-    }
-
   def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
     answer =>
       toRow(

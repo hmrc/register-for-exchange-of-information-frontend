@@ -17,7 +17,9 @@
 package forms
 
 import forms.mappings.Mappings
+import models.UniqueTaxpayerReference
 import play.api.data.Form
+import play.api.data.Forms.mapping
 import utils.RegexConstants
 
 import javax.inject.Inject
@@ -26,8 +28,10 @@ class UTRFormProvider @Inject() extends Mappings with RegexConstants {
 
   private val maxLength = 10
 
-  def apply(msgArg: String): Form[String] =
+  def apply(msgArg: String): Form[UniqueTaxpayerReference] =
     Form(
-      "value" -> validatedFixedLengthText("utr.error.required", "utr.error.invalid", "utr.error.length", utrRegex, maxLength, msgArg)
+      mapping(
+        "value" -> validatedFixedLengthText("utr.error.required", "utr.error.invalid", "utr.error.length", utrRegex, maxLength, msgArg)
+      )(UniqueTaxpayerReference.apply)(UniqueTaxpayerReference.unapply)
     )
 }

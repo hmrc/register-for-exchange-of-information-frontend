@@ -26,11 +26,7 @@ case class BusinessAddress(addressLine1: String,
                            addressLine4: Option[String],
                            postCode: String,
                            countryCode: String
-) {
-
-  // TODO implement def toAddress: Address = ???
-
-}
+)
 
 object BusinessAddress {
 

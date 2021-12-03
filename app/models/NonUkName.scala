@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 case class NonUkName(givenName: String, familyName: String) {
 
-  val toName: Name = Name(givenName, familyName) // TODO possible unification ?
+  val toName: Name = Name(givenName, familyName)
 }
 
 object NonUkName {

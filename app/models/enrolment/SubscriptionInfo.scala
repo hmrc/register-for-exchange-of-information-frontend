@@ -17,7 +17,7 @@
 package models.enrolment
 
 import models.BusinessType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
-import models.{SubscriptionID, UserAnswers}
+import models.{SubscriptionID, UniqueTaxpayerReference, UserAnswers}
 import models.error.ApiError
 import pages._
 import play.api.libs.json.{Json, OFormat}
@@ -77,13 +77,13 @@ object SubscriptionInfo {
 
   private def getSaUtrIfProvided(userAnswers: UserAnswers): Option[String] =
     userAnswers.get(BusinessTypePage) match {
-      case Some(Partnership) | Some(Sole) | Some(LimitedPartnership) => userAnswers.get(UTRPage)
+      case Some(Partnership) | Some(Sole) | Some(LimitedPartnership) => userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
       case _                                                         => None
     }
 
   private def getCtUtrIfProvided(userAnswers: UserAnswers): Option[String] =
     userAnswers.get(BusinessTypePage) match {
-      case Some(LimitedCompany) | Some(UnincorporatedAssociation) => userAnswers.get(UTRPage)
+      case Some(LimitedCompany) | Some(UnincorporatedAssociation) => userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
       case _                                                      => None
     }
 

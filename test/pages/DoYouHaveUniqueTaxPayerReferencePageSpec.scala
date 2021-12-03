@@ -16,9 +16,9 @@
 
 package pages
 
-import models.{Address, AddressLookup, BusinessType, Country, Name, NonUkName, UserAnswers, WhatAreYouRegisteringAs}
-import pages.behaviours.PageBehaviours
+import models.{Address, AddressLookup, BusinessType, Country, Name, NonUkName, UniqueTaxpayerReference, UserAnswers, WhatAreYouRegisteringAs}
 import org.scalacheck.Arbitrary.arbitrary
+import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
@@ -44,7 +44,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(BusinessTypePage, BusinessType.Sole)
             .success
             .value
-            .set(UTRPage, "1234567890")
+            .set(UTRPage, UniqueTaxpayerReference("1234567890"))
             .success
             .value
             .set(SoleNamePage, Name("firstName", "secondName"))
