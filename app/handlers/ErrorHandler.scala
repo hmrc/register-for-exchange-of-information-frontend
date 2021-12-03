@@ -59,7 +59,9 @@ class ErrorHandler @Inject() (
           )
           .map(NotFound(_))
       case _ =>
-        renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
+        renderer
+          .render("thereIsAProblem.njk", Json.obj("regime" -> MDR.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
+          .map(InternalServerError(_))
     }
   }
 
@@ -72,7 +74,9 @@ class ErrorHandler @Inject() (
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>
-        renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
+        renderer
+          .render("thereIsAProblem.njk", Json.obj("regime" -> MDR.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
+          .map(InternalServerError(_))
     }
   }
 

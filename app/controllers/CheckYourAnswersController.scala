@@ -18,6 +18,7 @@ package controllers
 
 import cats.data.EitherT
 import cats.implicits._
+import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Regime
 import models.error.ApiError.{BadRequestError, EnrolmentExistsError, MandatoryInformationMissingError}
@@ -44,6 +45,7 @@ class CheckYourAnswersController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   subscriptionService: SubscriptionService,
+  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   taxEnrolmentsService: TaxEnrolmentService,
   countryFactory: CountryListFactory,
@@ -101,9 +103,13 @@ class CheckYourAnswersController @Inject() (
               Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
             }
           case BadRequestError =>
-            renderer.render("thereIsAProblem.njk").map(BadRequest(_))
+            renderer
+              .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+              .map(BadRequest(_))
           case _ =>
-            renderer.render("thereIsAProblem.njk").map(InternalServerError(_))
+            renderer
+              .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+              .map(InternalServerError(_))
         }
   }
 }
