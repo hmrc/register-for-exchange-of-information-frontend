@@ -28,71 +28,24 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   val messages: Messages
 ) extends RowBuilder {
 
-  def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
-
-    val pagesToCheck = Tuple4(
-      helper.businessType,
+  def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
+    Seq(
+      helper.confirmBusiness,
+      helper.doYouHaveUniqueTaxPayerReference,
+      helper.whatAreYouRegisteringAs,
+      helper.doYouHaveNIN,
       helper.nino,
+      helper.whatIsYourName,
+      helper.whatIsYourDateOfBirth,
       helper.businessWithoutIDName,
-      helper.nonUkName
-    )
-
-    pagesToCheck match {
-      case (Some(_), None, None, None) =>
-        //Business with ID (inc. Sole proprietor)
-        Seq(
-          helper.confirmBusiness
-        ).flatten
-
-      case (None, Some(_), None, None) =>
-        //Individual with ID
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.whatAreYouRegisteringAs,
-          helper.doYouHaveNIN,
-          helper.nino,
-          helper.whatIsYourName,
-          helper.whatIsYourDateOfBirth
-        ).flatten
-      case (None, None, Some(_), None) =>
-        //Business without ID
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.whatAreYouRegisteringAs,
-          helper.businessWithoutIDName,
-          helper.whatIsTradingName,
-          helper.addressWithoutIdBusiness
-        ).flatten
-      case (None, None, None, Some(_)) =>
-        //Individual without ID
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.whatAreYouRegisteringAs,
-          helper.doYouHaveNIN,
-          helper.nonUkName,
-          helper.whatIsYourDateOfBirth,
-          helper.addressWithoutIdIndividual,
-          helper.addressUK,
-          helper.selectAddress //ToDo hook selectAddress logic
-        ).flatten
-      case _ =>
-        //All pages
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.confirmBusiness,
-          helper.nino,
-          helper.whatIsYourName,
-          helper.whatIsYourDateOfBirth,
-          helper.whatAreYouRegisteringAs,
-          helper.businessWithoutIDName,
-          helper.addressUK,
-          helper.doYouHaveNIN,
-          helper.nonUkName,
-          helper.doYouLiveInTheUK,
-          helper.addressUK
-        ).flatten
-    }
-  }
+      helper.whatIsTradingName,
+      helper.addressWithoutIdBusiness,
+      helper.nonUkName,
+      helper.addressWithoutIdIndividual,
+      helper.addressUK,
+      helper.selectAddress, //ToDo hook selectAddress logic
+      helper.doYouLiveInTheUK
+    ).flatten
 
   def confirmBusiness: Option[Row] = {
     val paragraphClass = """govuk-!-margin-0"""
