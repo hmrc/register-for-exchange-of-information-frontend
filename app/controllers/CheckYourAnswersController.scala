@@ -76,7 +76,7 @@ class CheckYourAnswersController @Inject() (
             "businessDetailsList" -> businessDetails,
             "firstContactList"    -> helper.buildFirstContact,
             "secondContactList"   -> helper.buildSecondContact,
-            "action"              -> Navigator.checkYourAnswers(regime).url // todo change once backend for onSubmit is implemented
+            "action"              -> routes.CheckYourAnswersController.onSubmit(regime).url
           )
         )
         .map(Ok(_))

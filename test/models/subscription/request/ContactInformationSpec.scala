@@ -144,7 +144,7 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .value
 
       val expectedValue = SecondaryContact(OrganisationDetails("Name Name"), "test@test.com", Some("11222244"), None)
-      SecondaryContact.convertTo(userAnswers).right.value.value mustBe expectedValue
+      SecondaryContact.convertTo(userAnswers).value.value mustBe expectedValue
     }
 
     "must return SecondaryContact for the input 'Business with/without Id UserAnswers' when SndConHavePhonePage is false" in {
@@ -163,7 +163,7 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .value
 
       val expectedValue = SecondaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None)
-      SecondaryContact.convertTo(userAnswers).right.value.value mustBe expectedValue
+      SecondaryContact.convertTo(userAnswers).value.value mustBe expectedValue
     }
 
     "must return None for the input 'Business with/without Id UserAnswers' when SecondContactPage is false " in {
@@ -178,7 +178,7 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .success
         .value
 
-      SecondaryContact.convertTo(userAnswers).right.value mustBe None
+      SecondaryContact.convertTo(userAnswers).value mustBe None
     }
 
     "must return None when SecondContactPage is true and SndConHavePhonePage is true and SndContactPhonePage is empty" in {

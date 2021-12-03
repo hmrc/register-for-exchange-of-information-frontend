@@ -21,7 +21,6 @@ import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
-import models.BusinessType.LimitedCompany
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
@@ -99,7 +98,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", "UTR", Option(dob)))
+          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
 
         result.futureValue mustBe Right(
           RegistrationInfo("XE0000123456789",
@@ -120,7 +119,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", "UTR", Option(dob)))
+          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
 
         result.futureValue mustBe Left(NotFoundError)
       }

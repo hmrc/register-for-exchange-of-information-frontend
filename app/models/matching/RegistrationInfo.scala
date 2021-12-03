@@ -18,7 +18,7 @@ package models.matching
 
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.register.response.details.AddressResponse
-import models.{BusinessType, Name}
+import models.{BusinessType, Name, UniqueTaxpayerReference}
 import play.api.libs.json.{__, OFormat, OWrites, Reads}
 import uk.gov.hmrc.domain.Nino
 
@@ -93,6 +93,6 @@ object RegistrationInfo {
   def build(name: Name, nino: Nino, dateOfBirth: Option[LocalDate]): RegistrationInfo =
     RegistrationInfo("", Option(name.fullName), None, AsIndividual, None, Option(nino.nino), dateOfBirth)
 
-  def build(businessType: BusinessType, businessName: String, utr: String, dateOfBirth: Option[LocalDate]): RegistrationInfo =
-    RegistrationInfo("", Option(businessName), None, AsOrganisation, Option(businessType), Option(utr), dateOfBirth)
+  def build(businessType: BusinessType, businessName: String, utr: UniqueTaxpayerReference, dateOfBirth: Option[LocalDate]): RegistrationInfo =
+    RegistrationInfo("", Option(businessName), None, AsOrganisation, Option(businessType), Option(utr.uniqueTaxPayerReference), dateOfBirth)
 }

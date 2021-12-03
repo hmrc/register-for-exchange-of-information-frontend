@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{BusinessType, MDR, NormalMode, UserAnswers}
+import models.{BusinessType, MDR, NormalMode, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessTypePage, UTRPage}
@@ -69,7 +69,8 @@ class UTRControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value.set(UTRPage, "1234567890").success.value
+      val userAnswers =
+        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value.set(UTRPage, UniqueTaxpayerReference("1234567890")).success.value
       retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])

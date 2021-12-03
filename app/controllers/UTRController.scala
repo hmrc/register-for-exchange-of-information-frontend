@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import models.BusinessType._
 import models.requests.DataRequest
-import models.{BusinessType, Mode, Regime}
+import models.{BusinessType, Mode, Regime, UniqueTaxpayerReference}
 import navigation.MDRNavigator
 import pages.{BusinessTypePage, UTRPage}
 import play.api.data.Form
@@ -60,7 +60,7 @@ class UTRController @Inject() (
 
   private def readKey(key: String)(implicit messages: Messages) = messages(key)
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], businessType: BusinessType)(implicit
+  private def render(mode: Mode, regime: Regime, form: Form[UniqueTaxpayerReference], businessType: BusinessType)(implicit
     request: DataRequest[AnyContent]
   ): Future[api.Html] = {
     val taxType = businessType match {

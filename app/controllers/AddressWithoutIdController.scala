@@ -126,7 +126,7 @@ class AddressWithoutIdController @Inject() (
   }
 
   private def getRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
-    request.userAnswers.get(WhatAreYouRegisteringAsPage) match { //ToDo defaulting to registering for business change when paths created if necessary
+    request.userAnswers.get(WhatAreYouRegisteringAsPage) match {
       case Some(RegistrationTypeBusiness) => true
       case _                              => false
     }

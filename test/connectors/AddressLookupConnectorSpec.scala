@@ -917,7 +917,6 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
         stubResponse(addressLookupUrl, OK, addressesJson)
 
         val addressLookupResult = Vector(
-          // todo kladzie sie bo nie ma NR w w 2 mimo ze istnieje
           AddressLookup(Some("2 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("3 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("4 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),

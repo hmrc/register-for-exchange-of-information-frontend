@@ -47,7 +47,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     .set(BusinessTypePage, BusinessType.LimitedCompany)
     .success
     .value
-    .set(UTRPage, "UTR")
+    .set(UTRPage, utr)
     .success
     .value
     .set(BusinessNamePage, "Name")

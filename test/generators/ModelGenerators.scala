@@ -17,7 +17,7 @@
 package generators
 
 import models.subscription.request._
-import models.{Address, Country}
+import models.{Address, Country, UniqueTaxpayerReference}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Nino
@@ -191,6 +191,12 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryDisplaySubscriptionRequest: Arbitrary[DisplaySubscriptionRequest] = Arbitrary {
     Gen.oneOf[DisplaySubscriptionRequest](arbitrary[DisplaySubscriptionForMDRRequest], arbitrary[DisplaySubscriptionForCBCRequest])
+  }
+
+  implicit lazy val arbitraryUniqueTaxpayerReference: Arbitrary[UniqueTaxpayerReference] = Arbitrary {
+    for {
+      utr <- arbitrary[String]
+    } yield UniqueTaxpayerReference(utr)
   }
 
 }

@@ -43,7 +43,7 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
     (request.userAnswers.get(WhatAreYouRegisteringAsPage),
      request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
      request.userAnswers.get(BusinessTypePage)
-    ) match { //ToDo defaulting to registering for business change when paths created if necessary
+    ) match {
       case (None, Some(true), Some(Sole))                   => false
       case (None, Some(true), _)                            => true
       case (Some(RegistrationTypeBusiness), Some(false), _) => true

@@ -60,6 +60,8 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
     with AuthorisedFunctions
     with Logging {
 
+  val enrolmentKey: String = config.enrolmentKey(regime.toString)
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
@@ -79,7 +81,6 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
       .recover {
         case _: NoActiveSession =>
           Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
-        case _: InsufficientEnrolments => Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad(regime))
         case _: AuthorisationException =>
           Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad(regime))
       }
