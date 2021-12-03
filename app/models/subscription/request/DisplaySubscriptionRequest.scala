@@ -19,8 +19,6 @@ package models.subscription.request
 import models.{MDR, Regime}
 import play.api.libs.json._
 
-import scala.language.implicitConversions
-
 sealed trait DisplaySubscriptionRequest
 
 case class DisplaySubscriptionForMDRRequest(displaySubscriptionForMDRRequest: ReadSubscriptionRequest) extends DisplaySubscriptionRequest

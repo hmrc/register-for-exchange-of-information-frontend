@@ -16,10 +16,10 @@
 
 package pages
 
+import models.UniqueTaxpayerReference
 import play.api.libs.json.JsPath
 
-// TODO use UniqueTaxpayerReference instead of String
-case object UTRPage extends QuestionPage[String] {
+case object UTRPage extends QuestionPage[UniqueTaxpayerReference] {
 
   override def path: JsPath = JsPath \ toString
 

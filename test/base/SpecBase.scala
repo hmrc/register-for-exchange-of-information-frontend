@@ -17,7 +17,7 @@
 package base
 
 import config.FrontendAppConfig
-import models.UserAnswers
+import models.{UniqueTaxpayerReference, UserAnswers}
 import org.mockito.MockitoSugar
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -42,6 +42,7 @@ trait SpecBase
 
   def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val hc: HeaderCarrier   = HeaderCarrier()
+  val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("UTR")
 
 }

@@ -98,7 +98,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", "UTR", Option(dob)))
+          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
 
         result.futureValue mustBe Right(
           RegistrationInfo("XE0000123456789",
@@ -119,7 +119,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", "UTR", Option(dob)))
+          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
 
         result.futureValue mustBe Left(NotFoundError)
       }

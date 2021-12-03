@@ -159,9 +159,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
         }
       }
 
-      //TODO - add this test when logic is added for individual matching
       "must go from 'What Is Your DOB?' page to 'We could not confirm your identity' page when valid DOB is entered " +
-        "but individual could not be matched" ignore {
+        "but individual could not be matched" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
@@ -390,7 +389,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(UTRPage, "0123456789")
+                .set(UTRPage, UniqueTaxpayerReference("0123456789"))
                 .success
                 .value
                 .set(BusinessTypePage, BusinessType.Sole)
@@ -408,7 +407,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(UTRPage, "0123456789")
+                .set(UTRPage, UniqueTaxpayerReference("0123456789"))
                 .success
                 .value
                 .set(BusinessTypePage, BusinessType.LimitedCompany)

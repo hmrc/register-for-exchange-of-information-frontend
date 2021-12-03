@@ -28,7 +28,7 @@ class RegimeSpec extends AnyFreeSpec with Matchers with EitherValues {
 
     "bind to `mdr` from path" in {
       val result =
-        pathBindable.bind("key", "mdr").right.value
+        pathBindable.bind("key", "mdr").value
 
       result mustEqual MDR
     }

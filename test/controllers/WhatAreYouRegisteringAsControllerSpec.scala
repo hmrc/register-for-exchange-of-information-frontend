@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.ControllerNoDataSpecBase
+import base.ControllerSpecBase
 import models.{MDR, NormalMode, UserAnswers, WhatAreYouRegisteringAs}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -28,7 +28,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class WhatAreYouRegisteringAsControllerSpec extends ControllerNoDataSpecBase { // TODO replace with ControllerSpecBase when actual flow is ready
+class WhatAreYouRegisteringAsControllerSpec extends ControllerSpecBase {
 
   lazy val loadRoute   = routes.WhatAreYouRegisteringAsController.onPageLoad(NormalMode, MDR).url
   lazy val submitRoute = routes.WhatAreYouRegisteringAsController.onSubmit(NormalMode, MDR).url
