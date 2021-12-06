@@ -28,71 +28,43 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   val messages: Messages
 ) extends RowBuilder {
 
-  def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] = {
-
-    val pagesToCheck = Tuple4(
-      helper.businessType,
-      helper.nino,
-      helper.businessWithoutIDName,
-      helper.nonUkName
-    )
-
-    pagesToCheck match {
-      case (Some(_), None, None, None) =>
-        //Business with ID (inc. Sole proprietor)
-        Seq(
-          helper.confirmBusiness
-        ).flatten
-
-      case (None, Some(_), None, None) =>
-        //Individual with ID
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.whatAreYouRegisteringAs,
-          helper.doYouHaveNIN,
-          helper.nino,
-          helper.whatIsYourName,
-          helper.whatIsYourDateOfBirth
-        ).flatten
-      case (None, None, Some(_), None) =>
-        //Business without ID
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.whatAreYouRegisteringAs,
-          helper.businessWithoutIDName,
-          helper.whatIsTradingName,
-          helper.addressWithoutIdBusiness
-        ).flatten
-      case (None, None, None, Some(_)) =>
-        //Individual without ID
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.whatAreYouRegisteringAs,
-          helper.doYouHaveNIN,
-          helper.nonUkName,
-          helper.whatIsYourDateOfBirth,
-          helper.addressWithoutIdIndividual,
-          helper.addressUK,
-          helper.selectAddress //ToDo hook selectAddress logic
-        ).flatten
-      case _ =>
-        //All pages
-        Seq(
-          helper.doYouHaveUniqueTaxPayerReference,
-          helper.confirmBusiness,
-          helper.nino,
-          helper.whatIsYourName,
-          helper.whatIsYourDateOfBirth,
-          helper.whatAreYouRegisteringAs,
-          helper.businessWithoutIDName,
-          helper.addressUK,
-          helper.doYouHaveNIN,
-          helper.nonUkName,
-          helper.doYouLiveInTheUK,
-          helper.addressUK
-        ).flatten
+  def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
+    if (userAnswers.get(pages.BusinessTypePage).isDefined) {
+      Seq(
+        helper.confirmBusiness
+      ).flatten
+    } else {
+      Seq(
+        helper.doYouHaveUniqueTaxPayerReference,
+        helper.confirmBusiness,
+        helper.whatAreYouRegisteringAs,
+        helper.doYouHaveNIN,
+        helper.nino,
+        helper.whatIsYourName,
+        helper.nonUkName,
+        helper.whatIsYourDateOfBirth,
+        helper.businessWithoutIDName,
+        helper.whatIsTradingName,
+        helper.addressWithoutIdBusiness,
+        helper.addressUK,
+        helper.selectAddress
+      ).flatten
     }
-  }
+
+  def buildSecondContact: Seq[SummaryList.Row] =
+    Seq(
+      secondContact,
+      sndContactName,
+      sndContactEmail,
+      sndContactPhone
+    ).flatten
+
+  def buildFirstContact: Seq[SummaryList.Row] =
+    Seq(
+      contactName,
+      contactEmail,
+      contactPhone
+    ).flatten
 
   def confirmBusiness: Option[Row] = {
     val paragraphClass = """govuk-!-margin-0"""
@@ -126,21 +98,20 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     }
   }
 
-  def whatIsTradingName: Option[Row] = {
+  def whatIsTradingName: Option[Row] =
+    userAnswers.get(pages.BusinessWithoutIDNamePage) map {
+      x =>
+        val value = userAnswers.get(pages.WhatIsTradingNamePage) match {
+          case Some(answer) => answer
+          case None         => "None"
+        }
 
-    val value = userAnswers.get(pages.WhatIsTradingNamePage) match {
-      case Some(answer) => answer
-      case None         => "None"
+        toRow(
+          msgKey = "whatIsTradingName",
+          value = lit"$value",
+          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
+        )
     }
-
-    Some(
-      toRow(
-        msgKey = "whatIsTradingName",
-        value = lit"$value",
-        href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
-      )
-    )
-  }
 
   def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
     answer =>
@@ -322,14 +293,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def buildSecondContact: Seq[SummaryList.Row] =
-    Seq(
-      secondContact,
-      sndContactName,
-      sndContactEmail,
-      sndContactPhone
-    ).flatten
-
   def sndConHavePhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
     answer =>
       toRow(
@@ -375,13 +338,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
         href = routes.SecondContactController.onPageLoad(CheckMode, regime).url
       )
   }
-
-  def buildFirstContact: Seq[SummaryList.Row] =
-    Seq(
-      contactName,
-      contactEmail,
-      contactPhone
-    ).flatten
 
   def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) match {
     case Some(answer) => buildContactPhoneRow(answer)
