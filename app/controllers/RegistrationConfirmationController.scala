@@ -21,10 +21,12 @@ import controllers.actions._
 import handlers.ErrorHandler
 import models.Regime
 import pages.SubscriptionIDPage
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -37,11 +39,13 @@ class RegistrationConfirmationController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   errorHandler: ErrorHandler,
+  sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
@@ -53,9 +57,13 @@ class RegistrationConfirmationController @Inject() (
             "submissionUrl"      -> appConfig.submissionsUrl,
             "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
           )
-          renderer.render("registrationConfirmation.njk", json).map(Ok(_))
+          sessionRepository.clear(request.userId) flatMap {
+            _ =>
+              renderer.render("registrationConfirmation.njk", json).map(Ok(_))
+          }
         case None =>
-          errorHandler.onServerError(request, throw new RuntimeException("Subscription ID missing"))
+          logger.info("SubscriptionIDPage: Subscription Id is missing")
+          renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
       }
   }
 }
