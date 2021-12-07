@@ -87,7 +87,7 @@ private[mappings] class LocalDateFormatter(
       case fieldValue if fieldValue.matches(""".*[.]year$""")  => if (validateYear(value)) None else Some("year")
     }
 
-  def missingFields(key: String, data: Map[String, String]): Either[Seq[FormError], Map[String, String]] = {
+  private def missingFields(key: String, data: Map[String, String]): Either[Seq[FormError], Map[String, String]] = {
 
     def messageNeeded(numberOfFields: Int) =
       numberOfFields match {
@@ -111,7 +111,7 @@ private[mappings] class LocalDateFormatter(
     }
   }
 
-  def validNumbers(key: String, data: Map[String, String]): Either[Seq[FormError], Map[String, String]] =
+  private def validNumbers(key: String, data: Map[String, String]): Either[Seq[FormError], Map[String, String]] =
     data.toList
       .filter(_._1 != "csrfToken")
       .flatMap(
