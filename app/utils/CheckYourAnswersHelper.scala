@@ -23,48 +23,9 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
-//noinspection ScalaStyle
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
   val messages: Messages
 ) extends RowBuilder {
-
-  def buildDetails(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    if (userAnswers.get(pages.BusinessTypePage).isDefined) {
-      Seq(
-        helper.confirmBusiness
-      ).flatten
-    } else {
-      Seq(
-        helper.doYouHaveUniqueTaxPayerReference,
-        helper.confirmBusiness,
-        helper.whatAreYouRegisteringAs,
-        helper.doYouHaveNIN,
-        helper.nino,
-        helper.whatIsYourName,
-        helper.nonUkName,
-        helper.whatIsYourDateOfBirth,
-        helper.businessWithoutIDName,
-        helper.whatIsTradingName,
-        helper.addressWithoutIdBusiness,
-        helper.addressUK,
-        helper.selectAddress
-      ).flatten
-    }
-
-  def buildSecondContact: Seq[SummaryList.Row] =
-    Seq(
-      secondContact,
-      sndContactName,
-      sndContactEmail,
-      sndContactPhone
-    ).flatten
-
-  def buildFirstContact: Seq[SummaryList.Row] =
-    Seq(
-      contactName,
-      contactEmail,
-      contactPhone
-    ).flatten
 
   def confirmBusiness: Option[Row] = {
     val paragraphClass = """govuk-!-margin-0"""
@@ -132,7 +93,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   }
 
   def whatIsYourPostcode: Option[Row] = userAnswers.get(pages.WhatIsYourPostcodePage) map {
-    answer =>
+    _ =>
       toRow(
         msgKey = "whatIsYourPostcode",
         value = msg"site.edit",
@@ -150,7 +111,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   }
 
   def soleName: Option[Row] = userAnswers.get(pages.SoleNamePage) map {
-    answer =>
+    _ =>
       toRow(
         msgKey = "soleName",
         value = msg"site.edit",
@@ -185,7 +146,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def doYouLiveInTheUK: Option[Row] = userAnswers.get(pages.DoYouLiveInTheUKPage) map {
+  def doYouLiveInTheUK(): Option[Row] = userAnswers.get(pages.DoYouLiveInTheUKPage) map {
     answer =>
       toRow(
         msgKey = "doYouLiveInTheUK",
@@ -195,7 +156,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   }
 
   def nonUkNameController: Option[Row] = userAnswers.get(pages.NonUkNamePage) map {
-    answer =>
+    _ =>
       toRow(
         msgKey = "nonUkNameController",
         value = msg"site.edit",
@@ -231,7 +192,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   }
 
   def isThisYourBusiness: Option[Row] = userAnswers.get(pages.IsThisYourBusinessPage) map {
-    answer =>
+    _ =>
       toRow(
         msgKey = "isThisYourBusiness",
         value = msg"site.edit",
@@ -249,7 +210,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   }
 
   def uTR: Option[Row] = userAnswers.get(pages.UTRPage) map {
-    answer =>
+    _ =>
       toRow(
         msgKey = "uTR",
         value = msg"site.edit",
@@ -258,7 +219,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   }
 
   def businessType: Option[Row] = userAnswers.get(pages.BusinessTypePage) map {
-    answer =>
+    _ =>
       toRow(
         msgKey = "bussinessType",
         value = msg"site.edit",

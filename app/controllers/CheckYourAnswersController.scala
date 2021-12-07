@@ -20,8 +20,11 @@ import cats.data.EitherT
 import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.BusinessType.Sole
 import models.Regime
+import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError.{BadRequestError, EnrolmentExistsError, MandatoryInformationMissingError}
+import models.requests.DataRequest
 import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -31,8 +34,9 @@ import renderer.Renderer
 import repositories.SessionRepository
 import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, SummaryList}
-import utils.{CheckYourAnswersHelper, CountryListFactory}
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.CountryListFactory
+import viewmodels.{CheckYourAnswersViewModel, Section}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,26 +63,18 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
-      val helper                                = new CheckYourAnswersHelper(request.userAnswers, regime, countryListFactory = countryFactory)
-      val businessDetails: Seq[SummaryList.Row] = helper.buildDetails(helper)
-
-      val isBusiness = registrationService.isRegisteringAsBusiness()
-      val (contactHeading, header) =
-        if (isBusiness) ("firstContact", "businessDetails") else ("contactDetails", "individualDetails")
+      val viewModel: Seq[Section] =
+        CheckYourAnswersViewModel.buildPages(request.userAnswers, regime, countryFactory, isRegisteringAsBusiness())
 
       renderer
         .render(
           "checkYourAnswers.njk",
-          Json.obj(
-            "regime"              -> regime.toUpperCase,
-            "isBusiness"          -> isBusiness,
-            "header"              -> s"checkYourAnswers.$header.h2",
-            "contactHeading"      -> s"checkYourAnswers.$contactHeading.h2",
-            "businessDetailsList" -> businessDetails,
-            "firstContactList"    -> helper.buildFirstContact,
-            "secondContactList"   -> helper.buildSecondContact,
-            "action"              -> routes.CheckYourAnswersController.onSubmit(regime).url
-          )
+          Json
+            .obj(
+              "regime"   -> regime.toUpperCase,
+              "sections" -> viewModel,
+              "action"   -> routes.CheckYourAnswersController.onSubmit(regime).url
+            )
         )
         .map(Ok(_))
   }
@@ -111,4 +107,15 @@ class CheckYourAnswersController @Inject() (
               .map(InternalServerError(_))
         }
   }
+
+  private def isRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
+    (request.userAnswers.get(WhatAreYouRegisteringAsPage),
+     request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
+     request.userAnswers.get(BusinessTypePage)
+    ) match {
+      case (None, Some(true), Some(Sole))                   => false
+      case (None, Some(true), _)                            => true
+      case (Some(RegistrationTypeBusiness), Some(false), _) => true
+      case _                                                => false
+    }
 }

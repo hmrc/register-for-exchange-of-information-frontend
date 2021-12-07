@@ -24,35 +24,22 @@
           {{ messages("checkYourAnswers.heading") }}
         </h1>
 
-        <h2 class="govuk-heading-m">
-          {{ messages(header) }}
-        </h2>
+        {% for section in sections %}
+            {% if loop.index == 1 %}
+                <h2 class="govuk-heading-m">
+                  {{ messages(section.sectionName) }}
+                </h2>
+             {% else %}
+                 <h2 class="govuk-heading-m govuk-!-padding-top-9">
+                    {{ messages(section.sectionName) }}
+                 </h2>
+             {% endif %}
 
-        {{ govukSummaryList({
-          rows: businessDetailsList,
-          classes: "govuk-!-margin-bottom-0"
-        }) }}
-
-        <h2 class="govuk-heading-m govuk-!-padding-top-9">
-          {{ messages(contactHeading) }}
-        </h2>
-
-        {{ govukSummaryList({
-          rows: firstContactList,
-          classes: "govuk-!-margin-bottom-0"
-        }) }}
-
-       {% if isBusiness %}
-        <div class="govuk-!-padding-top-9">
-          <h2 class="govuk-heading-m">
-            {{ messages("checkYourAnswers.secondContact.h2") }}
-          </h2>
-          {{ govukSummaryList({
-            rows: secondContactList,
-            classes: "govuk-!-margin-bottom-0"
-          }) }}
-        </div>
-       {% endif %}
+            {{ govukSummaryList({
+              rows: section.rows,
+              classes: "govuk-!-margin-bottom-0"
+            }) }}
+        {% endfor %}
 
         <div class="govuk-!-padding-top-9">
           <h2 class="govuk-heading-m">
