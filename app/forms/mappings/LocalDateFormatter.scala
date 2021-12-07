@@ -96,15 +96,9 @@ private[mappings] class LocalDateFormatter(
         case 1 => requiredKey
       }
 
-    val fields: Map[String, Option[String]] = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key.$field").filter(_.nonEmpty)
-    }.toMap
-
-    lazy val missingFields = fields
-      .withFilter(_._2.isEmpty)
-      .map(_._1)
-      .toList
+    val missingFields = fieldKeys flatMap {
+      field => if (!data.contains(s"$key.$field") || data(s"$key.$field").isEmpty) Some(field) else None
+    }
 
     if (missingFields.isEmpty) {
       Right(data)
@@ -125,7 +119,7 @@ private[mappings] class LocalDateFormatter(
       ) match {
       case Nil                      => Right(data)
       case items if items.size == 1 => Left(Seq(FormError(returnKey(key, items.head), invalidKey, items ++ args)))
-      case items                    => Left(Seq(FormError(returnKey(key, "day"), invalidKey, args)))
+      case _                        => Left(Seq(FormError(returnKey(key, "day"), invalidKey, args)))
     }
 
   private def datePredicate(key: String, date: LocalDate, testDate: LocalDate, message: String)(f: LocalDate => Boolean): Either[Seq[FormError], LocalDate] =
