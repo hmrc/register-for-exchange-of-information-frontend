@@ -32,7 +32,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
   "RegistrationConfirmation Controller" - {
 
     "return OK and the correct view for a GET" in {
-
+      when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
@@ -52,6 +52,23 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
       templateCaptor.getValue mustEqual "registrationConfirmation.njk"
+    }
+
+    "render 'Technical Difficulties' page when Subscription Id is missing" in {
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request        = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad(MDR).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(app, request).value
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
     }
   }
 }
