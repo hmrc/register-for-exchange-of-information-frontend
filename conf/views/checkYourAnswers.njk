@@ -27,7 +27,7 @@
         {% for section in sections %}
             {% if loop.index == 1 %}
                 <h2 class="govuk-heading-m">
-                  {{ messages(section.sectionName) }}
+                  {{ section.sectionName }}
                 </h2>
              {% else %}
                  <h2 class="govuk-heading-m govuk-!-padding-top-9">

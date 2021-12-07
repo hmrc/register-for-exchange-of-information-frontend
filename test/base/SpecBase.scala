@@ -16,7 +16,6 @@
 
 package base
 
-import config.FrontendAppConfig
 import models.{UniqueTaxpayerReference, UserAnswers}
 import org.mockito.MockitoSugar
 import org.scalatest._
@@ -35,8 +34,6 @@ trait SpecBase
     with IntegrationPatience
     with MockitoSugar
     with BeforeAndAfterEach {
-
-  val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   val userAnswersId = "id"
 
