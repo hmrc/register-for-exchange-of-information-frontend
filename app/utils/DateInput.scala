@@ -73,21 +73,21 @@ object DateInput extends NunjucksSupport {
         label = msg"site.day.capitalized",
         name = field("day").name,
         id = field("day").id,
-        value = field("day").value.getOrElse(""),
+        value = field("day").value.getOrElse("").trim,
         classes = classes("day", "govuk-input--width-2")
       ),
       Item(
         label = msg"site.month.capitalized",
         name = field("month").name,
         id = field("month").id,
-        value = field("month").value.getOrElse(""),
+        value = field("month").value.getOrElse("").trim,
         classes = classes("month", "govuk-input--width-2")
       ),
       Item(
         label = msg"site.year.capitalized",
         name = field("year").name,
         id = field("year").id,
-        value = field("year").value.getOrElse(""),
+        value = field("year").value.getOrElse("").trim,
         classes = classes("year", "govuk-input--width-4")
       )
     )
