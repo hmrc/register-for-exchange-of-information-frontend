@@ -17,16 +17,20 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
+import config.FrontendAppConfig
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import models.MDR
+import play.api.libs.json.{JsObject, Json}
 
 import scala.concurrent.Future
 
 class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMockFixtures {
+
+  val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "BusinessAlreadyRegistered Controller" - {
 
@@ -39,14 +43,22 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       retrieveUserAnswersData(emptyUserAnswers)
       val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithID(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "regime"       -> "MDR",
+        "withID"       -> true,
+        "emailAddress" -> frontendAppConfig.emailEnquiries
+      )
 
       templateCaptor.getValue mustEqual "businessAlreadyRegistered.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "return OK and the correct view for a GET without UTR" in {
@@ -59,13 +71,22 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(app, request).value
+      val result     = route(app, request).value
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "regime"       -> "MDR",
+        "withID"       -> false,
+        "emailAddress" -> frontendAppConfig.emailEnquiries,
+        "loginGG"      -> frontendAppConfig.loginUrl
+      )
 
       templateCaptor.getValue mustEqual "businessAlreadyRegistered.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
     }
   }
 }
