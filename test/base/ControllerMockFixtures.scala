@@ -16,7 +16,6 @@
 
 package base
 
-import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import controllers.actions._
 import matchers.JsonMatchers
@@ -43,7 +42,6 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
   final val mockRenderer: NunjucksRenderer                 = mock[NunjucksRenderer]
   final val mockDataRetrievalAction: DataRetrievalAction   = mock[DataRetrievalAction]
   final val mockSessionRepository: SessionRepository       = mock[SessionRepository]
-  final val mockFrontendAppConfig                          = mock[FrontendAppConfig]
   final val mockAddressLookupConnector                     = mock[AddressLookupConnector]
   protected val cbcrFakeNavigator: ContactDetailsNavigator = new CBCRFakeNavigator(onwardRoute)
   protected val mdrFakeNavigator: MDRNavigator             = new MDRFakeNavigator(onwardRoute)
