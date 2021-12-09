@@ -125,9 +125,14 @@ private[mappings] class LocalDateFormatter(
   private def datePredicate(key: String, date: LocalDate, testDate: LocalDate, message: String)(f: LocalDate => Boolean): Either[Seq[FormError], LocalDate] =
     if (f(date)) Left(Seq(FormError(returnKey(key, "day"), message, List(formatDateToString(testDate)) ++ args))) else Right(date)
 
+  private def trimMap(data: Map[String, String]) =
+    data.foldLeft(Map.empty[String, String])(
+      (accum, values) => accum + (values._1 -> values._2.trim)
+    )
+
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
     for {
-      missing    <- missingFields(key, data)
+      missing    <- missingFields(key, trimMap(data))
       valid      <- validNumbers(key, missing)
       dateValid  <- formatDate(key, valid)
       dateBefore <- datePredicate(key, dateValid, minDate, minDateKey)(_.isBefore(minDate))
