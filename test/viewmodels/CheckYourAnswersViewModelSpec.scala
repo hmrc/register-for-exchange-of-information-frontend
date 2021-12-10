@@ -26,6 +26,8 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import utils.CountryListFactory
 
+import java.time.LocalDate
+
 class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
@@ -168,13 +170,16 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
+        .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+        .success
+        .value
         .set(IsContactTelephonePage, false)
         .success
         .value
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(DoYouLiveInTheUKPage, true)
+        .set(DoYouLiveInTheUKPage, false)
         .success
         .value
 
@@ -183,7 +188,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
       result.size mustBe 2
 
       result.head.sectionName mustBe "Your details"
-      result.head.rows.size mustBe 5
+      result.head.rows.size mustBe 6
 
       result(1).sectionName mustBe "Contact details"
       result(1).rows.size mustBe 2
