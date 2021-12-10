@@ -109,7 +109,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val json                = jsonCaptor.getValue
-        val firstContactDetails = (json \ "firstContactList").toString
+        val firstContactDetails = (json \ "sections" \ 1 \ "rows").toString
 
         templateCaptor.getValue mustEqual "checkYourAnswers.njk"
         firstContactDetails.contains("Contact name") mustBe true
@@ -143,13 +143,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val json                = jsonCaptor.getValue
-        val firstContactDetails = (json \ "firstContactList").toString
+        val firstContactDetails = (json \ "sections" \ 1 \ "rows").toString
 
         templateCaptor.getValue mustEqual "checkYourAnswers.njk"
         firstContactDetails.contains("Contact name") mustBe true
         firstContactDetails.contains("Email address") mustBe true
         firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
-        ((json \ "firstContactList")(2) \ "value" \ "text").get.as[String] mustEqual "None"
       }
 
       "must return OK and the correct view for a GET - Without Second Contact" in {
@@ -198,17 +197,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
 
-        val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-          .set(ContactNamePage, firstContactName)
+        val userAnswers: UserAnswers = emptyUserAnswers
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(ContactEmailPage, firstContactEmail)
+          .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(ContactPhonePage, firstContactPhone)
+          .set(ContactNamePage, "Name Name")
           .success
           .value
-          .set(SecondContactPage, isSecondContact)
+          .set(IsContactTelephonePage, false)
+          .success
+          .value
+          .set(SecondContactPage, true)
           .success
           .value
           .set(SndContactNamePage, secondContactName)
@@ -238,13 +240,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
         val json                 = jsonCaptor.getValue
-        val firstContactDetails  = (json \ "firstContactList").toString
-        val secondContactDetails = (json \ "secondContactList").toString
+        val firstContactDetails  = (json \ "sections" \ 1 \ "rows").toString
+        val secondContactDetails = (json \ "sections" \ 2 \ "rows").toString
 
         templateCaptor.getValue mustEqual "checkYourAnswers.njk"
         firstContactDetails.contains("Contact name") mustBe true
         firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
         secondContactDetails.contains("Second contact name") mustBe true
         secondContactDetails.contains("Second contact email address") mustBe true
         secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
@@ -255,6 +256,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
           .set(ContactNamePage, firstContactName)
           .success
           .value
@@ -301,7 +305,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         secondContactDetails.contains("Second contact name") mustBe true
         secondContactDetails.contains("Second contact email address") mustBe true
         secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
-        ((json \ "secondContactList")(3) \ "value" \ "text").get.as[String] mustEqual "None"
       }
     }
 

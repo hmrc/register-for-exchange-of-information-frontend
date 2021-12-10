@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.IsContactTelephoneFormProvider
-import models.error.ApiError.BadRequestError
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator

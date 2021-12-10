@@ -32,8 +32,6 @@ import scala.concurrent.ExecutionContext
 class BusinessAlreadyRegisteredController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   frontendAppConfig: FrontendAppConfig,
   renderer: Renderer
@@ -42,9 +40,10 @@ class BusinessAlreadyRegisteredController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoadWithID(regime: Regime): Action[AnyContent] = (identify(regime)).async {
+  def onPageLoadWithID(regime: Regime): Action[AnyContent] = identify(regime).async {
     implicit request =>
       val json = Json.obj(
+        "regime"       -> regime.toUpperCase,
         "withID"       -> true,
         "emailAddress" -> frontendAppConfig.emailEnquiries
       )
@@ -52,9 +51,10 @@ class BusinessAlreadyRegisteredController @Inject() (
       renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
   }
 
-  def onPageLoadWithoutID(regime: Regime): Action[AnyContent] = (identify(regime)).async {
+  def onPageLoadWithoutID(regime: Regime): Action[AnyContent] = identify(regime).async {
     implicit request =>
       val json = Json.obj(
+        "regime"       -> regime.toUpperCase,
         "withID"       -> false,
         "emailAddress" -> frontendAppConfig.emailEnquiries,
         "loginGG"      -> frontendAppConfig.loginUrl

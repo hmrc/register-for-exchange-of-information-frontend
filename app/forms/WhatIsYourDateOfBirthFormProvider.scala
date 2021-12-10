@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
-import models.DateHelper.{formatDateToString, today}
+import models.DateHelper.today
 import play.api.data.Form
 
 import java.time.LocalDate
@@ -31,8 +31,11 @@ class WhatIsYourDateOfBirthFormProvider @Inject() extends Mappings {
         invalidKey = "whatIsYourDateOfBirth.error.invalid",
         allRequiredKey = "whatIsYourDateOfBirth.error.required.all",
         twoRequiredKey = "whatIsYourDateOfBirth.error.required.two",
-        requiredKey = "whatIsYourDateOfBirth.error.required"
-      ).verifying(maxDate(today, "individualDateOfBirth.error.futureDate", formatDateToString(today)))
-        .verifying(minDate(LocalDate.of(1909, 1, 1), "whatIsYourDateOfBirth.error.pastDate"))
+        requiredKey = "whatIsYourDateOfBirth.error.required",
+        maxDateKey = "individualDateOfBirth.error.futureDate",
+        minDateKey = "whatIsYourDateOfBirth.error.pastDate",
+        maxDate = today,
+        minDate = LocalDate.of(1909, 1, 1)
+      )
     )
 }

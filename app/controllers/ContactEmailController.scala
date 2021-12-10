@@ -16,19 +16,16 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.ContactEmailFormProvider
-import models.error.ApiError.BadRequestError
 import models.requests.DataRequest
-import models.{MDR, Mode, Regime}
+import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
 import pages.{ContactEmailPage, ContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

@@ -19,8 +19,6 @@ package services
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import controllers.WithEitherT
-import models.BusinessType.Sole
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError
 import models.error.ApiError.{MandatoryInformationMissingError, RegistrationResponseType}
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
@@ -38,17 +36,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) extends WithEitherT {
-
-  def isRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
-    (request.userAnswers.get(WhatAreYouRegisteringAsPage),
-     request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
-     request.userAnswers.get(BusinessTypePage)
-    ) match {
-      case (None, Some(true), Some(Sole))                   => false
-      case (None, Some(true), _)                            => true
-      case (Some(RegistrationTypeBusiness), Some(false), _) => true
-      case _                                                => false
-    }
 
   def registerWithoutId(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, RegistrationInfo]] =
     businessRegistration(regime).orElse(individualRegistration(regime)).value
