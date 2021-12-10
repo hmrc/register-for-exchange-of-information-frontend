@@ -16,9 +16,9 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.ContactPhoneFormProvider
+import models.error.ApiError.BadRequestError
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
@@ -26,7 +26,7 @@ import pages.{ContactNamePage, ContactPhonePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -44,7 +44,6 @@ class ContactPhoneController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: ContactPhoneFormProvider,
-  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -55,36 +54,26 @@ class ContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Option[JsObject] = {
+  private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
 
     val suffix       = isBusinessOrIndividual()
     val orIndividual = if (suffix == "individual") Some("") else None
-    request.userAnswers.get(ContactNamePage).orElse(orIndividual).map {
-      name =>
-        Json.obj(
-          "form"      -> request.userAnswers.get(ContactPhonePage).fold(form)(form.fill),
-          "regime"    -> regime.toUpperCase,
-          "name"      -> name,
-          "pageTitle" -> s"contactPhone.title.$suffix",
-          "heading"   -> s"contactPhone.heading.$suffix",
-          "hintText"  -> hintWithNoBreakSpaces(),
-          "action"    -> routes.ContactPhoneController.onSubmit(mode, regime).url
-        )
-    }
+    val name         = request.userAnswers.get(ContactNamePage).orElse(orIndividual)
+    Json.obj(
+      "form"      -> request.userAnswers.get(ContactPhonePage).fold(form)(form.fill),
+      "regime"    -> regime.toUpperCase,
+      "name"      -> name,
+      "pageTitle" -> s"contactPhone.title.$suffix",
+      "heading"   -> s"contactPhone.heading.$suffix",
+      "hintText"  -> hintWithNoBreakSpaces(),
+      "action"    -> routes.ContactPhoneController.onSubmit(mode, regime).url
+    )
   }
-
-  private def thereIsAProblem(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Result] =
-    renderer
-      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-      .map(BadRequest(_))
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        data(mode, regime, form).fold(thereIsAProblem(regime)) {
-          data =>
-            renderer.render("contactPhone.njk", data).map(Ok(_))
-        }
+        renderer.render("contactPhone.njk", data(mode, regime, form)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
@@ -93,11 +82,7 @@ class ContactPhoneController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              data(mode, regime, formWithErrors).fold(thereIsAProblem(regime)) {
-                data =>
-                  renderer.render("contactPhone.njk", data).map(BadRequest(_))
-              },
+            formWithErrors => renderer.render("contactPhone.njk", data(mode, regime, formWithErrors)).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactPhonePage, value))
