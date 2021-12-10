@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import models.DateHelper.formatDateToString
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -27,6 +28,10 @@ private[mappings] class LocalDateFormatter(
   allRequiredKey: String,
   twoRequiredKey: String,
   requiredKey: String,
+  maxDateKey: String,
+  minDateKey: String,
+  maxDate: LocalDate,
+  minDate: LocalDate,
   args: Seq[String] = Seq.empty
 ) extends Formatter[LocalDate]
     with Formatters {
@@ -38,7 +43,7 @@ private[mappings] class LocalDateFormatter(
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, invalidKey, args)))
+        Left(Seq(FormError(returnKey(key, "day"), invalidKey, args)))
     }
 
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
@@ -58,31 +63,81 @@ private[mappings] class LocalDateFormatter(
     } yield date
   }
 
-  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
+  val returnKey: (String, String) => String = (key: String, fieldName: String) => s"$key.$fieldName"
 
-    val fields = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key.$field").filter(_.nonEmpty)
-    }.toMap
+  private def validateDay(day: String): Boolean = Try(day.toInt) match {
+    case Success(datefield) => datefield >= 1 && datefield <= 31
+    case Failure(_)         => false
+  }
 
-    lazy val missingFields = fields
-      .withFilter(_._2.isEmpty)
-      .map(_._1)
-      .toList
+  private def validateMonth(month: String): Boolean = Try(month.toInt) match {
+    case Success(datefield) => datefield >= 1 && datefield <= 12
+    case Failure(_)         => false
+  }
 
-    fields.count(_._2.isDefined) match {
-      case 3 =>
-        formatDate(key, data).left.map {
-          _.map(_.copy(key = key, args = args))
-        }
-      case 2 =>
-        Left(List(FormError(key, requiredKey, missingFields ++ args)))
-      case 1 =>
-        Left(List(FormError(key, twoRequiredKey, missingFields ++ args)))
-      case _ =>
-        Left(List(FormError(key, allRequiredKey, args)))
+  private def validateYear(year: String): Boolean = Try(year.toInt) match {
+    case Success(_) => true
+    case Failure(_) => false
+  }
+
+  private def validateDateField(field: String, value: String): Option[String] =
+    field match {
+      case fieldValue if fieldValue.matches(""".*[.]day$""")   => if (validateDay(value)) None else Some("day")
+      case fieldValue if fieldValue.matches(""".*[.]month$""") => if (validateMonth(value)) None else Some("month")
+      case fieldValue if fieldValue.matches(""".*[.]year$""")  => if (validateYear(value)) None else Some("year")
+    }
+
+  private def missingFields(key: String, data: Map[String, String]): Either[Seq[FormError], Map[String, String]] = {
+
+    def messageNeeded(numberOfFields: Int) =
+      numberOfFields match {
+        case 3 => allRequiredKey
+        case 2 => twoRequiredKey
+        case 1 => requiredKey
+      }
+
+    val missingFields = fieldKeys flatMap {
+      field => if (!data.contains(s"$key.$field") || data(s"$key.$field").isEmpty) Some(field) else None
+    }
+
+    if (missingFields.isEmpty) {
+      Right(data)
+    } else {
+      if (fieldKeys.size == missingFields.size) {
+        Left(Seq(FormError(returnKey(key, missingFields.head), messageNeeded(missingFields.size), args)))
+      } else {
+        Left(Seq(FormError(returnKey(key, missingFields.head), messageNeeded(missingFields.size), missingFields ++ args)))
+      }
     }
   }
+
+  private def validNumbers(key: String, data: Map[String, String]): Either[Seq[FormError], Map[String, String]] =
+    data.toList
+      .filter(_._1 != "csrfToken")
+      .flatMap(
+        (dateField: (String, String)) => validateDateField(dateField._1, dateField._2)
+      ) match {
+      case Nil                      => Right(data)
+      case items if items.size == 1 => Left(Seq(FormError(returnKey(key, items.head), invalidKey, items ++ args)))
+      case _                        => Left(Seq(FormError(returnKey(key, "day"), invalidKey, args)))
+    }
+
+  private def datePredicate(key: String, date: LocalDate, testDate: LocalDate, message: String)(f: LocalDate => Boolean): Either[Seq[FormError], LocalDate] =
+    if (f(date)) Left(Seq(FormError(returnKey(key, "day"), message, List(formatDateToString(testDate)) ++ args))) else Right(date)
+
+  private def trimMap(data: Map[String, String]) =
+    data.foldLeft(Map.empty[String, String])(
+      (accum, values) => accum + (values._1 -> values._2.trim)
+    )
+
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
+    for {
+      missing    <- missingFields(key, trimMap(data))
+      valid      <- validNumbers(key, missing)
+      dateValid  <- formatDate(key, valid)
+      dateBefore <- datePredicate(key, dateValid, minDate, minDateKey)(_.isBefore(minDate))
+      dateAfter  <- datePredicate(key, dateBefore, maxDate, maxDateKey)(_.isAfter(maxDate))
+    } yield dateAfter
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
