@@ -54,9 +54,8 @@ class IsContactTelephoneController @Inject() (
   def form(suffix: String) = formProvider(suffix)
 
   private def data(mode: Mode, regime: Regime, form: Form[Boolean], suffix: String)(implicit request: DataRequest[AnyContent]): JsObject = {
-    val orIndividual = if (suffix == "individual") Some("") else None
-    val name         = request.userAnswers.get(ContactNamePage).orElse(orIndividual)
-    val filledForm   = request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)
+    val name       = request.userAnswers.get(ContactNamePage)
+    val filledForm = request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)
     Json.obj(
       "form"      -> filledForm,
       "regime"    -> regime.toUpperCase,

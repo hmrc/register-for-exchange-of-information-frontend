@@ -55,9 +55,8 @@ class ContactPhoneController @Inject() (
 
   private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
 
-    val suffix       = isBusinessOrIndividual()
-    val orIndividual = if (suffix == "individual") Some("") else None
-    val name         = request.userAnswers.get(ContactNamePage).orElse(orIndividual)
+    val suffix = isBusinessOrIndividual()
+    val name   = request.userAnswers.get(ContactNamePage)
     Json.obj(
       "form"      -> request.userAnswers.get(ContactPhonePage).fold(form)(form.fill),
       "regime"    -> regime.toUpperCase,

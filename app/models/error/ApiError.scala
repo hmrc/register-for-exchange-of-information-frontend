@@ -19,6 +19,7 @@ package models.error
 import cats.data.EitherT
 import models.enrolment.GroupIds
 import models.matching.RegistrationInfo
+import play.api.http.Status.SERVICE_UNAVAILABLE
 import uk.gov.hmrc.http.HttpReads
 import uk.gov.hmrc.http.HttpReads.{is4xx, is5xx}
 
@@ -34,10 +35,11 @@ object ApiError {
     HttpReads.ask.flatMap {
       case (_, _, response) =>
         response.status match {
-          case status if status == 404 => HttpReads.pure(Left(NotFoundError))
-          case status if is4xx(status) => HttpReads.pure(Left(BadRequestError))
-          case status if is5xx(status) => HttpReads.pure(Left(ServiceUnavailableError))
-          case _                       => HttpReads[A].map(Right.apply)
+          case status if status == 404                 => HttpReads.pure(Left(NotFoundError))
+          case status if is4xx(status)                 => HttpReads.pure(Left(BadRequestError))
+          case status if status == SERVICE_UNAVAILABLE => HttpReads.pure(Left(ServiceUnavailableError))
+          case status if is5xx(status)                 => HttpReads.pure(Left(InternalServerError))
+          case _                                       => HttpReads[A].map(Right.apply)
         }
     }
 
@@ -51,6 +53,8 @@ object ApiError {
   case object NotFoundError extends ApiError
 
   case object ServiceUnavailableError extends ApiError
+
+  case object InternalServerError extends ApiError
 
   case class MandatoryInformationMissingError(value: String = "") extends ApiError
 
