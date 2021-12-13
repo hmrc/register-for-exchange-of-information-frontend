@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  val registrationInfo = RegistrationInfo.build("safeId", AsIndividual)
+  val registrationInfo = RegistrationInfo("safeId", None, None, AsIndividual)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
@@ -73,7 +73,10 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     "return OK and the correct view for a GET when there is a match" in {
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(registrationInfo)))
+        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", None, None, AsIndividual))))
+
+      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
+
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockRenderer.render(any(), any())(any()))

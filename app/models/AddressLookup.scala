@@ -16,8 +16,6 @@
 
 package models
 
-import models.error.ApiError
-import models.error.ApiError.MandatoryInformationMissingError
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -32,8 +30,8 @@ case class AddressLookup(addressLine1: Option[String],
                          postcode: String
 ) {
 
-  val toAddress: Either[ApiError, Address] =
-    (for {
+  val toAddress: Option[Address] =
+    for {
       line1 <- addressLine1
       line2 = addressLine2
       line3 = addressLine3
@@ -43,8 +41,7 @@ case class AddressLookup(addressLine1: Option[String],
         .getOrElse(town)
       line4        = addressLine4
       safePostcode = Option(postcode)
-    } yield Address(line1, line2, line3, line4, safePostcode, Country.GB))
-      .toRight(MandatoryInformationMissingError(toString))
+    } yield Address(line1, line2, line3, line4, safePostcode, Country.GB)
 }
 
 object LookupAddressByPostcode {

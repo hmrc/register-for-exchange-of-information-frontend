@@ -16,17 +16,12 @@
 
 package pages
 
-import models.UserAnswers
+import models.matching.RegistrationRequest
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object IsThisYourBusinessPage extends QuestionPage[Boolean] {
+case object RegistrationRequestPage extends QuestionPage[RegistrationRequest] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "isThisYourBusiness"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allContactDetailPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+  override def toString: String = "registrationRequest"
 }

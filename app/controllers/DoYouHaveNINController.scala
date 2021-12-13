@@ -16,18 +16,17 @@
 
 package controllers
 
-import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveNINFormProvider
 import models.requests.DataRequest
-import models.{Mode, Regime}
+import models.{Mode, NormalMode, Regime}
 import navigation.MDRNavigator
 import pages.DoYouHaveNINPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -51,8 +50,7 @@ class DoYouHaveNINController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with WithEitherT {
+    with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -80,16 +78,11 @@ class DoYouHaveNINController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              (for {
-                updatedAnswers <- setEither(DoYouHaveNINPage, value, checkPrevious = true)
-                _ = sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, regime, updatedAnswers)))
-                .valueOrF(
-                  _ =>
-                    renderer
-                      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-                      .map(ServiceUnavailable(_))
-                )
+              // TODO check checkPrevious
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, NormalMode, regime, updatedAnswers))
           )
     }
 }

@@ -74,10 +74,10 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
-                .set(IsContactTelephonePage, false)
+                .set(BusinessTypePage, LimitedCompany)
                 .success
                 .value
-                .set(BusinessTypePage, LimitedCompany)
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
 
@@ -116,10 +116,10 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
-                .set(IsContactTelephonePage, false)
+                .set(BusinessTypePage, Sole)
                 .success
                 .value
-                .set(BusinessTypePage, Sole)
+                .set(IsContactTelephonePage, false)
                 .success
                 .value
 

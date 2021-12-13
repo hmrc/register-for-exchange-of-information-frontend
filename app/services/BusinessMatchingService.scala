@@ -19,14 +19,14 @@ package services
 import cats.data.EitherT
 import cats.implicits._
 import connectors.RegistrationConnector
-import controllers.{routes, WithEitherT}
+import controllers.routes
 import models.error.ApiError
 import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError}
-import models.matching.MatchingType.AsIndividual
-import models.matching.RegistrationInfo
+import models.matching.MatchingType.{AsIndividual, AsOrganisation}
+import models.matching.{RegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
-import models.{CheckMode, Mode, Regime}
+import models.{BusinessType, CheckMode, Mode, Regime}
 import pages._
 import play.api.mvc.{AnyContent, Call}
 import repositories.SessionRepository
@@ -35,18 +35,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector, sessionRepository: SessionRepository)(implicit ec: ExecutionContext)
-    extends WithEitherT {
+class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector, sessionRepository: SessionRepository)(implicit ec: ExecutionContext) {
 
   def onBusinessMatch(mode: Mode, regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Call] =
     (for {
-      registrationInfo <- buildBusinessRegistrationInfo
-      orPreviousInfo <- getEither(RegistrationInfoPage).recover {
-        case _ => registrationInfo
-      }
-      orError  <- EitherT.cond[Future](!orPreviousInfo.sameAs(registrationInfo), orPreviousInfo, DuplicateSubmissionError)
-      response <- EitherT(sendBusinessRegistrationInformation(regime, orError))
-      withInfo <- setEither(RegistrationInfoPage, response)
+      registrationRequest <- EitherT.fromEither[Future](buildBusinessRegistrationRequest)
+      response            <- EitherT(sendBusinessRegistrationInformation(regime, registrationRequest))
+      withInfo            <- EitherT.fromEither[Future](request.userAnswers.setEither(RegistrationInfoPage, response))
       _ = sessionRepository.set(withInfo)
     } yield routes.IsThisYourBusinessController.onPageLoad(mode, regime)).valueOr {
       case DuplicateSubmissionError if mode == CheckMode =>
@@ -55,41 +50,48 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
         routes.NoRecordsMatchedController.onPageLoad(regime)
     }
 
-  private def buildBusinessRegistrationInfo(implicit request: DataRequest[AnyContent]): EitherT[Future, ApiError, RegistrationInfo] =
-    for {
-      utr          <- getEither(UTRPage)
-      businessName <- getEither(BusinessNamePage).orElse(getEither(SoleNamePage).map(_.fullName))
-      businessType <- getEither(BusinessTypePage)
-      dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
-    } yield RegistrationInfo.build(businessType, businessName, utr, dateOfBirth)
+  private def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
+    request.userAnswers.get(BusinessTypePage) match {
+      case Some(BusinessType.Sole) => request.userAnswers.get(SoleNamePage).map(_.fullName)
+      case _                       => request.userAnswers.get(BusinessNamePage)
+    }
 
-  def sendBusinessRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
+  private def buildBusinessRegistrationRequest(implicit request: DataRequest[AnyContent]): Either[ApiError, RegistrationRequest] =
+    (for {
+      utr          <- request.userAnswers.get(UTRPage)
+      businessName <- buildBusinessName
+      businessType <- request.userAnswers.get(BusinessTypePage)
+      dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
+    } yield RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, Option(businessType), dateOfBirth))
+      .toRight(MandatoryInformationMissingError())
+
+  def sendBusinessRegistrationInformation(regime: Regime, registrationRequest: RegistrationRequest)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, RegistrationInfo]] =
     registrationConnector
-      .withOrganisationUtr(RegisterWithID(regime, registrationInfo))
+      .withOrganisationUtr(RegisterWithID(regime, registrationRequest))
       .subflatMap {
         response =>
           (for {
             safeId <- response.safeId
-            name    = response.organisationName
+            name    = response.name
             address = response.address
-          } yield registrationInfo.copy(safeId = safeId, name = name, address = address)).toRight(MandatoryInformationMissingError())
+          } yield RegistrationInfo(safeId, name, address, AsOrganisation)).toRight(MandatoryInformationMissingError())
       }
       .value
 
-  def sendIndividualRegistrationInformation(regime: Regime, registrationInfo: RegistrationInfo)(implicit
+  def sendIndividualRegistrationInformation(regime: Regime, registrationRequest: RegistrationRequest)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, RegistrationInfo]] =
     registrationConnector
-      .withIndividualNino(RegisterWithID(regime, registrationInfo))
+      .withIndividualNino(RegisterWithID(regime, registrationRequest))
       .subflatMap {
         response =>
           response.safeId
             .map {
-              RegistrationInfo.build(_, AsIndividual)
+              safeId => RegistrationInfo(safeId, None, None, AsIndividual)
             }
             .toRight(MandatoryInformationMissingError())
       }

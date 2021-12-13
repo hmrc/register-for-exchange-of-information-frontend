@@ -99,11 +99,13 @@ class IsContactTelephoneController @Inject() (
                 data =>
                   renderer.render("isContactTelephone.njk", data).map(BadRequest(_))
               },
-            value =>
+            value => {
+              val originalAnswer = request.userAnswers.get(IsContactTelephonePage)
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(IsContactTelephonePage, value, checkPreviousUserAnswer = true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value, originalAnswer))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, regime, updatedAnswers))
+            }
           )
     }
 }

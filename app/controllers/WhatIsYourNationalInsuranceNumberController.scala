@@ -16,8 +16,6 @@
 
 package controllers
 
-import cats.implicits._
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.WhatIsYourNationalInsuranceNumberFormProvider
 import models.requests.DataRequest
@@ -46,14 +44,12 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: WhatIsYourNationalInsuranceNumberFormProvider,
-  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with WithEitherT {
+    with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -86,17 +82,13 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value =>
-              (for {
-                updatedAnswers <- setEither(WhatIsYourNationalInsuranceNumberPage, Nino(value), checkPrevious = true)
+            value => {
+              val originalAnswer = request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
                 _ = sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers)))
-                .valueOrF(
-                  _ =>
-                    renderer
-                      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-                      .map(ServiceUnavailable(_))
-                )
+              } yield Redirect(navigator.nextPageWithValueCheck(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers, originalAnswer))
+            }
           )
     }
 }

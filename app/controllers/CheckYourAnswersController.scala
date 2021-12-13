@@ -33,6 +33,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
@@ -58,8 +59,7 @@ class CheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with Logging
-    with WithEitherT {
+    with Logging {
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
@@ -79,12 +79,18 @@ class CheckYourAnswersController @Inject() (
         .map(Ok(_))
   }
 
+  private def buildRegistrationInfo(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier) =
+    request.userAnswers.getEither(RegistrationInfoPage) match {
+      case Left(_)      => EitherT(registrationService.registerWithoutId(regime))
+      case registration => EitherT.fromEither[Future](registration)
+    }
+
   def onSubmit(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
       (for {
-        registrationInfo   <- getEither(RegistrationInfoPage).orElse(EitherT(registrationService.registerWithoutId(regime)))
+        registrationInfo   <- buildRegistrationInfo(regime)
         subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, registrationInfo.safeId, request.userAnswers))
-        withSubscriptionID <- setEither(SubscriptionIDPage, subscriptionID)
+        withSubscriptionID <- EitherT.fromEither[Future](request.userAnswers.setEither(SubscriptionIDPage, subscriptionID))
         _ = sessionRepository.set(withSubscriptionID)
         _ <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
       } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))

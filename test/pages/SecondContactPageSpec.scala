@@ -36,9 +36,6 @@ class SecondContactPageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
             val result = userAnswers
-              .setOrCleanup(SecondContactPage, true, checkPreviousUserAnswer = true)
-              .success
-              .value
               .set(SndContactNamePage, "name")
               .success
               .value
@@ -51,7 +48,7 @@ class SecondContactPageSpec extends PageBehaviours {
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .setOrCleanup(SecondContactPage, false, checkPreviousUserAnswer = true)
+              .set(SecondContactPage, false, Some(true))
               .success
               .value
 
@@ -79,7 +76,7 @@ class SecondContactPageSpec extends PageBehaviours {
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .setOrCleanup(SecondContactPage, true, checkPreviousUserAnswer = true)
+              .set(SecondContactPage, true)
               .success
               .value
 

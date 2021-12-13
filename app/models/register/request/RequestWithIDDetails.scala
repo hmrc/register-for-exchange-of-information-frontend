@@ -17,7 +17,7 @@
 package models.register.request
 
 import models.Name
-import models.matching.RegistrationInfo
+import models.matching.RegistrationRequest
 import models.register.request
 import models.register.request.details.{PartnerDetails, WithIDIndividual, WithIDOrganisation}
 import play.api.libs.json.{__, Json, OWrites, Reads}
@@ -84,12 +84,12 @@ object RequestWithIDDetails {
       WithIDIndividual(name.firstName, None, name.lastName, dob.format(dateFormat))
     )
 
-  def apply(registrationInfo: RegistrationInfo): RequestWithIDDetails =
+  def apply(registrationRequest: RegistrationRequest): RequestWithIDDetails =
     RequestWithIDDetails(
-      registrationInfo.identifierType,
-      registrationInfo.identifier.getOrElse(""),
+      registrationRequest.identifierType,
+      registrationRequest.identifier,
       requiresNameMatch = true,
       isAnAgent = false, //This may change
-      WithIDOrganisation(registrationInfo.name.getOrElse(""), registrationInfo.businessType.map(_.code).getOrElse(""))
+      WithIDOrganisation(registrationRequest.name, registrationRequest.businessType.map(_.code).getOrElse(""))
     )
 }

@@ -21,17 +21,17 @@ import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
+import models.BusinessType.LimitedCompany
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
-import models.matching.RegistrationInfo
+import models.matching.{RegistrationInfo, RegistrationRequest}
 import models.register.response.RegistrationWithIDResponse
-import models.{BusinessType, MDR, Name}
+import models.{MDR, Name}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -71,9 +71,9 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
+          service.sendIndividualRegistrationInformation(MDR, RegistrationRequest("NINO", "CC123456C", name.fullName, None))
 
-        result.futureValue mustBe Right(RegistrationInfo.build("XE0000123456789", AsIndividual))
+        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
@@ -83,7 +83,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(MDR, RegistrationInfo.build(name, Nino("CC123456C"), Option(dob)))
+          service.sendIndividualRegistrationInformation(MDR, RegistrationRequest("UTR", "CC123456C", name.fullName, None))
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -98,17 +98,13 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
+          service.sendBusinessRegistrationInformation(
+            MDR,
+            RegistrationRequest("UTR", "XE0000123456789", "name", Some(LimitedCompany))
+          )
 
         result.futureValue mustBe Right(
-          RegistrationInfo("XE0000123456789",
-                           Option("name"),
-                           Option(addressResponse),
-                           AsOrganisation,
-                           Option(BusinessType.LimitedCompany),
-                           Option("UTR"),
-                           Option(dob)
-          )
+          RegistrationInfo("XE0000123456789", Option("name"), Option(addressResponse), AsOrganisation)
         )
       }
 
@@ -119,7 +115,12 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
+          service.sendBusinessRegistrationInformation(
+            MDR,
+            RegistrationRequest("UTR", "UTR", "name", Some(LimitedCompany))
+          )
+
+        // TODO service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
 
         result.futureValue mustBe Left(NotFoundError)
       }

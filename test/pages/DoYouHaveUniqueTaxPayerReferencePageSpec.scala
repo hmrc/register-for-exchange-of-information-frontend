@@ -41,9 +41,6 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true, checkPreviousUserAnswer = true)
-            .success
-            .value
             .set(BusinessTypePage, BusinessType.Sole)
             .success
             .value
@@ -86,7 +83,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(SndContactPhonePage, "07540000000")
             .success
             .value
-            .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, false, checkPreviousUserAnswer = true)
+            .set(DoYouHaveUniqueTaxPayerReferencePage, false, Some(true))
             .success
             .value
 
@@ -112,9 +109,6 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, false, checkPreviousUserAnswer = true)
-            .success
-            .value
             .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
             .success
             .value
@@ -187,7 +181,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(SndContactPhonePage, "07540000000")
             .success
             .value
-            .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true, checkPreviousUserAnswer = true)
+            .set(DoYouHaveUniqueTaxPayerReferencePage, true)
             .success
             .value
 

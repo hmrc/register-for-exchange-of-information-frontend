@@ -92,7 +92,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
     case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
-  
+
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(WhatAreYouRegisteringAsPage) map {
       case  RegistrationTypeBusiness =>

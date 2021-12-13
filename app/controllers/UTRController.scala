@@ -28,7 +28,7 @@ import pages.{BusinessTypePage, UTRPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import play.twirl.api
 import renderer.Renderer
 import repositories.SessionRepository
@@ -52,8 +52,7 @@ class UTRController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with WithEitherT {
+    with NunjucksSupport {
 
   private val ct = "utr.error.ct"
   private val sa = "utr.error.sa"
@@ -107,14 +106,15 @@ class UTRController @Inject() (
                 formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
                 value =>
                   (for {
-                    updatedAnswers <- setEither(UTRPage, value, checkPrevious = true)
+                    updatedAnswers <- request.userAnswers.set(UTRPage, value)
                     _ = sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers)))
-                    .valueOrF(
+                    .fold(
                       _ =>
                         renderer
                           .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-                          .map(ServiceUnavailable(_))
+                          .map(ServiceUnavailable(_)),
+                      result => Future.successful(result)
                     )
               )
         }

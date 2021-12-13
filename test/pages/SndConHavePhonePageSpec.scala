@@ -37,13 +37,10 @@ class SndConHavePhonePageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
             val result = userAnswers
-              .setOrCleanup(SndConHavePhonePage, true, checkPreviousUserAnswer = true)
-              .success
-              .value
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .setOrCleanup(SndConHavePhonePage, false, checkPreviousUserAnswer = true)
+              .set(SndConHavePhonePage, false, Some(true))
               .success
               .value
 
@@ -59,7 +56,7 @@ class SndConHavePhonePageSpec extends PageBehaviours {
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .setOrCleanup(SndConHavePhonePage, true, checkPreviousUserAnswer = true)
+              .set(SndConHavePhonePage, true)
               .success
               .value
 
