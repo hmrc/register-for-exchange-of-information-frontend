@@ -50,8 +50,7 @@ class WhatIsYourDateOfBirthController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with WithEitherT {
+    with NunjucksSupport {
 
   val form = formProvider()
 
@@ -78,34 +77,11 @@ class WhatIsYourDateOfBirthController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => {
-
-              val originalAnswer = request.userAnswers.get(WhatIsYourDateOfBirthPage)
-
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setB(WhatIsYourDateOfBirthPage, value, true))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers, originalAnswer))
-            }
-          )
-    }
-  /*
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              (for {
-                updatedAnswers <- setEither(WhatIsYourDateOfBirthPage, value, checkPrevious = true)
-                _ = sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers)))
-                .valueOrF(
-                  _ => renderer.render("thereIsAProblem.njk").map(ServiceUnavailable(_))
-                )
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourDateOfBirthPage, value, checkPreviousUserAnswer = true))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers))
           )
     }
-   */
 }

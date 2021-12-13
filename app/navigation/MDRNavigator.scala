@@ -25,6 +25,7 @@ import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
+// @formatter:off
 @Singleton
 class MDRNavigator @Inject() () extends Navigator {
 
@@ -53,85 +54,92 @@ class MDRNavigator @Inject() () extends Navigator {
   }
 
   override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
-    // Individual with ID
-    case DoYouHaveNINPage                      => regime => doYouHaveNINORoutes(CheckMode)(regime)
-    case WhatIsYourNationalInsuranceNumberPage => regime => whatIsYourNationalInsuranceNumberRoutes(CheckMode)(regime)
-
     case DoYouHaveUniqueTaxPayerReferencePage => regime => doYouHaveUniqueTaxPayerReference(CheckMode)(regime)
     case WhatAreYouRegisteringAsPage          => regime => whatAreYouRegisteringAs(CheckMode)(regime)
-    case BusinessWithoutIDNamePage            => regime => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime))
     case BusinessHaveDifferentNamePage        => regime => businessHaveDifferentNameRoutes(CheckMode)(regime)
-    case WhatIsTradingNamePage                => regime => whatIsTradingNameRoutes(CheckMode)(regime)
     case AddressWithoutIdPage                 => regime => addressWithoutID(CheckMode)(regime)
-    case NonUkNamePage                        => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
-    case WhatIsYourNamePage                   => regime => whatIsYourNameRoutes(CheckMode)(regime)
+    case DoYouHaveNINPage                     => regime => doYouHaveNINORoutes(CheckMode)(regime)
     case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
     case DoYouLiveInTheUKPage                 => regime => doYouLiveInTheUkRoutes(CheckMode)(regime)
     case WhatIsYourPostcodePage               => regime => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode, regime))
     case SelectAddressPage                    => regime => addressWithoutID(CheckMode)(regime)
     case AddressUKPage                        => regime => addressWithoutID(CheckMode)(regime)
-    case _                                    => regime => _ => Some(Navigator.checkYourAnswers(regime))
+
+    case BusinessWithoutIDNamePage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, BusinessHaveDifferentNamePage, routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime)
+      )
+
+    case WhatIsYourNationalInsuranceNumberPage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, WhatIsYourNamePage, routes.WhatIsYourNameController.onPageLoad(CheckMode, regime)
+      )
+
+    case WhatIsTradingNamePage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, AddressWithoutIdPage, routes.AddressWithoutIdController.onPageLoad(CheckMode, regime)
+      )
+
+    case NonUkNamePage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, WhatIsYourDateOfBirthPage, routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime)
+      )
+
+    case WhatIsYourNamePage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, WhatIsYourDateOfBirthPage, routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime)
+      )
+
+    case _ => regime => _ => Some(Navigator.checkYourAnswers(regime))
   }
-
-  private def whatIsYourNationalInsuranceNumberRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    isContinueJourney(WhatIsYourNamePage, mode, ua) match {
-      case true  => Some(routes.WhatIsYourNameController.onPageLoad(mode, regime))
-      case false => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    }
-
-  private def whatIsYourNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    isContinueJourney(WhatIsYourDateOfBirthPage, mode, ua) match {
-      case true  => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(mode, regime))
-      case false => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    }
-
-  private def whatIsTradingNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    (ua.get(DoYouHaveUniqueTaxPayerReferencePage), mode) match {
-      case (_, CheckMode) if containsContactDetails(ua) => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-      case _                                            => Some(routes.AddressWithoutIdController.onPageLoad(mode, regime))
-    }
-
+  
   private def addressWithoutID(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    (ua.get(WhatAreYouRegisteringAsPage), mode) match {
-      case (_, CheckMode) if containsContactDetails(ua) => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-      case (Some(RegistrationTypeBusiness), _)          => Some(routes.ContactNameController.onPageLoad(mode, regime))
-      case (Some(RegistrationTypeIndividual), _)        => Some(routes.ContactEmailController.onPageLoad(mode, regime))
-      case _                                            => Some(routes.SomeInformationIsMissingController.onPageLoad(regime))
+    ua.get(WhatAreYouRegisteringAsPage) map {
+      case  RegistrationTypeBusiness =>
+        checkNextPageForValueThenRoute(mode, regime, ua, ContactNamePage, routes.ContactNameController.onPageLoad(mode, regime)).get
+      case  RegistrationTypeIndividual =>
+        checkNextPageForValueThenRoute(mode, regime, ua, ContactEmailPage, routes.ContactEmailController.onPageLoad(mode, regime)).get
+      case _ =>
+        routes.SomeInformationIsMissingController.onPageLoad(regime)
     }
 
   private def doYouHaveUniqueTaxPayerReference(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    (ua.get(DoYouHaveUniqueTaxPayerReferencePage), mode) match {
-      case (_, CheckMode) if containsContactDetails(ua) => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-      case (Some(true), _)                              => Some(routes.BusinessTypeController.onPageLoad(mode, regime))
-      case (Some(false), _)                             => Some(routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime))
+    ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
+      case true =>
+        checkNextPageForValueThenRoute(mode, regime, ua, BusinessTypePage, routes.BusinessTypeController.onPageLoad(mode, regime)).get
+      case false =>
+        checkNextPageForValueThenRoute(mode, regime, ua, WhatAreYouRegisteringAsPage, routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime)).get
     }
 
   private def whatAreYouRegisteringAs(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    (ua.get(WhatAreYouRegisteringAsPage), mode) match {
-      case (_, CheckMode) if containsContactDetails(ua) => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-      case (Some(RegistrationTypeBusiness), _)          => Some(routes.BusinessWithoutIDNameController.onPageLoad(mode, regime))
-      case (Some(RegistrationTypeIndividual), _)        => Some(routes.DoYouHaveNINController.onPageLoad(mode, regime))
+    ua.get(WhatAreYouRegisteringAsPage) map {
+      case RegistrationTypeBusiness =>
+        checkNextPageForValueThenRoute(mode, regime, ua, BusinessWithoutIDNamePage, routes.BusinessWithoutIDNameController.onPageLoad(mode, regime)).get
+      case RegistrationTypeIndividual =>
+        checkNextPageForValueThenRoute(mode, regime, ua, DoYouHaveNINPage, routes.DoYouHaveNINController.onPageLoad(mode, regime)).get
     }
 
   private def businessHaveDifferentNameRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
-    (ua.get(BusinessHaveDifferentNamePage), mode) match {
-      case (Some(false), CheckMode) if containsContactDetails(ua) => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-      case (Some(true), _)                                        => Some(routes.WhatIsTradingNameController.onPageLoad(mode, regime))
-      case (Some(false), _)                                       => Some(routes.AddressWithoutIdController.onPageLoad(mode, regime))
+    ua.get(BusinessHaveDifferentNamePage) map {
+      case true  =>
+        routes.WhatIsTradingNameController.onPageLoad(mode, regime)
+      case false =>
+        checkNextPageForValueThenRoute(mode, regime, ua, AddressWithoutIdPage, routes.AddressWithoutIdController.onPageLoad(mode, regime)).get
     }
 
   private def doYouHaveNINORoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true if isContinueJourney(WhatIsYourNationalInsuranceNumberPage, mode, ua) =>
-        routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode, regime)
-      case false if isContinueJourney(NonUkNamePage, mode, ua) => routes.NonUkNameController.onPageLoad(mode, regime)
-      case _                                                   => routes.CheckYourAnswersController.onPageLoad(regime)
+      case true =>
+        checkNextPageForValueThenRoute(mode, regime, ua, WhatIsYourNationalInsuranceNumberPage, routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(mode, regime)).get
+      case false =>
+        checkNextPageForValueThenRoute(mode, regime, ua, NonUkNamePage, routes.NonUkNameController.onPageLoad(mode, regime)).get
     }
 
   private def whatIsYourDateOfBirthRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveNINPage) map {
-      case true  => routes.WeHaveConfirmedYourIdentityController.onPageLoad(mode, regime)
-      case false => routes.DoYouLiveInTheUKController.onPageLoad(mode, regime)
+      case true => routes.WeHaveConfirmedYourIdentityController.onPageLoad(mode, regime)
+      case false =>
+        checkNextPageForValueThenRoute(mode, regime, ua, DoYouLiveInTheUKPage, routes.DoYouLiveInTheUKController.onPageLoad(mode, regime)).get
     }
 
   private def doYouLiveInTheUkRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
@@ -152,20 +160,6 @@ class MDRNavigator @Inject() () extends Navigator {
       case (Some(true), Some(_))    => Some(routes.ContactNameController.onPageLoad(mode, regime))
       case _                        => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
     }
-
-  // In CHECKMODE we check if contact details have been cleared down if not we can safely Redirec to CYA page
-  private def containsContactDetails(ua: UserAnswers): Boolean = {
-    val hasContactName = ua
-      .get(ContactNamePage)
-      .fold(false)(
-        _ => true
-      )
-    val hasContactEmail = ua
-      .get(ContactEmailPage)
-      .fold(false)(
-        _ => true
-      )
-
-    hasContactName || hasContactEmail
-  }
 }
+
+//

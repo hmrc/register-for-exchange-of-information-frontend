@@ -85,13 +85,13 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
 
     "must return PrimaryContact for the input 'Individual without Id UserAnswers' " in {
       val userAnswers = UserAnswers("id")
+        .set(DoYouHaveNINPage, false)
+        .success
+        .value
         .set(NonUkNamePage, NonUkName("Name", "Name"))
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-        .success
-        .value
-        .set(DoYouHaveNINPage, false)
+        .setOrCleanup(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
         .success
         .value
         .set(ContactEmailPage, "test@test.com")

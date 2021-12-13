@@ -16,8 +16,11 @@
 
 package pages
 
+import models.UserAnswers
 import play.api.libs.json.JsPath
 import utils.UserAnswersHelper
+
+import scala.util.Try
 
 case object BusinessWithoutIDNamePage extends QuestionPage[String] with UserAnswersHelper {
 
@@ -25,4 +28,6 @@ case object BusinessWithoutIDNamePage extends QuestionPage[String] with UserAnsw
 
   override def toString: String = "businessWithoutIDName"
 
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
+    List(BusinessHaveDifferentNamePage, WhatIsTradingNamePage, AddressWithoutIdPage).foldLeft(Try(userAnswers))(PageLists.removePage)
 }

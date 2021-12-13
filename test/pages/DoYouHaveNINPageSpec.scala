@@ -41,6 +41,9 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
+            .setOrCleanup(DoYouHaveNINPage, true, checkPreviousUserAnswer = true)
+            .success
+            .value
             .set(WhatIsYourNationalInsuranceNumberPage, Nino("CS700100A"))
             .success
             .value
@@ -50,7 +53,7 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
             .set(WhatIsYourDateOfBirthPage, LocalDate.now())
             .success
             .value
-            .set(DoYouHaveNINPage, false, Some(true))
+            .setOrCleanup(DoYouHaveNINPage, false, checkPreviousUserAnswer = true)
             .success
             .value
 
@@ -65,6 +68,9 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
+            .setOrCleanup(DoYouHaveNINPage, false, checkPreviousUserAnswer = true)
+            .success
+            .value
             .set(NonUkNamePage, NonUkName("firstName", "lastName"))
             .success
             .value
@@ -89,7 +95,7 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
             .set(SelectedAddressLookupPage, AddressLookup(None, None, None, None, "", None, ""))
             .success
             .value
-            .set(DoYouHaveNINPage, true, Some(false))
+            .setOrCleanup(DoYouHaveNINPage, true, checkPreviousUserAnswer = true)
             .success
             .value
 

@@ -30,7 +30,7 @@ class SelectAddressPageSpec extends PageBehaviours {
 
     beRemovable[String](SelectAddressPage)
 
-    "must remove manual UK address when user fills in this page" in {
+    "must remove manual UK address when user selects a UK address from lookup" in {
       forAll(arbitrary[UserAnswers]) {
         answers =>
           val result = answers
@@ -41,7 +41,7 @@ class SelectAddressPageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(AddressUKPage) mustBe None
+          result.get(AddressUKPage) must not be defined
       }
     }
   }
