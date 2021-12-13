@@ -16,8 +16,6 @@
 
 package controllers
 
-import cats.implicits._
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.WhatIsYourNameFormProvider
 import models.requests.DataRequest
@@ -45,14 +43,12 @@ class WhatIsYourNameController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: WhatIsYourNameFormProvider,
-  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with WithEitherT {
+    with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -97,15 +93,9 @@ class WhatIsYourNameController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               (for {
-                updatedAnswers <- setEither(WhatIsYourNamePage, value, checkPrevious = true)
-                _ = sessionRepository.set(updatedAnswers)
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
+                _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers)))
-                .valueOrF(
-                  _ =>
-                    renderer
-                      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-                      .map(ServiceUnavailable(_))
-                )
           )
     }
 }

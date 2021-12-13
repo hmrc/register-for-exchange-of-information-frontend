@@ -18,7 +18,6 @@ package controllers
 
 import cats.data.EitherT
 import cats.implicits._
-import config.FrontendAppConfig
 import controllers.actions._
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
@@ -43,7 +42,6 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
-  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
   subscriptionService: SubscriptionService,
@@ -82,10 +80,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
             fa = {
               case NotFoundError =>
                 Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
-              case _ =>
-                renderer
-                  .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-                  .map(ServiceUnavailable(_))
+              case error =>
+                renderer.renderError(error, regime)
             },
             fb =>
               subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {

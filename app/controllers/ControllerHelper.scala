@@ -16,14 +16,12 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import models.error.ApiError.EnrolmentExistsError
 import models.requests.DataRequest
 import models.{Regime, SubscriptionID, UserAnswers}
 import pages.SubscriptionIDPage
 import play.api.Logging
-import play.api.libs.json.Json
-import play.api.mvc.Results.{Redirect, ServiceUnavailable}
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import renderer.Renderer
 import repositories.SessionRepository
@@ -35,11 +33,8 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService,
-                                  renderer: Renderer,
-                                  sessionRepository: SessionRepository,
-                                  appConfig: FrontendAppConfig
-) extends Logging
+class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, renderer: Renderer, sessionRepository: SessionRepository)
+    extends Logging
     with NunjucksSupport {
 
   private def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
@@ -51,11 +46,7 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService,
       case Left(EnrolmentExistsError(groupIds)) =>
         logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
         Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
-      case Left(error) =>
-        logger.info(s"Error $error received while creating an enrolment")
-        renderer
-          .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-          .map(ServiceUnavailable(_))
+      case Left(error) => renderer.renderError(error, regime)
     }
 
   def updateSubscriptionIdAndCreateEnrolment(safeId: String, subscriptionId: SubscriptionID, regime: Regime)(implicit

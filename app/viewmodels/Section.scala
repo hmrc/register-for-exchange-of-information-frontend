@@ -20,7 +20,6 @@ import play.api.i18n.Messages
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{__, OWrites}
 import uk.gov.hmrc.viewmodels.SummaryList.Row
-import uk.gov.hmrc.viewmodels.Text
 
 final case class Section(sectionName: String, rows: Seq[Row])
 
