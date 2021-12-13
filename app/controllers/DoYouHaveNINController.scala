@@ -16,13 +16,13 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveNINFormProvider
 import models.requests.DataRequest
 import models.{Mode, NormalMode, Regime}
 import navigation.MDRNavigator
 import pages.DoYouHaveNINPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -44,13 +44,13 @@ class DoYouHaveNINController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
   formProvider: DoYouHaveNINFormProvider,
-  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with Logging {
 
   private val form = formProvider()
 

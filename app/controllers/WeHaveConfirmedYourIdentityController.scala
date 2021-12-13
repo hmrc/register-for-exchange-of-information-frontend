@@ -16,17 +16,11 @@
 
 package controllers
 
-import controllers.actions._
-import models.matching.RegistrationRequest
-import cats.data.EitherT
-import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
-import models.error.ApiError
-import models.error.ApiError.NotFoundError
-import models.matching.RegistrationInfo
+import models.matching.RegistrationRequest
 import models.requests.DataRequest
-import models.{BusinessType, CheckMode, Mode, NormalMode, Regime, UserAnswers}
+import models.{BusinessType, Mode, NormalMode, Regime}
 import navigation.MDRNavigator
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -60,16 +54,12 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
-        val action: String = {
-          if (containsContactDetails(request.userAnswers) && mode == CheckMode) routes.CheckYourAnswersController.onPageLoad(regime).url
-          else {
-            request.userAnswers.get(BusinessTypePage) match {
-              case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-              case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
-              case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-            }
+        val action: String =
+          request.userAnswers.get(BusinessTypePage) match {
+            case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+            case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
+            case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
           }
-        }
         buildRegistrationRequest match {
           case Some(registrationRequest) =>
             matchingService
@@ -109,6 +99,4 @@ class WeHaveConfirmedYourIdentityController @Inject() (
       name <- buildIndividualName
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
     } yield RegistrationRequest("NINO", nino.nino, name, None, Option(dob))
-
-  def containsContactDetails(ua: UserAnswers) = false
 }

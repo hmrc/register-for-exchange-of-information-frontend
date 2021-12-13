@@ -153,7 +153,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val result = route(app, request).value
 
-      status(result) mustEqual SERVICE_UNAVAILABLE
+      status(result) mustEqual BAD_REQUEST
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
@@ -299,7 +299,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "must return Service Unavailable and errors when invalid data is submitted" in {
+    "must return Internal Server Error when invalid data is submitted" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

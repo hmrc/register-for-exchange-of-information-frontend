@@ -21,7 +21,6 @@ import models.BusinessType.Sole
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
-import play.api.libs.json.Reads
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}

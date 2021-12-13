@@ -82,13 +82,11 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => {
-              val originalAnswer = request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourNationalInsuranceNumberPage, Nino(value), true))
                 _ = sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers, originalAnswer))
-            }
+              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers))
           )
     }
 }

@@ -16,7 +16,6 @@
 
 package controllers
 
-import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.UTRFormProvider
@@ -105,17 +104,10 @@ class UTRController @Inject() (
               .fold(
                 formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
                 value =>
-                  (for {
-                    updatedAnswers <- request.userAnswers.set(UTRPage, value)
-                    _ = sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers)))
-                    .fold(
-                      _ =>
-                        renderer
-                          .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-                          .map(ServiceUnavailable(_)),
-                      result => Future.successful(result)
-                    )
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
               )
         }
     }

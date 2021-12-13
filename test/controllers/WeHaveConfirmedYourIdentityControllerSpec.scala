@@ -133,7 +133,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       val result = route(app, request).value
 
-      status(result) mustEqual SERVICE_UNAVAILABLE
+      status(result) mustEqual BAD_REQUEST
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
@@ -155,7 +155,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad("identity", MDR).url
     }
 
-    "return return Service Unavailable for a GET when there is no data" in {
+    "return return Internal Server Error for a GET when there is no data" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))

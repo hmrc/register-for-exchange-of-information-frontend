@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
-import models.DateHelper.{formatDateToString, today}
+import models.DateHelper.today
 import play.api.data.Form
 
 import java.time.LocalDate
