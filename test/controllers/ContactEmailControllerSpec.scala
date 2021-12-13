@@ -112,7 +112,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(userAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", "some@email.com"))

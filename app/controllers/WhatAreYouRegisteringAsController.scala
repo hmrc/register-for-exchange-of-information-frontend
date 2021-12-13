@@ -76,15 +76,11 @@ class WhatAreYouRegisteringAsController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => {
-
-              val originalAnswer = request.userAnswers.get(WhatAreYouRegisteringAsPage)
-
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value, originalAnswer))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatAreYouRegisteringAsPage, value, checkPreviousUserAnswer = true))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPageWithValueCheck(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers, originalAnswer))
-            }
+              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
           )
     }
 }

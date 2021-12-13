@@ -37,10 +37,13 @@ class IsContactTelephonePageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
             val result = userAnswers
+              .setOrCleanup(IsContactTelephonePage, true, checkPreviousUserAnswer = true)
+              .success
+              .value
               .set(ContactPhonePage, "112233445566")
               .success
               .value
-              .set(IsContactTelephonePage, false, Some(true))
+              .setOrCleanup(IsContactTelephonePage, false, checkPreviousUserAnswer = true)
               .success
               .value
 
@@ -56,7 +59,7 @@ class IsContactTelephonePageSpec extends PageBehaviours {
               .set(ContactPhonePage, "112233445566")
               .success
               .value
-              .set(IsContactTelephonePage, true)
+              .setOrCleanup(IsContactTelephonePage, true, checkPreviousUserAnswer = true)
               .success
               .value
 

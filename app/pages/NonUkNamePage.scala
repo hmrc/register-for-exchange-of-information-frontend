@@ -16,12 +16,21 @@
 
 package pages
 
-import models.NonUkName
+import models.{NonUkName, UserAnswers}
 import play.api.libs.json.JsPath
 
+import scala.util.Try
+
 case object NonUkNamePage extends QuestionPage[NonUkName] {
+
+  val nonUKNameSubJourneyPages =
+    List(WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage)
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "nonUkName"
+
+  override def cleanup(value: Option[NonUkName], userAnswers: UserAnswers): Try[UserAnswers] =
+    nonUKNameSubJourneyPages
+      .foldLeft(Try(userAnswers))(PageLists.removePage)
 }
