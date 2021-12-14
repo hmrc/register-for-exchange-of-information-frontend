@@ -85,7 +85,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourNationalInsuranceNumberPage, Nino(value), true))
-                _ = sessionRepository.set(updatedAnswers)
+                _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers))
           )
     }

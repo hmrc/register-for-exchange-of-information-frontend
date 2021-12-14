@@ -84,9 +84,6 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(AddressWithoutIdPage, address)
         .success
         .value
-//        .set(RegistrationInfoPage, RegistrationInfo.build("safeId", AsIndividual))
-//        .success
-//        .value
 
       val result = service.checkAndCreateSubscription(MDR, "safeId", userAnswers)
       result.futureValue mustBe Right(SubscriptionID("id"))
@@ -165,9 +162,6 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .set(SecondContactPage, false)
           .success
           .value
-//          .set(RegistrationInfoPage, RegistrationInfo.build("safeId", AsIndividual))
-//          .success
-//          .value
 
         val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(error))
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))

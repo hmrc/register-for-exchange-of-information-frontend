@@ -120,8 +120,6 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
             RegistrationRequest("UTR", "UTR", "name", Some(LimitedCompany))
           )
 
-        // TODO service.sendBusinessRegistrationInformation(MDR, RegistrationInfo.build(BusinessType.LimitedCompany, "name", utr, Option(dob)))
-
         result.futureValue mustBe Left(NotFoundError)
       }
     }
