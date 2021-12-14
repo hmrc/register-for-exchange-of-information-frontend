@@ -78,9 +78,8 @@ class DoYouHaveNINController @Inject() (
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
-              // TODO check checkPrevious
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(DoYouHaveNINPage, value, true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(DoYouHaveNINPage, NormalMode, regime, updatedAnswers))
           )

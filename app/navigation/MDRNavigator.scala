@@ -65,6 +65,12 @@ class MDRNavigator @Inject() () extends Navigator {
     case SelectAddressPage                    => regime => addressWithoutID(CheckMode)(regime)
     case AddressUKPage                        => regime => addressWithoutID(CheckMode)(regime)
 
+    case BusinessTypePage                     => regime => _ => Some(routes.UTRController.onPageLoad(CheckMode, regime))
+    case UTRPage                              => isSoleProprietor(CheckMode)
+    case SoleNamePage                         => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
+    case BusinessNamePage                     => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
+    case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
+
     case BusinessWithoutIDNamePage => regime => ua =>
       checkNextPageForValueThenRoute(
         CheckMode, regime, ua, BusinessHaveDifferentNamePage, routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime)

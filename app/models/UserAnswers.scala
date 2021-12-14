@@ -65,7 +65,6 @@ final case class UserAnswers(
   ): Try[UserAnswers] = {
 
     val originalValue: Option[A] = if (checkPreviousUserAnswer) get(page) else None
-
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)

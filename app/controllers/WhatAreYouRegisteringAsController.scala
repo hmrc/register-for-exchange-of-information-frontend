@@ -75,9 +75,9 @@ class WhatAreYouRegisteringAsController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => // setOrCleanup
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatAreYouRegisteringAsPage, value, true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
           )

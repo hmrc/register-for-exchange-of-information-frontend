@@ -75,13 +75,11 @@ class BusinessTypeController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value => {
-              val originalValue = request.userAnswers.get(BusinessTypePage)
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessTypePage, value, originalValue))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessTypePage, value, true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(BusinessTypePage, mode, regime, updatedAnswers))
-            }
           )
     }
 }
