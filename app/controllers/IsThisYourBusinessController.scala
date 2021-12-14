@@ -117,7 +117,9 @@ class IsThisYourBusinessController @Inject() (
           formWithErrors =>
             request.userAnswers.get(RegistrationInfoPage).fold(thereIsAProblem) {
               registrationInfo =>
-                result(mode, regime, formWithErrors, registrationInfo)
+                val name    = registrationInfo.name.getOrElse("")
+                val address = registrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
+                render(mode, regime, formWithErrors, name, address).map(BadRequest(_))
             },
           value =>
             for {
