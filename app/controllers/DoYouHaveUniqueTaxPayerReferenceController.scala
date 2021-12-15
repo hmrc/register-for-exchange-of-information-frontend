@@ -19,10 +19,12 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveUniqueTaxPayerReferenceFormProvider
+import models.error.ApiError
+import models.matching.RegistrationRequest
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.MDRNavigator
-import pages.DoYouHaveUniqueTaxPayerReferencePage
+import pages.{DoYouHaveUniqueTaxPayerReferencePage, RegistrationRequestPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -30,6 +32,7 @@ import play.api.mvc._
 import play.twirl.api
 import renderer.Renderer
 import repositories.SessionRepository
+import services.BusinessMatchingService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
 
@@ -45,6 +48,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   getData: DataRetrievalAction,
   requireData: DataInitializeAction,
   formProvider: DoYouHaveUniqueTaxPayerReferenceFormProvider,
+  matchingService: BusinessMatchingService,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -70,6 +74,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
     (identify(regime) andThen getData.apply andThen requireData(regime))
       .async {
         implicit request =>
+          saveOriginalRegistrationRequestIfExists
           render(mode, regime, request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage).fold(form)(form.fill)).map(Ok(_))
       }
 
@@ -88,6 +93,13 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
                 } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
             )
       }
+
+  private def saveOriginalRegistrationRequestIfExists(implicit request: DataRequest[AnyContent]): Either[ApiError, RegistrationRequest] =
+    matchingService.buildBusinessRegistrationRequest map {
+      registrationRequest =>
+        request.userAnswers.set(RegistrationRequestPage, registrationRequest).map(sessionRepository.set)
+        registrationRequest
+    }
 
   private def hintWithLostUtrLink()(implicit messages: Messages): Html =
     Html(

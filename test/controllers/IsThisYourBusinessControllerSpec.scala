@@ -85,6 +85,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must return OK and the correct view for a GET" in {
 
+      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
+        .thenReturn(Right(registrationRequest))
+
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
 
@@ -116,6 +119,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
+      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
+        .thenReturn(Right(registrationRequest))
+
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
 
@@ -136,6 +142,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     }
 
     "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
+
+      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
+        .thenReturn(Right(registrationRequest))
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("safeId", Some("name"), Some(address), AsOrganisation))))
@@ -161,6 +170,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
+
+      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
+        .thenReturn(Right(registrationRequest))
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", Some("name"), Some(address), AsOrganisation))))
@@ -217,6 +229,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     }
 
     "must populate the view correctly on a GET when the question has previously been answered with different info" in {
+
+      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
+        .thenReturn(Right(registrationRequest))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any()))
         .thenReturn(Future.successful(None))
@@ -281,6 +296,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     }
 
     "must redirect to the next page when valid data is submitted" in {
+
+      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
+        .thenReturn(Right(registrationRequest))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 

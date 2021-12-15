@@ -19,11 +19,11 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.matching.{RegistrationInfo, RegistrationRequest}
+import models.matching.RegistrationInfo
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
-import models.{BusinessType, Mode, NormalMode, Regime}
-import navigation.MDRNavigator
+import models.{Mode, NormalMode, Regime}
+import navigation.{MDRNavigator, Navigator}
 import pages._
 import play.api.Logging
 import play.api.data.Form
@@ -91,8 +91,8 @@ class IsThisYourBusinessController @Inject() (
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
-      buildRegistrationRequest match {
-        case Some(registrationRequest) =>
+      matchingService.buildBusinessRegistrationRequest match {
+        case Right(registrationRequest) =>
           matchingService.sendBusinessRegistrationInformation(regime, registrationRequest).flatMap {
             case Right(response) =>
               request.userAnswers.set(RegistrationInfoPage, response).map(sessionRepository.set)
@@ -125,21 +125,20 @@ class IsThisYourBusinessController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
+            } yield
+              if (isTheSame) {
+                Redirect(Navigator.checkYourAnswers(regime))
+              } else {
+                Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
+              }
         )
   }
 
-  private def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
-    request.userAnswers.get(BusinessTypePage) match {
-      case Some(BusinessType.Sole) => request.userAnswers.get(SoleNamePage).map(_.fullName)
-      case _                       => request.userAnswers.get(BusinessNamePage)
-    }
-
-  private def buildRegistrationRequest(implicit request: DataRequest[AnyContent]): Option[RegistrationRequest] =
-    for {
-      utr          <- request.userAnswers.get(UTRPage)
-      businessName <- buildBusinessName
-      businessType = request.userAnswers.get(BusinessTypePage)
-      dateOfBirth  = request.userAnswers.get(SoleDateOfBirthPage)
-    } yield RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, businessType, dateOfBirth)
+  private def isTheSame(implicit request: DataRequest[AnyContent]): Boolean =
+    matchingService.buildBusinessRegistrationRequest
+      .map {
+        current =>
+          request.userAnswers.get(RegistrationRequestPage).contains(current)
+      }
+      .getOrElse(false)
 }

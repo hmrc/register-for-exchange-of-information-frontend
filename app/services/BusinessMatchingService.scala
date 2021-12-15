@@ -50,19 +50,19 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
         routes.NoRecordsMatchedController.onPageLoad(regime)
     }
 
-  private def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
+  def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
     request.userAnswers.get(BusinessTypePage) match {
       case Some(BusinessType.Sole) => request.userAnswers.get(SoleNamePage).map(_.fullName)
       case _                       => request.userAnswers.get(BusinessNamePage)
     }
 
-  private def buildBusinessRegistrationRequest(implicit request: DataRequest[AnyContent]): Either[ApiError, RegistrationRequest] =
+  def buildBusinessRegistrationRequest(implicit request: DataRequest[AnyContent]): Either[ApiError, RegistrationRequest] =
     (for {
       utr          <- request.userAnswers.get(UTRPage)
       businessName <- buildBusinessName
-      businessType <- request.userAnswers.get(BusinessTypePage)
-      dateOfBirth = request.userAnswers.get(SoleDateOfBirthPage)
-    } yield RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, Option(businessType), dateOfBirth))
+      businessType = request.userAnswers.get(BusinessTypePage)
+      dateOfBirth  = request.userAnswers.get(SoleDateOfBirthPage)
+    } yield RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, businessType, dateOfBirth))
       .toRight(MandatoryInformationMissingError())
 
   def sendBusinessRegistrationInformation(regime: Regime, registrationRequest: RegistrationRequest)(implicit
