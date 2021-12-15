@@ -49,7 +49,7 @@ class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures with 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      templateCaptor.getValue mustEqual "signedOut.njk"
+      templateCaptor.getValue mustEqual "auth/signedOut.njk"
     }
   }
 }

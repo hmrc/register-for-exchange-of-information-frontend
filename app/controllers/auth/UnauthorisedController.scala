@@ -16,8 +16,10 @@
 
 package controllers.auth
 
+import config.FrontendAppConfig
 import models.Regime
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -27,6 +29,7 @@ import scala.concurrent.ExecutionContext
 
 class UnauthorisedController @Inject() (
   val controllerComponents: MessagesControllerComponents,
+  appConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -34,6 +37,11 @@ class UnauthorisedController @Inject() (
 
   def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("unauthorised.njk", regime.toJson).map(Ok(_))
+      val json = Json.obj(
+        "regime"       -> regime.toUpperCase,
+        "emailAddress" -> appConfig.emailEnquiries
+      )
+
+      renderer.render("auth/unauthorised.njk", json).map(Ok(_))
   }
 }

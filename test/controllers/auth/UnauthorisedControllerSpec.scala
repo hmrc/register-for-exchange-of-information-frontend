@@ -47,7 +47,7 @@ class UnauthorisedControllerSpec extends SpecBase with ControllerMockFixtures wi
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      templateCaptor.getValue mustEqual "unauthorised.njk"
+      templateCaptor.getValue mustEqual "auth/unauthorised.njk"
     }
   }
 }

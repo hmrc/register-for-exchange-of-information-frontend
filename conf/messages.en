@@ -83,8 +83,10 @@ signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
 
-unauthorised.title = You can’t access this service with this account
-unauthorised.heading = You can’t access this service with this account
+unauthorised.title = Sorry, there is a problem with the service
+unauthorised.heading = Sorry, there is a problem with the service
+unauthorised.p1 = Try again later.
+unauthorised.p2 = If you need to contact someone about your MDR reporting, you can email 
 
 needContactDetails.title = We need your contact details
 needContactDetails.heading = We need your contact details
@@ -114,9 +116,6 @@ footer.links.welsh = Rhestr o Wasanaethau Cymraeg
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
-
-unauthorised.title = You can’t access this service with this account
-unauthorised.heading = You can’t access this service with this account
 
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out

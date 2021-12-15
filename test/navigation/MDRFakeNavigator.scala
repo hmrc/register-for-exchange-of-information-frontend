@@ -18,7 +18,6 @@ package navigation
 
 import models.{Mode, Regime, UserAnswers}
 import pages._
-import play.api.libs.json.Reads
 import play.api.mvc.Call
 
 class MDRFakeNavigator(desiredRoute: Call) extends MDRNavigator {
