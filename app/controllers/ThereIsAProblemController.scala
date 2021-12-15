@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.Regime
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -31,9 +30,6 @@ import scala.concurrent.ExecutionContext
 
 class ThereIsAProblemController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
   frontendAppConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -41,7 +37,7 @@ class ThereIsAProblemController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
         "regime"       -> regime.toUpperCase,
