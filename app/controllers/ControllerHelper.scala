@@ -26,6 +26,7 @@ import play.api.mvc.{AnyContent, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.TaxEnrolmentService
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -43,6 +44,9 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
   ): Future[Result] =
     taxEnrolmentService.checkAndCreateEnrolment(safeId, userAnswers, subscriptionId, regime) flatMap {
       case Right(_) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
+      case Left(EnrolmentExistsError(groupIds)) if request.affinityGroup == AffinityGroup.Individual =>
+        logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
+        Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
       case Left(EnrolmentExistsError(groupIds)) =>
         logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
         Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))

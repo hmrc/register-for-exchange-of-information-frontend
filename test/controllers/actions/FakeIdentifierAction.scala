@@ -29,8 +29,10 @@ class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers)
     with ActionBuilder[IdentifierRequest, AnyContent]
     with ActionFunction[Request, IdentifierRequest] {
 
+  val affinityGroup: AffinityGroup = AffinityGroup.Organisation
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, "id", AffinityGroup.Organisation))
+    block(IdentifierRequest(request, "id", affinityGroup))
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default

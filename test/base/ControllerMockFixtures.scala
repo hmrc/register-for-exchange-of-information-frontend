@@ -29,9 +29,10 @@ import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{AnyContentAsEmpty, Call}
+import play.api.mvc.{AnyContentAsEmpty, BodyParsers, Call, PlayBodyParsers}
 import play.api.test.FakeRequest
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 
@@ -68,6 +69,8 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
   override def fakeApplication(): Application =
     guiceApplicationBuilder()
       .build()
+
+  def injectedParsers = app.injector.instanceOf[PlayBodyParsers]
 
   // Override to provide custom binding
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
