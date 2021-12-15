@@ -512,3 +512,9 @@ businessAlreadyRegistered.withOutID.information = You can access the service usi
 businessAlreadyRegistered.withOutID.GGLink = Sign into your Government Gateway account (opens in a new tab)
 businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the ‘Manage account’ settings within their Business Tax Account.
 businessAlreadyRegistered.help = If you’re having problems accessing the service, you can email
+
+individualAlreadyRegistered.title = You are already registered to use the MDR service
+individualAlreadyRegistered.heading = You are already registered to use the MDR service
+individualAlreadyRegistered.p1 = You can access the service using the same Government Gateway account that you used to register for MDR.
+individualAlreadyRegistered.link = Sign in to your Government Gateway account (opens in new tab)
+individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email

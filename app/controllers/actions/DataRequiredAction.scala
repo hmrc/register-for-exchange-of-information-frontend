@@ -33,7 +33,7 @@ class DataRequiredActionImplWithRegime(regime: Regime)(implicit val executionCon
       case None =>
         Future.successful(Left(Redirect(routes.SessionExpiredController.onPageLoad(regime))))
       case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.userId, data)))
+        Future.successful(Right(DataRequest(request.request, request.userId, request.affinityGroup, data)))
     }
 }
 

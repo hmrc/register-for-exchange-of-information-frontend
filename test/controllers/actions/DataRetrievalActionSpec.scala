@@ -23,6 +23,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.AffinityGroup
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,7 +46,7 @@ class DataRetrievalActionSpec extends SpecBase with ScalaFutures {
         when(sessionRepository.get("id")) thenReturn Future(None)
         val action = new Harness(sessionRepository)
 
-        val futureResult = action.callTransform(new IdentifierRequest(fakeRequest, "id"))
+        val futureResult = action.callTransform(new IdentifierRequest(fakeRequest, "id", AffinityGroup.Organisation))
 
         whenReady(futureResult) {
           result =>
@@ -62,7 +63,7 @@ class DataRetrievalActionSpec extends SpecBase with ScalaFutures {
         when(sessionRepository.get("id")) thenReturn Future(Some(new UserAnswers("id")))
         val action = new Harness(sessionRepository)
 
-        val futureResult = action.callTransform(new IdentifierRequest(fakeRequest, "id"))
+        val futureResult = action.callTransform(new IdentifierRequest(fakeRequest, "id", AffinityGroup.Organisation))
 
         whenReady(futureResult) {
           result =>

@@ -32,6 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
@@ -89,6 +90,8 @@ class CheckYourAnswersController @Inject() (
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
+          case EnrolmentExistsError(_) if request.affinityGroup == AffinityGroup.Individual =>
+            Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
           case EnrolmentExistsError(_) =>
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
               Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
