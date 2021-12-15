@@ -22,6 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.BusinessType.Sole
 import models.Regime
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
+import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
 import models.requests.DataRequest
 import pages._
@@ -89,8 +90,8 @@ class CheckYourAnswersController @Inject() (
         registrationInfo   <- buildRegistrationInfo(regime)
         subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, registrationInfo.safeId, request.userAnswers))
         withSubscriptionID <- EitherT.fromEither[Future](request.userAnswers.setEither(SubscriptionIDPage, subscriptionID))
-        _ = sessionRepository.set(withSubscriptionID)
-        _ <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
+        _                  <- EitherT.fromEither[Future](Right[ApiError, Future[Boolean]](sessionRepository.set(withSubscriptionID)))
+        _                  <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
       } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
         .valueOrF {
           case MandatoryInformationMissingError(error) =>

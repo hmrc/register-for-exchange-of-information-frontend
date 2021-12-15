@@ -42,7 +42,7 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
       registrationRequest <- EitherT.fromEither[Future](buildBusinessRegistrationRequest)
       response            <- EitherT(sendBusinessRegistrationInformation(regime, registrationRequest))
       withInfo            <- EitherT.fromEither[Future](request.userAnswers.setEither(RegistrationInfoPage, response))
-      _ = sessionRepository.set(withInfo)
+      _                   <- EitherT.fromEither[Future](Right[ApiError, Future[Boolean]](sessionRepository.set(withInfo)))
     } yield routes.IsThisYourBusinessController.onPageLoad(mode, regime)).valueOr {
       case DuplicateSubmissionError if mode == CheckMode =>
         routes.CheckYourAnswersController.onPageLoad(regime)
