@@ -463,11 +463,11 @@ whatIsTradingName.error.businessName.length = Trading name must be 80 characters
 #Assistant messages
 unauthorisedAssistant.title = Sorry, you’re unable to use this service
 unauthorisedAssistant.heading = Sorry, you’re unable to use this service
-unauthorisedAssistant.paragraph.1 = You’ve signed in as an assistant. To register for the MDR service, you must sign in as an administrator.
-unauthorisedAssistant.paragraph.2a = If you have an administrator’s account,
-unauthorisedAssistant.paragraph.2b = sign in with those Government Gateway details
-unauthorisedAssistant.paragraph.3 = If you do not have an administrator account, ask someone else in your organisation who does. They can then register for the service using their Government Gateway details.
-unauthorisedAssistant.paragraph.4 = Once registered, you can use the service to submit MDR reports using your own Government Gateway credentials.
+unauthorisedAssistant.paragraph.1 = You’ve signed in as a standard user. Only people in your organisation with an administrator role can register for the service.
+unauthorisedAssistant.paragraph.2 = You need to find someone with an administrator’s credentials who can then sign in with their Government Gateway details.
+unauthorisedAssistant.paragraph.3 = Once registered, they can give you permission to use the service to submit MDR reports using your own Government Gateway credentials.
+unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change team members’ access in the manage account section within your organisation’s
+unauthorisedAssistant.paragraph.4b = business tax account (opens in new tab)
 
 #Agent messages
 unauthorisedAgent.title = Sorry, you’re unable to use this service
