@@ -199,7 +199,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("http://localhost:10018/mandatory-disclosure-rules-frontend")
+        redirectLocation(result) mustBe Some("http://localhost:10018/report-under-mandatory-disclosure-rules")
       }
 
       "must redirect user to the unauthorised page if mdr enrolment id not activated" in {
@@ -215,7 +215,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("http://localhost:10018/mandatory-disclosure-rules-frontend")
+        redirectLocation(result) mustBe Some("http://localhost:10018/report-under-mandatory-disclosure-rules")
       }
     }
   }
