@@ -96,7 +96,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url
+        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url
       }
     }
 
@@ -110,7 +110,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url
+        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url
       }
     }
 
@@ -123,7 +123,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url
+        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url
       }
     }
 
@@ -136,7 +136,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url)
+        redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url)
       }
 
       "must redirect the user to the unauthorised agent page" in {
@@ -165,7 +165,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.auth.routes.UnauthorisedController.onPageLoad(MDR).url)
+        redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url)
       }
 
       "must redirect the user to the unauthorised assistant page" in {
