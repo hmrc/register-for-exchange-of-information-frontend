@@ -55,7 +55,7 @@ class WeCouldNotConfirmController @Inject() (
         )
 
         (for {
-          cleaned <- clean(request.userAnswers)
+          cleaned <- (PageLists.individualWithIDPages ++ PageLists.businessWithIDPages).foldLeft(Try(request.userAnswers))(PageLists.removePage)
         } yield sessionRepository.set(cleaned))
 
         renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))

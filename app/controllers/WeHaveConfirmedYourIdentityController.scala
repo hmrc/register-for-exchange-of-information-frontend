@@ -21,7 +21,6 @@ import controllers.actions._
 import models.matching.RegistrationRequest
 import models.requests.DataRequest
 import models.{BusinessType, Mode, NormalMode, Regime}
-import navigation.MDRNavigator
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -37,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class WeHaveConfirmedYourIdentityController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: MDRNavigator,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
