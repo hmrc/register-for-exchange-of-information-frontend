@@ -36,7 +36,6 @@ class IndividualAlreadyRegisteredControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
       val request        = FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
