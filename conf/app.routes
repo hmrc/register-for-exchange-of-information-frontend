@@ -186,3 +186,5 @@ GET        /:regime/register/confirm-registration           controllers.Registra
 
 GET        /:regime/register/problem/organisation-with-utr-pre-registered                       controllers.BusinessAlreadyRegisteredController.onPageLoadWithID(regime: models.Regime)
 GET        /:regime/register/problem/organisation-without-utr-pre-registered                    controllers.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime: models.Regime)
+
+GET        /:regime/register/problem/individual-pre-registered                                  controllers.IndividualAlreadyRegisteredController.onPageLoad(regime: models.Regime)

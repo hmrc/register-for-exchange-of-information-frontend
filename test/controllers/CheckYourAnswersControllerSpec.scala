@@ -17,23 +17,31 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
+import connectors.AddressLookupConnector
+import controllers.actions.{DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, FakeIdentifierAction, IdentifierAction}
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
 import models.error.ApiError._
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
+import models.requests.{DataRequest, IdentifierRequest}
 import models.{Address, Country, MDR, SubscriptionID, UserAnswers}
+import navigation.{ContactDetailsNavigator, MDRNavigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages._
+import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import repositories.SessionRepository
 import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
 import scala.concurrent.Future
 
@@ -472,6 +480,56 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.SomeInformationIsMissingController.onPageLoad(MDR).url
+      }
+
+      "must redirect to 'Individual already registered' page when there is EnrolmentExistsError and Affinity Group is Individual" in {
+
+        val app: Application =
+          new GuiceApplicationBuilder()
+            .overrides(
+              bind[SubscriptionService].toInstance(mockSubscriptionService),
+              bind[RegistrationService].toInstance(mockRegistrationService),
+              bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentsService),
+              bind[DataRequiredAction].to[DataRequiredActionImpl],
+              bind[DataRetrievalAction].toInstance(mockDataRetrievalAction),
+              bind[NunjucksRenderer].toInstance(mockRenderer),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[ContactDetailsNavigator].toInstance(cbcrFakeNavigator),
+              bind[MDRNavigator].toInstance(mdrFakeNavigator),
+              bind[AddressLookupConnector].toInstance(mockAddressLookupConnector),
+              bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers) {
+                override val affinityGroup: AffinityGroup = AffinityGroup.Individual
+              })
+            )
+            .build()
+
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
+        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual, None, None, None))))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
+
+        val userAnswers = UserAnswers("Id")
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .success
+          .value
+          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+          .success
+          .value
+          .set(DoYouHaveNINPage, true)
+          .success
+          .value
+
+        retrieveUserAnswersData(userAnswers)
+
+        val request = FakeRequest(POST, submitRoute)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe routes.IndividualAlreadyRegisteredController.onPageLoad(MDR).url
       }
 
       "must redirect to 'Business already registered' page when there is EnrolmentExistsError" in {
