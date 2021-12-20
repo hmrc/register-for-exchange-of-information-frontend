@@ -28,22 +28,24 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
   override def toString: String = "doYouHaveNIN"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    (List(
-      NonUkNamePage,
-      WhatIsYourDateOfBirthPage,
-      DoYouLiveInTheUKPage,
-      WhatIsYourPostcodePage,
-      AddressLookupPage,
-      AddressUKPage,
-      AddressWithoutIdPage,
-      WhatIsYourPostcodePage,
-      AddressUKPage,
-      SelectAddressPage,
-      SelectedAddressLookupPage,
-      WhatIsYourNationalInsuranceNumberPage,
-      WhatIsYourNamePage,
-      WhatIsYourDateOfBirthPage
-    ) ++ PageLists.allContactDetailPages).foldLeft(
+    (
+      List(
+        NonUkNamePage,
+        WhatIsYourDateOfBirthPage,
+        DoYouLiveInTheUKPage,
+        WhatIsYourPostcodePage,
+        AddressLookupPage,
+        AddressUKPage,
+        AddressWithoutIdPage,
+        WhatIsYourPostcodePage,
+        AddressUKPage,
+        SelectAddressPage,
+        SelectedAddressLookupPage,
+        WhatIsYourNationalInsuranceNumberPage,
+        WhatIsYourNamePage,
+        WhatIsYourDateOfBirthPage
+      )
+    ).foldLeft(
       Try(userAnswers)
     )(PageLists.removePage)
 }

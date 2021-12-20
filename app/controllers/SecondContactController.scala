@@ -81,13 +81,11 @@ class SecondContactController @Inject() (
               SomeInformationIsMissing.isMissingInformation(regime, ContactNamePage) {
                 render(mode, regime, request.userAnswers.get(SecondContactPage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
               },
-            value => {
-              val originalAnswer = request.userAnswers.get(SecondContactPage)
+            value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactPage, value, originalAnswer))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(SecondContactPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(SecondContactPage, mode, regime, updatedAnswers))
-            }
           )
     }
 }

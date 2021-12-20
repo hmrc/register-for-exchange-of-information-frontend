@@ -16,41 +16,25 @@
 
 package services
 
-import cats.data.EitherT
 import cats.implicits._
 import connectors.RegistrationConnector
-import controllers.routes
 import models.error.ApiError
-import models.error.ApiError.{DuplicateSubmissionError, MandatoryInformationMissingError}
+import models.error.ApiError.MandatoryInformationMissingError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.{RegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
-import models.{BusinessType, CheckMode, Mode, Regime}
+import models.{BusinessType, Regime}
 import pages._
-import play.api.mvc.{AnyContent, Call}
-import repositories.SessionRepository
+import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector, sessionRepository: SessionRepository)(implicit ec: ExecutionContext) {
+class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
 
-  def onBusinessMatch(mode: Mode, regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Call] =
-    (for {
-      registrationRequest <- EitherT.fromEither[Future](buildBusinessRegistrationRequest)
-      response            <- EitherT(sendBusinessRegistrationInformation(regime, registrationRequest))
-      withInfo            <- EitherT.fromEither[Future](request.userAnswers.setEither(RegistrationInfoPage, response))
-      _                   <- EitherT.fromEither[Future](Right[ApiError, Future[Boolean]](sessionRepository.set(withInfo)))
-    } yield routes.IsThisYourBusinessController.onPageLoad(mode, regime)).valueOr {
-      case DuplicateSubmissionError if mode == CheckMode =>
-        routes.CheckYourAnswersController.onPageLoad(regime)
-      case error =>
-        routes.NoRecordsMatchedController.onPageLoad(regime)
-    }
-
-  def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
+  private def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
     request.userAnswers.get(BusinessTypePage) match {
       case Some(BusinessType.Sole) => request.userAnswers.get(SoleNamePage).map(_.fullName)
       case _                       => request.userAnswers.get(BusinessNamePage)

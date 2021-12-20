@@ -26,7 +26,4 @@ case object IsThisYourBusinessPage extends QuestionPage[Boolean] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "isThisYourBusiness"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allContactDetailPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 }

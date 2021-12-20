@@ -40,7 +40,7 @@ class IsContactTelephonePageSpec extends PageBehaviours {
               .set(ContactPhonePage, "112233445566")
               .success
               .value
-              .set(IsContactTelephonePage, false, Some(true))
+              .set(IsContactTelephonePage, false)
               .success
               .value
 

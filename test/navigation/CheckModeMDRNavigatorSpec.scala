@@ -265,6 +265,25 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       "must go from 'WhatIsYourNationalInsuranceNumber' page to " - {
 
+        "'What is your name?' page " +
+          "if valid NINO is entered AND 'What is your name?' page is clean" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
+                    .success
+                    .value
+                    .remove(WhatIsYourNamePage)
+                    .success
+                    .value
+
+                navigator
+                  .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
         "'CheckYourAnswers' page " +
           "if the next page is set, wich is 'WhatIsYourNamePage'" in {
 
@@ -272,7 +291,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               answers =>
                 val updatedAnswers =
                   answers
-                    .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
+                    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
                     .success
                     .value
                     .set(WhatIsYourNamePage, Name("name", "surname"))
@@ -285,22 +304,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
             }
           }
 
-        "'WhatIsYourName' page " +
-          "if value is provided" in {
-
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers =
-                  answers
-                    .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
-                    .success
-                    .value
-
-                navigator
-                  .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
-                  .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode, MDR))
-            }
-          }
       }
 
       "must go from 'WhatIsYourName' page to " - {
@@ -332,6 +335,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               val updatedAnswers =
                 answers
                   .set(WhatIsYourNamePage, Name("name", "surname"))
+                  .success
+                  .value
+                  .remove(WhatIsYourDateOfBirthPage)
                   .success
                   .value
 
@@ -533,35 +539,24 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           }
         }
 
-      "must go from 'What Is Your NINO?' page to 'What is your name?' page if valid NINO is entered" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
-                .success
-                .value
+      "must go from 'What is your name?'(UK) page to " +
+        "'What is your DOB?' page if valid NINO is entered" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(WhatIsYourNamePage, Name("Little", "Comets"))
+                  .success
+                  .value
+                  .remove(WhatIsYourDateOfBirthPage)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode, MDR))
+              navigator
+                .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
+          }
         }
-      }
-
-      "must go from 'What is your name?'(UK) page to 'What is your DOB?' page if valid NINO is entered" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNamePage, Name("Little", "Comets"))
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
-        }
-      }
 
       "must go from 'What Is Your Name?'(NON-UK) page to 'What Is Your DOB?' page when valid name is entered" in {
         forAll(arbitrary[UserAnswers]) {

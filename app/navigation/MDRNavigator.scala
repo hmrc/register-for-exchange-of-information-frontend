@@ -71,6 +71,11 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessNamePage                     => regime => _ => Some(routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime))
     case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
 
+    case ContactNamePage => regime => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, regime, ua, ContactEmailPage, routes.ContactEmailController.onPageLoad(CheckMode, regime)
+      )
+
     case BusinessWithoutIDNamePage => regime => ua =>
       checkNextPageForValueThenRoute(
         CheckMode, regime, ua, BusinessHaveDifferentNamePage, routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime)
@@ -111,10 +116,8 @@ class MDRNavigator @Inject() () extends Navigator {
 
   private def doYouHaveUniqueTaxPayerReference(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
-      case true =>
-        checkNextPageForValueThenRoute(mode, regime, ua, BusinessTypePage, routes.BusinessTypeController.onPageLoad(mode, regime)).get
-      case false =>
-        checkNextPageForValueThenRoute(mode, regime, ua, WhatAreYouRegisteringAsPage, routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime)).get
+      case true => routes.BusinessTypeController.onPageLoad(mode, regime)
+      case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode, regime)
     }
 
   private def whatAreYouRegisteringAs(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =

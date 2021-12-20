@@ -29,7 +29,7 @@ case object IsContactTelephonePage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(false) => PageLists.allAfterIsContactTelephonePages.foldLeft(Try(userAnswers))(PageLists.removePage)
+      case Some(false) => userAnswers.remove(ContactPhonePage)
       case _           => super.cleanup(value, userAnswers)
     }
 }

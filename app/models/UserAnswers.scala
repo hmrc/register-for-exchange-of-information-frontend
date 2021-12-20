@@ -39,7 +39,7 @@ final case class UserAnswers(
   def getEither[A](page: Gettable[A])(implicit rds: Reads[A]): Either[ApiError, A] =
     get(page).toRight(MandatoryInformationMissingError(page.toString))
 
-  def set[A](page: Settable[A], value: A, originalValue: Option[A] = None)(implicit writes: Writes[A]): Try[UserAnswers] = {
+  def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>

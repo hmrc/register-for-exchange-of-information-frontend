@@ -50,7 +50,7 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
             .set(WhatIsYourDateOfBirthPage, LocalDate.now())
             .success
             .value
-            .set(DoYouHaveNINPage, false, Some(true))
+            .set(DoYouHaveNINPage, false)
             .success
             .value
 
@@ -89,7 +89,7 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
             .set(SelectedAddressLookupPage, AddressLookup(None, None, None, None, "", None, ""))
             .success
             .value
-            .set(DoYouHaveNINPage, true, Some(false))
+            .set(DoYouHaveNINPage, true)
             .success
             .value
 

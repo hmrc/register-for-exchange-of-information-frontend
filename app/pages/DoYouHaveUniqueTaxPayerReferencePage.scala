@@ -28,5 +28,10 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
   override def toString: String = "doYouHaveUniqueTaxPayerReference"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    (PageLists.allOtherPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+    value match {
+      case Some(false) =>
+        (PageLists.allExceptHaveUTRPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+
+      case _ => super.cleanup(value, userAnswers)
+    }
 }

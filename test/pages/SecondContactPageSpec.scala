@@ -48,7 +48,7 @@ class SecondContactPageSpec extends PageBehaviours {
               .set(SndContactPhonePage, "112233445566")
               .success
               .value
-              .set(SecondContactPage, false, Some(true))
+              .set(SecondContactPage, false)
               .success
               .value
 

@@ -37,7 +37,7 @@ class BusinessHaveDifferentNamePageSpec extends PageBehaviours {
             .set(WhatIsTradingNamePage, "differentName")
             .success
             .value
-            .set(BusinessHaveDifferentNamePage, false, Some(true))
+            .set(BusinessHaveDifferentNamePage, false)
             .success
             .value
 

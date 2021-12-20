@@ -125,12 +125,7 @@ class IsThisYourBusinessController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield
-              if (isTheSame) {
-                Redirect(Navigator.checkYourAnswers(regime))
-              } else {
-                Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
-              }
+            } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
         )
   }
 
