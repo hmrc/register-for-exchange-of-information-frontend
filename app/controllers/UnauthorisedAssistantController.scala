@@ -30,10 +30,7 @@ import scala.concurrent.ExecutionContext
 
 class UnauthorisedAssistantController @Inject() (
   override val messagesApi: MessagesApi,
-  frontendAppConfig: FrontendAppConfig,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -43,8 +40,8 @@ class UnauthorisedAssistantController @Inject() (
   def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
-        "regime"   -> regime.toUpperCase,
-        "loginUrl" -> frontendAppConfig.loginUrl
+        "regime"  -> regime.toUpperCase,
+        "btaLink" -> appConfig.businessTaxAccountLink
       )
       renderer.render("unauthorisedAssistant.njk", json).map(Ok(_))
   }

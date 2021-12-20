@@ -75,14 +75,14 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
         case _ ~ enrolments ~ _ ~ _ if enrolments.enrolments.exists(_.key == config.enrolmentKey(regime.toString)) =>
           logger.info("MDR enrolment exists")
           Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
-        case Some(internalID) ~ _ ~ _ ~ _ => block(IdentifierRequest(request, internalID))
-        case _                            => throw new UnauthorizedException("Unable to retrieve internal Id")
+        case Some(internalID) ~ _ ~ Some(affinityGroup) ~ _ => block(IdentifierRequest(request, internalID, affinityGroup))
+        case _                                              => throw new UnauthorizedException("Unable to retrieve internal Id")
       }
       .recover {
         case _: NoActiveSession =>
           Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl(regime))))
         case _: AuthorisationException =>
-          Redirect(controllers.auth.routes.UnauthorisedController.onPageLoad(regime))
+          Redirect(controllers.routes.ThereIsAProblemController.onPageLoad(regime))
       }
   }
 }

@@ -14,31 +14,29 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import matchers.JsonMatchers
 import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class UnauthorisedControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class IndividualAlreadyRegisteredControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  "Unauthorised Controller" - {
+  "IndividualAlreadyRegistered Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.UnauthorisedController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad(MDR).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -47,7 +45,7 @@ class UnauthorisedControllerSpec extends SpecBase with ControllerMockFixtures wi
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      templateCaptor.getValue mustEqual "unauthorised.njk"
+      templateCaptor.getValue mustEqual "individualAlreadyRegistered.njk"
     }
   }
 }

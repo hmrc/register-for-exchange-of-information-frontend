@@ -69,7 +69,7 @@ index.guidance = Register for exchange of information.
 thereIsAProblem.title = Sorry, there is a problem with the service
 thereIsAProblem.heading = Sorry, there is a problem with the service
 thereIsAProblem.paragraph.1 = Try again later.
-thereIsAProblem.paragraph.2.a = We are unable to complete your registration. We have not saved your answers. If you need to contact someone about your MDR reporting, you can email
+thereIsAProblem.paragraph.2.a = If you need to contact someone about your MDR reporting, you can email
 thereIsAProblem.emailAddress = enquiries.aeoi@hmrc.gov.uk
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
@@ -83,9 +83,6 @@ signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
 
-unauthorised.title = You can’t access this service with this account
-unauthorised.heading = You can’t access this service with this account
-
 needContactDetails.title = We need your contact details
 needContactDetails.heading = We need your contact details
 needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
@@ -93,7 +90,7 @@ needContactDetails.p2 = We need these before you can send a country-by-country r
 
 contactName.title = Who can we contact if we have questions about your reports?
 contactName.heading = Who can we contact if we have questions about your reports?
-contactName.hint = For example, ''Tax team'' or ''Ashley Smith''
+contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
 contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 contactName.error.length = Name must be 35 characters or less
@@ -111,30 +108,12 @@ footer.links.terms = Terms and conditions
 footer.links.contact = Contact
 footer.links.welsh = Rhestr o Wasanaethau Cymraeg
 
-signedOut.title = For your security, we signed you out
-signedOut.heading = For your security, we signed you out
-signedOut.guidance = We did not save your answers.
-
-unauthorised.title = You can’t access this service with this account
-unauthorised.heading = You can’t access this service with this account
-
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out
 sessionExpired.guidance = Your answers have not been saved.
 
-needContactDetails.title = We need your contact details
-needContactDetails.heading = We need your contact details
-needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
-needContactDetails.p2 = We need these before you can send a country-by-country report.
-
-contactName.title = Who can we contact if we have questions about your reports?
-contactName.heading = Who can we contact if we have questions about your reports?
-contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
 contactName.checkYourAnswersLabel = Contact name
 contactName.checkYourAnswersLabel.hiddenText = contact name
-contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
-contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
-contactName.error.length = Name must be 35 characters
 
 contactEmail.title.business = What is the email address for {0}?
 contactEmail.heading.business = What is the email address for {0}?
@@ -463,11 +442,11 @@ whatIsTradingName.error.businessName.length = Trading name must be 80 characters
 #Assistant messages
 unauthorisedAssistant.title = Sorry, you’re unable to use this service
 unauthorisedAssistant.heading = Sorry, you’re unable to use this service
-unauthorisedAssistant.paragraph.1 = You’ve signed in as an assistant. To register for the MDR service, you must sign in as an administrator.
-unauthorisedAssistant.paragraph.2a = If you have an administrator’s account,
-unauthorisedAssistant.paragraph.2b = sign in with those Government Gateway details
-unauthorisedAssistant.paragraph.3 = If you do not have an administrator account, ask someone else in your organisation who does. They can then register for the service using their Government Gateway details.
-unauthorisedAssistant.paragraph.4 = Once registered, you can use the service to submit MDR reports using your own Government Gateway credentials.
+unauthorisedAssistant.paragraph.1 = You’ve signed in as a standard user. Only people in your organisation with an administrator role can register for the service.
+unauthorisedAssistant.paragraph.2 = You need to find someone with an administrator’s credentials who can then sign in with their Government Gateway details.
+unauthorisedAssistant.paragraph.3 = Once registered, they can give you permission to use the service to submit MDR reports using your own Government Gateway credentials.
+unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change team members’ access in the manage account section within your organisation’s
+unauthorisedAssistant.paragraph.4b = business tax account (opens in new tab)
 
 #Agent messages
 unauthorisedAgent.title = Sorry, you’re unable to use this service
@@ -512,3 +491,9 @@ businessAlreadyRegistered.withOutID.information = You can access the service usi
 businessAlreadyRegistered.withOutID.GGLink = Sign into your Government Gateway account (opens in a new tab)
 businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the ‘Manage account’ settings within their Business Tax Account.
 businessAlreadyRegistered.help = If you’re having problems accessing the service, you can email
+
+individualAlreadyRegistered.title = You are already registered to use the MDR service
+individualAlreadyRegistered.heading = You are already registered to use the MDR service
+individualAlreadyRegistered.p1 = You can access the service using the same Government Gateway account that you used to register for MDR.
+individualAlreadyRegistered.link = Sign in to your Government Gateway account (opens in new tab)
+individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email

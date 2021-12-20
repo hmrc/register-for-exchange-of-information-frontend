@@ -34,6 +34,6 @@ class SignedOutController @Inject() (
 
   def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("signedOut.njk", regime.toJson).map(Ok(_))
+      renderer.render("auth/signedOut.njk", regime.toJson).map(Ok(_))
   }
 }

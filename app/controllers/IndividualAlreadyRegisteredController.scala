@@ -14,26 +14,39 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers
 
+import config.FrontendAppConfig
+import controllers.actions._
 import models.Regime
-import play.api.i18n.I18nSupport
+
+import javax.inject.Inject
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class UnauthorisedController @Inject() (
+class IndividualAlreadyRegisteredController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = identify(regime).async {
     implicit request =>
-      renderer.render("unauthorised.njk", regime.toJson).map(Ok(_))
+      val json = Json.obj(
+        "regime"       -> regime.toUpperCase,
+        "emailAddress" -> appConfig.emailEnquiries,
+        "loginGG"      -> appConfig.loginUrl
+      )
+
+      renderer.render("individualAlreadyRegistered.njk", json).map(Ok(_))
   }
 }
