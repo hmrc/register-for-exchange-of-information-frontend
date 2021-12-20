@@ -22,7 +22,7 @@ import models.error.ApiError.BadRequestError
 import models.matching.MatchingType.AsOrganisation
 import models.matching.{RegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
-import models.{CheckMode, MDR, NormalMode, SubscriptionID, UniqueTaxpayerReference, UserAnswers}
+import models.{CheckMode, MDR, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages._
@@ -185,86 +185,10 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       val registrationInfo = RegistrationInfo("SAFEID", Some("name"), Some(address), AsOrganisation)
 
       val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(BusinessTypePage, LimitedCompany)
-        .success
-        .value
-        .set(IsThisYourBusinessPage, true)
-        .success
-        .value
-        .set(UTRPage, UniqueTaxpayerReference("UTR"))
-        .success
-        .value
         .set(BusinessNamePage, "name")
         .success
         .value
-        .set(RegistrationInfoPage, registrationInfo)
-        .success
-        .value
-
-      retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "true"))
-
-      val expectedJson = Json.obj(
-        "form"    -> filledForm,
-        "regime"  -> "MDR",
-        "name"    -> "name",
-        "address" -> List("line1"),
-        "action"  -> loadRoute,
-        "radios"  -> Radios.yesNo(filledForm("value"))
-      )
-
-      templateCaptor.getValue mustEqual "isThisYourBusiness.njk"
-
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered with different info" in {
-
-      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
-        .thenReturn(Right(registrationRequest))
-
-      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any()))
-        .thenReturn(Future.successful(None))
-
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(Right(RegistrationInfo("SAFEID", Some("name"), Some(address), AsOrganisation)))
-        )
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(OK)))
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val registrationInfo = RegistrationInfo("SAFEID", Some("name"), Some(address), AsOrganisation)
-
-      val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(BusinessTypePage, LimitedCompany)
-        .success
-        .value
         .set(IsThisYourBusinessPage, true)
-        .success
-        .value
-        .set(UTRPage, UniqueTaxpayerReference("UTR"))
-        .success
-        .value
-        .set(BusinessNamePage, "otherName")
-        .success
-        .value
-        .set(RegistrationInfoPage, registrationInfo)
         .success
         .value
 
