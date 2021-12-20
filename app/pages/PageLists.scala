@@ -39,7 +39,7 @@ object PageLists {
 
   val allAfterWhatIsYourNamePage = List(WhatIsYourDateOfBirthPage)
 
-  val afterUTRPage = List(BusinessNamePage, SoleNamePage, IsThisYourBusinessPage)
+  val afterUTRPage = List(BusinessNamePage, SoleNamePage, IsThisYourBusinessPage) ++ allContactDetailPages
 
   val businessWithIDPages =
     List(BusinessTypePage, UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage, IsThisYourBusinessPage)

@@ -105,7 +105,7 @@ class UTRController @Inject() (
                 formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
                 value =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(UTRPage, value, true))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
               )
