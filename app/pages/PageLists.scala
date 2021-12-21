@@ -27,7 +27,9 @@ object PageLists {
 
   val allAfterSecondContactPages = List(SndContactNamePage, SndContactEmailPage, SndConHavePhonePage, SndContactPhonePage)
 
-  val allContactDetailPages = allAfterSecondContactPages ++ List(ContactNamePage, ContactEmailPage, IsContactTelephonePage, ContactPhonePage, SecondContactPage)
+  val firstContactDetailsPages = List(ContactNamePage, ContactEmailPage, IsContactTelephonePage, ContactPhonePage)
+
+  val allContactDetailPages = allAfterSecondContactPages ++ firstContactDetailsPages :+ SecondContactPage
 
   val afterAllSndConHavePhonePages = List(SndContactPhonePage)
 
@@ -70,6 +72,8 @@ object PageLists {
     AddressUKPage
   )
 
+  val allAfterBusinessNameWithOuIDPages = List(BusinessHaveDifferentNamePage, WhatIsTradingNamePage, AddressWithoutIdPage) ++ firstContactDetailsPages
+
   val individualWithOutIDPages = List(
     NonUkNamePage,
     DoYouLiveInTheUKPage,
@@ -86,6 +90,8 @@ object PageLists {
   val allWithOutIDPages = List(WhatAreYouRegisteringAsPage) ++ businessWithOutIDPages ++ individualWithOutIDPages
 
   val allWithIDPages = List(DoYouHaveNINPage) ++ individualWithIDPages ++ businessWithIDPages
+
+  val allWithOutIDBusinessPages = businessWithOutIDPages ++ firstContactDetailsPages
 
   val allOtherPages = allWithIDPages ++ allWithOutIDPages
 
