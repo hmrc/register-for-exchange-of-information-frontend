@@ -58,6 +58,9 @@ object PageLists {
 
   // without id
 
+  val nonUKNameSubJourneyPages =
+    List(DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage)
+
   val businessWithOutIDPages = List(
     BusinessWithoutIDNamePage,
     BusinessHaveDifferentNamePage,
