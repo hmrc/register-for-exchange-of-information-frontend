@@ -120,7 +120,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       "must go from 'What Are You Registering As' (registration-type) page to " - {
 
-        "'Do You Have NINO?' page " +
+        "'Check your answers' page " +
           "if user has changed answer to 'Individual' " in {
 
             forAll(arbitrary[UserAnswers]) {
@@ -135,7 +135,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
                 navigator
                   .nextPage(page = WhatAreYouRegisteringAsPage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                  .mustBe(routes.DoYouHaveNINController.onPageLoad(CheckMode, MDR))
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
             }
           }
 

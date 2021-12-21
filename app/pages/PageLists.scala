@@ -68,18 +68,17 @@ object PageLists {
   )
 
   val individualWithOutIDPages = List(
-    DoYouHaveNINPage,
-    WhatIsYourNationalInsuranceNumberPage,
-    WhatIsYourNamePage,
-    WhatIsYourDateOfBirthPage,
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
     AddressWithoutIdPage,
     AddressLookupPage,
     AddressUKPage,
-    SelectAddressPage
+    SelectAddressPage,
+    SelectedAddressLookupPage
   )
+
+  val allIndividualPages = individualWithIDPages ++ individualWithOutIDPages
 
   val allWithOutIDPages = List(WhatAreYouRegisteringAsPage) ++ businessWithOutIDPages ++ individualWithOutIDPages
 

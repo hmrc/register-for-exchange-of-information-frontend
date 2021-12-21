@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.DoYouHaveNINFormProvider
 import models.requests.DataRequest
-import models.{Mode, NormalMode, Regime}
+import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages.DoYouHaveNINPage
 import play.api.Logging
@@ -79,9 +79,9 @@ class DoYouHaveNINController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(DoYouHaveNINPage, value, true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, NormalMode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(DoYouHaveNINPage, mode, regime, updatedAnswers))
           )
     }
 }
