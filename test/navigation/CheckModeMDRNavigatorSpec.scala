@@ -656,6 +656,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
                   .success
                   .value
+                  .remove(ContactNamePage)
+                  .success
+                  .value
                   .set(AddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                   .success
                   .value
