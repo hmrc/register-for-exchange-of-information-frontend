@@ -120,22 +120,25 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       "must go from 'What Are You Registering As' (registration-type) page to " - {
 
-        "'Check your answers' page " +
+        "'Do You Have NINO?' page" +
           "if user has changed answer to 'Individual' " in {
 
             forAll(arbitrary[UserAnswers]) {
               answers =>
                 val updatedAnswers = answers
+                  .remove(DoYouHaveNINPage)
+                  .success
+                  .value
                   .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
                   .success
                   .value
-                  .setOrCleanup(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
+                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
                   .success
                   .value
 
                 navigator
                   .nextPage(page = WhatAreYouRegisteringAsPage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                  .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                  .mustBe(routes.DoYouHaveNINController.onPageLoad(CheckMode, MDR))
             }
           }
 

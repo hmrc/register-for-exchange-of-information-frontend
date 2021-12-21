@@ -73,7 +73,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(DoYouHaveNINPage) must not be defined
           result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
           result.get(WhatIsYourNamePage) must not be defined
           result.get(WhatIsYourDateOfBirthPage) must not be defined
