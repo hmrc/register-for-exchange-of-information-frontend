@@ -54,7 +54,10 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
       case Some(false) =>
         request.userAnswers.get(SelectedAddressLookupPage) match {
           case Some(lookup) => lookup.toAddress
-          case _            => request.userAnswers.get(AddressWithoutIdPage)
+          case _ =>
+            request.userAnswers
+              .get(AddressWithoutIdPage) // orElse ?
+              .fold(request.userAnswers.get(AddressUKPage))(Some.apply)
         }
       case _ => request.userAnswers.get(AddressUKPage)
     }
