@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
+import cats.data.EitherT
 import play.api.libs.json._
+
+import scala.language.higherKinds
+import scala.util.Try
 
 package object models {
 

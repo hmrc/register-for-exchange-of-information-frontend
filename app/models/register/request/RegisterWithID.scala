@@ -16,7 +16,7 @@
 
 package models.register.request
 
-import models.matching.RegistrationInfo
+import models.matching.RegistrationRequest
 import models.{Name, Regime}
 import play.api.libs.json.{Format, Json}
 
@@ -35,11 +35,11 @@ object RegisterWithID {
       )
     )
 
-  def apply(regime: Regime, registrationInfo: RegistrationInfo): RegisterWithID =
+  def apply(regime: Regime, registrationRequest: RegistrationRequest): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
         RequestCommon(regime.toUpperCase),
-        RequestWithIDDetails(registrationInfo)
+        RequestWithIDDetails(registrationRequest)
       )
     )
 }

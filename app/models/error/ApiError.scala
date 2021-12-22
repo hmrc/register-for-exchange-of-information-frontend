@@ -66,6 +66,7 @@ object ApiError {
 
   case object SubscriptionCreationError extends ApiError
 
+  case object RegistrationDataNotModified extends ApiError
   // Enrolment Specific
   case class EnrolmentExistsError(groupIds: GroupIds) extends ApiError
 

@@ -27,9 +27,9 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class SomeInformationIsMissingControllerSpec extends SpecBase with ControllerMockFixtures {
+class SomeInformationIsMissingSpec extends SpecBase with ControllerMockFixtures {
 
-  "SomeInformationIsMissing Controller" - {
+  "Controller Helper" - {
 
     "return OK and the correct view for a GET" in {
 

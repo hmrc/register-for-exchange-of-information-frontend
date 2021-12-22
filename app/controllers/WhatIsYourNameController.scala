@@ -67,7 +67,6 @@ class WhatIsYourNameController @Inject() (
         render(mode, regime, request.userAnswers.get(WhatIsYourNamePage).fold(form)(form.fill)).map(Ok(_))
     }
 
-  /*
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
@@ -77,25 +76,9 @@ class WhatIsYourNameController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourNamePage, value, true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers))
-          )
-    }
-   */
-
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-            value =>
-              (for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers)))
           )
     }
 }

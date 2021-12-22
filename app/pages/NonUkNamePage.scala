@@ -23,14 +23,11 @@ import scala.util.Try
 
 case object NonUkNamePage extends QuestionPage[NonUkName] {
 
-  val nonUKNameSubJourneyPages =
-    List(WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage)
-
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "nonUkName"
 
   override def cleanup(value: Option[NonUkName], userAnswers: UserAnswers): Try[UserAnswers] =
-    nonUKNameSubJourneyPages
+    PageLists.nonUKNameSubJourneyPages
       .foldLeft(Try(userAnswers))(PageLists.removePage)
 }

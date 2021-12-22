@@ -18,13 +18,12 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import connectors.AddressLookupConnector
-import controllers.actions.{DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, FakeIdentifierAction, IdentifierAction}
+import controllers.actions._
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
 import models.error.ApiError._
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
-import models.requests.{DataRequest, IdentifierRequest}
 import models.{Address, Country, MDR, SubscriptionID, UserAnswers}
 import navigation.{ContactDetailsNavigator, MDRNavigator}
 import org.mockito.ArgumentCaptor
@@ -34,7 +33,7 @@ import pages._
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -325,7 +324,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val userAnswers = UserAnswers("Id")
@@ -357,7 +356,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsOrganisation, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsOrganisation))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val userAnswers = UserAnswers("Id")
@@ -381,7 +380,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo.build("SAFEID", AsIndividual))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID("id"))))
@@ -406,7 +405,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val userAnswers = UserAnswers("Id")
@@ -438,7 +437,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsOrganisation, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsOrganisation))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val userAnswers = UserAnswers("Id")
@@ -506,7 +505,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
@@ -537,7 +536,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
@@ -575,7 +574,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(RegistrationInfoPage, RegistrationInfo.build("SAFEID", AsIndividual))
+          .set(RegistrationInfoPage, RegistrationInfo("SAFEID", None, None, AsIndividual))
           .success
           .value
 
@@ -596,7 +595,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(BadRequestError)))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val userAnswers = UserAnswers("Id")
@@ -632,7 +631,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
         when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual, None, None, None))))
+          .thenReturn(Future.successful(Right(RegistrationInfo("SAFEID", None, None, AsIndividual))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val userAnswers = UserAnswers("Id")

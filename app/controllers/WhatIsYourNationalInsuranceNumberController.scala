@@ -84,7 +84,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourNationalInsuranceNumberPage, Nino(value), true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers))
           )

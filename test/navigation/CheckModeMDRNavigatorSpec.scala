@@ -22,365 +22,461 @@ import generators.Generators
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
+import play.api.mvc.Call
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 
 class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+
   val navigator: MDRNavigator = new MDRNavigator
+  val checkYourAnswers: Call  = (Navigator.checkYourAnswers)(MDR)
 
   "Navigator" - {
 
     "in CheckMode mode" - {
 
-      "must go from 'Do You Have Unique Tax Payer Reference?' page to 'CheckYourAnswers' page if user has not changed answer " +
-        "& answer for next page of journey exists" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
+      "must go from 'Do You Have Unique Tax Payer Reference?' (have-utr) page to " - {
+
+        "'What Are You Registering As?' (registration-type) page " +
+          "if user has changed answer to 'NO' " in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                  .success
+                  .value
+                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, false, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
+                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
+        "'What type of business do you have?' (business-type) page " +
+          "if user has changed answer to 'YES' " in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                  .success
+                  .value
+                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
+                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
+        "'What type of business do you have?' (business-type) page " +
+          "if user has not changed the answer 'NO' " in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                  .success
+                  .value
+                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, false, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
+                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
+        "'What type of business do you have?' (business-type) page " +
+          "if user has not changed the answer 'YES' " in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                  .success
+                  .value
+                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
+                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode, MDR))
+            }
+          }
+      }
+
+      "must go from 'What Are You Registering As' (registration-type) page to " - {
+
+        "'Do You Have NINO?' page" +
+          "if user has changed answer to 'Individual' " in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .remove(DoYouHaveNINPage)
+                  .success
+                  .value
+                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
+                  .success
+                  .value
+                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(page = WhatAreYouRegisteringAsPage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
+                  .mustBe(routes.DoYouHaveNINController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
+        "'What is the name of your business' page " +
+          "if user has changed answer to 'Business' " in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
+                  .success
+                  .value
+                  .setOrCleanup(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(
+                    page = WhatAreYouRegisteringAsPage,
+                    mode = CheckMode,
+                    regime = MDR,
+                    userAnswers = updatedAnswers
+                  )
+                  .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(CheckMode, MDR))
+            }
+          }
+      }
+
+      "must go from 'Do you Have a National Insurance Number' page to " - {
+
+        "'WhatIsYourNationalInsuranceNumber' page " +
+          "if user has changed answer to 'Yes' " in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(DoYouHaveNINPage, false)
+                  .success
+                  .value
+                  .setOrCleanup(DoYouHaveNINPage, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
+        "'What Is Your Name?' page " +
+          "if NO is selected" in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(DoYouHaveNINPage, true)
+                  .success
+                  .value
+                  .setOrCleanup(DoYouHaveNINPage, false)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.NonUkNameController.onPageLoad(CheckMode, MDR))
+            }
+          }
+      }
+
+      "must go from 'What type of business do you have?' (business-type) page to " - {
+
+        "'What is your Unique Tax Payer Reference' page " in {
+
+          forAll(arbitrary[UserAnswers], arbitraryBussinessType.arbitrary) {
+            (answers, businessType) =>
               val updatedAnswers = answers
-                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                .success
-                .value
-                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+                .set(BusinessTypePage, businessType)
                 .success
                 .value
 
               navigator
-                .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                .nextPage(BusinessTypePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.UTRController.onPageLoad(CheckMode, MDR))
           }
         }
+      }
 
-      "must go from 'Do You Have Unique Tax Payer Reference?' page to 'What Are You Registering As?' page if user has changed answer to 'NO' " +
-        "& answer for next page of journey does NOT exist" in {
+      "must go from 'What is your Unique Tax Payer Reference' (utr) page to " - {
+
+        "'What is your Name' page " +
+          "if the business type is 'Sole trader'" in {
+
+            forAll(arbitrary[UserAnswers], arbitraryUniqueTaxpayerReference.arbitrary) {
+              (answers, utr) =>
+                val updatedAnswers = answers
+                  .set(BusinessTypePage, BusinessType.Sole)
+                  .success
+                  .value
+                  .set(UTRPage, utr)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(UTRPage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.SoleNameController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
+        "'What is your {business} Name' page " +
+          "if the business type is other than 'Sole trader'" in {
+
+            forAll(arbitrary[UserAnswers], Gen.oneOf(models.BusinessType.values.toSeq)) {
+              (answers, businessType) =>
+                val updatedAnswers = answers
+                  .set(BusinessTypePage, BusinessType.LimitedCompany)
+                  .success
+                  .value
+                  .set(UTRPage, utr)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(UTRPage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.BusinessNameController.onPageLoad(CheckMode, MDR))
+            }
+          }
+      }
+
+      "must go from 'WhatIsYourNationalInsuranceNumber' page to " - {
+
+        "'What is your name?' page " +
+          "if valid NINO is entered AND 'What is your name?' page is clean" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
+                    .success
+                    .value
+                    .remove(WhatIsYourNamePage)
+                    .success
+                    .value
+
+                navigator
+                  .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode, MDR))
+            }
+          }
+
+        "'CheckYourAnswers' page " +
+          "if the next page is set, wich is 'WhatIsYourNamePage'" in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
+                    .success
+                    .value
+                    .set(WhatIsYourNamePage, Name("name", "surname"))
+                    .success
+                    .value
+
+                navigator
+                  .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+            }
+          }
+
+      }
+
+      "must go from 'WhatIsYourName' page to " - {
+
+        "'CheckYourAnswers' page " +
+          "if the next page is set, wich is 'WhatIsYourDateOfBirthPage'" in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(WhatIsYourNamePage, Name("name", "surname"))
+                    .success
+                    .value
+                    .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+                    .success
+                    .value
+
+                navigator
+                  .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+            }
+          }
+
+        "'WhatIsYourDateOfBirth' page if value is provided" in {
+
           forAll(arbitrary[UserAnswers]) {
             answers =>
-              val updatedAnswers = answers
-                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                .success
-                .value
-                .remove(WhatAreYouRegisteringAsPage)
-                .success
-                .value
+              val updatedAnswers =
+                answers
+                  .set(WhatIsYourNamePage, Name("name", "surname"))
+                  .success
+                  .value
+                  .remove(WhatIsYourDateOfBirthPage)
+                  .success
+                  .value
 
               navigator
-                .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, MDR))
+                .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
           }
         }
+      }
 
-      "must go from 'Do You Have Unique Tax Payer Reference?' page to 'What type of business do you have?' page if user has changed answer to 'YES' " +
-        "& answer for next page of journey does NOT exist" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true)
-                .success
-                .value
-                .remove(BusinessTypePage)
-                .success
-                .value
+      "must go from 'What is the name of your business' page to " - {
 
-              navigator
-                .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode, MDR))
+        "'Check Your Answers' page " +
+          "if user has not changed answer & next page in Journey has an answer" in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(BusinessWithoutIDNamePage, "a business")
+                  .success
+                  .value
+                  .set(BusinessHaveDifferentNamePage, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(
+                    page = BusinessWithoutIDNamePage,
+                    mode = CheckMode,
+                    regime = MDR,
+                    userAnswers = updatedAnswers
+                  )
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+
+            }
           }
-        }
 
-      "must go from 'What Are You Registering As' page to 'Check Your Answers' page if user has not changed answer " +
-        "& answer for next page of journey exists" in {
+        "'Does your business trade under a different name?' page " +
+          "if user has changed answer" in {
 
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                .success
-                .value
-                .set(DoYouHaveNINPage, true)
-                .success
-                .value
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(BusinessWithoutIDNamePage, "a new business")
+                  .success
+                  .value
 
-              navigator
-                .nextPage(
-                  page = WhatAreYouRegisteringAsPage,
-                  mode = CheckMode,
-                  regime = MDR,
-                  userAnswers = updatedAnswers
-                )
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                navigator
+                  .nextPage(
+                    page = BusinessWithoutIDNamePage,
+                    mode = CheckMode,
+                    regime = MDR,
+                    userAnswers = updatedAnswers
+                  )
+                  .mustBe(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, MDR))
+            }
           }
-        }
+      }
 
-      "must go from 'What Are You Registering As' page to 'Do You Have NINO?' page if user has changed answer to 'Individual' " +
-        "& answer for next page of journey does NOT exist" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                .success
-                .value
-                .remove(DoYouHaveNINPage)
-                .success
-                .value
+      "must go from 'Does your business trade under a different name?' page to " - {
 
-              navigator
-                .nextPage(page = WhatAreYouRegisteringAsPage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                .mustBe(routes.DoYouHaveNINController.onPageLoad(CheckMode, MDR))
+        "'Check Your Answers' page " +
+          "if user has selected 'NO' & next page in Journey has an answer " in {
+
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(BusinessHaveDifferentNamePage, false)
+                  .success
+                  .value
+                  .set(AddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(
+                    page = BusinessHaveDifferentNamePage,
+                    mode = CheckMode,
+                    regime = MDR,
+                    userAnswers = updatedAnswers
+                  )
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+            }
           }
-        }
 
-      "must go from 'What Are You Registering As' page to 'What is the name of your business' page if user has changed answer to 'Business' " +
-        "& answer for next page of journey does NOT exist" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
-                .success
-                .value
-                .remove(BusinessWithoutIDNamePage)
-                .success
-                .value
+        "'What is the trading name of your business?' page " +
+          "if user has selected 'YES' " in {
 
-              navigator
-                .nextPage(
-                  page = WhatAreYouRegisteringAsPage,
-                  mode = CheckMode,
-                  regime = MDR,
-                  userAnswers = updatedAnswers
-                )
-                .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(CheckMode, MDR))
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(BusinessHaveDifferentNamePage, true)
+                  .success
+                  .value
+
+                navigator
+                  .nextPage(
+                    page = BusinessHaveDifferentNamePage,
+                    mode = CheckMode,
+                    regime = MDR,
+                    userAnswers = updatedAnswers
+                  )
+                  .mustBe(routes.WhatIsTradingNameController.onPageLoad(CheckMode, MDR))
+            }
           }
-        }
-
-      "must go from DoYouHaveNIN page to CheckYourAnswers page if WhatIsYourNationalInsuranceNumberPage is set" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveNINPage, true)
-                .success
-                .value
-                .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
-                .success
-                .value
-
-            navigator
-              .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-        }
       }
 
-      "must go from DoYouHaveNIN page to WhatIsYourNationalInsuranceNumber page if YES is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveNINPage, true)
-                .success
-                .value
+      "must go from 'What is the trading name of your business?' page to " - {
 
-            navigator
-              .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode, MDR))
-        }
-      }
+        "'Check Your Answers' page when user enters a name " +
+          "& next page in Journey has an answer" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers = answers
+                  .set(WhatIsTradingNamePage, "tradeName")
+                  .success
+                  .value
+                  .set(ContactNamePage, "someName")
+                  .success
+                  .value
+                  .set(AddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
+                  .success
+                  .value
 
-      "must go from 'Do You Have NINO?' page to 'What Is Your Name?' page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveNINPage, false)
-                .success
-                .value
-                .remove(NonUkNamePage)
-                .success
-                .value
-
-            navigator
-              .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.NonUkNameController.onPageLoad(CheckMode, MDR))
-        }
-      }
-
-      "must go from WhatIsYourNationalInsuranceNumber page to CheckYourAnswers page if WhatIsYourNamePage is set" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
-                .success
-                .value
-                .set(WhatIsYourNamePage, Name("name", "surname"))
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-        }
-      }
-
-      "must go from WhatIsYourNationalInsuranceNumber page to WhatIsYourName page if value is provided" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode, MDR))
-        }
-      }
-
-      "must go from WhatIsYourName page to CheckYourAnswers page if WhatIsYourDateOfBirthPage is set" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNamePage, Name("name", "surname"))
-                .success
-                .value
-                .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-        }
-      }
-
-      "must go from WhatIsYourName page to WhatIsYourDateOfBirth page if value is provided" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNamePage, Name("name", "surname"))
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
-        }
-      }
-
-      "must go from 'What is the name of your business' page to 'Check Your Answers' page if user has not changed answer " +
-        "& next page in Journey has an answer" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(BusinessWithoutIDNamePage, "a business")
-                .success
-                .value
-                .set(BusinessHaveDifferentNamePage, true)
-                .success
-                .value
-
-              navigator
-                .nextPage(
-                  page = BusinessWithoutIDNamePage,
-                  mode = CheckMode,
-                  regime = MDR,
-                  userAnswers = updatedAnswers
-                )
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-
+                navigator
+                  .nextPage(
+                    page = WhatIsTradingNamePage,
+                    mode = CheckMode,
+                    regime = MDR,
+                    userAnswers = updatedAnswers
+                  )
+                  .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+            }
           }
-        }
 
-      "must go from 'What is the name of your business?' page to 'Does your business trade under a different name?' page if user has changed answer" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers = answers
-              .set(BusinessWithoutIDNamePage, "a new business")
-              .success
-              .value
-
-            navigator
-              .nextPage(
-                page = BusinessWithoutIDNamePage,
-                mode = CheckMode,
-                regime = MDR,
-                userAnswers = updatedAnswers
-              )
-              .mustBe(routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, MDR))
-        }
       }
-
-      "must go from 'Does your business trade under a different name?' page to 'Check Your Answers' page if user has selected 'NO' " +
-        "& next page in Journey has an answer " in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(BusinessHaveDifferentNamePage, false)
-                .success
-                .value
-                .set(AddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
-                .success
-                .value
-
-              navigator
-                .nextPage(
-                  page = BusinessHaveDifferentNamePage,
-                  mode = CheckMode,
-                  regime = MDR,
-                  userAnswers = updatedAnswers
-                )
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-          }
-        }
-
-      "must go from 'Does your business trade under a different name?' page to 'What is the trading name of your business?' page if user has selected 'YES' " in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers = answers
-              .set(BusinessHaveDifferentNamePage, true)
-              .success
-              .value
-
-            navigator
-              .nextPage(
-                page = BusinessHaveDifferentNamePage,
-                mode = CheckMode,
-                regime = MDR,
-                userAnswers = updatedAnswers
-              )
-              .mustBe(routes.WhatIsTradingNameController.onPageLoad(CheckMode, MDR))
-        }
-      }
-
-      "must go from 'What is the trading name of your business?' page to 'Check Your Answers' page when user enters a name " +
-        "& next page in Journey has an answer" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers = answers
-                .set(WhatIsTradingNamePage, "tradeName")
-                .success
-                .value
-                .set(ContactNamePage, "someName")
-                .success
-                .value
-                .set(AddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
-                .success
-                .value
-
-              navigator
-                .nextPage(
-                  page = WhatIsTradingNamePage,
-                  mode = CheckMode,
-                  regime = MDR,
-                  userAnswers = updatedAnswers
-                )
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
-          }
-        }
 
       "must go from 'What is the main address of your business' page to 'Check Your Answers' page when user enters address " +
         "& answer for next page of journey exists" in {
@@ -446,35 +542,24 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           }
         }
 
-      "must go from 'What Is Your NINO?' page to 'What is your name?' page if valid NINO is entered" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
-                .success
-                .value
+      "must go from 'What is your name?'(UK) page to " +
+        "'What is your DOB?' page if valid NINO is entered" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(WhatIsYourNamePage, Name("Little", "Comets"))
+                  .success
+                  .value
+                  .remove(WhatIsYourDateOfBirthPage)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode, MDR))
+              navigator
+                .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
+          }
         }
-      }
-
-      "must go from 'What is your name?'(UK) page to 'What is your DOB?' page if valid NINO is entered" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatIsYourNamePage, Name("Little", "Comets"))
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
-        }
-      }
 
       "must go from 'What Is Your Name?'(NON-UK) page to 'What Is Your DOB?' page when valid name is entered" in {
         forAll(arbitrary[UserAnswers]) {
@@ -569,6 +654,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               val updatedAnswers =
                 answers
                   .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+                  .success
+                  .value
+                  .remove(ContactNamePage)
                   .success
                   .value
                   .set(AddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))

@@ -16,6 +16,8 @@
 
 package models
 
+import models.error.ApiError
+import models.error.ApiError.MandatoryInformationMissingError
 import pages.QuestionPage
 import play.api.libs.Files.logger
 import play.api.libs.json._
@@ -33,6 +35,9 @@ final case class UserAnswers(
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+
+  def getEither[A](page: Gettable[A])(implicit rds: Reads[A]): Either[ApiError, A] =
+    get(page).toRight(MandatoryInformationMissingError(page.toString))
 
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
@@ -59,8 +64,7 @@ final case class UserAnswers(
     reads: Reads[A]
   ): Try[UserAnswers] = {
 
-    val previousValue: Option[A] = if (checkPreviousUserAnswer) get(page) else None
-
+    val originalValue: Option[A] = if (checkPreviousUserAnswer) get(page) else None
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
@@ -70,7 +74,8 @@ final case class UserAnswers(
 
     updatedData.flatMap {
       d =>
-        if (checkPreviousUserAnswer && previousValue.contains(value)) {
+        // We only clear down answers when an answer changes
+        if (originalValue.contains(value)) {
           Try(copy(data = d))
         } else {
           val updatedAnswers = copy(data = d)
@@ -78,6 +83,12 @@ final case class UserAnswers(
         }
     }
   }
+
+  def setEither[A](page: QuestionPage[A], value: A, checkPrevious: Boolean = false)(implicit
+    writes: Writes[A],
+    reads: Reads[A]
+  ): Either[ApiError, UserAnswers] =
+    set[A](page, value).toOption.toRight(MandatoryInformationMissingError(page.toString))
 
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 

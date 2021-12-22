@@ -19,13 +19,13 @@ package controllers
 import controllers.actions._
 import forms.ContactEmailFormProvider
 import models.requests.DataRequest
-import models.{Mode, Regime}
+import models.{CheckMode, Mode, Regime}
 import navigation.ContactDetailsNavigator
-import pages.{ContactEmailPage, ContactNamePage}
+import pages.{ContactEmailPage, ContactNamePage, PageLists}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,6 +34,7 @@ import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class ContactEmailController @Inject() (
   override val messagesApi: MessagesApi,
@@ -71,6 +72,9 @@ class ContactEmailController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
       implicit request =>
+        if (mode == CheckMode) {
+          request.userAnswers.remove(ContactEmailPage)
+        }
         renderer.render("contactEmail.njk", data(mode, regime, form)).map(Ok(_))
     }
 

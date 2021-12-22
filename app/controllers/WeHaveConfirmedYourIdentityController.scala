@@ -16,18 +16,15 @@
 
 package controllers
 
-import cats.data.EitherT
-import cats.implicits._
+import config.FrontendAppConfig
 import controllers.actions._
-import models.error.ApiError
-import models.error.ApiError.NotFoundError
-import models.matching.RegistrationInfo
+import models.matching.RegistrationRequest
 import models.requests.DataRequest
-import models.{BusinessType, CheckMode, Mode, NormalMode, Regime, UserAnswers}
+import models.{BusinessType, Mode, NormalMode, Regime}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{BusinessMatchingService, SubscriptionService}
@@ -42,6 +39,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   identify: IdentifierAction,
   getData: DataRetrievalAction,
   requireData: DataRequiredAction,
+  appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
   subscriptionService: SubscriptionService,
@@ -49,71 +47,54 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with WithEitherT {
+    with I18nSupport {
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (identify(regime) andThen getData.apply andThen requireData(regime)).async {
-
       implicit request =>
-        val action: String = {
-          if (containsContactDetails(request.userAnswers) && mode == CheckMode) routes.CheckYourAnswersController.onPageLoad(regime).url
-          else {
-            request.userAnswers.get(BusinessTypePage) match {
-              case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-              case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
-              case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-            }
+        val action: String =
+          request.userAnswers.get(BusinessTypePage) match {
+            case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
+            case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
+            case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
           }
-        }
-        val json = Json.obj(
-          "regime" -> regime.toUpperCase,
-          "action" -> action
-        )
-
-        (for {
-          registrationInfo <- EitherT(matchIndividualInfo(regime))
-          updatedAnswers   <- setEither(RegistrationInfoPage, registrationInfo)
-          _ = sessionRepository.set(updatedAnswers)
-        } yield registrationInfo)
-          .fold[Future[Result]](
-            fa = {
-              case NotFoundError =>
-                Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
-              case error =>
-                renderer.renderError(error, regime)
-            },
-            fb =>
-              subscriptionService.getDisplaySubscriptionId(regime, fb.safeId) flatMap {
-                case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(fb.safeId, subscriptionId, regime)
-                case _                    => renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+        buildRegistrationRequest match {
+          case Some(registrationRequest) =>
+            matchingService
+              .sendIndividualRegistrationInformation(regime, registrationRequest)
+              .flatMap {
+                case Right(info) =>
+                  request.userAnswers.set(RegistrationInfoPage, info).map(sessionRepository.set)
+                  subscriptionService.getDisplaySubscriptionId(regime, info.safeId) flatMap {
+                    case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId, regime)
+                    case _ =>
+                      val json = Json.obj(
+                        "regime" -> regime.toUpperCase,
+                        "action" -> action
+                      )
+                      renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+                  }
+                case _ =>
+                  Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
               }
-          )
-          .flatten
+          case _ =>
+            renderer
+              .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+              .map(ServiceUnavailable(_))
+        }
 
     }
 
-  private def matchIndividualInfo(regime: Regime)(implicit request: DataRequest[AnyContent]): Future[Either[ApiError, RegistrationInfo]] =
-    (for {
-      nino             <- getEither(WhatIsYourNationalInsuranceNumberPage)
-      name             <- getEither(WhatIsYourNamePage).orElse(getEither(SoleNamePage))
-      dob              <- getEither(WhatIsYourDateOfBirthPage)
-      registrationInfo <- EitherT(matchingService.sendIndividualRegistrationInformation(regime, RegistrationInfo.build(name, nino, Option(dob))))
-    } yield registrationInfo).value
+  private def buildIndividualName(implicit request: DataRequest[AnyContent]): Option[String] =
+    request.userAnswers.get(BusinessTypePage) match {
+      case Some(BusinessType.Sole) => request.userAnswers.get(SoleNamePage).map(_.fullName)
+      case _                       => request.userAnswers.get(WhatIsYourNamePage).map(_.fullName)
+    }
 
-  // In CHECKMODE we check if contact details have been cleared down if not we can safely Redirec to CYA page
-  private def containsContactDetails(ua: UserAnswers): Boolean = {
-    val hasContactName = ua
-      .get(ContactNamePage)
-      .fold(false)(
-        _ => true
-      )
-    val hasContactEmail = ua
-      .get(ContactEmailPage)
-      .fold(false)(
-        _ => true
-      )
-
-    hasContactName || hasContactEmail
-  }
+  private def buildRegistrationRequest(implicit request: DataRequest[AnyContent]): Option[RegistrationRequest] =
+    for {
+      nino <- request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
+      name <- buildIndividualName
+      dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
+    } yield RegistrationRequest("NINO", nino.nino, name, None, Option(dob))
 }

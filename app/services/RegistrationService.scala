@@ -16,11 +16,11 @@
 
 package services
 
+import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
-import controllers.WithEitherT
 import models.error.ApiError
-import models.error.ApiError.{MandatoryInformationMissingError, RegistrationResponseType}
+import models.error.ApiError.MandatoryInformationMissingError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.RegistrationInfo
 import models.register.request.RegisterWithoutID
@@ -35,53 +35,80 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) extends WithEitherT {
+class RegistrationService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
 
   def registerWithoutId(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, RegistrationInfo]] =
-    businessRegistration(regime).orElse(individualRegistration(regime)).value
+    (request.userAnswers.get(DoYouHaveNINPage) match {
+      case Some(false) => individualRegistration(regime)
+      case _           => businessRegistration(regime)
+    }).value
 
-  private def individualRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): RegistrationResponseType =
-    for {
-      name <- getEither(WhatIsYourNamePage).orElse(getEither(NonUkNamePage).map(_.toName))
-      dob  <- getEither(WhatIsYourDateOfBirthPage)
+  private def buildIndividualName(implicit request: DataRequest[AnyContent]): Option[Name] =
+    request.userAnswers.get(DoYouHaveNINPage) match {
+      case Some(false) => request.userAnswers.get(NonUkNamePage).map(_.toName)
+      case _           => request.userAnswers.get(WhatIsYourNamePage)
+    }
+
+  private def buildIndividualAddress(implicit request: DataRequest[AnyContent]): Option[Address] =
+    request.userAnswers.get(DoYouHaveNINPage) match {
+      case Some(false) =>
+        request.userAnswers.get(SelectedAddressLookupPage) match {
+          case Some(lookup) => lookup.toAddress
+          case _ =>
+            request.userAnswers
+              .get(AddressWithoutIdPage) // orElse ?
+              .fold(request.userAnswers.get(AddressUKPage))(Some.apply)
+        }
+      case _ => request.userAnswers.get(AddressUKPage)
+    }
+
+  private val registrationError =
+    EitherT[Future, ApiError, RegistrationInfo](Future.successful(Left(MandatoryInformationMissingError())))
+
+  private def individualRegistration(
+    regime: Regime
+  )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, RegistrationInfo] =
+    (for {
+      name <- buildIndividualName
+      dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
       phoneNumber  = request.userAnswers.get(ContactPhonePage)
       emailAddress = request.userAnswers.get(ContactEmailPage)
-      address  <- getEither(AddressWithoutIdPage).orElse(getEither(AddressUKPage)).orElse(getEither(SelectedAddressLookupPage) subflatMap (_.toAddress))
-      response <- sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress))
-    } yield response
+      address <- buildIndividualAddress
+    } yield sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress)))
+      .getOrElse(registrationError)
 
-  private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): RegistrationResponseType =
-    for {
-      organisationName <- getEither(BusinessWithoutIDNamePage)
+  private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, RegistrationInfo] =
+    (for {
+      organisationName <- request.userAnswers.get(BusinessWithoutIDNamePage)
       phoneNumber  = request.userAnswers.get(ContactPhonePage)
       emailAddress = request.userAnswers.get(ContactEmailPage)
-      address  <- getEither(AddressWithoutIdPage)
-      response <- sendBusinessRegistration(regime, organisationName, address, ContactDetails(phoneNumber, emailAddress))
-    } yield response
+      address <- request.userAnswers.get(AddressWithoutIdPage)
+    } yield sendBusinessRegistration(regime, organisationName, address, ContactDetails(phoneNumber, emailAddress)))
+      .getOrElse(registrationError)
 
   def sendIndividualRegistration(regime: Regime, name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): RegistrationResponseType =
+  ): EitherT[Future, ApiError, RegistrationInfo] =
     registrationConnector
       .withIndividualNoId(RegisterWithoutID(regime, name, dob, address, contactDetails))
       .subflatMap {
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield RegistrationInfo.build(safeId, AsIndividual)).toRight(MandatoryInformationMissingError())
+          } yield RegistrationInfo(safeId, None, None, AsIndividual)).toRight(MandatoryInformationMissingError())
       }
 
   def sendBusinessRegistration(regime: Regime, businessName: String, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): RegistrationResponseType =
+  ): EitherT[Future, ApiError, RegistrationInfo] =
     registrationConnector
       .withOrganisationNoId(RegisterWithoutID(regime, businessName, address, contactDetails))
       .subflatMap {
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield RegistrationInfo.build(safeId, AsOrganisation)).toRight(MandatoryInformationMissingError())
+          } yield RegistrationInfo(safeId, Some(businessName), None, AsOrganisation)).toRight(MandatoryInformationMissingError())
       }
 }

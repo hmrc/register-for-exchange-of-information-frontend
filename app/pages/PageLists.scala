@@ -23,49 +23,45 @@ import scala.util.Try
 object PageLists {
 
   val removePage: (Try[UserAnswers], QuestionPage[_]) => Try[UserAnswers] =
-    (ua: Try[UserAnswers], page: QuestionPage[_]) =>
-      ua.flatMap(
-        x => x.remove(page)
-      )
-
-  val allAfterIsContactTelephonePages = List(ContactPhonePage)
+    (ua: Try[UserAnswers], page: QuestionPage[_]) => ua.flatMap(_.remove(page))
 
   val allAfterSecondContactPages = List(SndContactNamePage, SndContactEmailPage, SndConHavePhonePage, SndContactPhonePage)
 
-  val allAfterBusinessTypePage = List(UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage, IsThisYourBusinessPage)
+  val firstContactDetailsPages = List(ContactNamePage, ContactEmailPage, IsContactTelephonePage, ContactPhonePage)
+
+  val allContactDetailPages = allAfterSecondContactPages ++ firstContactDetailsPages :+ SecondContactPage
+
+  val afterAllSndConHavePhonePages = List(SndContactPhonePage)
+
+  // with id
+
+  val individualWithIDPages = List(WhatIsYourNationalInsuranceNumberPage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
 
   val allAfterWhatIsYourNationalInsuranceNumberPage = List(WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
 
   val allAfterWhatIsYourNamePage = List(WhatIsYourDateOfBirthPage)
 
-  val individualWithIdJourney = List(WhatIsYourNationalInsuranceNumberPage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
+  val afterUTRPage = List(BusinessNamePage, SoleNamePage, IsThisYourBusinessPage) ++ allContactDetailPages
 
-  val businessWithIdJourney = BusinessTypePage +: allAfterBusinessTypePage
+  val businessWithIDPages =
+    List(BusinessTypePage, UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage, IsThisYourBusinessPage)
 
-  val individualWithoutIdJourney =
-    List(BusinessWithoutIDNamePage, WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, AddressUKPage, SelectAddressPage)
+  val allAfterBusinessTypePage =
+    List(UTRPage,
+         BusinessNamePage,
+         SoleNamePage,
+         WhatIsYourDateOfBirthPage,
+         SoleDateOfBirthPage,
+         WhatAreYouRegisteringAsPage,
+         IsThisYourBusinessPage
+    ) ++ allContactDetailPages
 
-  val businessWithoutIdJourney = List()
+  val dobSubJourneyPages = List(DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage)
 
-  val allContactDetailPages = List(
-    ContactNamePage,
-    ContactEmailPage,
-    IsContactTelephonePage,
-    ContactPhonePage,
-    SecondContactPage,
-    SndContactNamePage,
-    SndContactEmailPage,
-    SndConHavePhonePage,
-    SndContactPhonePage
-  )
+  // without id
 
-  val allWithIDPages = List(
-    BusinessTypePage,
-    UTRPage,
-    SoleNamePage,
-    IsThisYourBusinessPage,
-    BusinessNamePage
-  )
+  val nonUKNameSubJourneyPages =
+    List(WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage)
 
   val businessWithOutIDPages = List(
     BusinessWithoutIDNamePage,
@@ -76,27 +72,30 @@ object PageLists {
     AddressUKPage
   )
 
+  val allAfterBusinessNameWithOuIDPages = List(BusinessHaveDifferentNamePage, WhatIsTradingNamePage, AddressWithoutIdPage) ++ firstContactDetailsPages
+
   val individualWithOutIDPages = List(
-    DoYouHaveNINPage,
-    WhatIsYourNationalInsuranceNumberPage,
-    WhatIsYourNamePage,
-    WhatIsYourDateOfBirthPage,
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
     AddressWithoutIdPage,
     AddressLookupPage,
-    AddressUKPage
+    AddressUKPage,
+    SelectAddressPage,
+    SelectedAddressLookupPage
   )
+
+  val allIndividualPages = individualWithIDPages ++ individualWithOutIDPages
 
   val allWithOutIDPages = List(WhatAreYouRegisteringAsPage) ++ businessWithOutIDPages ++ individualWithOutIDPages
 
-  val allOtherPages =
-    List(WhatAreYouRegisteringAsPage,
-         DoYouHaveNINPage
-    ) ++ individualWithIdJourney ++ individualWithoutIdJourney ++ businessWithIdJourney ++ businessWithoutIdJourney
+  val allWithIDPages = List(DoYouHaveNINPage) ++ individualWithIDPages ++ businessWithIDPages
 
-  val allPages = List(DoYouHaveUniqueTaxPayerReferencePage,
-                      WhatAreYouRegisteringAsPage
-  ) ++ allContactDetailPages ++ allWithIDPages ++ businessWithOutIDPages ++ individualWithOutIDPages
+  val allWithOutIDBusinessPages = businessWithOutIDPages ++ firstContactDetailsPages
+
+  val allOtherPages = allWithIDPages ++ allWithOutIDPages
+
+  val allExceptHaveUTRPages = allContactDetailPages ++ allOtherPages
+
+  val allPages = List(DoYouHaveUniqueTaxPayerReferencePage) ++ allExceptHaveUTRPages
 }

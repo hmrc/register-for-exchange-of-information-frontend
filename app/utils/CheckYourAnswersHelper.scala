@@ -142,7 +142,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "addressWithoutId.business",
         value = formatAddress(answer),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.AddressWithoutIdController.onPageLoad(CheckMode, regime).url
       )
   }
 

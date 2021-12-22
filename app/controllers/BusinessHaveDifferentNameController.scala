@@ -75,7 +75,7 @@ class BusinessHaveDifferentNameController @Inject() (
           formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessHaveDifferentNamePage, value, checkPreviousUserAnswer = true))
+              updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessHaveDifferentNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(BusinessHaveDifferentNamePage, mode, regime, updatedAnswers))
         )

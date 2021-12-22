@@ -16,20 +16,12 @@
 
 package pages
 
-import models.UserAnswers
+import models.matching.RegistrationRequest
 import play.api.libs.json.JsPath
 
-import scala.util.Try
-
-case object IsContactTelephonePage extends QuestionPage[Boolean] {
+case object RegistrationRequestPage extends QuestionPage[RegistrationRequest] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "isContactTelephone"
-
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(false) => userAnswers.remove(ContactPhonePage)
-      case _           => super.cleanup(value, userAnswers)
-    }
+  override def toString: String = "registrationRequest"
 }

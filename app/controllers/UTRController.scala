@@ -27,7 +27,7 @@ import pages.{BusinessTypePage, UTRPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import play.twirl.api
 import renderer.Renderer
 import repositories.SessionRepository
@@ -105,7 +105,7 @@ class UTRController @Inject() (
                 formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
                 value =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(UTRPage, value, true))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
               )

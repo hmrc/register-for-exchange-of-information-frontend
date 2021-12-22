@@ -25,7 +25,7 @@ import pages.WhatAreYouRegisteringAsPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
@@ -48,8 +48,7 @@ class WhatAreYouRegisteringAsController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with WithEitherT {
+    with NunjucksSupport {
 
   private val form = formProvider()
 
@@ -78,7 +77,7 @@ class WhatAreYouRegisteringAsController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatAreYouRegisteringAsPage, value, checkPreviousUserAnswer = true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatAreYouRegisteringAsPage, value, true))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
           )
