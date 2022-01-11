@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package utils
 
 import controllers.routes
+import models.matching.OrgRegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
 import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
@@ -32,7 +33,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     userAnswers.get(pages.IsThisYourBusinessPage) match {
       case Some(true) =>
         for {
-          registrationInfo <- userAnswers.get(RegistrationInfoPage)
+          registrationInfo <- userAnswers.get(RegistrationInfoPage).asInstanceOf[Option[OrgRegistrationInfo]]
           businessName     <- registrationInfo.name
           address          <- registrationInfo.address
           countryName      <- countryListFactory.getDescriptionFromCode(address.countryCode)

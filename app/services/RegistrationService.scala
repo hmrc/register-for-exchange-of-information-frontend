@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
-import models.matching.RegistrationInfo
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
 import models.register.request.RegisterWithoutID
 import models.requests.DataRequest
 import models.shared.ContactDetails
@@ -96,7 +96,7 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield RegistrationInfo(safeId, None, None, AsIndividual)).toRight(MandatoryInformationMissingError())
+          } yield IndRegistrationInfo(safeId)).toRight(MandatoryInformationMissingError())
       }
 
   def sendBusinessRegistration(regime: Regime, businessName: String, address: Address, contactDetails: ContactDetails)(implicit
@@ -109,6 +109,6 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield RegistrationInfo(safeId, Some(businessName), None, AsOrganisation)).toRight(MandatoryInformationMissingError())
+          } yield OrgRegistrationInfo(safeId, Some(businessName), None)).toRight(MandatoryInformationMissingError())
       }
 }

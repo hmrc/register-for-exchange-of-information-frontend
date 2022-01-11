@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
 import models.matching.MatchingType.{AsIndividual, AsOrganisation}
-import models.matching.{RegistrationInfo, RegistrationRequest}
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
 import models.{BusinessType, Regime}
@@ -52,7 +52,7 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
   def sendBusinessRegistrationInformation(regime: Regime, registrationRequest: RegistrationRequest)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ApiError, RegistrationInfo]] =
+  ): Future[Either[ApiError, OrgRegistrationInfo]] =
     registrationConnector
       .withOrganisationUtr(RegisterWithID(regime, registrationRequest))
       .subflatMap {
@@ -61,21 +61,21 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
             safeId <- response.safeId
             name    = response.name
             address = response.address
-          } yield RegistrationInfo(safeId, name, address, AsOrganisation)).toRight(MandatoryInformationMissingError())
+          } yield OrgRegistrationInfo(safeId, name, address)).toRight(MandatoryInformationMissingError())
       }
       .value
 
   def sendIndividualRegistrationInformation(regime: Regime, registrationRequest: RegistrationRequest)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): Future[Either[ApiError, RegistrationInfo]] =
+  ): Future[Either[ApiError, IndRegistrationInfo]] =
     registrationConnector
       .withIndividualNino(RegisterWithID(regime, registrationRequest))
       .subflatMap {
         response =>
           response.safeId
             .map {
-              safeId => RegistrationInfo(safeId, None, None, AsIndividual)
+              safeId => IndRegistrationInfo(safeId)
             }
             .toRight(MandatoryInformationMissingError())
       }
