@@ -24,8 +24,7 @@ import helpers.RegisterHelper._
 import models.BusinessType.LimitedCompany
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
-import models.matching.MatchingType.{AsIndividual, AsOrganisation}
-import models.matching.{RegistrationInfo, RegistrationRequest}
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo, RegistrationRequest}
 import models.register.response.RegistrationWithIDResponse
 import models.{MDR, Name}
 import org.mockito.ArgumentMatchers.any
@@ -73,7 +72,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendIndividualRegistrationInformation(MDR, RegistrationRequest("NINO", "CC123456C", name.fullName, None))
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual))
+        result.futureValue mustBe Right(IndRegistrationInfo("XE0000123456789"))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
@@ -104,7 +103,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
           )
 
         result.futureValue mustBe Right(
-          RegistrationInfo("XE0000123456789", Option("name"), Option(addressResponse), AsOrganisation)
+          OrgRegistrationInfo("XE0000123456789", Option("name"), Option(addressResponse))
         )
       }
 

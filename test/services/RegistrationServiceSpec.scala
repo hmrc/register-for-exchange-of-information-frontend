@@ -23,8 +23,7 @@ import connectors.RegistrationConnector
 import helpers.RegisterHelper._
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
-import models.matching.MatchingType.{AsIndividual, AsOrganisation}
-import models.matching.RegistrationInfo
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
 import models.register.response.RegistrationWithoutIDResponse
 import models.{Address, Country, MDR, Name}
 import org.mockito.ArgumentMatchers.any
@@ -73,7 +72,7 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", None, None, AsIndividual))
+        result.futureValue mustBe Right(IndRegistrationInfo("XE0000123456789"))
       }
 
       "must return an error when when safeId can't be recovered" in {
@@ -98,7 +97,7 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         val result: Future[Either[ApiError, RegistrationInfo]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
 
-        result.futureValue mustBe Right(RegistrationInfo("XE0000123456789", Some("name"), None, AsOrganisation))
+        result.futureValue mustBe Right(OrgRegistrationInfo("XE0000123456789", Some("name"), None))
       }
 
       "must return an error when when safeId can't be recovered" in {

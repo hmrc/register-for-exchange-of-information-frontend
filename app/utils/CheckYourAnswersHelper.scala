@@ -33,7 +33,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     userAnswers.get(pages.IsThisYourBusinessPage) match {
       case Some(true) =>
         for {
-          registrationInfo <- userAnswers.get(RegistrationInfoPage).asInstanceOf[Option[OrgRegistrationInfo]]
+          registrationInfo <- userAnswers.get(RegistrationInfoPage)
           businessName     <- registrationInfo.name
           address          <- registrationInfo.address
           countryName      <- countryListFactory.getDescriptionFromCode(address.countryCode)

@@ -25,7 +25,7 @@ import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, UnableToCreateEnrolmentError}
 import models.matching.MatchingType.AsIndividual
-import models.matching.RegistrationInfo
+import models.matching.{IndRegistrationInfo, RegistrationInfo}
 import models.{Address, Country, MDR, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
@@ -84,7 +84,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(IndRegistrationInfoPage, IndRegistrationInfo("safeId"))
         .success
         .value
 
@@ -121,7 +121,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(IndRegistrationInfoPage, IndRegistrationInfo("safeId"))
         .success
         .value
 
@@ -160,7 +160,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(IndRegistrationInfoPage, IndRegistrationInfo("safeId"))
         .success
         .value
 
