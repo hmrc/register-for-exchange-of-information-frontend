@@ -125,12 +125,4 @@ class IsThisYourBusinessController @Inject() (
             } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
         )
   }
-
-  private def isTheSame(implicit request: DataRequest[AnyContent]): Boolean =
-    matchingService.buildBusinessRegistrationRequest
-      .map {
-        current =>
-          request.userAnswers.get(RegistrationRequestPage).contains(current)
-      }
-      .getOrElse(false)
 }

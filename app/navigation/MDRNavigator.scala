@@ -74,11 +74,11 @@ class MDRNavigator @Inject() () extends Navigator {
       )
 
     case SoleNamePage => regime => ua =>
-      checkNextPageForValueThenRoute(CheckMode, regime, ua, IsThisYourBusinessPage, routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime)
+      checkNextPageForValueThenRoute(CheckMode, regime, ua, RegistrationInfoPage, routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime)
       )
 
     case BusinessNamePage => regime => ua =>
-      checkNextPageForValueThenRoute(CheckMode, regime, ua, IsThisYourBusinessPage, routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime)
+      checkNextPageForValueThenRoute(CheckMode, regime, ua, RegistrationInfoPage, routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime)
       )
 
     case ContactNamePage => regime => ua =>
