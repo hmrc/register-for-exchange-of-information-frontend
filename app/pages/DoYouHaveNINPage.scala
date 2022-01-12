@@ -17,6 +17,7 @@
 package pages
 
 import models.UserAnswers
+import pages.PageLists._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -27,6 +28,10 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
 
   override def toString: String = "doYouHaveNIN"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allIndividualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = value match {
+    case Some(true)  => individualWithOutIDPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case Some(false) => (individualWithIDPages ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+    case _ =>
+      super.cleanup(value, userAnswers)
+  }
 }

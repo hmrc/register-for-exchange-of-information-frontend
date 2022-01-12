@@ -58,9 +58,4 @@ class WeCouldNotConfirmController @Inject() (
 
         renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
     }
-
-  private def clean(userAnswers: UserAnswers) =
-    PageLists.allPages.foldLeft(
-      Try(userAnswers)
-    )(PageLists.removePage)
 }

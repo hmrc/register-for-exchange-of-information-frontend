@@ -17,9 +17,11 @@
 package pages
 
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.matching.MatchingType.AsIndividual
+import models.matching.RegistrationInfo
 import models.{Address, AddressLookup, Country, Name, NonUkName, UserAnswers, WhatAreYouRegisteringAs}
-import pages.behaviours.PageBehaviours
 import org.scalacheck.Arbitrary.arbitrary
+import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
@@ -69,6 +71,9 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .set(AddressUKPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
             .success
             .value
+            .set(RegistrationInfoPage, RegistrationInfo("ID", None, None, AsIndividual))
+            .success
+            .value
             .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
             .success
             .value
@@ -80,6 +85,7 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
           result.get(DoYouLiveInTheUKPage) must not be defined
           result.get(WhatIsYourPostcodePage) must not be defined
           result.get(AddressLookupPage) must not be defined
+          result.get(RegistrationInfoPage) must not be defined
           result.get(AddressUKPage) must not be defined
       }
     }
