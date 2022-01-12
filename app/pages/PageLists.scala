@@ -59,14 +59,4 @@ object PageLists {
     SelectAddressPage,
     SelectedAddressLookupPage
   )
-
-  val allWithOutIDPages = List(WhatAreYouRegisteringAsPage) ++ businessWithOutIDPages ++ individualWithOutIDPages
-
-  val allWithIDPages = List(DoYouHaveNINPage) ++ individualWithIDPages ++ businessWithIDPages
-
-  val allOtherPages = allWithIDPages ++ allWithOutIDPages
-
-  val allExceptHaveUTRPages = allContactDetailPages ++ allOtherPages
-
-  val allPages = List(DoYouHaveUniqueTaxPayerReferencePage) ++ allExceptHaveUTRPages
 }
