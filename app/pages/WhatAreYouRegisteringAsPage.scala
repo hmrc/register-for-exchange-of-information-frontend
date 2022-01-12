@@ -52,7 +52,8 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
 
       case Some(RegistrationTypeIndividual) =>
         (businessWithIDPages ++ businessWithOutIDPages ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
-        
+
+      case _ => super.cleanup(value, userAnswers)
     }
 
 }
