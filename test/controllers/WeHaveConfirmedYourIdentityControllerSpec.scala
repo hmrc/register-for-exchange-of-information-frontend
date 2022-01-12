@@ -18,8 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.error.ApiError.{BadRequestError, NotFoundError}
-import models.matching.MatchingType.AsIndividual
-import models.matching.RegistrationInfo
+import models.matching.IndRegistrationInfo
 import models.{MDR, Name, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -37,7 +36,7 @@ import scala.concurrent.Future
 
 class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  val registrationInfo = RegistrationInfo("safeId", None, None, AsIndividual)
+  val registrationInfo = IndRegistrationInfo("safeId")
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
@@ -73,7 +72,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     "return OK and the correct view for a GET when there is a match" in {
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(RegistrationInfo("safeId", None, None, AsIndividual))))
+        .thenReturn(Future.successful(Right(registrationInfo)))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 

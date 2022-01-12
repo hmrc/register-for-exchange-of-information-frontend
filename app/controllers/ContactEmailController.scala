@@ -21,11 +21,11 @@ import forms.ContactEmailFormProvider
 import models.requests.DataRequest
 import models.{CheckMode, Mode, Regime}
 import navigation.ContactDetailsNavigator
-import pages.{ContactEmailPage, ContactNamePage, PageLists}
+import pages.{ContactEmailPage, ContactNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,7 +34,6 @@ import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class ContactEmailController @Inject() (
   override val messagesApi: MessagesApi,

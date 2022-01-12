@@ -19,11 +19,11 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.matching.RegistrationInfo
+import models.matching.OrgRegistrationInfo
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
 import models.{Mode, NormalMode, Regime}
-import navigation.{MDRNavigator, Navigator}
+import navigation.MDRNavigator
 import pages._
 import play.api.Logging
 import play.api.data.Form
@@ -62,7 +62,7 @@ class IsThisYourBusinessController @Inject() (
 
   private val form = formProvider()
 
-  private def result(mode: Mode, regime: Regime, form: Form[Boolean], registrationInfo: RegistrationInfo)(implicit
+  private def result(mode: Mode, regime: Regime, form: Form[Boolean], registrationInfo: OrgRegistrationInfo)(implicit
     ec: ExecutionContext,
     request: DataRequest[AnyContent]
   ) =
@@ -116,10 +116,9 @@ class IsThisYourBusinessController @Inject() (
         .fold(
           formWithErrors =>
             request.userAnswers.get(RegistrationInfoPage).fold(thereIsAProblem) {
-              registrationInfo =>
-                val name    = registrationInfo.name.getOrElse("")
-                val address = registrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
+              case OrgRegistrationInfo(_, Some(name), Some(address)) =>
                 render(mode, regime, formWithErrors, name, address).map(BadRequest(_))
+              case _ => thereIsAProblem
             },
           value =>
             for {

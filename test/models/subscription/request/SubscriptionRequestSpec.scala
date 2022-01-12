@@ -18,8 +18,7 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.matching.MatchingType.AsIndividual
-import models.matching.RegistrationInfo
+import models.matching.IndRegistrationInfo
 import models.{MDR, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -56,7 +55,7 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .set(SecondContactPage, false)
         .success
         .value
-        .set(RegistrationInfoPage, RegistrationInfo("safeId", None, None, AsIndividual))
+        .set(IndRegistrationInfoPage, IndRegistrationInfo("safeId"))
         .success
         .value
 

@@ -64,7 +64,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
               .sendIndividualRegistrationInformation(regime, registrationRequest)
               .flatMap {
                 case Right(info) =>
-                  request.userAnswers.set(RegistrationInfoPage, info).map(sessionRepository.set)
+                  request.userAnswers.set(IndRegistrationInfoPage, info).map(sessionRepository.set)
                   subscriptionService.getDisplaySubscriptionId(regime, info.safeId) flatMap {
                     case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId, regime)
                     case _ =>
