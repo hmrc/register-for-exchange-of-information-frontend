@@ -17,7 +17,7 @@
 package models.matching
 
 import models.register.response.details.AddressResponse
-import play.api.libs.json.{__, JsError, JsPath, JsSuccess, JsValue, Json, JsonValidationError, OFormat, OWrites, Reads, Writes}
+import play.api.libs.json.{OFormat, OWrites, Reads, __}
 
 sealed trait RegistrationInfo {
   val safeId: String
