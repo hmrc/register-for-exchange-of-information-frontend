@@ -23,32 +23,6 @@ sealed trait RegistrationInfo {
   val safeId: String
 }
 
-object RegistrationInfo {
-
-  implicit val writes: Writes[RegistrationInfo] = Writes[RegistrationInfo] {
-    case ind: IndRegistrationInfo => Json.toJson(ind)(IndRegistrationInfo.writes)
-    case org: OrgRegistrationInfo => Json.toJson(org)(OrgRegistrationInfo.writes)
-  }
-
-  implicit val reads: Reads[RegistrationInfo] = Reads {
-    (data: JsValue) =>
-      val allErrors: Either[Seq[(JsPath, Seq[JsonValidationError])], RegistrationInfo] = for {
-        indErrs <- data.validate[IndRegistrationInfo].asEither.left
-        orgErrs <- data.validate[OrgRegistrationInfo].asEither.left
-      } yield indErrs.map(
-        pair => (pair._1, JsonValidationError("Failed to read as IndRegistrationInfo") +: pair._2)
-      ) ++
-        orgErrs.map(
-          pair => (pair._1, JsonValidationError("Failed to read as OrgRegistrationInfo") +: pair._2)
-        )
-
-      allErrors match {
-        case Right(lt)  => JsSuccess(lt)
-        case Left(errs) => JsError(errs)
-      }
-  }
-}
-
 case class OrgRegistrationInfo(safeId: String, name: Option[String], address: Option[AddressResponse]) extends RegistrationInfo
 
 object OrgRegistrationInfo {
