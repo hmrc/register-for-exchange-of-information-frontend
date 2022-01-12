@@ -20,8 +20,7 @@ import cats.implicits._
 import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.MatchingType.{AsIndividual, AsOrganisation}
-import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo, RegistrationRequest}
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
 import models.{BusinessType, Regime}
@@ -32,7 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
+class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
 
   private def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
     request.userAnswers.get(BusinessTypePage) match {

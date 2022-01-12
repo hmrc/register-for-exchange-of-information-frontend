@@ -21,7 +21,6 @@ import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.MatchingType.{AsIndividual, AsOrganisation}
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
 import models.register.request.RegisterWithoutID
 import models.requests.DataRequest

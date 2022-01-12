@@ -19,8 +19,7 @@ package models.subscription.request
 import base.SpecBase
 import generators.Generators
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.matching.MatchingType.AsIndividual
-import models.matching.{IndRegistrationInfo, RegistrationInfo}
+import models.matching.IndRegistrationInfo
 import models.{Address, Country, Name, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

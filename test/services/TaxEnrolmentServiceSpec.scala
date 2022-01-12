@@ -24,8 +24,7 @@ import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, UnableToCreateEnrolmentError}
-import models.matching.MatchingType.AsIndividual
-import models.matching.{IndRegistrationInfo, RegistrationInfo}
+import models.matching.IndRegistrationInfo
 import models.{Address, Country, MDR, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach

@@ -18,8 +18,7 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.matching.MatchingType.AsIndividual
-import models.matching.{IndRegistrationInfo, RegistrationInfo}
+import models.matching.IndRegistrationInfo
 import models.{MDR, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

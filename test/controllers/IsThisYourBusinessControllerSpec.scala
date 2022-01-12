@@ -19,8 +19,7 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import models.BusinessType.LimitedCompany
 import models.error.ApiError.BadRequestError
-import models.matching.MatchingType.AsOrganisation
-import models.matching.{OrgRegistrationInfo, RegistrationInfo, RegistrationRequest}
+import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
 import models.{CheckMode, MDR, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -181,8 +180,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
-
-      val registrationInfo = OrgRegistrationInfo("SAFEID", Some("name"), Some(address))
 
       val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
         .set(BusinessNamePage, "name")

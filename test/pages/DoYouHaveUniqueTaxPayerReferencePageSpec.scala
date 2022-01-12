@@ -16,12 +16,7 @@
 
 package pages
 
-import models.{Address, AddressLookup, BusinessType, Country, Name, NonUkName, UniqueTaxpayerReference, UserAnswers, WhatAreYouRegisteringAs}
-import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
-import uk.gov.hmrc.domain.Nino
-
-import java.time.LocalDate
 
 class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
 

@@ -18,8 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.error.ApiError.{BadRequestError, NotFoundError}
-import models.matching.MatchingType.AsIndividual
-import models.matching.{IndRegistrationInfo, RegistrationInfo}
+import models.matching.IndRegistrationInfo
 import models.{MDR, Name, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any

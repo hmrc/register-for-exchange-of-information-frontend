@@ -22,8 +22,7 @@ import controllers.actions._
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
 import models.error.ApiError._
-import models.matching.MatchingType.AsIndividual
-import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo}
 import models.{Address, Country, MDR, SubscriptionID, UserAnswers}
 import navigation.{ContactDetailsNavigator, MDRNavigator}
 import org.mockito.ArgumentCaptor

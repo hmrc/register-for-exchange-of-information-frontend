@@ -17,7 +17,6 @@
 package utils
 
 import controllers.routes
-import models.matching.OrgRegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
 import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages

@@ -23,8 +23,6 @@ import connectors.SubscriptionConnector
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
-import models.matching.MatchingType.{AsIndividual, AsOrganisation}
-import models.matching.RegistrationInfo
 import models.{Address, Country, MDR, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar

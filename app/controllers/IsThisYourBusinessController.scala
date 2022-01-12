@@ -19,11 +19,11 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
+import models.matching.OrgRegistrationInfo
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
 import models.{Mode, NormalMode, Regime}
-import navigation.{MDRNavigator, Navigator}
+import navigation.MDRNavigator
 import pages._
 import play.api.Logging
 import play.api.data.Form

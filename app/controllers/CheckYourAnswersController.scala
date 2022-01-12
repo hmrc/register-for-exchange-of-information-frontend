@@ -24,7 +24,6 @@ import models.Regime
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
-import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
 import models.requests.DataRequest
 import pages._
 import play.api.Logging
@@ -34,8 +33,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
