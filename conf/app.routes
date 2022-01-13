@@ -180,7 +180,7 @@ GET        /:regime/problem/no-agent-service-available           controllers.Una
 
 GET        /:regime/problem/sign-in-problem                      controllers.UnauthorisedAssistantController.onPageLoad(regime: models.Regime)
 
-GET        /:regime/register/no-records-matched                    controllers.NoRecordsMatchedController.onPageLoad(regime:  models.Regime)
+GET        /:regime/register/business-not-identified                    controllers.BusinessNotIdentifiedController.onPageLoad(regime:  models.Regime)
 
 GET        /:regime/register/confirm-registration           controllers.RegistrationConfirmationController.onPageLoad(regime:  models.Regime)
 

@@ -1,0 +1,64 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
+
+{% block pageTitle %}
+  {{ title(messages("businessNotIdentified.title")) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: messages("site.back")
+  }) }}
+{% endblock %}
+
+{% block mainContent %}
+   <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">
+          {{ messages("businessNotIdentified.heading") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages("businessNotIdentified.p1") }}</p>
+
+        <h2 class="govuk-heading-m">
+            {{ messages("businessNotIdentified.subheading1") }}
+        </h2>
+
+        <p class="govuk-body">{{ messages("businessNotIdentified.p2") }}</p>
+
+        <ul class="govuk-list govuk-list--bullet" style="padding-left:20px;list-style-type:disc">
+            <li>{{ messages("businessNotIdentified.bullet1") }}</li>
+            <li>{{ messages("businessNotIdentified.bullet2") }}</li>
+            <li>{{ messages("businessNotIdentified.bullet3") }}</li>
+        </ul>
+
+        <p class="govuk-body">{{ messages("businessNotIdentified.p3")}}
+            <a href="{{contactUrl}}" class="govuk-link" target="_blank" rel="noopener noreferrer">{{ messages("businessNotIdentified.p3.link")}}</a>.
+        </p>
+
+        <h2 class="govuk-heading-m">
+            {{ messages("businessNotIdentified.subheading2") }}
+        </h2>
+
+        <p class="govuk-body">{{ messages("businessNotIdentified.p4") }}</p>
+
+        <p class="bottom-margin govuk-body"> {{ messages("businessNotIdentified.p5")}}
+            <a href="{{lostUtrUrl}}" class="govuk-link" target="_blank" rel="noopener noreferrer">{{ messages("businessNotIdentified.p5.link")}}</a>.
+        </p>
+
+        <p class="govuk-body">
+          {{ govukButton({
+            text: messages("businessNotIdentified.button"),
+            href: startUrl,
+            attributes: {id:"submit"}
+          }) }}
+        </p>
+
+      </div>
+   </div>
+
+{% endblock %}

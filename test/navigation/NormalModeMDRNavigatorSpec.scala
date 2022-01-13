@@ -489,7 +489,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(IsThisYourBusinessPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.NoRecordsMatchedController.onPageLoad(MDR))
+              .mustBe(routes.BusinessNotIdentifiedController.onPageLoad(MDR))
         }
       }
     }
