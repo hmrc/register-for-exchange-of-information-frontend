@@ -98,7 +98,7 @@ class IsThisYourBusinessController @Inject() (
               request.userAnswers.set(RegistrationInfoPage, response).map(sessionRepository.set)
               result(mode, regime, form, response)
             case _ =>
-              Future.successful(Redirect(routes.NoRecordsMatchedController.onPageLoad(regime)))
+              Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad(regime)))
           }
         case _ =>
           renderer

@@ -457,11 +457,21 @@ unauthorisedAgent.paragraph.2.b = signing in with your own or your organisation�
 unauthorisedAgent.paragraph.3 = You cannot report cross-border arrangements for other organisations or individuals, they must do it themselves.
 
 
-noRecordsMatched.title = The details you entered did not match our records
-noRecordsMatched.heading = The details you entered did not match our records
-noRecordsMatched.p1 = We could not match the details you entered with records held by HMRC.
-noRecordsMatched.p2 = If you used the wrong details, you can
-noRecordsMatched.link =  try again using different details
+businessNotIdentified.title = Your business could not be identified
+businessNotIdentified.heading = Your business could not be identified
+businessNotIdentified.p1 = This could be because of several reasons.
+businessNotIdentified.subheading1 = Try entering your business name again
+businessNotIdentified.p2 = Check if your business name uses:
+businessNotIdentified.bullet1 = capital letters
+businessNotIdentified.bullet2 = spaces
+businessNotIdentified.bullet3 = Limited or LTD
+businessNotIdentified.p3 = If you do not know your exact business name, you can
+businessNotIdentified.p3.link = contact HMRC (opens in new tab)
+businessNotIdentified.subheading2 = Try entering your Unique Taxpayer Reference again
+businessNotIdentified.p4 = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment or Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
+businessNotIdentified.p5 = You can discover help for
+businessNotIdentified.p5.link = finding a lost UTR number (opens in new tab)
+businessNotIdentified.button = Try again
 
 registrationConfirmation.title = Registration successful
 registrationConfirmation.heading = What happens next

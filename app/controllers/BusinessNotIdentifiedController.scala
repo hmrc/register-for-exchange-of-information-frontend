@@ -18,7 +18,9 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.BusinessType.{LimitedCompany, UnincorporatedAssociation}
 import models.{NormalMode, Regime}
+import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,7 +30,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class NoRecordsMatchedController @Inject() (
+class BusinessNotIdentifiedController @Inject() (
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,
   getData: DataRetrievalAction,
@@ -42,10 +44,17 @@ class NoRecordsMatchedController @Inject() (
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
     implicit request =>
+      val contactLink: String = request.userAnswers.get(BusinessTypePage) match {
+        case Some(LimitedCompany) | Some(UnincorporatedAssociation) => appConfig.corporationTaxEnquiriesLink
+        case _                                                      => appConfig.selfAssessmentEnquiriesLink
+      }
+
       val data = Json.obj(
-        "regime"   -> regime.toUpperCase,
-        "startUrl" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
+        "regime"     -> regime.toUpperCase,
+        "contactUrl" -> contactLink,
+        "lostUtrUrl" -> appConfig.lostUTRUrl,
+        "startUrl"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
       )
-      renderer.render("noRecordsMatched.njk", data).map(Ok(_))
+      renderer.render("businessNotIdentified.njk", data).map(Ok(_))
   }
 }

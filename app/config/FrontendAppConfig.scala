@@ -74,11 +74,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration.get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
 
-  lazy val lostUTRUrl: String             = "https://www.gov.uk/find-lost-utr-number"
-  lazy val businessTaxAccountLink: String = "https://www.gov.uk/guidance/sign-in-to-your-hmrc-business-tax-account"
-  lazy val emailEnquiries: String         = "enquiries.aeoi@hmrc.gov.uk"
-  lazy val countryCodeJson: String        = configuration.get[String]("json.countries")
-  val enrolmentKey: String => String      = (serviceName: String) => configuration.get[String](s"keys.enrolmentKey.$serviceName")
+  lazy val lostUTRUrl: String                  = configuration.get[String]("urls.lostUTR")
+  lazy val businessTaxAccountLink: String      = configuration.get[String]("urls.businessTaxAccount")
+  lazy val corporationTaxEnquiriesLink: String = configuration.get[String]("urls.corporationTaxEnquiries")
+  lazy val selfAssessmentEnquiriesLink: String = configuration.get[String]("urls.selfAssessmentEnquiries")
+  lazy val emailEnquiries: String              = configuration.get[String]("urls.emailEnquiries")
+  lazy val countryCodeJson: String             = configuration.get[String]("json.countries")
+  val enrolmentKey: String => String           = (serviceName: String) => configuration.get[String](s"keys.enrolmentKey.$serviceName")
 
   lazy val mandatoryDisclosureRulesFrontendUrl: String = configuration.get[String]("urls.mandatory-disclosure-rules-frontend")
 

@@ -167,7 +167,7 @@ class MDRNavigator @Inject() () extends Navigator {
     (ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) match {
       case (Some(true), Some(Sole)) => Some(routes.ContactEmailController.onPageLoad(mode, regime))
       case (Some(true), Some(_))    => Some(routes.ContactNameController.onPageLoad(mode, regime))
-      case _                        => Some(routes.NoRecordsMatchedController.onPageLoad(regime))
+      case _                        => Some(routes.BusinessNotIdentifiedController.onPageLoad(regime))
     }
 }
 
