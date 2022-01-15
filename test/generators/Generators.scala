@@ -18,6 +18,7 @@ package generators
 
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
+import org.scalacheck.rng.Seed
 import org.scalacheck.{Gen, Shrink}
 import utils.RegexConstants
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -51,7 +52,41 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validAddressLine: Gen[String] = RegexpGen.from(apiAddressRegex)
 
-  def validOrganisationName: Gen[String] = RegexpGen.from(orgNameRegex)
+//  def validOrganisationName(maxLength: Int): Gen[String] = for {
+//    specialChars <- Gen.oneOf(""" &`-'\^""".toCharArray)
+//    length       <- Gen.chooseNum(1, maxLength - 1)
+//    chars        <- listOfN(length, Gen.alphaNumChar)
+//  } yield chars.mkString + specialChars.toString
+
+  def validOrganisationName(maxLength: Int): Gen[String] = for {
+    length <- Gen.chooseNum(maxLength, maxLength)
+    chars  <- listOfN(length, RegexpGen.from(orgNameRegex))
+  } yield chars.mkString
+
+  def stringWithinMaxLengthByRegex(maxLength: Int, regex: String): Gen[String] = for {
+    length <- Gen.chooseNum(1, maxLength)
+    chars  <- listOfN(length, RegexpGen.from(regex))
+  } yield chars.mkString match {
+    case str if str.isEmpty            => str
+    case str if str.length > maxLength => str.substring(0, maxLength - 1)
+    case str                           => str
+  }
+
+  def stringWithFixedLengthByRegex(length: Int, regex: String): Gen[String] = {
+    for {
+      chars <- listOfN(length, RegexpGen.from(regex))
+    } yield chars.mkString match {
+      case str if str.isEmpty         => str
+      case str if str.length > length => str.substring(0, length - 1)
+      case str                        => str
+    }
+  } suchThat (_.length == length)
+
+  def validUtr: Gen[String] = for {
+    chars <- listOfN(10, Gen.oneOf(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)))
+  } yield chars.mkString
+
+  def nonEmptyStringWithinMaxLengthByRegex(maxLength: Int, regex: String): Gen[String] = stringWithinMaxLengthByRegex(maxLength, regex) suchThat (_.nonEmpty)
 
   def validPersonalName(maxLength: Int): Gen[String] = RegexpGen.from(individualNameRegex) suchThat (_.length > maxLength)
 
@@ -67,9 +102,12 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validNonApiName: Gen[String] = RegexpGen.from(nonApiNameRegex)
 
-  def validUtr: Gen[String] = RegexpGen.from(utrRegex)
-
-  def validNino: Gen[String] = RegexpGen.from(ninoRegex)
+  def validNino: Gen[String] = for {
+    first   <- Gen.oneOf("ACEHJLMOPRSWXY".toCharArray)
+    second  <- Gen.oneOf("ABCEGHJKLMNPRSTWXYZ".toCharArray)
+    numbers <- listOfN(6, Gen.oneOf(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)))
+    last    <- Gen.oneOf("ABCD".toCharArray)
+  } yield s"$first$second${numbers.mkString}$last"
 
   val subscriptionIDRegex              = "^[X][A-Z][0-9]{13}"
   def validSubscriptionID: Gen[String] = RegexpGen.from(subscriptionIDRegex)

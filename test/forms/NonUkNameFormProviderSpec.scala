@@ -34,7 +34,7 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, individualNameRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -69,7 +69,7 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, individualNameRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(

@@ -36,7 +36,7 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -75,7 +75,7 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -103,7 +103,7 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -142,7 +142,7 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(

@@ -35,7 +35,7 @@ class SndContactNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validNonApiName
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, orgNameRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(

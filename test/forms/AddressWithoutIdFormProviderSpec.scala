@@ -37,7 +37,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validAddressLine
+      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -76,7 +76,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validAddressLine
+      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -104,7 +104,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validAddressLine
+      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -143,7 +143,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validAddressLine
+      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
