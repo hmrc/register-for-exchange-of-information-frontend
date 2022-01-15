@@ -34,7 +34,7 @@ class WhatIsTradingNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, apiOrganisationNameRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(

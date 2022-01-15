@@ -33,7 +33,7 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validPersonalName(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, individualNameRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -60,7 +60,7 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validPersonalName(maxLength)
+      nonEmptyStringWithinMaxLengthByRegex(maxLength, individualNameRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(

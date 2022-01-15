@@ -35,7 +35,7 @@ class WhatIsYourNationalInsuranceNumberFormProviderSpec extends StringFieldBehav
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validNino
     )
 
     behave like fieldWithMaxLengthAndInvalid(
