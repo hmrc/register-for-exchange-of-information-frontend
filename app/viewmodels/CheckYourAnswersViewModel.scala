@@ -35,12 +35,12 @@ object CheckYourAnswersViewModel {
     val secContact     = if (isBusiness) Seq(Section(messages("checkYourAnswers.secondContact.h2"), buildSecondContact(helper))) else Nil
 
     Seq(
-      Section(regDetails, buildDetails(userAnswers, helper)),
+      Section(regDetails, buildDetails(userAnswers, helper, isBusiness)),
       Section(contactHeading, buildFirstContact(helper))
     ) ++: secContact
   }
 
-  private def buildDetails(userAnswers: UserAnswers, helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
+  private def buildDetails(userAnswers: UserAnswers, helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryList.Row] =
     if (userAnswers.get(pages.BusinessTypePage).isDefined) {
       Seq(
         helper.confirmBusiness
@@ -57,7 +57,7 @@ object CheckYourAnswersViewModel {
         helper.whatIsYourDateOfBirth,
         helper.businessWithoutIDName,
         helper.whatIsTradingName,
-        helper.addressWithoutIdBusiness,
+        if (isBusiness) helper.addressWithoutIdBusiness else helper.addressWithoutIdIndividual,
         helper.addressUK,
         helper.selectAddress
       ).flatten
