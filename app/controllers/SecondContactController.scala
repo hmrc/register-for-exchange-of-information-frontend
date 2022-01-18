@@ -62,7 +62,7 @@ class SecondContactController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(ContactNamePage, regime))).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(ContactNamePage, regime)).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SecondContactPage) match {
           case None        => form
@@ -72,7 +72,7 @@ class SecondContactController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(ContactNamePage, regime))).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(ContactNamePage, regime)).async {
       implicit request =>
         form
           .bindFromRequest()

@@ -39,9 +39,7 @@ class ContactEmailController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: ContactDetailsNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: ContactEmailFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -69,7 +67,7 @@ class ContactEmailController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         if (mode == CheckMode) {
           request.userAnswers.remove(ContactEmailPage)
@@ -78,7 +76,7 @@ class ContactEmailController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         form
           .bindFromRequest()

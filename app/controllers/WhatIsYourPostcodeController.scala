@@ -40,9 +40,7 @@ class WhatIsYourPostcodeController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: WhatIsYourPostcodeFormProvider,
   val controllerComponents: MessagesControllerComponents,
   addressLookupConnector: AddressLookupConnector,
@@ -65,13 +63,13 @@ class WhatIsYourPostcodeController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         render(mode, regime, request.userAnswers.get(WhatIsYourPostcodePage).fold(form)(form.fill)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val formReturned = form.bindFromRequest()
 

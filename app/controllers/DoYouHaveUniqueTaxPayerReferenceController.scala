@@ -44,9 +44,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   appConfig: FrontendAppConfig,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataInitializeAction,
+  standardActionSets: StandardActionSets,
   formProvider: DoYouHaveUniqueTaxPayerReferenceFormProvider,
   matchingService: BusinessMatchingService,
   val controllerComponents: MessagesControllerComponents,
@@ -71,7 +69,8 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime))
+    standardActionSets
+      .identifiedUserWithData(regime)
       .async {
         implicit request =>
           saveOriginalRegistrationRequestIfExists
@@ -79,7 +78,8 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
       }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime))
+    standardActionSets
+      .identifiedUserWithData(regime)
       .async {
         implicit request =>
           form

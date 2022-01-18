@@ -62,7 +62,7 @@ class SndConHavePhoneController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(SndContactNamePage, regime))).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(SndContactNamePage, regime)).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SndConHavePhonePage) match {
           case None        => form
@@ -72,7 +72,7 @@ class SndConHavePhoneController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(SndContactNamePage, regime))).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(SndContactNamePage, regime)).async {
       implicit request =>
         form
           .bindFromRequest()

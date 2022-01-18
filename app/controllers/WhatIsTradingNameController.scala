@@ -39,9 +39,7 @@ class WhatIsTradingNameController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: WhatIsTradingNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -61,12 +59,12 @@ class WhatIsTradingNameController @Inject() (
     renderer.render("whatIsTradingName.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       render(mode, regime, request.userAnswers.get(WhatIsTradingNamePage).fold(form)(form.fill)).map(Ok(_))
   }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       form
         .bindFromRequest()

@@ -43,9 +43,7 @@ class AddressWithoutIdController @Inject() (
   countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: AddressWithoutIdFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -71,7 +69,7 @@ class AddressWithoutIdController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val registeringAsBusiness = getRegisteringAsBusiness()
 
@@ -87,7 +85,7 @@ class AddressWithoutIdController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val registeringAsBusiness = getRegisteringAsBusiness()
 

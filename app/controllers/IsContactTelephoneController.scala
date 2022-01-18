@@ -39,9 +39,7 @@ class IsContactTelephoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: ContactDetailsNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: IsContactTelephoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -68,14 +66,14 @@ class IsContactTelephoneController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val suffix = isBusinessOrIndividual()
         renderer.render("isContactTelephone.njk", data(mode, regime, form(suffix), suffix)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val suffix = isBusinessOrIndividual()
         form(suffix)

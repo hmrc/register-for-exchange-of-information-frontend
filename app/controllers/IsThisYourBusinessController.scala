@@ -44,9 +44,7 @@ class IsThisYourBusinessController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: IsThisYourBusinessFormProvider,
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
@@ -89,7 +87,7 @@ class IsThisYourBusinessController @Inject() (
     renderer.render("isThisYourBusiness.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       matchingService.buildBusinessRegistrationRequest match {
         case Right(registrationRequest) =>
@@ -107,7 +105,7 @@ class IsThisYourBusinessController @Inject() (
       }
   }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       val thereIsAProblem =
         renderer.render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries)).map(ServiceUnavailable(_))
