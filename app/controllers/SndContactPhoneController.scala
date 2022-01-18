@@ -40,9 +40,7 @@ class SndContactPhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: ContactDetailsNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: SndContactPhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -65,23 +63,22 @@ class SndContactPhoneController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    (standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(SndContactNamePage, regime))).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
-          render(mode, regime, request.userAnswers.get(SndContactPhonePage).fold(form)(form.fill), _).map(Ok(_))
+        val preparedForm = request.userAnswers.get(SndContactPhonePage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
         }
+        render(mode, regime, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    (standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(SndContactNamePage, regime))).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              SomeInformationIsMissing.isMissingInformation(regime, SndContactNamePage) {
-                render(mode, regime, request.userAnswers.get(SndContactPhonePage).fold(formWithErrors)(formWithErrors.fill), _).map(BadRequest(_))
-              },
+            formWithErrors => render(mode, regime, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactPhonePage, value))

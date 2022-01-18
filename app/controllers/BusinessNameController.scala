@@ -40,9 +40,7 @@ class BusinessNameController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: BusinessNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -98,38 +96,36 @@ class BusinessNameController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(BusinessTypePage, regime)).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingInformation(regime, BusinessTypePage) {
-          businessType =>
-            val form = formProvider(businessType match {
-              case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
-              case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
-              case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
-            })
-            render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
-        }
+        val businessType = request.userAnswers.get(BusinessTypePage).get
+
+        val form = formProvider(businessType match {
+          case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
+          case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
+          case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
+        })
+        render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(BusinessTypePage, regime)).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingInformation(regime, BusinessTypePage) {
-          businessType =>
-            formProvider(businessType match {
-              case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
-              case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
-              case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
-            })
-              .bindFromRequest()
-              .fold(
-                formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
-                value =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
-                    _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
-              )
-        }
+        val businessType = request.userAnswers.get(BusinessTypePage).get
+
+        formProvider(businessType match {
+          case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
+          case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
+          case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
+        })
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
+          )
     }
 }
