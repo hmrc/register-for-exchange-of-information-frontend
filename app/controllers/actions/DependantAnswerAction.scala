@@ -27,7 +27,7 @@ import queries.Gettable
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequiredAnswerAction[T] @Inject() (answer: Gettable[T], regime: Regime)(implicit val executionContext: ExecutionContext, val reads: Reads[T])
+class DependantAnswerAction[T] @Inject() (answer: Gettable[T], regime: Regime)(implicit val executionContext: ExecutionContext, val reads: Reads[T])
     extends ActionFilter[DataRequest] {
 
   override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] =
@@ -39,8 +39,8 @@ class RequiredAnswerAction[T] @Inject() (answer: Gettable[T], regime: Regime)(im
     }
 }
 
-class RequiredAnswerActionProvider @Inject() (implicit ec: ExecutionContext) {
+class DependantAnswerProvider @Inject() (implicit ec: ExecutionContext) {
 
   def apply[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]): ActionFilter[DataRequest] =
-    new RequiredAnswerAction(answer, regime)
+    new DependantAnswerAction(answer, regime)
 }

@@ -27,15 +27,13 @@ import javax.inject.Inject
 class StandardActionSets @Inject() (identify: IdentifierAction,
                                     getData: DataRetrievalAction,
                                     requireData: DataRequiredAction,
-                                    requireAnswer: RequiredAnswerActionProvider
+                                    dependantAnswer: DependantAnswerProvider
 ) {
 
   def identifiedUserWithData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
     identify(regime) andThen getData() andThen requireData(regime)
 
-  def identifiedUserWithRequiredAnswer[T](answer: Gettable[T], regime: Regime = MDR)(implicit
-    reads: Reads[T]
-  ): ActionBuilder[DataRequest, AnyContent] =
-    identifiedUserWithData(regime) andThen requireAnswer(answer, regime)
+  def identifiedUserWithDependantAnswer[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]): ActionBuilder[DataRequest, AnyContent] =
+    identifiedUserWithData(regime) andThen dependantAnswer(answer, regime)
 
 }

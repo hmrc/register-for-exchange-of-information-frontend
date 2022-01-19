@@ -61,7 +61,7 @@ class SndContactEmailController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithRequiredAnswer(SndContactNamePage, regime).async {
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SndContactEmailPage) match {
           case None        => form
@@ -71,7 +71,7 @@ class SndContactEmailController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithRequiredAnswer(SndContactNamePage, regime).async {
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
       implicit request =>
         form
           .bindFromRequest()

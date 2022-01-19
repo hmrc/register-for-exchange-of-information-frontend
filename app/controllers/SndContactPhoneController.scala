@@ -63,7 +63,7 @@ class SndContactPhoneController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithRequiredAnswer(SndContactNamePage, regime).async {
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SndContactPhonePage) match {
           case None        => form
@@ -73,7 +73,7 @@ class SndContactPhoneController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithRequiredAnswer(SndContactNamePage, regime).async {
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
       implicit request =>
         form
           .bindFromRequest()
