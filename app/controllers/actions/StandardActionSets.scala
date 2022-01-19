@@ -27,8 +27,12 @@ import javax.inject.Inject
 class StandardActionSets @Inject() (identify: IdentifierAction,
                                     getData: DataRetrievalAction,
                                     requireData: DataRequiredAction,
+                                    initializeData: DataInitializeAction,
                                     dependantAnswer: DependantAnswerProvider
 ) {
+
+  def identifiedUserWithInitializedData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
+    identify(regime) andThen getData() andThen initializeData(regime)
 
   def identifiedUserWithData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
     identify(regime) andThen getData() andThen requireData(regime)

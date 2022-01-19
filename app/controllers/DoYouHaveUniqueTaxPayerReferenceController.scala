@@ -70,7 +70,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets
-      .identifiedUserWithData(regime)
+      .identifiedUserWithInitializedData(regime)
       .async {
         implicit request =>
           saveOriginalRegistrationRequestIfExists
@@ -79,7 +79,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets
-      .identifiedUserWithData(regime)
+      .identifiedUserWithInitializedData(regime)
       .async {
         implicit request =>
           form
