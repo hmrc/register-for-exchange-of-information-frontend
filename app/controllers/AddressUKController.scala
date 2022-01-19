@@ -42,9 +42,7 @@ class AddressUKController @Inject() (
   countryListFactory: CountryListFactory,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: AddressUKFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -67,7 +65,7 @@ class AddressUKController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         countriesList match {
           case Some(countries) =>
@@ -80,7 +78,7 @@ class AddressUKController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         countriesList match {
           case Some(countries) =>

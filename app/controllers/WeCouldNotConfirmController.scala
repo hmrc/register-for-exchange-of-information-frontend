@@ -34,9 +34,7 @@ import scala.util.Try
 class WeCouldNotConfirmController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -45,7 +43,7 @@ class WeCouldNotConfirmController @Inject() (
     with Logging {
 
   def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val messages = implicitly[Messages]
         val data = Json.obj(

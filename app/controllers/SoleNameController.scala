@@ -39,9 +39,7 @@ class SoleNameController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: SoleNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -62,13 +60,13 @@ class SoleNameController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         render(mode, regime, request.userAnswers.get(SoleNamePage).fold(form)(form.fill)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         form
           .bindFromRequest()

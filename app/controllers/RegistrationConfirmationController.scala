@@ -35,9 +35,7 @@ import scala.concurrent.ExecutionContext
 class RegistrationConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
   appConfig: FrontendAppConfig,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   errorHandler: ErrorHandler,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
@@ -47,7 +45,7 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>

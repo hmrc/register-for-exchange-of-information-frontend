@@ -40,9 +40,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: WhatIsYourNationalInsuranceNumberFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -63,7 +61,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         render(mode,
                regime,
@@ -76,7 +74,7 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         form
           .bindFromRequest()

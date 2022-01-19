@@ -18,7 +18,7 @@ package controllers
 
 import cats.data.EitherT
 import cats.implicits._
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.StandardActionSets
 import models.BusinessType.Sole
 import models.Regime
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
@@ -46,9 +46,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   subscriptionService: SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   taxEnrolmentsService: TaxEnrolmentService,
@@ -61,7 +59,7 @@ class CheckYourAnswersController @Inject() (
     with NunjucksSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       val viewModel: Seq[Section] =
         CheckYourAnswersViewModel.buildPages(request.userAnswers, regime, countryFactory, isRegisteringAsBusiness())
@@ -85,7 +83,7 @@ class CheckYourAnswersController @Inject() (
       case registration => EitherT.fromEither[Future](registration)
     }
 
-  def onSubmit(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onSubmit(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       (for {
         registrationInfo   <- buildRegistrationInfo(regime)

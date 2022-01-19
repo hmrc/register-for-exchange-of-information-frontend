@@ -36,9 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class WeHaveConfirmedYourIdentityController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingService,
@@ -50,7 +48,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val action: String =
           request.userAnswers.get(BusinessTypePage) match {

@@ -29,9 +29,7 @@ import scala.concurrent.ExecutionContext
 
 class SomeInformationIsMissingController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -39,7 +37,7 @@ class SomeInformationIsMissingController @Inject() (
     with I18nSupport {
 
   def onPageLoad(regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
         val data = Json.obj(
           "regime"   -> regime.toUpperCase,

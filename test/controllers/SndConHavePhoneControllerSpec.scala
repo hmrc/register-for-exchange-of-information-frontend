@@ -99,7 +99,9 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      val userAnswers = emptyUserAnswers.set(SndContactNamePage, "Name").success.value
+
+      retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", "true"))
@@ -149,7 +151,7 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult(MDR)).value mustEqual controllers.routes.SomeInformationIsMissingController
+      redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController
         .onPageLoad(MDR)
         .url
     }

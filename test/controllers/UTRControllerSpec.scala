@@ -145,7 +145,7 @@ class UTRControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(SomeInformationIsMissing.missingInformationResult(MDR)).value mustEqual controllers.routes.SomeInformationIsMissingController
+      redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController
         .onPageLoad(MDR)
         .url
     }

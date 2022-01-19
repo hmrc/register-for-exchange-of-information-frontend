@@ -32,9 +32,7 @@ import scala.concurrent.ExecutionContext
 
 class BusinessNotIdentifiedController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
   appConfig: FrontendAppConfig,
   renderer: Renderer
@@ -42,7 +40,7 @@ class BusinessNotIdentifiedController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       val contactLink: String = request.userAnswers.get(BusinessTypePage) match {
         case Some(LimitedCompany) | Some(UnincorporatedAssociation) => appConfig.corporationTaxEnquiriesLink

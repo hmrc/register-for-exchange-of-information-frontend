@@ -42,9 +42,7 @@ class UTRController @Inject() (
   appConfig: FrontendAppConfig,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  standardActionSets: StandardActionSets,
   formProvider: UTRFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -78,38 +76,35 @@ class UTRController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingInformation(regime, BusinessTypePage) {
-          businessType =>
-            val form = formProvider(businessType match {
-              case Partnership | Sole | LimitedPartnership => readKey(sa)
-              case _                                       => readKey(ct)
-            })
-            render(mode, regime, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
-        }
+        val businessType = request.userAnswers.get(BusinessTypePage).get
 
+        val form = formProvider(businessType match {
+          case Partnership | Sole | LimitedPartnership => readKey(sa)
+          case _                                       => readKey(ct)
+        })
+        render(mode, regime, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    (identify(regime) andThen getData.apply andThen requireData(regime)).async {
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
       implicit request =>
-        SomeInformationIsMissing.isMissingInformation(regime, BusinessTypePage) {
-          businessType =>
-            formProvider(businessType match {
-              case Partnership | Sole | LimitedPartnership => readKey(sa)
-              case _                                       => readKey(ct)
-            })
-              .bindFromRequest()
-              .fold(
-                formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
-                value =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(UTRPage, value, true))
-                    _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
-              )
-        }
+        val businessType = request.userAnswers.get(BusinessTypePage).get
+
+        formProvider(businessType match {
+          case Partnership | Sole | LimitedPartnership => readKey(sa)
+          case _                                       => readKey(ct)
+        })
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(UTRPage, value, true))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
+          )
     }
 
   private def hintWithLostUtrLink(taxType: String)(implicit messages: Messages): Html =
