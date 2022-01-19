@@ -123,7 +123,7 @@ contactEmail.hint = We will use this to send confirmation of your reports or if 
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.checkYourAnswersLabel.hiddenText = email address
 contactEmail.error.required = Enter your email address
-contactEmail.error.length = Email address must be 256 characters or less
+contactEmail.error.length = Email address must be 132 characters or less
 contactEmail.error.invalid = Enter your email address in the correct format, like name@example.com
 
 isContactTelephone.title.business = Can we contact {0} by telephone?
@@ -144,7 +144,7 @@ contactPhone.checkYourAnswersLabel = Telephone number
 contactPhone.checkYourAnswersLabel.hiddenText = telephone number
 contactPhone.error.required = Enter a telephone number
 contactPhone.error.invalid = Enter a telephone number in the correct format
-contactPhone.error.length = Enter a telephone number in the correct format
+contactPhone.error.length = Telephone number must be 24 characters or less
 
 secondContact.title = Is there someone else we can contact?
 secondContact.heading = Is there someone else we can contact if {0} is not available?
@@ -168,7 +168,7 @@ sndContactEmail.hint = We will use this to send confirmation of your reports and
 sndContactEmail.checkYourAnswersLabel = Second contact email address
 sndContactEmail.checkYourAnswersLabel.hiddenText = second contact email address
 sndContactEmail.error.required = Enter an email address
-sndContactEmail.error.length = Email address must be 256 characters or less
+sndContactEmail.error.length = Email address must be 132 characters or less
 sndContactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
 
 sndConHavePhone.title = Can we contact {0} by telephone?
@@ -183,7 +183,7 @@ sndContactPhone.checkYourAnswersLabel = Second contact telephone number
 sndContactPhone.checkYourAnswersLabel.hiddenText = second contact telephone number
 sndContactPhone.error.required = Enter a telephone number
 sndContactPhone.error.invalid = Enter a telephone number in the correct format
-sndContactPhone.error.length = Enter a telephone number in the correct format
+sndContactPhone.error.length = Telephone number must be 24 characters or less
 
 checkYourAnswers.title = Check your answers before you register to report for MDR
 checkYourAnswers.heading = Check your answers before you register to report for MDR
