@@ -69,30 +69,26 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets
-      .identifiedUserWithInitializedData(regime)
-      .async {
-        implicit request =>
-          saveOriginalRegistrationRequestIfExists
-          render(mode, regime, request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage).fold(form)(form.fill)).map(Ok(_))
-      }
+    (standardActionSets.identifiedUserWithInitializedData(regime)).async {
+      implicit request =>
+        saveOriginalRegistrationRequestIfExists
+        render(mode, regime, request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage).fold(form)(form.fill)).map(Ok(_))
+    }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets
-      .identifiedUserWithInitializedData(regime)
-      .async {
-        implicit request =>
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, value, true))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
-            )
-      }
+    (standardActionSets.identifiedUserWithInitializedData(regime)).async {
+      implicit request =>
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            value =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, value, true))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
+          )
+    }
 
   private def saveOriginalRegistrationRequestIfExists(implicit request: DataRequest[AnyContent]): Either[ApiError, RegistrationRequest] =
     matchingService.buildBusinessRegistrationRequest map {
