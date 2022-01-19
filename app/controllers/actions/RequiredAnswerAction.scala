@@ -17,35 +17,30 @@
 package controllers.actions
 
 import controllers.routes
+import models.Regime
 import models.requests.DataRequest
-import models.{MDR, Regime}
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Call, Result}
+import play.api.mvc.{ActionFilter, Result}
 import queries.Gettable
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-final case class RequiredAnswer[T](answer: Gettable[T], regime: Regime) {
+class RequiredAnswerAction[T] @Inject() (answer: Gettable[T], regime: Regime)(implicit val executionContext: ExecutionContext, val reads: Reads[T])
+    extends ActionFilter[DataRequest] {
 
-  val redirect: Call = routes.SomeInformationIsMissingController.onPageLoad(regime)
-}
-
-class RequiredAnswerAction[T] @Inject() (required: RequiredAnswer[T])(implicit val executionContext: ExecutionContext, val reads: Reads[T])
-    extends ActionRefiner[DataRequest, DataRequest] {
-
-  override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-    request.userAnswers.get(required.answer) match {
+  override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] =
+    request.userAnswers.get(answer) match {
       case None =>
-        Future.successful(Left(Redirect(required.redirect)))
+        Future.successful(Some(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime))))
       case Some(_) =>
-        Future.successful(Right(request))
+        Future.successful(None)
     }
 }
 
 class RequiredAnswerActionProvider @Inject() (implicit ec: ExecutionContext) {
 
-  def apply[T](required: RequiredAnswer[T])(implicit reads: Reads[T]) =
-    new RequiredAnswerAction(required)
+  def apply[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]) =
+    new RequiredAnswerAction(answer, regime)
 }

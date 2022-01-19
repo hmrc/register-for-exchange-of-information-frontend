@@ -20,6 +20,7 @@ import models.requests.DataRequest
 import models.{MDR, Regime}
 import play.api.libs.json.Reads
 import play.api.mvc.{ActionBuilder, AnyContent}
+import queries.Gettable
 
 import javax.inject.Inject
 
@@ -32,9 +33,9 @@ class StandardActionSets @Inject() (identify: IdentifierAction,
   def identifiedUserWithData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
     identify(regime) andThen getData() andThen requireData(regime)
 
-  def identifiedUserWithRequiredAnswer[T](requiredAnswer: RequiredAnswer[T], regime: Regime = MDR)(implicit
+  def identifiedUserWithRequiredAnswer[T](answer: Gettable[T], regime: Regime = MDR)(implicit
     reads: Reads[T]
   ): ActionBuilder[DataRequest, AnyContent] =
-    identifiedUserWithData(regime) andThen requireAnswer(requiredAnswer)
+    identifiedUserWithData(regime) andThen requireAnswer(answer, regime)
 
 }

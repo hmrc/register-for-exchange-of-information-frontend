@@ -96,7 +96,7 @@ class BusinessNameController @Inject() (
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(BusinessTypePage, regime)).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(BusinessTypePage, regime).async {
       implicit request =>
         val businessType = request.userAnswers.get(BusinessTypePage).get
 
@@ -109,7 +109,7 @@ class BusinessNameController @Inject() (
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithRequiredAnswer(RequiredAnswer(BusinessTypePage, regime)).async {
+    standardActionSets.identifiedUserWithRequiredAnswer(BusinessTypePage, regime).async {
       implicit request =>
         val businessType = request.userAnswers.get(BusinessTypePage).get
 
