@@ -33,7 +33,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{BusinessMatchingService, SubscriptionService}
+import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -48,7 +48,7 @@ class IsThisYourBusinessController @Inject() (
   formProvider: IsThisYourBusinessFormProvider,
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
-  matchingService: BusinessMatchingService,
+  matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
   renderer: Renderer

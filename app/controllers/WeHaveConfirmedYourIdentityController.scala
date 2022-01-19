@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{BusinessMatchingService, SubscriptionService}
+import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -39,7 +39,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   standardActionSets: StandardActionSets,
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
-  matchingService: BusinessMatchingService,
+  matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
   renderer: Renderer

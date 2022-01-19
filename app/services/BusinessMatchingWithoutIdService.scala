@@ -34,7 +34,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
+class BusinessMatchingWithoutIdService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
 
   def registerWithoutId(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, RegistrationInfo]] =
     (request.userAnswers.get(DoYouHaveNINPage) match {

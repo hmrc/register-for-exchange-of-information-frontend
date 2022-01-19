@@ -37,7 +37,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import repositories.SessionRepository
-import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
+import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
@@ -45,7 +45,7 @@ import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixtures with BeforeAndAfterEach {
 
-  final val mockRegistrationService: RegistrationService = mock[RegistrationService]
+  final val mockRegistrationService: BusinessMatchingWithoutIdService = mock[BusinessMatchingWithoutIdService]
 
   lazy val loadRoute   = routes.CheckYourAnswersController.onPageLoad(MDR).url
   lazy val submitRoute = routes.CheckYourAnswersController.onSubmit(MDR).url
@@ -70,7 +70,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
       .guiceApplicationBuilder()
       .overrides(
         bind[SubscriptionService].toInstance(mockSubscriptionService),
-        bind[RegistrationService].toInstance(mockRegistrationService),
+        bind[BusinessMatchingWithoutIdService].toInstance(mockRegistrationService),
         bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentsService)
       )
 
@@ -486,7 +486,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           new GuiceApplicationBuilder()
             .overrides(
               bind[SubscriptionService].toInstance(mockSubscriptionService),
-              bind[RegistrationService].toInstance(mockRegistrationService),
+              bind[BusinessMatchingWithoutIdService].toInstance(mockRegistrationService),
               bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentsService),
               bind[DataRequiredAction].to[DataRequiredActionImpl],
               bind[DataRetrievalAction].toInstance(mockDataRetrievalAction),

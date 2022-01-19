@@ -32,7 +32,7 @@ import play.api.mvc._
 import play.twirl.api
 import renderer.Renderer
 import repositories.SessionRepository
-import services.BusinessMatchingService
+import services.BusinessMatchingWithIdService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
 
@@ -46,7 +46,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   navigator: MDRNavigator,
   standardActionSets: StandardActionSets,
   formProvider: DoYouHaveUniqueTaxPayerReferenceFormProvider,
-  matchingService: BusinessMatchingService,
+  matchingService: BusinessMatchingWithIdService,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)

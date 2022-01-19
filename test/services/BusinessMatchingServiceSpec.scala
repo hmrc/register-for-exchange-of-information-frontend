@@ -40,7 +40,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
   val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
-  val service: BusinessMatchingService = app.injector.instanceOf[BusinessMatchingService]
+  val service: BusinessMatchingWithIdService = app.injector.instanceOf[BusinessMatchingWithIdService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
