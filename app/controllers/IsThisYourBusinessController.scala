@@ -63,7 +63,7 @@ class IsThisYourBusinessController @Inject() (
   private def result(mode: Mode, regime: Regime, form: Form[Boolean], registrationInfo: OrgRegistrationInfo)(implicit
     ec: ExecutionContext,
     request: DataRequest[AnyContent]
-  ) =
+  ): Future[Result] =
     subscriptionService.getDisplaySubscriptionId(regime, registrationInfo.safeId) flatMap {
       case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(registrationInfo.safeId, subscriptionId, regime)
       case _ =>
@@ -126,11 +126,4 @@ class IsThisYourBusinessController @Inject() (
         )
   }
 
-  private def isTheSame(implicit request: DataRequest[AnyContent]): Boolean =
-    matchingService.buildBusinessRegistrationRequest
-      .map {
-        current =>
-          request.userAnswers.get(RegistrationRequestPage).contains(current)
-      }
-      .getOrElse(false)
 }

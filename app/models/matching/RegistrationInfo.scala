@@ -17,10 +17,32 @@
 package models.matching
 
 import models.register.response.details.AddressResponse
-import play.api.libs.json.{__, OFormat, OWrites, Reads}
+import play.api.libs.json._
 
 sealed trait RegistrationInfo {
   val safeId: String
+}
+
+object RegistrationInfo {
+
+  implicit lazy val reads: Reads[RegistrationInfo] = {
+
+    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
+      def or[B >: A](b: Reads[B]): Reads[B] =
+        a.map[B](identity).orElse(b)
+    }
+
+    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
+      a.map(identity)
+
+    OrgRegistrationInfo.reads or
+      IndRegistrationInfo.reads
+  }
+
+  implicit val writes: Writes[RegistrationInfo] = Writes[RegistrationInfo] {
+    case o: OrgRegistrationInfo => Json.toJson(o)
+    case i: IndRegistrationInfo => Json.toJson(i)
+  }
 }
 
 case class OrgRegistrationInfo(safeId: String, name: Option[String], address: Option[AddressResponse]) extends RegistrationInfo
@@ -51,10 +73,10 @@ case class IndRegistrationInfo(safeId: String) extends RegistrationInfo
 object IndRegistrationInfo {
 
   val reads: Reads[IndRegistrationInfo] =
-    ((__ \ "safeId").read[String]).map(IndRegistrationInfo.apply)
+    (__ \ "safeId").read[String].map(IndRegistrationInfo.apply)
 
   val writes: OWrites[IndRegistrationInfo] =
-    ((__ \ "safeId").write[String]).contramap(_.safeId)
+    (__ \ "safeId").write[String].contramap(_.safeId)
 
   implicit val format: OFormat[IndRegistrationInfo] = OFormat(reads, writes)
 }

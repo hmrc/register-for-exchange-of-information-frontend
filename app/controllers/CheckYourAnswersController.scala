@@ -24,6 +24,7 @@ import models.Regime
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
+import models.matching.RegistrationInfo
 import models.requests.DataRequest
 import pages._
 import play.api.Logging
@@ -77,7 +78,7 @@ class CheckYourAnswersController @Inject() (
         .map(Ok(_))
   }
 
-  private def buildRegistrationInfo(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier) =
+  private def buildRegistrationInfo(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, RegistrationInfo] =
     request.userAnswers.getEither(RegistrationInfoPage) match {
       case Left(_)      => EitherT(registrationService.registerWithoutId(regime))
       case registration => EitherT.fromEither[Future](registration)
