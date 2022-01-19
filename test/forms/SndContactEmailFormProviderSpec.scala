@@ -24,7 +24,7 @@ class SndContactEmailFormProviderSpec extends StringFieldBehaviours {
   val requiredKey = "sndContactEmail.error.required"
   val invalidKey  = "sndContactEmail.error.invalid"
   val lengthKey   = "sndContactEmail.error.length"
-  val maxLength   = 256
+  val maxLength   = 132
 
   val form = new SndContactEmailFormProvider()()
 
