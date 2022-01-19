@@ -41,6 +41,6 @@ class RequiredAnswerAction[T] @Inject() (answer: Gettable[T], regime: Regime)(im
 
 class RequiredAnswerActionProvider @Inject() (implicit ec: ExecutionContext) {
 
-  def apply[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]) =
+  def apply[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]): ActionFilter[DataRequest] =
     new RequiredAnswerAction(answer, regime)
 }
