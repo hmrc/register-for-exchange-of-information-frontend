@@ -16,8 +16,8 @@
 
 package controllers.actions
 
+import models.Regime
 import models.requests.DataRequest
-import models.{MDR, Regime}
 import play.api.libs.json.Reads
 import play.api.mvc.{ActionBuilder, AnyContent}
 import queries.Gettable
