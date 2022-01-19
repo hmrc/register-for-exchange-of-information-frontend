@@ -71,9 +71,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .set(AddressUKPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
             .success
             .value
-            .set(RegistrationInfoPage, RegistrationInfo("ID", None, None, AsIndividual))
-            .success
-            .value
             .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
             .success
             .value

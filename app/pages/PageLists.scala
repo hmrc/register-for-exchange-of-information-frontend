@@ -33,10 +33,10 @@ object PageLists {
 
   // with id
 
-  val individualWithIDPages = List(WhatIsYourNationalInsuranceNumberPage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage, RegistrationInfoPage)
+  val individualWithIDPages = List(WhatIsYourNationalInsuranceNumberPage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
 
   val businessWithIDPages =
-    List(BusinessTypePage, UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage, IsThisYourBusinessPage, RegistrationInfoPage)
+    List(UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage, IsThisYourBusinessPage)
 
   // without id
 
@@ -50,6 +50,7 @@ object PageLists {
   )
 
   val individualWithOutIDPages = List(
+    DoYouHaveNINPage,
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
