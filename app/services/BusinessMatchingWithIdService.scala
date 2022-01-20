@@ -57,10 +57,10 @@ class BusinessMatchingWithIdService @Inject() (registrationConnector: Registrati
       .subflatMap {
         response =>
           (for {
-            safeId <- response.safeId
-            name    = response.name
-            address = response.address
-          } yield OrgRegistrationInfo(safeId, name.get, address.get)).toRight(MandatoryInformationMissingError())
+            safeId  <- response.safeId
+            name    <- response.name
+            address <- response.address
+          } yield OrgRegistrationInfo(safeId, name, address)).toRight(MandatoryInformationMissingError())
       }
       .value
 
