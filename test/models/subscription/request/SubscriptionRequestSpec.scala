@@ -55,7 +55,7 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .set(SecondContactPage, false)
         .success
         .value
-        .set(IndRegistrationInfoPage, IndRegistrationInfo("safeId"))
+        .set(RegistrationInfoPage, IndRegistrationInfo("safeId"))
         .success
         .value
 

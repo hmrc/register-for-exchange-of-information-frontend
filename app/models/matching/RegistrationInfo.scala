@@ -19,64 +19,22 @@ package models.matching
 import models.register.response.details.AddressResponse
 import play.api.libs.json._
 
-sealed trait RegistrationInfo {
-  val safeId: String
-}
+sealed trait RegistrationInfo
 
 object RegistrationInfo {
-
-  implicit lazy val reads: Reads[RegistrationInfo] = {
-
-    implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
-      def or[B >: A](b: Reads[B]): Reads[B] =
-        a.map[B](identity).orElse(b)
-    }
-
-    implicit def convertToSupertype[A, B >: A](a: Reads[A]): Reads[B] =
-      a.map(identity)
-
-    OrgRegistrationInfo.reads or
-      IndRegistrationInfo.reads
-  }
-
-  implicit val writes: Writes[RegistrationInfo] = Writes[RegistrationInfo] {
-    case o: OrgRegistrationInfo => Json.toJson(o)
-    case i: IndRegistrationInfo => Json.toJson(i)
-  }
+  implicit val format: OFormat[RegistrationInfo] = Json.format[RegistrationInfo]
 }
 
-case class OrgRegistrationInfo(safeId: String, name: Option[String], address: Option[AddressResponse]) extends RegistrationInfo
+case class OrgRegistrationInfo(safeId: String, name: String, address: AddressResponse) extends RegistrationInfo
 
 object OrgRegistrationInfo {
 
-  import play.api.libs.functional.syntax._
-
-  val reads: Reads[OrgRegistrationInfo] =
-    (
-      (__ \ "safeId").read[String] and
-        (__ \ "name").readNullable[String] and
-        (__ \ "address").readNullable[AddressResponse]
-    )(OrgRegistrationInfo.apply _)
-
-  val writes: OWrites[OrgRegistrationInfo] =
-    (
-      (__ \ "safeId").write[String] and
-        (__ \ "name").writeNullable[String] and
-        (__ \ "address").writeNullable[AddressResponse]
-    )(unlift(OrgRegistrationInfo.unapply))
-
-  implicit val format: OFormat[OrgRegistrationInfo] = OFormat(reads, writes)
+  implicit val format: OFormat[OrgRegistrationInfo] = Json.format[OrgRegistrationInfo]
 }
 
 case class IndRegistrationInfo(safeId: String) extends RegistrationInfo
 
 object IndRegistrationInfo {
 
-  val reads: Reads[IndRegistrationInfo] =
-    (__ \ "safeId").read[String].map(IndRegistrationInfo.apply)
-
-  val writes: OWrites[IndRegistrationInfo] =
-    (__ \ "safeId").write[String].contramap(_.safeId)
-
-  implicit val format: OFormat[IndRegistrationInfo] = OFormat(reads, writes)
+  implicit val format: OFormat[IndRegistrationInfo] = Json.format[IndRegistrationInfo]
 }

@@ -32,10 +32,10 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     val paragraphClass = """govuk-!-margin-0"""
     (userAnswers.get(pages.IsThisYourBusinessPage), userAnswers.get(RegistrationInfoPage)) match {
       case (Some(true), Some(registrationInfo: OrgRegistrationInfo)) =>
+        val businessName = registrationInfo.name
+        val address      = registrationInfo.address
         for {
-          businessName <- registrationInfo.name
-          address      <- registrationInfo.address
-          countryName  <- countryListFactory.getDescriptionFromCode(address.countryCode)
+          countryName <- countryListFactory.getDescriptionFromCode(address.countryCode)
         } yield toRow(
           msgKey = "businessWithIDName",
           value = Html(s"""

@@ -23,7 +23,7 @@ import connectors.RegistrationConnector
 import helpers.RegisterHelper._
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
-import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
+import models.matching.SafeId
 import models.register.response.RegistrationWithoutIDResponse
 import models.{Address, Country, MDR, Name}
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoSugar {
+class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp with MockitoSugar {
 
   val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
@@ -60,7 +60,7 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
   val address: Address = Address("line 1", Some("line 2"), "line 3", Some("line 4"), Some(""), Country.GB)
 
-  "RegistrationService" - {
+  "BusinessMatchingWithoutIdService" - {
 
     "sendIndividualRegistration" - {
 
@@ -70,9 +70,9 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
 
-        result.futureValue mustBe Right(IndRegistrationInfo("XE0000123456789"))
+        result.futureValue mustBe Right(SafeId("XE0000123456789"))
       }
 
       "must return an error when when safeId can't be recovered" in {
@@ -81,7 +81,7 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -95,9 +95,9 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
 
-        result.futureValue mustBe Right(OrgRegistrationInfo("XE0000123456789", Some("name"), None))
+        result.futureValue mustBe Right(SafeId("XE0000123456789"))
       }
 
       "must return an error when when safeId can't be recovered" in {
@@ -106,7 +106,7 @@ class RegistrationServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, RegistrationInfo]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
 
         result.futureValue mustBe Left(NotFoundError)
       }

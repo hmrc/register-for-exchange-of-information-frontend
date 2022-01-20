@@ -67,8 +67,8 @@ class IsThisYourBusinessController @Inject() (
     subscriptionService.getDisplaySubscriptionId(regime, registrationInfo.safeId) flatMap {
       case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(registrationInfo.safeId, subscriptionId, regime)
       case _ =>
-        val name     = registrationInfo.name.getOrElse("")
-        val address  = registrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
+        val name     = registrationInfo.name
+        val address  = registrationInfo.address
         val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
         render(mode, regime, withForm, name, address).map(Ok(_))
     }
@@ -114,7 +114,7 @@ class IsThisYourBusinessController @Inject() (
         .fold(
           formWithErrors =>
             request.userAnswers.get(RegistrationInfoPage).fold(thereIsAProblem) {
-              case OrgRegistrationInfo(_, Some(name), Some(address)) =>
+              case OrgRegistrationInfo(_, name, address) =>
                 render(mode, regime, formWithErrors, name, address).map(BadRequest(_))
               case _ => thereIsAProblem
             },
