@@ -17,6 +17,7 @@
 package pages
 
 import models.{UniqueTaxpayerReference, UserAnswers}
+import pages.PageLists.allContactDetailPages
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -28,5 +29,5 @@ case object UTRPage extends QuestionPage[UniqueTaxpayerReference] {
   override def toString: String = "utr"
 
   override def cleanup(value: Option[UniqueTaxpayerReference], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.afterUTRPage.foldLeft(Try(userAnswers))(PageLists.removePage)
+    (List(BusinessNamePage, SoleNamePage, IsThisYourBusinessPage) ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 }

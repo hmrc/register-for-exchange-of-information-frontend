@@ -28,5 +28,5 @@ case object WhatIsYourNamePage extends QuestionPage[Name] {
   override def toString: String = "whatIsYourName"
 
   override def cleanup(value: Option[Name], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allAfterWhatIsYourNamePage.foldLeft(Try(userAnswers))(PageLists.removePage)
+    List(WhatIsYourDateOfBirthPage).foldLeft(Try(userAnswers))(PageLists.removePage)
 }
