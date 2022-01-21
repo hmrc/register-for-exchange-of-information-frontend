@@ -55,7 +55,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validPersonalName(maxLength: Int): Gen[String] = RegexpGen.from(individualNameRegex) suchThat (_.length > maxLength)
 
-  def validPhoneNumber: Gen[String] = RegexpGen.from(digitsAndWhiteSpaceOnly)
+  def validPhoneNumber: Gen[String] = RegexpGen.from(phoneRegex)
 
   def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex)
 
