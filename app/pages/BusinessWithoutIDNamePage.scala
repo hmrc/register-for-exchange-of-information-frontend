@@ -24,10 +24,12 @@ import scala.util.Try
 
 case object BusinessWithoutIDNamePage extends QuestionPage[String] with UserAnswersHelper {
 
+  val pagesToClean = List(BusinessHaveDifferentNamePage, WhatIsTradingNamePage, AddressWithoutIdPage)
+
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "businessWithoutIDName"
 
   override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allAfterBusinessNameWithOuIDPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    pagesToClean.foldLeft(Try(userAnswers))(PageLists.removePage)
 }

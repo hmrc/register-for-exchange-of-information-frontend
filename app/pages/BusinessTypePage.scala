@@ -17,6 +17,7 @@
 package pages
 
 import models.{BusinessType, UserAnswers}
+import pages.PageLists.allContactDetailPages
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -28,5 +29,17 @@ case object BusinessTypePage extends QuestionPage[BusinessType] {
   override def toString: String = "bussinessType"
 
   override def cleanup(value: Option[BusinessType], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.allAfterBusinessTypePage.foldLeft(Try(userAnswers))(PageLists.removePage)
+    (List(
+      UTRPage,
+      BusinessNamePage,
+      SoleNamePage,
+      WhatIsYourDateOfBirthPage,
+      SoleDateOfBirthPage,
+      WhatAreYouRegisteringAsPage,
+      IsThisYourBusinessPage,
+      NonUkNamePage,
+      AddressLookupPage,
+      SelectedAddressLookupPage,
+      SelectAddressPage
+    ) ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 }

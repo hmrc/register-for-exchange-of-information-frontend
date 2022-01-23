@@ -19,12 +19,10 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveUniqueTaxPayerReferenceFormProvider
-import models.error.ApiError
-import models.matching.RegistrationRequest
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.MDRNavigator
-import pages.{DoYouHaveUniqueTaxPayerReferencePage, RegistrationRequestPage}
+import pages.DoYouHaveUniqueTaxPayerReferencePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -71,7 +69,6 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     (standardActionSets.identifiedUserWithInitializedData(regime)).async {
       implicit request =>
-        saveOriginalRegistrationRequestIfExists
         render(mode, regime, request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage).fold(form)(form.fill)).map(Ok(_))
     }
 
@@ -88,13 +85,6 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
           )
-    }
-
-  private def saveOriginalRegistrationRequestIfExists(implicit request: DataRequest[AnyContent]): Either[ApiError, RegistrationRequest] =
-    matchingService.buildBusinessRegistrationRequest map {
-      registrationRequest =>
-        request.userAnswers.set(RegistrationRequestPage, registrationRequest).map(sessionRepository.set)
-        registrationRequest
     }
 
   private def hintWithLostUtrLink()(implicit messages: Messages): Html =

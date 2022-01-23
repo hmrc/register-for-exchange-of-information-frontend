@@ -21,6 +21,7 @@ import controllers.actions._
 import models.matching.RegistrationRequest
 import models.requests.DataRequest
 import models.{BusinessType, Mode, NormalMode, Regime}
+import navigation.{ContactDetailsNavigator, MDRNavigator}
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -38,6 +39,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   sessionRepository: SessionRepository,
   standardActionSets: StandardActionSets,
   appConfig: FrontendAppConfig,
+  navigator: MDRNavigator,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
@@ -50,12 +52,6 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
-        val action: String =
-          request.userAnswers.get(BusinessTypePage) match {
-            case Some(BusinessType.Sole) => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-            case Some(_)                 => routes.ContactNameController.onPageLoad(NormalMode, regime).url
-            case None                    => routes.ContactEmailController.onPageLoad(NormalMode, regime).url
-          }
         buildRegistrationRequest match {
           case Some(registrationRequest) =>
             matchingService
@@ -68,7 +64,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
                     case _ =>
                       val json = Json.obj(
                         "regime" -> regime.toUpperCase,
-                        "action" -> action
+                        "action" -> navigator.nextPage(RegistrationInfoPage, mode, regime, request.userAnswers).url
                       )
                       renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
                   }

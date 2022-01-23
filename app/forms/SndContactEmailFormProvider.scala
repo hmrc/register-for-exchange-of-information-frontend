@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class SndContactEmailFormProvider @Inject() extends Mappings with RegexConstants {
 
-  private val maxLength = 254
+  private val maxLength = 132
 
   def apply(): Form[String] =
     Form(

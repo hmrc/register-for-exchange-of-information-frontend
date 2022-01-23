@@ -25,6 +25,7 @@ import org.scalatest.EitherValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.domain.Nino
 
 class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with EitherValues {
 
@@ -64,13 +65,16 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
 
     "must return PrimaryContact for the input 'Individual with Id UserAnswers' " in {
       val userAnswers = UserAnswers("id")
+        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .success
+        .value
         .set(DoYouHaveNINPage, true)
         .success
         .value
-        .set(WhatIsYourNamePage, Name("Name", "Name"))
+        .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(WhatIsYourNamePage, Name("Name", "Name"))
         .success
         .value
         .set(ContactEmailPage, "test@test.com")

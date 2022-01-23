@@ -29,5 +29,6 @@ case object WhatIsYourDateOfBirthPage extends QuestionPage[LocalDate] {
   override def toString: String = "whatIsYourDateOfBirth"
 
   override def cleanup(value: Option[LocalDate], userAnswers: UserAnswers): Try[UserAnswers] =
-    PageLists.dobSubJourneyPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    List(DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage, RegistrationInfoPage)
+      .foldLeft(Try(userAnswers))(PageLists.removePage)
 }
