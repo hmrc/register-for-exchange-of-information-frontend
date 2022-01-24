@@ -33,7 +33,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{BusinessMatchingService, SubscriptionService}
+import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
@@ -48,7 +48,7 @@ class IsThisYourBusinessController @Inject() (
   formProvider: IsThisYourBusinessFormProvider,
   appConfig: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
-  matchingService: BusinessMatchingService,
+  matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
   renderer: Renderer
@@ -63,12 +63,12 @@ class IsThisYourBusinessController @Inject() (
   private def result(mode: Mode, regime: Regime, form: Form[Boolean], registrationInfo: OrgRegistrationInfo)(implicit
     ec: ExecutionContext,
     request: DataRequest[AnyContent]
-  ) =
+  ): Future[Result] =
     subscriptionService.getDisplaySubscriptionId(regime, registrationInfo.safeId) flatMap {
       case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(registrationInfo.safeId, subscriptionId, regime)
       case _ =>
-        val name     = registrationInfo.name.getOrElse("")
-        val address  = registrationInfo.address.getOrElse(AddressResponse("", None, None, None, None, ""))
+        val name     = registrationInfo.name
+        val address  = registrationInfo.address
         val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
         render(mode, regime, withForm, name, address).map(Ok(_))
     }
@@ -114,7 +114,7 @@ class IsThisYourBusinessController @Inject() (
         .fold(
           formWithErrors =>
             request.userAnswers.get(RegistrationInfoPage).fold(thereIsAProblem) {
-              case OrgRegistrationInfo(_, Some(name), Some(address)) =>
+              case OrgRegistrationInfo(_, name, address) =>
                 render(mode, regime, formWithErrors, name, address).map(BadRequest(_))
               case _ => thereIsAProblem
             },
@@ -125,4 +125,5 @@ class IsThisYourBusinessController @Inject() (
             } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
         )
   }
+
 }

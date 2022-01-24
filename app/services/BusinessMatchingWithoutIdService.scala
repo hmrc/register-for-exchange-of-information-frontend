@@ -21,7 +21,7 @@ import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo}
+import models.matching.SafeId
 import models.register.request.RegisterWithoutID
 import models.requests.DataRequest
 import models.shared.ContactDetails
@@ -34,9 +34,9 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
+class BusinessMatchingWithoutIdService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
 
-  def registerWithoutId(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, RegistrationInfo]] =
+  def registerWithoutId(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (request.userAnswers.get(DoYouHaveNINPage) match {
       case Some(false) => individualRegistration(regime)
       case _           => businessRegistration(regime)
@@ -62,11 +62,11 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
     }
 
   private val registrationError =
-    EitherT[Future, ApiError, RegistrationInfo](Future.successful(Left(MandatoryInformationMissingError())))
+    EitherT[Future, ApiError, SafeId](Future.successful(Left(MandatoryInformationMissingError())))
 
   private def individualRegistration(
     regime: Regime
-  )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, RegistrationInfo] =
+  )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, SafeId] =
     (for {
       name <- buildIndividualName
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
@@ -76,7 +76,7 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
     } yield sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress)))
       .getOrElse(registrationError)
 
-  private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, RegistrationInfo] =
+  private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, SafeId] =
     (for {
       organisationName <- request.userAnswers.get(BusinessWithoutIDNamePage)
       phoneNumber  = request.userAnswers.get(ContactPhonePage)
@@ -88,26 +88,26 @@ class RegistrationService @Inject() (registrationConnector: RegistrationConnecto
   def sendIndividualRegistration(regime: Regime, name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): EitherT[Future, ApiError, RegistrationInfo] =
+  ): EitherT[Future, ApiError, SafeId] =
     registrationConnector
       .withIndividualNoId(RegisterWithoutID(regime, name, dob, address, contactDetails))
       .subflatMap {
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield IndRegistrationInfo(safeId)).toRight(MandatoryInformationMissingError())
+          } yield SafeId(safeId)).toRight(MandatoryInformationMissingError())
       }
 
   def sendBusinessRegistration(regime: Regime, businessName: String, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): EitherT[Future, ApiError, RegistrationInfo] =
+  ): EitherT[Future, ApiError, SafeId] =
     registrationConnector
       .withOrganisationNoId(RegisterWithoutID(regime, businessName, address, contactDetails))
       .subflatMap {
         response =>
           (for {
             safeId <- response.registerWithoutIDResponse.safeId
-          } yield OrgRegistrationInfo(safeId, Some(businessName), None)).toRight(MandatoryInformationMissingError())
+          } yield SafeId(safeId)).toRight(MandatoryInformationMissingError())
       }
 }

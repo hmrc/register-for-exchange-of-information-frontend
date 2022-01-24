@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package pages
+package models.matching
 
-import models.matching.IndRegistrationInfo
-import play.api.libs.json.JsPath
+import play.api.libs.json.{Json, OFormat}
 
-case object IndRegistrationInfoPage extends QuestionPage[IndRegistrationInfo] {
+case class SafeId(safeId: String)
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "registrationInfo"
+object SafeId {
+  implicit val format: OFormat[SafeId] = Json.format[SafeId]
 }

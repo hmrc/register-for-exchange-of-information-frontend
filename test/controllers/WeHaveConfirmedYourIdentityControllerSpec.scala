@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.{BusinessMatchingService, SubscriptionService, TaxEnrolmentService}
+import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
@@ -49,15 +49,15 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     .success
     .value
 
-  val mockMatchingService: BusinessMatchingService = mock[BusinessMatchingService]
-  val mockSubscriptionService: SubscriptionService = mock[SubscriptionService]
-  val mockTaxEnrolmentService: TaxEnrolmentService = mock[TaxEnrolmentService]
+  val mockMatchingService: BusinessMatchingWithIdService = mock[BusinessMatchingWithIdService]
+  val mockSubscriptionService: SubscriptionService       = mock[SubscriptionService]
+  val mockTaxEnrolmentService: TaxEnrolmentService       = mock[TaxEnrolmentService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[BusinessMatchingService].toInstance(mockMatchingService),
+        bind[BusinessMatchingWithIdService].toInstance(mockMatchingService),
         bind[SubscriptionService].toInstance(mockSubscriptionService),
         bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
       )

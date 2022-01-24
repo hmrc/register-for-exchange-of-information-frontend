@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{BusinessMatchingService, SubscriptionService}
+import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   appConfig: FrontendAppConfig,
   navigator: MDRNavigator,
   val controllerComponents: MessagesControllerComponents,
-  matchingService: BusinessMatchingService,
+  matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
   renderer: Renderer
@@ -58,7 +58,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
               .sendIndividualRegistrationInformation(regime, registrationRequest)
               .flatMap {
                 case Right(info) =>
-                  request.userAnswers.set(IndRegistrationInfoPage, info).map(sessionRepository.set)
+                  request.userAnswers.set(RegistrationInfoPage, info).map(sessionRepository.set)
                   subscriptionService.getDisplaySubscriptionId(regime, info.safeId) flatMap {
                     case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId, regime)
                     case _ =>

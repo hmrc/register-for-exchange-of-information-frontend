@@ -36,11 +36,11 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with MockitoSugar {
+class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp with MockitoSugar {
 
   val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
 
-  val service: BusinessMatchingService = app.injector.instanceOf[BusinessMatchingService]
+  val service: BusinessMatchingWithIdService = app.injector.instanceOf[BusinessMatchingWithIdService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
@@ -59,7 +59,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
 
   val dob: LocalDate = LocalDate.now
 
-  "BusinessMatchingService" - {
+  "BusinessMatchingWithIdService" - {
 
     "sendIndividualRegistrationInformation" - {
 
@@ -103,7 +103,7 @@ class BusinessMatchingServiceSpec extends SpecBase with MockServiceApp with Mock
           )
 
         result.futureValue mustBe Right(
-          OrgRegistrationInfo("XE0000123456789", Option("name"), Option(addressResponse))
+          OrgRegistrationInfo("XE0000123456789", "name", addressResponse)
         )
       }
 

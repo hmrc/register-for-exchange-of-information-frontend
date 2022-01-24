@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingService @Inject() (registrationConnector: RegistrationConnector) {
+class BusinessMatchingWithIdService @Inject() (registrationConnector: RegistrationConnector) {
 
   private def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
     request.userAnswers.get(BusinessTypePage) match {
@@ -57,9 +57,9 @@ class BusinessMatchingService @Inject() (registrationConnector: RegistrationConn
       .subflatMap {
         response =>
           (for {
-            safeId <- response.safeId
-            name    = response.name
-            address = response.address
+            safeId  <- response.safeId
+            name    <- response.name
+            address <- response.address
           } yield OrgRegistrationInfo(safeId, name, address)).toRight(MandatoryInformationMissingError())
       }
       .value

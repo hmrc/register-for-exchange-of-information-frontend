@@ -31,7 +31,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.{BusinessMatchingService, SubscriptionService, TaxEnrolmentService}
+import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.viewmodels.Radios
 
 import scala.concurrent.Future
@@ -46,7 +46,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   val address             = AddressResponse("line1", None, None, None, None, "GB")
   val registrationRequest = RegistrationRequest("UTR", "UTR", "name", Some(LimitedCompany))
-  val registrationInfo    = OrgRegistrationInfo("SAFEID", Some("name"), Some(address))
+  val registrationInfo    = OrgRegistrationInfo("SAFEID", "name", address)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(BusinessTypePage, LimitedCompany)
@@ -62,15 +62,15 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     .success
     .value
 
-  val mockMatchingService: BusinessMatchingService = mock[BusinessMatchingService]
-  val mockSubscriptionService: SubscriptionService = mock[SubscriptionService]
-  val mockTaxEnrolmentService: TaxEnrolmentService = mock[TaxEnrolmentService]
+  val mockMatchingService: BusinessMatchingWithIdService = mock[BusinessMatchingWithIdService]
+  val mockSubscriptionService: SubscriptionService       = mock[SubscriptionService]
+  val mockTaxEnrolmentService: TaxEnrolmentService       = mock[TaxEnrolmentService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
       .overrides(
-        bind[BusinessMatchingService].toInstance(mockMatchingService),
+        bind[BusinessMatchingWithIdService].toInstance(mockMatchingService),
         bind[SubscriptionService].toInstance(mockSubscriptionService),
         bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
       )
@@ -88,7 +88,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Right(registrationRequest))
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo("safeId", Some("name"), Some(address)))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo("safeId", "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 
@@ -122,7 +122,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Right(registrationRequest))
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo("safeId", Some("name"), Some(address)))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo("safeId", "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
@@ -146,7 +146,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Right(registrationRequest))
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo("safeId", Some("name"), Some(address)))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo("safeId", "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
@@ -174,7 +174,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Right(registrationRequest))
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo("SAFEID", Some("name"), Some(address)))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo("SAFEID", "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
 

@@ -24,6 +24,7 @@ import models.Regime
 import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
 import models.requests.DataRequest
 import pages._
 import play.api.Logging
@@ -32,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{RegistrationService, SubscriptionService, TaxEnrolmentService}
+import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -51,7 +52,7 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   taxEnrolmentsService: TaxEnrolmentService,
   countryFactory: CountryListFactory,
-  registrationService: RegistrationService,
+  registrationService: BusinessMatchingWithoutIdService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -77,20 +78,25 @@ class CheckYourAnswersController @Inject() (
         .map(Ok(_))
   }
 
-  private def buildRegistrationInfo(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier) =
+  private def getSafeIdFromRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, SafeId] =
     request.userAnswers.getEither(RegistrationInfoPage) match {
-      case Left(_)      => EitherT(registrationService.registerWithoutId(regime))
-      case registration => EitherT.fromEither[Future](registration)
+      case Left(_) => EitherT(registrationService.registerWithoutId(regime))
+      case registration =>
+        val safeId = registration map {
+          case OrgRegistrationInfo(safeId, _, _) => SafeId(safeId)
+          case IndRegistrationInfo(safeId)       => SafeId(safeId)
+        }
+        EitherT.fromEither[Future](safeId)
     }
 
   def onSubmit(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       (for {
-        registrationInfo   <- buildRegistrationInfo(regime)
-        subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, registrationInfo.safeId, request.userAnswers))
+        safeId             <- getSafeIdFromRegistration(regime)
+        subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId.safeId, request.userAnswers))
         withSubscriptionID <- EitherT.fromEither[Future](request.userAnswers.setEither(SubscriptionIDPage, subscriptionID))
         _                  <- EitherT.fromEither[Future](Right[ApiError, Future[Boolean]](sessionRepository.set(withSubscriptionID)))
-        _                  <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(registrationInfo.safeId, withSubscriptionID, subscriptionID, regime))
+        _                  <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(safeId.safeId, withSubscriptionID, subscriptionID, regime))
       } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
         .valueOrF {
           case MandatoryInformationMissingError(error) =>

@@ -17,6 +17,7 @@
 package utils
 
 import controllers.routes
+import models.matching.OrgRegistrationInfo
 import models.{CheckMode, Regime, UserAnswers}
 import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
@@ -29,13 +30,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
 
   def confirmBusiness: Option[Row] = {
     val paragraphClass = """govuk-!-margin-0"""
-    userAnswers.get(pages.IsThisYourBusinessPage) match {
-      case Some(true) =>
+    (userAnswers.get(pages.IsThisYourBusinessPage), userAnswers.get(RegistrationInfoPage)) match {
+      case (Some(true), Some(registrationInfo: OrgRegistrationInfo)) =>
+        val businessName = registrationInfo.name
+        val address      = registrationInfo.address
         for {
-          registrationInfo <- userAnswers.get(RegistrationInfoPage)
-          businessName     <- registrationInfo.name
-          address          <- registrationInfo.address
-          countryName      <- countryListFactory.getDescriptionFromCode(address.countryCode)
+          countryName <- countryListFactory.getDescriptionFromCode(address.countryCode)
         } yield toRow(
           msgKey = "businessWithIDName",
           value = Html(s"""
