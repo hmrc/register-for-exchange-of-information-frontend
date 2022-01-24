@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
+import services.{BusinessMatchingWithoutIdService, EmailService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -50,6 +50,7 @@ class CheckYourAnswersController @Inject() (
   subscriptionService: SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   countryFactory: CountryListFactory,
+  emailService: EmailService,
   controllerHelper: ControllerHelper,
   registrationService: BusinessMatchingWithoutIdService,
   renderer: Renderer
@@ -94,6 +95,7 @@ class CheckYourAnswersController @Inject() (
         safeId         <- EitherT(getSafeIdFromRegistration(regime))
         subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
         result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID, regime))
+        _                  <- EitherT(emailService.sendAnLogEmail(userAnswers = withSubscriptionID))
       } yield result)
         .valueOrF {
           case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>

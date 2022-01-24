@@ -16,7 +16,8 @@ object AppDependencies {
 
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.33.0-play-28",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.15.0-play-28",
-    "uk.gov.hmrc"       %% "domain"                        % "6.2.0-play-28"
+    "uk.gov.hmrc"       %% "domain"                        % "6.2.0-play-28",
+    "uk.gov.hmrc"       %% "emailaddress"                  % "3.5.0"
   )
 
   val test = Seq(

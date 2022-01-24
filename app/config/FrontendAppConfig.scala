@@ -73,6 +73,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration.get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
 
+  lazy val sendEmailUrl: String = configuration.get[Service]("microservice.services.email").baseUrl
+
+  lazy val emailOrganisationTemplate: String = configuration.get[String]("emailtemplates.organisation")
+  lazy val emailIndividualTemplate: String   = configuration.get[String]("emailtemplates.individual")
+  lazy val emailSoleTraderTemplate: String   = configuration.get[String]("emailtemplates.individual")
+
   lazy val lostUTRUrl: String                  = configuration.get[String]("urls.lostUTR")
   lazy val businessTaxAccountLink: String      = configuration.get[String]("urls.businessTaxAccount")
   lazy val corporationTaxEnquiriesLink: String = configuration.get[String]("urls.corporationTaxEnquiries")
