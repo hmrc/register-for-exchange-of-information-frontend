@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import connectors.{EnrolmentStoreProxyConnector, TaxEnrolmentsConnector}
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
+import models.matching.SafeId
 import models.{Regime, SubscriptionID, UserAnswers}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnector, enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector)
     extends Logging {
 
-  def checkAndCreateEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
+  def checkAndCreateEnrolment(safeId: SafeId, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, Int]] =

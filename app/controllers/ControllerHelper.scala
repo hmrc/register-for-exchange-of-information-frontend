@@ -17,6 +17,7 @@
 package controllers
 
 import models.error.ApiError.EnrolmentExistsError
+import models.matching.SafeId
 import models.requests.DataRequest
 import models.{Regime, SubscriptionID, UserAnswers}
 import pages.SubscriptionIDPage
@@ -38,7 +39,7 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
     extends Logging
     with NunjucksSupport {
 
-  private def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
+  private def createEnrolment(safeId: SafeId, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     request: DataRequest[AnyContent]
   ): Future[Result] =
@@ -53,7 +54,7 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
       case Left(error) => renderer.renderError(error, regime)
     }
 
-  def updateSubscriptionIdAndCreateEnrolment(safeId: String, subscriptionId: SubscriptionID, regime: Regime)(implicit
+  def updateSubscriptionIdAndCreateEnrolment(safeId: SafeId, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     request: DataRequest[AnyContent]
   ): Future[Result] =

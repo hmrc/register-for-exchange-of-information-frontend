@@ -16,12 +16,13 @@
 
 package models.register.response
 
+import models.matching.SafeId
 import models.register.response.details.{AddressResponse, IndividualResponse, OrganisationResponse, PartnerDetailsResponse}
 import models.shared.ContactDetails
 import play.api.libs.json.{__, Json, Reads, Writes}
 
 case class RegisterWithIDResponseDetail(
-  SAFEID: String,
+  SAFEID: SafeId,
   ARN: Option[String],
   isEditable: Boolean,
   isAnAgent: Boolean,
@@ -46,7 +47,7 @@ object RegisterWithIDResponseDetail {
                                       contactDetails
         ) =>
       Json.obj(
-        "SAFEID"         -> safeid,
+        "SAFEID"         -> safeid.value,
         "ARN"            -> arn,
         "isEditable"     -> isEditable,
         "isAnAgent"      -> isAnAgent,
@@ -68,7 +69,7 @@ object RegisterWithIDResponseDetail {
                                       contactDetails
         ) =>
       Json.obj(
-        "SAFEID"         -> safeid,
+        "SAFEID"         -> safeid.value,
         "ARN"            -> arn,
         "isEditable"     -> isEditable,
         "isAnAgent"      -> isAnAgent,
@@ -83,7 +84,7 @@ object RegisterWithIDResponseDetail {
   implicit lazy val responseDetailsReads: Reads[RegisterWithIDResponseDetail] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \ "SAFEID").read[String] and
+      (__ \ "SAFEID").read[SafeId] and
         (__ \ "ARN").readNullable[String] and
         (__ \ "isEditable").read[Boolean] and
         (__ \ "isAnAgent").read[Boolean] and

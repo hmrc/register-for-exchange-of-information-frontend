@@ -573,7 +573,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(RegistrationInfoPage, IndRegistrationInfo("SAFEID"))
+          .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
           .success
           .value
 

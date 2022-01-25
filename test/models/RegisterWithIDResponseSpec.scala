@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import helpers.JsonFixtures._
+import models.matching.SafeId
 import models.register.response.details.{AddressResponse, IndividualResponse}
 import models.register.response.{RegisterWithIDResponse, RegisterWithIDResponseDetail, RegistrationWithIDResponse}
 import models.shared.{ContactDetails, Parameters, ResponseCommon}
@@ -33,7 +34,7 @@ class RegisterWithIDResponseSpec extends SpecBase {
   )
 
   val responseDetail: RegisterWithIDResponseDetail = RegisterWithIDResponseDetail(
-    "XE0000123456789",
+    SafeId("XE0000123456789"),
     Some("WARN8764123"),
     isEditable = true,
     isAnAgent = false,

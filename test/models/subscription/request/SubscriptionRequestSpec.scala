@@ -34,7 +34,7 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
     }
 
     "must return SubscriptionRequest for the input 'UserAnswers'" in {
-      val requestDtls = CreateRequestDetail("SAFE", "safeId", None, true, PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
+      val requestDtls = CreateRequestDetail("SAFE", "SAFEID", None, true, PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
 
       val userAnswers = UserAnswers("id")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -55,11 +55,11 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
         .set(SecondContactPage, false)
         .success
         .value
-        .set(RegistrationInfoPage, IndRegistrationInfo("safeId"))
+        .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
         .success
         .value
 
-      val subscriptionRequest = SubscriptionRequest.convertTo(MDR, "safeId", userAnswers).value
+      val subscriptionRequest = SubscriptionRequest.convertTo(MDR, safeId, userAnswers).value
       subscriptionRequest.requestCommon.regime mustBe "MDR"
       subscriptionRequest.requestCommon.originatingSystem mustBe "MDTP"
       subscriptionRequest.requestDetail mustBe requestDtls
@@ -68,7 +68,7 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
     "must return None for missing 'UserAnswers'" in {
       val userAnswers = UserAnswers("id")
 
-      val subscriptionRequest = SubscriptionRequest.convertTo(MDR, "safeId", userAnswers)
+      val subscriptionRequest = SubscriptionRequest.convertTo(MDR, safeId, userAnswers)
       subscriptionRequest mustBe None
     }
   }

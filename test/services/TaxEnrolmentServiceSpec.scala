@@ -83,11 +83,11 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, IndRegistrationInfo("safeId"))
+        .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
         .success
         .value
 
-      val result = service.checkAndCreateEnrolment("safeId", userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Right(NO_CONTENT)
     }
@@ -120,11 +120,11 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, IndRegistrationInfo("safeId"))
+        .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
         .success
         .value
 
-      val result = service.checkAndCreateEnrolment("safeId", userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Left(UnableToCreateEnrolmentError)
     }
@@ -159,11 +159,11 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(AddressWithoutIdPage, address)
         .success
         .value
-        .set(RegistrationInfoPage, IndRegistrationInfo("safeId"))
+        .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
         .success
         .value
 
-      val result = service.checkAndCreateEnrolment("safeId", userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID, MDR)
 
       result.futureValue mustBe Left(EnrolmentExistsError(groupIds))
     }

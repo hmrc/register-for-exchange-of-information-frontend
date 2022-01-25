@@ -25,14 +25,14 @@ object RegistrationInfo {
   implicit val format: OFormat[RegistrationInfo] = Json.format[RegistrationInfo]
 }
 
-case class OrgRegistrationInfo(safeId: String, name: String, address: AddressResponse) extends RegistrationInfo
+case class OrgRegistrationInfo(safeId: SafeId, name: String, address: AddressResponse) extends RegistrationInfo
 
 object OrgRegistrationInfo {
 
   implicit val format: OFormat[OrgRegistrationInfo] = Json.format[OrgRegistrationInfo]
 }
 
-case class IndRegistrationInfo(safeId: String) extends RegistrationInfo
+case class IndRegistrationInfo(safeId: SafeId) extends RegistrationInfo
 
 object IndRegistrationInfo {
 

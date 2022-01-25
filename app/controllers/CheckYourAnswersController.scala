@@ -83,8 +83,8 @@ class CheckYourAnswersController @Inject() (
       case Left(_) => EitherT(registrationService.registerWithoutId(regime))
       case registration =>
         val safeId = registration map {
-          case OrgRegistrationInfo(safeId, _, _) => SafeId(safeId)
-          case IndRegistrationInfo(safeId)       => SafeId(safeId)
+          case OrgRegistrationInfo(safeId, _, _) => safeId
+          case IndRegistrationInfo(safeId)       => safeId
         }
         EitherT.fromEither[Future](safeId)
     }
@@ -93,10 +93,10 @@ class CheckYourAnswersController @Inject() (
     implicit request =>
       (for {
         safeId             <- getSafeIdFromRegistration(regime)
-        subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId.safeId, request.userAnswers))
+        subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
         withSubscriptionID <- EitherT.fromEither[Future](request.userAnswers.setEither(SubscriptionIDPage, subscriptionID))
         _                  <- EitherT.fromEither[Future](Right[ApiError, Future[Boolean]](sessionRepository.set(withSubscriptionID)))
-        _                  <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(safeId.safeId, withSubscriptionID, subscriptionID, regime))
+        _                  <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(safeId, withSubscriptionID, subscriptionID, regime))
       } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
         .valueOrF {
           case MandatoryInformationMissingError(error) =>
