@@ -7,7 +7,7 @@
 {% from "macros/title.njk"                         import title %}
 
 {% block pageTitle %}
-  {{ title(titleTxt, form.errors) }}
+  {{ title(messages(titleTxt), form.errors) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -33,7 +33,7 @@
 
           {{ govukInput({
             label: {
-              text: heading,
+              text: messages(heading),
               isPageHeading: true,
               classes: "govuk-label--l"
             },
@@ -41,7 +41,7 @@
             id: "value",
             name: "value",
             hint: {
-                          text: hint
+                          text: messages(hint)
                         },
             value: form.value.value,
             errorMessage: form.value.error

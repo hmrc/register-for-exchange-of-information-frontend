@@ -40,7 +40,7 @@ object BusinessType extends Enumerable.Implicits {
     UnincorporatedAssociation
   )
 
-  def radios(form: Form[_])(implicit messages: Messages): Seq[Radios.Item] = {
+  def radios(form: Form[_]): Seq[Radios.Item] = {
 
     val field = form("value")
     val items = Seq(

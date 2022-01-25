@@ -33,9 +33,9 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode, MDR).url
   lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode, MDR).url
 
-  val reqErrKey    = "businessName.error.required.llp"
-  val lnErrKey     = "businessName.error.length.llp"
-  private def form = new forms.BusinessNameFormProvider().apply((reqErrKey, lnErrKey))
+  val selectedBusinessTypeText = "llp"
+  val lnErrKey                 = "businessName.error.length.llp"
+  private def form             = new forms.BusinessNameFormProvider().apply(selectedBusinessTypeText)
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value
 
