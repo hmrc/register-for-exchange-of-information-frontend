@@ -49,11 +49,12 @@ class BusinessNameController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  private def selectedBusinessTypeText(businessType: BusinessType): String =
+  private def selectedBusinessTypeText(businessType: BusinessType): Option[String] =
     businessType match {
-      case LimitedPartnership | LimitedCompany => "llp"
-      case Partnership                         => "partner"
-      case UnincorporatedAssociation           => "unincorporated"
+      case LimitedPartnership | LimitedCompany => Some("llp")
+      case Partnership                         => Some("partner")
+      case UnincorporatedAssociation           => Some("unincorporated")
+      case _                                   => None
     }
 
   private def render(mode: Mode, regime: Regime, form: Form[String], businessType: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
@@ -72,27 +73,33 @@ class BusinessNameController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
       implicit request =>
-        val businessTypeText = selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get)
+        selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
+          case Some(businessTypeText) =>
+            val form = formProvider(businessTypeText)
+            render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessTypeText).map(Ok(_))
 
-        val form = formProvider(businessTypeText)
-        render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessTypeText).map(Ok(_))
-
+          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+        }
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
       implicit request =>
-        val businessTypeText = selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get)
+        selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
+          case Some(businessTypeText) =>
+            formProvider(businessTypeText)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => render(mode, regime, formWithErrors, businessTypeText).map(BadRequest(_)),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessNamePage, value, true))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
+              )
 
-        formProvider(businessTypeText)
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, regime, formWithErrors, businessTypeText).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessNamePage, value, true))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
-          )
+          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+        }
+
     }
 }

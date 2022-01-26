@@ -30,7 +30,8 @@ import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.Results.Redirect
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
@@ -52,6 +53,7 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   taxEnrolmentsService: TaxEnrolmentService,
   countryFactory: CountryListFactory,
+  controllerHelper: ControllerHelper,
   registrationService: BusinessMatchingWithoutIdService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -78,41 +80,40 @@ class CheckYourAnswersController @Inject() (
         .map(Ok(_))
   }
 
-  private def getSafeIdFromRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, SafeId] =
-    request.userAnswers.getEither(RegistrationInfoPage) match {
-      case Left(_) => EitherT(registrationService.registerWithoutId(regime))
-      case registration =>
-        val safeId = registration map {
+  private def getSafeIdFromRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+    request.userAnswers.get(RegistrationInfoPage) match {
+      case Some(registration) =>
+        val safeId = registration match {
           case OrgRegistrationInfo(safeId, _, _) => safeId
           case IndRegistrationInfo(safeId)       => safeId
         }
-        EitherT.fromEither[Future](safeId)
+        Future.successful(Right(safeId))
+      case _ => registrationService.registerWithoutId(regime)
     }
 
   def onSubmit(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       (for {
-        safeId             <- getSafeIdFromRegistration(regime)
-        subscriptionID     <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
-        withSubscriptionID <- EitherT.fromEither[Future](request.userAnswers.setEither(SubscriptionIDPage, subscriptionID))
-        _                  <- EitherT.fromEither[Future](Right[ApiError, Future[Boolean]](sessionRepository.set(withSubscriptionID)))
-        _                  <- EitherT(taxEnrolmentsService.checkAndCreateEnrolment(safeId, withSubscriptionID, subscriptionID, regime))
-      } yield Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
+        safeId         <- EitherT(getSafeIdFromRegistration(regime))
+        subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
+        orders         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID, regime))
+      } yield orders)
         .valueOrF {
-          case MandatoryInformationMissingError(error) =>
-            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case EnrolmentExistsError(_) if request.affinityGroup == AffinityGroup.Individual =>
+          case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>
+            logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
             Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
-          case EnrolmentExistsError(_) =>
+          case EnrolmentExistsError(groupIds) =>
+            logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
               Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
             } else {
               Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
             }
-          case error =>
-            renderer
-              .renderError(error, regime)
+          case MandatoryInformationMissingError(_) =>
+            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
+          case error => renderer.renderError(error, regime)
         }
+
   }
 
   private def isRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =

@@ -24,7 +24,9 @@ import helpers.JsonFixtures.{withIDIndividualResponse, withIDOrganisationRespons
 import helpers.RegisterHelper._
 import helpers.WireMockServerHandler
 import models.Name
+import models.error.ApiError
 import models.error.ApiError.{NotFoundError, ServiceUnavailableError}
+import models.matching.SafeId
 import models.register.request.details.{Individual, NoIdOrganisation, WithIDIndividual, WithIDOrganisation}
 import models.register.request._
 import models.shared.Parameters
@@ -35,6 +37,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
 
@@ -141,8 +144,8 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubResponse("/individual/noId", OK, withoutIDResponse)
 
-        val result = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
-        result.value.futureValue mustBe Right(registrationWithoutIDResponse)
+        val result: Future[Either[ApiError, SafeId]] = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
+        result.futureValue mustBe Right(expectedSafeId)
       }
 
       "return 404 and NotFoundError when there is no match" in {
@@ -150,7 +153,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/individual/noId", NOT_FOUND, withoutIDResponse)
 
         val result = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
-        result.value.futureValue mustBe Left(NotFoundError)
+        result.futureValue mustBe Left(NotFoundError)
       }
 
       "return 503 and ServiceUnavailableError when remote is unavailable " in {
@@ -158,7 +161,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/individual/noId", SERVICE_UNAVAILABLE, withoutIDResponse)
 
         val result = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
-        result.value.futureValue mustBe Left(ServiceUnavailableError)
+        result.futureValue mustBe Left(ServiceUnavailableError)
       }
     }
 
@@ -169,7 +172,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/organisation/noId", OK, withoutIDResponse)
 
         val result = connector.withOrganisationNoId(registrationWithoutOrganisationIDPayload)
-        result.value.futureValue mustBe Right(registrationWithoutIDResponse)
+        result.futureValue mustBe Right(expectedSafeId)
       }
 
       "return 404 and NotFoundError when there is no match" in {
@@ -177,7 +180,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/organisation/noId", NOT_FOUND, withoutIDResponse)
 
         val result = connector.withOrganisationNoId(registrationWithoutOrganisationIDPayload)
-        result.value.futureValue mustBe Left(NotFoundError)
+        result.futureValue mustBe Left(NotFoundError)
       }
 
       "return 503 and ServiceUnavailableError when remote is unavailable " in {
@@ -185,7 +188,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/organisation/noId", SERVICE_UNAVAILABLE, withoutIDResponse)
 
         val result = connector.withOrganisationNoId(registrationWithoutOrganisationIDPayload)
-        result.value.futureValue mustBe Left(ServiceUnavailableError)
+        result.futureValue mustBe Left(ServiceUnavailableError)
       }
     }
   }
