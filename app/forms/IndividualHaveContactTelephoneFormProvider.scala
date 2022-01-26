@@ -25,6 +25,6 @@ class IndividualHaveContactTelephoneFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("individualHaveContactTelephone.error.required")
+      "value" -> boolean("isContactTelephone.error.required.individual")
     )
 }

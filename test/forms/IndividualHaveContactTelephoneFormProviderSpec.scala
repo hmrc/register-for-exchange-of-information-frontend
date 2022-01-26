@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class IndividualHaveContactTelephoneFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "individualHaveContactTelephone.error.required"
+  val requiredKey = "isContactTelephone.error.required.individual"
   val invalidKey  = "error.boolean"
 
   val form = new IndividualHaveContactTelephoneFormProvider()()

@@ -508,7 +508,3 @@ individualAlreadyRegistered.p1 = You can access the service using the same Gover
 individualAlreadyRegistered.link = Sign in to your Government Gateway account (opens in new tab)
 individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email
 
-individualHaveContactTelephone.title = individualHaveContactTelephone
-individualHaveContactTelephone.heading = individualHaveContactTelephone
-individualHaveContactTelephone.checkYourAnswersLabel = individualHaveContactTelephone
-individualHaveContactTelephone.error.required = Select yes if individualHaveContactTelephone
