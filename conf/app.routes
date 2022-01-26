@@ -193,3 +193,8 @@ GET        /:regime/register/individual-email                        controllers
 POST       /:regime/register/individual-email                        controllers.IndividualContactEmailController.onSubmit(mode: models.Mode = models.NormalMode, regime: models.Regime)
 GET        /:regime/register/change-individual-email                  controllers.IndividualContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
 POST       /:regime/register/change-individual-email                  controllers.IndividualContactEmailController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)
+
+GET        /:regime/register/individual-have-phone                        controllers.IndividualHaveContactTelephoneController.onPageLoad(mode: models.Mode = models.NormalMode, regime: models.Regime)
+POST       /:regime/register/individual-have-phone                        controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode, regime: models.Regime)
+GET        /:regime/register/change-individual-have-phone                  controllers.IndividualHaveContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
+POST       /:regime/register/change-individual-have-phone                  controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)
