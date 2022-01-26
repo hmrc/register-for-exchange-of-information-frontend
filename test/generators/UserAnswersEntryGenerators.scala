@@ -23,6 +23,14 @@ import uk.gov.hmrc.domain.Nino
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryIndividualContactEmailUserAnswersEntry: Arbitrary[(pages.IndividualContactEmailPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.IndividualContactEmailPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryWhatIsTradingNameUserAnswersEntry: Arbitrary[(pages.WhatIsTradingNamePage.type, JsValue)] =
     Arbitrary {
       for {

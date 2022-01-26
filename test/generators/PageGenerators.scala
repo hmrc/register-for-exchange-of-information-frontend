@@ -20,6 +20,9 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryIndividualContactEmailPage: Arbitrary[pages.IndividualContactEmailPage.type] =
+    Arbitrary(pages.IndividualContactEmailPage)
+
   implicit lazy val arbitraryWhatIsTradingNamePage: Arbitrary[pages.WhatIsTradingNamePage.type] =
     Arbitrary(pages.WhatIsTradingNamePage)
 

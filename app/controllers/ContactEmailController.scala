@@ -63,7 +63,6 @@ class ContactEmailController @Inject() (
       "heading"   -> s"contactEmail.heading.$suffix",
       "action"    -> routes.ContactEmailController.onSubmit(mode, regime).url
     )
-
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =

@@ -340,4 +340,13 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
         href = routes.ContactEmailController.onPageLoad(CheckMode, regime).url
       )
   }
+
+  def individualContactEmail: Option[Row] = userAnswers.get(pages.IndividualContactEmailPage) map {
+    answer =>
+      toRow(
+        msgKey = "contactEmail",
+        value = lit"$answer",
+        href = routes.IndividualContactEmailController.onPageLoad(CheckMode, regime).url
+      )
+  }
 }
