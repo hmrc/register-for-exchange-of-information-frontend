@@ -68,7 +68,6 @@ class MDRNavigator @Inject() () extends Navigator {
     case BusinessTypePage                     => regime => _ => Some(routes.UTRController.onPageLoad(CheckMode, regime))
     case UTRPage                              => isSoleProprietor(CheckMode)
     case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
-//    case RegistrationInfoPage                 => regime => ua => IndividualMatchRoutes(CheckMode)(regime)(ua)
     case RegistrationInfoPage                 => regime => ua =>
       checkNextPageForValueThenRoute(CheckMode, regime, ua, ContactEmailPage, routes.ContactEmailController.onPageLoad(CheckMode, regime)
       )

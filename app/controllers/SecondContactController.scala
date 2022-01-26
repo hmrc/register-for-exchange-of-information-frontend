@@ -80,7 +80,7 @@ class SecondContactController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors, request.userAnswers.get(ContactNamePage).get).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(SecondContactPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(SecondContactPage, mode, regime, updatedAnswers))
           )

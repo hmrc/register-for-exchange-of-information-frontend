@@ -50,7 +50,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                   .success
                   .value
-                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, false, true)
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                   .success
                   .value
 
@@ -69,7 +69,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                   .success
                   .value
-                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true, true)
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                   .success
                   .value
 
@@ -88,7 +88,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                   .success
                   .value
-                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, false, true)
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                   .success
                   .value
 
@@ -107,7 +107,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                   .success
                   .value
-                  .setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, true, true)
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                   .success
                   .value
 
@@ -150,7 +150,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
                   .success
                   .value
-                  .setOrCleanup(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
+                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
                   .success
                   .value
 
@@ -177,7 +177,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(DoYouHaveNINPage, false)
                   .success
                   .value
-                  .setOrCleanup(DoYouHaveNINPage, true)
+                  .set(DoYouHaveNINPage, true)
                   .success
                   .value
 
@@ -196,7 +196,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(DoYouHaveNINPage, true)
                   .success
                   .value
-                  .setOrCleanup(DoYouHaveNINPage, false)
+                  .set(DoYouHaveNINPage, false)
                   .success
                   .value
 
