@@ -30,18 +30,18 @@ class RegistrationInfoSpec extends SpecBase with Generators with ScalaCheckPrope
       val json: JsValue =
         Json.parse(
           """
-            |{"safeId":"safeId","name":"name","address":{"addressLine1":"100 Parliament Street","addressLine4":"London","postalCode":"SW1A 2BQ","countryCode":"GB"},"_type":"models.matching.OrgRegistrationInfo"}""".stripMargin
+            |{"safeId":"SAFEID","name":"name","address":{"addressLine1":"100 Parliament Street","addressLine4":"London","postalCode":"SW1A 2BQ","countryCode":"GB"},"_type":"models.matching.OrgRegistrationInfo"}""".stripMargin
         )
 
-      val registrationInfo: RegistrationInfo = OrgRegistrationInfo("safeId", "name", RegisterHelper.addressResponse)
+      val registrationInfo: RegistrationInfo = OrgRegistrationInfo(safeId, "name", RegisterHelper.addressResponse)
       Json.toJson(registrationInfo) mustBe json
       json.as[OrgRegistrationInfo] mustBe registrationInfo
     }
 
     "must serialise and de-serialise IndRegistrationInfo" in {
-      val json: JsValue = Json.parse("""{"safeId":"name","_type":"models.matching.IndRegistrationInfo"}""".stripMargin)
+      val json: JsValue = Json.parse("""{"safeId":"SAFEID","_type":"models.matching.IndRegistrationInfo"}""".stripMargin)
 
-      val registrationInfo: RegistrationInfo = IndRegistrationInfo("name")
+      val registrationInfo: RegistrationInfo = IndRegistrationInfo(safeId)
       Json.toJson(registrationInfo) mustBe json
       json.as[IndRegistrationInfo] mustBe registrationInfo
     }

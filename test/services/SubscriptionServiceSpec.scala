@@ -83,7 +83,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .success
         .value
 
-      val result = service.checkAndCreateSubscription(MDR, "safeId", userAnswers)
+      val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
       result.futureValue mustBe Right(SubscriptionID("id"))
     }
 
@@ -92,7 +92,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(subscriptionID)))
 
-      val result = service.checkAndCreateSubscription(MDR, "safeId", emptyUserAnswers)
+      val result = service.checkAndCreateSubscription(MDR, safeId, emptyUserAnswers)
       result.futureValue mustBe Right(subscriptionID)
     }
 
@@ -122,11 +122,8 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(IsContactTelephonePage, true)
         .success
         .value
-//        .set(RegistrationInfoPage, RegistrationInfo.build("safeId", AsOrganisation))
-//        .success
-//        .value
 
-      val result = service.checkAndCreateSubscription(MDR, "safeId", userAnswers)
+      val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
       result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
 
@@ -136,7 +133,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-      val result = service.checkAndCreateSubscription(MDR, "safeId", UserAnswers("id"))
+      val result = service.checkAndCreateSubscription(MDR, safeId, UserAnswers("id"))
 
       result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
@@ -165,7 +162,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-        val result = service.checkAndCreateSubscription(MDR, "safeId", userAnswers)
+        val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
 
         result.futureValue mustBe Left(error)
       }
@@ -175,13 +172,13 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       "must return 'SubscriptionID' for valid input" in {
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
-        val result = service.getDisplaySubscriptionId(MDR, "safeId")
+        val result = service.getDisplaySubscriptionId(MDR, safeId)
         result.futureValue mustBe Some(SubscriptionID("id"))
       }
 
       "must return 'None' for any failures of exceptions" in {
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
-        val result = service.getDisplaySubscriptionId(MDR, "safeId")
+        val result = service.getDisplaySubscriptionId(MDR, safeId)
         result.futureValue mustBe None
       }
     }

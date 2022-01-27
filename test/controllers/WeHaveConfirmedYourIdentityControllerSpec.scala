@@ -36,7 +36,7 @@ import scala.concurrent.Future
 
 class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  val registrationInfo = IndRegistrationInfo("safeId")
+  val registrationInfo = IndRegistrationInfo(safeId)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))

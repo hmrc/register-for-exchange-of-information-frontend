@@ -18,6 +18,7 @@ package models.enrolment
 
 import models.BusinessType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
 import models.error.ApiError
+import models.matching.SafeId
 import models.{SubscriptionID, UserAnswers}
 import pages._
 import play.api.libs.json.{Json, OFormat}
@@ -57,10 +58,10 @@ case class SubscriptionInfo(safeID: String,
 object SubscriptionInfo {
   implicit val format: OFormat[SubscriptionInfo] = Json.format[SubscriptionInfo]
 
-  def createSubscriptionInfo(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID): Either[ApiError, SubscriptionInfo] =
+  def createSubscriptionInfo(safeId: SafeId, userAnswers: UserAnswers, subscriptionId: SubscriptionID): Either[ApiError, SubscriptionInfo] =
     Right(
       SubscriptionInfo(
-        safeID = safeId,
+        safeID = safeId.value,
         saUtr = getSaUtrIfProvided(userAnswers),
         ctUtr = getCtUtrIfProvided(userAnswers),
         nino = getNinoIfProvided(userAnswers),

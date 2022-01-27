@@ -16,6 +16,7 @@
 
 package base
 
+import models.matching.SafeId
 import models.{UniqueTaxpayerReference, UserAnswers}
 import org.mockito.MockitoSugar
 import org.scalatest._
@@ -41,5 +42,6 @@ trait SpecBase
 
   implicit val hc: HeaderCarrier   = HeaderCarrier()
   val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("UTR")
+  val safeId: SafeId               = SafeId("SAFEID")
 
 }

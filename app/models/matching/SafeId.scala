@@ -16,10 +16,15 @@
 
 package models.matching
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
-case class SafeId(safeId: String)
+case class SafeId(value: String)
 
 object SafeId {
-  implicit val format: OFormat[SafeId] = Json.format[SafeId]
+
+  implicit val reads: Reads[SafeId] = __.read[String].map(SafeId.apply)
+
+  implicit val writes: Writes[SafeId] = Writes(
+    safeId => JsString(safeId.value)
+  )
 }

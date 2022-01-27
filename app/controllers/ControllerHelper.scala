@@ -16,10 +16,11 @@
 
 package controllers
 
-import models.error.ApiError.EnrolmentExistsError
+import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
+import models.matching.SafeId
 import models.requests.DataRequest
 import models.{Regime, SubscriptionID, UserAnswers}
-import pages.SubscriptionIDPage
+import pages.{RegistrationInfoPage, SubscriptionIDPage}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
@@ -38,7 +39,7 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
     extends Logging
     with NunjucksSupport {
 
-  private def createEnrolment(safeId: String, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
+  private def createEnrolment(safeId: SafeId, userAnswers: UserAnswers, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     request: DataRequest[AnyContent]
   ): Future[Result] =
@@ -49,11 +50,17 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
         Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
       case Left(EnrolmentExistsError(groupIds)) =>
         logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
-        Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
+        if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
+          Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
+        } else {
+          Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
+        }
+      case Left(MandatoryInformationMissingError(_)) =>
+        Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
       case Left(error) => renderer.renderError(error, regime)
     }
 
-  def updateSubscriptionIdAndCreateEnrolment(safeId: String, subscriptionId: SubscriptionID, regime: Regime)(implicit
+  def updateSubscriptionIdAndCreateEnrolment(safeId: SafeId, subscriptionId: SubscriptionID, regime: Regime)(implicit
     hc: HeaderCarrier,
     request: DataRequest[AnyContent]
   ): Future[Result] =

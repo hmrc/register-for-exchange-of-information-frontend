@@ -19,7 +19,6 @@ package models.subscription.request
 import base.SpecBase
 import generators.Generators
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.matching.IndRegistrationInfo
 import models.{Address, Country, Name, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -75,7 +74,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     "must return 'CreateRequestDetail' for the input userAnswers" in {
       val createRequestDetails = CreateRequestDetail(
         IDType = "SAFE",
-        IDNumber = "safeId",
+        IDNumber = "SAFEID",
         tradingName = Some("traderName"),
         isGBUser = true,
         primaryContact = PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None),
@@ -105,7 +104,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
       request mustBe createRequestDetails
     }
 
@@ -128,7 +127,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -158,7 +157,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -188,7 +187,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -218,7 +217,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }
@@ -255,7 +254,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe true
     }
@@ -289,7 +288,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }
@@ -313,7 +312,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .success
         .value
 
-      val request = CreateRequestDetail.convertTo("safeId", updatedUserAnswers).value
+      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }

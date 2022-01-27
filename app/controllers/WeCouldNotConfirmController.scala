@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import models.{NormalMode, Regime, UserAnswers}
+import models.{NormalMode, Regime}
 import pages.PageLists
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}

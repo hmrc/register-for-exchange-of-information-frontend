@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import controllers.actions._
 import models.matching.RegistrationRequest
 import models.requests.DataRequest
-import models.{BusinessType, Mode, NormalMode, Regime}
-import navigation.{ContactDetailsNavigator, MDRNavigator}
+import models.{BusinessType, Mode, Regime}
+import navigation.MDRNavigator
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json

@@ -16,6 +16,7 @@
 
 package helpers
 
+import models.matching.SafeId
 import models.register.request.details.AddressRequest
 import models.register.response.details.{AddressResponse, IndividualResponse, OrganisationResponse}
 import models.register.response._
@@ -34,7 +35,7 @@ object RegisterHelper {
       ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
       Some(
         RegisterWithIDResponseDetail(
-          "XE0000123456789",
+          SafeId("XE0000123456789"),
           Some("WARN8764123"),
           isEditable = true,
           isAnAgent = false,
@@ -53,7 +54,7 @@ object RegisterHelper {
       ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
       Some(
         RegisterWithIDResponseDetail(
-          "XE0000123456789",
+          SafeId("XE0000123456789"),
           Some("WARN8764123"),
           isEditable = true,
           isAnAgent = false,
@@ -67,15 +68,5 @@ object RegisterHelper {
     )
   )
 
-  val registrationWithoutIDResponse: RegistrationWithoutIDResponse = RegistrationWithoutIDResponse(
-    RegisterWithoutIDResponse(
-      ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
-      Some(
-        RegisterWithoutIDResponseDetail(
-          "XE0000123456789",
-          Some("WARN8764123")
-        )
-      )
-    )
-  )
+  val expectedSafeId: SafeId = SafeId("XE0000123456789")
 }

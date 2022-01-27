@@ -26,8 +26,8 @@ class BusinessNameFormProvider @Inject() extends Mappings with RegexConstants {
 
   private val maxLength = 105
 
-  def apply(keys: Tuple2[String, String]): Form[String] =
+  def apply(key: String): Form[String] =
     Form(
-      "value" -> validatedTextMaxLength(keys._1, keys._2, maxLength)
+      "value" -> validatedTextMaxLength(s"businessName.error.required.$key", s"businessName.error.length.$key", maxLength)
     )
 }

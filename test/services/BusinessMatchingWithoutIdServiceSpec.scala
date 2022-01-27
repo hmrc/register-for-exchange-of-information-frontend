@@ -66,22 +66,22 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
       "must return matching information when safeId can be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithoutIDResponse] = EitherT.fromEither[Future](Right(registrationWithoutIDResponse))
+        val response: Future[Either[ApiError, SafeId]] = Future.successful(Right(SafeId("XE0000123456789")))
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails)
 
         result.futureValue mustBe Right(SafeId("XE0000123456789"))
       }
 
       "must return an error when when safeId can't be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithoutIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
+        val response: Future[Left[ApiError, SafeId]] = Future.successful(Left(NotFoundError))
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails)
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -91,22 +91,22 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
       "must return matching information when safeId can be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithoutIDResponse] = EitherT.fromEither[Future](Right(registrationWithoutIDResponse))
+        val response: Future[Either[ApiError, SafeId]] = Future.successful(Right(SafeId("XE0000123456789")))
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails)
 
         result.futureValue mustBe Right(SafeId("XE0000123456789"))
       }
 
       "must return an error when when safeId can't be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithoutIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
+        val response: Future[Left[ApiError, SafeId]] = Future.successful(Left(NotFoundError))
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails).value
+        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails)
 
         result.futureValue mustBe Left(NotFoundError)
       }

@@ -36,9 +36,6 @@ final case class UserAnswers(
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
-  def getEither[A](page: Gettable[A])(implicit rds: Reads[A]): Either[ApiError, A] =
-    get(page).toRight(MandatoryInformationMissingError(page.toString))
-
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
@@ -83,12 +80,6 @@ final case class UserAnswers(
         }
     }
   }
-
-  def setEither[A](page: QuestionPage[A], value: A, checkPrevious: Boolean = false)(implicit
-    writes: Writes[A],
-    reads: Reads[A]
-  ): Either[ApiError, UserAnswers] =
-    set[A](page, value).toOption.toRight(MandatoryInformationMissingError(page.toString))
 
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 

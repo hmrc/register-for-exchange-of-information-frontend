@@ -16,9 +16,10 @@
 
 package models.register.response
 
+import models.matching.SafeId
 import play.api.libs.json.{Json, OFormat}
 
-case class RegisterWithoutIDResponseDetail(SAFEID: String, ARN: Option[String])
+case class RegisterWithoutIDResponseDetail(SAFEID: SafeId, ARN: Option[String])
 
 object RegisterWithoutIDResponseDetail {
   implicit val format: OFormat[RegisterWithoutIDResponseDetail] = Json.format[RegisterWithoutIDResponseDetail]

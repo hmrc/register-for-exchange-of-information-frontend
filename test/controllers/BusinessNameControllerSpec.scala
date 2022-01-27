@@ -33,11 +33,10 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode, MDR).url
   lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode, MDR).url
 
-  val reqErrKey    = "businessName.error.required.llp"
-  val lnErrKey     = "businessName.error.length.llp"
-  private def form = new forms.BusinessNameFormProvider().apply((reqErrKey, lnErrKey))
+  val selectedBusinessTypeText = "llp"
+  private def form             = new forms.BusinessNameFormProvider().apply(selectedBusinessTypeText)
 
-  val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value
 
   "BusinessName Controller" - {
 
@@ -66,6 +65,23 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
+    "redirect to 'There is a problem with this page' page when business type is 'Sole trader'" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
+
+      retrieveUserAnswersData(userAnswers)
+      val request = FakeRequest(GET, loadRoute)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.ThereIsAProblemController.onPageLoad(MDR).url
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockRenderer.render(any(), any())(any()))
@@ -73,6 +89,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
 
       val userAnswers =
         UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value.set(BusinessNamePage, "answer").success.value
+
       retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
@@ -148,6 +165,25 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController
+        .onPageLoad(MDR)
+        .url
+    }
+
+    "must redirect to 'There is a problem with this page' when business type is 'sole trader' on submission" in {
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val userAnswers =
+        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
+
+      retrieveUserAnswersData(userAnswers)
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.ThereIsAProblemController
         .onPageLoad(MDR)
         .url
     }

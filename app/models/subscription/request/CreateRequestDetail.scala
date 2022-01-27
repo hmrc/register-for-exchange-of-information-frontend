@@ -17,6 +17,7 @@
 package models.subscription.request
 
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.matching.SafeId
 import models.{BusinessType, UserAnswers}
 import pages._
 import play.api.libs.json.{Json, OFormat}
@@ -34,7 +35,7 @@ object CreateRequestDetail {
   implicit val format: OFormat[CreateRequestDetail] = Json.format[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def convertTo(safeId: String, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
+  def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
 
     val individualOrSoleTrader = {
       (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
@@ -52,7 +53,7 @@ object CreateRequestDetail {
           primaryContact <- PrimaryContact.convertTo(userAnswers)
         } yield CreateRequestDetail(
           IDType = idType,
-          IDNumber = safeId,
+          IDNumber = safeId.value,
           tradingName = userAnswers.get(WhatIsTradingNamePage),
           isGBUser = isGBUser(userAnswers),
           primaryContact = primaryContact,

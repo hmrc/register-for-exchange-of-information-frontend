@@ -69,7 +69,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val businessMatchingUrl: String =
     s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"
-  lazy val submissionsUrl: String = s"${configuration.get[String]("urls.submissions.host")}${configuration.get[String]("urls.submissions.startUrl")}"
 
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration.get[String]("microservice.services.enrolment-store-proxy.startUrl")}"

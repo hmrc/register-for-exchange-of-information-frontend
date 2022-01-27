@@ -21,6 +21,7 @@ import cats.implicits.catsStdInstancesForFuture
 import connectors.SubscriptionConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
+import models.matching.SafeId
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest, SubscriptionRequest}
 import models.{Regime, SubscriptionID, UserAnswers}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnector) {
 
-  def checkAndCreateSubscription(regime: Regime, safeID: String, userAnswers: UserAnswers)(implicit
+  def checkAndCreateSubscription(regime: Regime, safeID: SafeId, userAnswers: UserAnswers)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, SubscriptionID]] =
@@ -46,11 +47,11 @@ class SubscriptionService @Inject() (subscriptionConnector: SubscriptionConnecto
         }).value
     }
 
-  def getDisplaySubscriptionId(regime: Regime, safeId: String)(implicit
+  def getDisplaySubscriptionId(regime: Regime, safeId: SafeId)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Option[SubscriptionID]] = {
-    val displaySubscription = DisplaySubscriptionRequest.convertTo(regime, safeId)
+    val displaySubscription = DisplaySubscriptionRequest.convertTo(regime, safeId.value)
     subscriptionConnector.readSubscription(displaySubscription)
   }
 }

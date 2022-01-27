@@ -24,7 +24,7 @@ import models.{BusinessType, Mode, Regime}
 import navigation.MDRNavigator
 import pages.{BusinessNamePage, BusinessTypePage}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
@@ -49,47 +49,22 @@ class BusinessNameController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  // title msg keys
-  private val llpTitleKey            = "businessName.title.llp"
-  private val partnerTitleKey        = "businessName.title.partnership"
-  private val unincorporatedTitleKey = "businessName.title.unincorporated"
-
-  // heading msg keys
-  private val llpHeadingKey            = "businessName.heading.llp"
-  private val partnerHeadingKey        = "businessName.heading.partnership"
-  private val unincorporatedHeadingKey = "businessName.heading.unincorporated"
-
-  // hint msg keys
-  private val llpHintKey            = "businessName.hint.llp"
-  private val partnerHintKey        = "businessName.hint.partnership"
-  private val unincorporatedHintKey = "businessName.hint.unincorporated"
-
-  // required error msg keys
-  private val llpReqErrKey            = "businessName.error.required.llp"
-  private val partnerReqErrKey        = "businessName.error.required.partner"
-  private val unincorporatedReqErrKey = "businessName.error.required.unincorporated"
-
-  // length error msg keys
-  private val llpLnErrKey            = "businessName.error.length.llp"
-  private val partnerLnErrKey        = "businessName.error.length.partner"
-  private val unincorporatedLnErrKey = "businessName.error.length.unincorporated"
-
-  private def pageHeadingAndHint(businessType: BusinessType)(implicit messages: Messages): (String, String, String) =
+  private def selectedBusinessTypeText(businessType: BusinessType): Option[String] =
     businessType match {
-      case LimitedPartnership | LimitedCompany => (messages(llpTitleKey), messages(llpHeadingKey), messages(llpHintKey))
-      case Partnership                         => (messages(partnerTitleKey), messages(partnerHeadingKey), messages(partnerHintKey))
-      case UnincorporatedAssociation           => (messages(unincorporatedTitleKey), messages(unincorporatedHeadingKey), messages(unincorporatedHintKey))
+      case LimitedPartnership | LimitedCompany => Some("llp")
+      case Partnership                         => Some("partner")
+      case UnincorporatedAssociation           => Some("unincorporated")
+      case _                                   => None
     }
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], businessType: BusinessType)(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val (title, heading, hint) = pageHeadingAndHint(businessType)
+  private def render(mode: Mode, regime: Regime, form: Form[String], businessType: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val data = Json.obj(
       "form"     -> form,
       "regime"   -> regime.toUpperCase,
-      "titleTxt" -> title,
-      "heading"  -> heading,
-      "hint"     -> hint,
+      "titleTxt" -> s"businessName.title.$businessType",
+      "heading"  -> s"businessName.heading.$businessType",
+      "hint"     -> s"businessName.hint.$businessType",
       "action"   -> routes.BusinessNameController.onSubmit(mode, regime).url
     )
     renderer.render("businessName.njk", data)
@@ -98,34 +73,33 @@ class BusinessNameController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
       implicit request =>
-        val businessType = request.userAnswers.get(BusinessTypePage).get
+        selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
+          case Some(businessTypeText) =>
+            val form = formProvider(businessTypeText)
+            render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessTypeText).map(Ok(_))
 
-        val form = formProvider(businessType match {
-          case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
-          case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
-          case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
-        })
-        render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessType).map(Ok(_))
+          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+        }
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
       implicit request =>
-        val businessType = request.userAnswers.get(BusinessTypePage).get
+        selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
+          case Some(businessTypeText) =>
+            formProvider(businessTypeText)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => render(mode, regime, formWithErrors, businessTypeText).map(BadRequest(_)),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessNamePage, value, true))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
+              )
 
-        formProvider(businessType match {
-          case LimitedCompany | LimitedPartnership => (llpReqErrKey, llpLnErrKey)
-          case Partnership                         => (partnerReqErrKey, partnerLnErrKey)
-          case UnincorporatedAssociation           => (unincorporatedReqErrKey, unincorporatedLnErrKey)
-        })
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessNamePage, value, true))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
-          )
+          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+        }
+
     }
 }

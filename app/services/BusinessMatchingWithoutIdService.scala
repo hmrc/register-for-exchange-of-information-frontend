@@ -16,8 +16,6 @@
 
 package services
 
-import cats.data.EitherT
-import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
@@ -37,10 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class BusinessMatchingWithoutIdService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
 
   def registerWithoutId(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
-    (request.userAnswers.get(DoYouHaveNINPage) match {
+    request.userAnswers.get(DoYouHaveNINPage) match {
       case Some(false) => individualRegistration(regime)
       case _           => businessRegistration(regime)
-    }).value
+    }
 
   private def buildIndividualName(implicit request: DataRequest[AnyContent]): Option[Name] =
     request.userAnswers.get(DoYouHaveNINPage) match {
@@ -61,12 +59,11 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
       case _ => request.userAnswers.get(AddressUKPage)
     }
 
-  private val registrationError =
-    EitherT[Future, ApiError, SafeId](Future.successful(Left(MandatoryInformationMissingError())))
+  private val registrationError = Future.successful(Left(MandatoryInformationMissingError()))
 
   private def individualRegistration(
     regime: Regime
-  )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, SafeId] =
+  )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (for {
       name <- buildIndividualName
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
@@ -76,7 +73,7 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
     } yield sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress)))
       .getOrElse(registrationError)
 
-  private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): EitherT[Future, ApiError, SafeId] =
+  private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (for {
       organisationName <- request.userAnswers.get(BusinessWithoutIDNamePage)
       phoneNumber  = request.userAnswers.get(ContactPhonePage)
@@ -88,26 +85,15 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
   def sendIndividualRegistration(regime: Regime, name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): EitherT[Future, ApiError, SafeId] =
+  ): Future[Either[ApiError, SafeId]] =
     registrationConnector
       .withIndividualNoId(RegisterWithoutID(regime, name, dob, address, contactDetails))
-      .subflatMap {
-        response =>
-          (for {
-            safeId <- response.registerWithoutIDResponse.safeId
-          } yield SafeId(safeId)).toRight(MandatoryInformationMissingError())
-      }
 
   def sendBusinessRegistration(regime: Regime, businessName: String, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): EitherT[Future, ApiError, SafeId] =
+  ): Future[Either[ApiError, SafeId]] =
     registrationConnector
       .withOrganisationNoId(RegisterWithoutID(regime, businessName, address, contactDetails))
-      .subflatMap {
-        response =>
-          (for {
-            safeId <- response.registerWithoutIDResponse.safeId
-          } yield SafeId(safeId)).toRight(MandatoryInformationMissingError())
-      }
+
 }

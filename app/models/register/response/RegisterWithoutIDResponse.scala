@@ -16,12 +16,13 @@
 
 package models.register.response
 
+import models.matching.SafeId
 import models.shared.ResponseCommon
 import play.api.libs.json.{Json, OFormat}
 
 case class RegisterWithoutIDResponse(responseCommon: ResponseCommon, responseDetail: Option[RegisterWithoutIDResponseDetail]) {
 
-  val safeId: Option[String] = responseDetail.map(_.SAFEID)
+  val safeId: Option[SafeId] = responseDetail.map(_.SAFEID)
 }
 
 object RegisterWithoutIDResponse {
