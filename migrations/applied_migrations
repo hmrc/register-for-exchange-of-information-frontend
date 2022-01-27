@@ -1,33 +1,34 @@
 #!/bin/bash
 
 echo ""
-echo "Applying migration IndividualHaveContactTelephone"
+echo "Applying migration IndividualContactPhone"
 
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.routes
-echo "GET        /individualHaveContactTelephone                        controllers.IndividualHaveContactTelephoneController.onPageLoad(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
-echo "POST       /individualHaveContactTelephone                        controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
+echo "GET        /individualContactPhone                        controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
+echo "POST       /individualContactPhone                        controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode)" >> ../conf/app.routes
 
-echo "GET        /changeIndividualHaveContactTelephone                  controllers.IndividualHaveContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
-echo "POST       /changeIndividualHaveContactTelephone                  controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
+echo "GET        /changeIndividualContactPhone                  controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
+echo "POST       /changeIndividualContactPhone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)" >> ../conf/app.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "individualHaveContactTelephone.title = individualHaveContactTelephone" >> ../conf/messages.en
-echo "individualHaveContactTelephone.heading = individualHaveContactTelephone" >> ../conf/messages.en
-echo "individualHaveContactTelephone.checkYourAnswersLabel = individualHaveContactTelephone" >> ../conf/messages.en
-echo "individualHaveContactTelephone.error.required = Select yes if individualHaveContactTelephone" >> ../conf/messages.en
+echo "individualContactPhone.title = individualContactPhone" >> ../conf/messages.en
+echo "individualContactPhone.heading = individualContactPhone" >> ../conf/messages.en
+echo "individualContactPhone.checkYourAnswersLabel = individualContactPhone" >> ../conf/messages.en
+echo "individualContactPhone.error.required = Enter individualContactPhone" >> ../conf/messages.en
+echo "individualContactPhone.error.length = IndividualContactPhone must be 100 characters or less" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitraryIndividualHaveContactTelephoneUserAnswersEntry: Arbitrary[(pages.IndividualHaveContactTelephonePage.type, JsValue)] =";\
+    print "  implicit lazy val arbitraryIndividualContactPhoneUserAnswersEntry: Arbitrary[(pages.IndividualContactPhonePage.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
-    print "        page  <- arbitrary[pages.IndividualHaveContactTelephonePage.type]";\
-    print "        value <- arbitrary[Boolean].map(Json.toJson(_))";\
+    print "        page  <- arbitrary[pages.IndividualContactPhonePage.type]";\
+    print "        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))";\
     print "      } yield (page, value)";\
     print "    }";\
     next }1' ../test/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test/generators/UserAnswersEntryGenerators.scala
@@ -36,33 +37,33 @@ echo "Adding to PageGenerators"
 awk '/trait PageGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitraryIndividualHaveContactTelephonePage: Arbitrary[pages.IndividualHaveContactTelephonePage.type] =";\
-    print "    Arbitrary(pages.IndividualHaveContactTelephonePage)";\
+    print "  implicit lazy val arbitraryIndividualContactPhonePage: Arbitrary[pages.IndividualContactPhonePage.type] =";\
+    print "    Arbitrary(pages.IndividualContactPhonePage)";\
     next }1' ../test/generators/PageGenerators.scala > tmp && mv tmp ../test/generators/PageGenerators.scala
 
 echo "Adding to UserAnswersGenerator"
 awk '/val generators/ {\
     print;\
-    print "    arbitrary[(IndividualHaveContactTelephonePage.type, JsValue)] ::";\
+    print "    arbitrary[(IndividualContactPhonePage.type, JsValue)] ::";\
     next }1' ../test/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test/generators/UserAnswersGenerator.scala
 
 echo "Adding helper method to CheckYourAnswersHelper"
 awk '/extends RowBuilder/ {\
      print;\
      print "";\
-     print "  def individualHaveContactTelephone: Option[Row] = userAnswers.get(pages.IndividualHaveContactTelephonePage) map {";\
+     print "  def individualContactPhone: Option[Row] = userAnswers.get(pages.IndividualContactPhonePage) map {";\
      print "      answer =>";\
      print "        toRow(";\
-     print "          msgKey = \"individualHaveContactTelephone\",";\
+     print "          msgKey = \"individualContactPhone\",";\
      print "          value = msg\"site.edit\",";\
-     print "          href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode).url,";\
+     print "          href = routes.IndividualContactPhoneController.onPageLoad(CheckMode).url,";\
      print "        )";\
      print "    }";\
      next }1' ../app/utils/CheckYourAnswersHelper.scala > tmp && mv tmp ../app/utils/CheckYourAnswersHelper.scala
 
 echo "Moving tests"
-mv ../generated-test/controllers/IndividualHaveContactTelephoneControllerSpec.scala ../test/controllers/
-mv ../generated-test/forms/IndividualHaveContactTelephoneFormProviderSpec.scala ../test/forms/
-mv ../generated-test/pages/IndividualHaveContactTelephonePageSpec.scala ../test/pages/
+mv ../generated-test/controllers/IndividualContactPhoneControllerSpec.scala ../test/controllers/
+mv ../generated-test/forms/IndividualContactPhoneFormProviderSpec.scala ../test/forms/
+mv ../generated-test/pages/IndividualContactPhonePageSpec.scala ../test/pages/
 
-echo "Migration IndividualHaveContactTelephone completed"
+echo "Migration IndividualContactPhone completed"

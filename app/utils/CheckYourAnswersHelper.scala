@@ -28,6 +28,20 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   val messages: Messages
 ) extends RowBuilder {
 
+  def individualContactPhone: Option[Row] = {
+    val numberOrNot = userAnswers.get(pages.IndividualContactPhonePage) match {
+      case Some(answer) => answer
+      case _            => "None"
+    }
+    Some(
+      toRow(
+        msgKey = "contactPhone",
+        value = lit"$numberOrNot",
+        href = routes.IndividualContactPhoneController.onPageLoad(CheckMode, regime).url
+      )
+    )
+  }
+
   def individualHaveContactTelephone: Option[Row] = userAnswers.get(pages.IndividualHaveContactTelephonePage) map {
     answer =>
       toRow(

@@ -198,3 +198,8 @@ GET        /:regime/register/individual-have-phone                        contro
 POST       /:regime/register/individual-have-phone                        controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode, regime: models.Regime)
 GET        /:regime/register/change-individual-have-phone                  controllers.IndividualHaveContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
 POST       /:regime/register/change-individual-have-phone                  controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)
+
+GET        /:regime/register/individual-phone                        controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.NormalMode, regime: models.Regime)
+POST       /:regime/register/individual-phone                        controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode, regime: models.Regime)
+GET        /:regime/register/change-individual-phone                  controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
+POST       /:regime/register/change-individual-phone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)
