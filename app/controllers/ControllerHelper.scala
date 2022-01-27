@@ -16,8 +16,11 @@
 
 package controllers
 
+import cats.data.EitherT
+import cats.implicits._
+import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
-import models.matching.SafeId
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
 import models.requests.DataRequest
 import models.{Regime, SubscriptionID, UserAnswers}
 import pages.{RegistrationInfoPage, SubscriptionIDPage}
@@ -26,7 +29,7 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import renderer.Renderer
 import repositories.SessionRepository
-import services.TaxEnrolmentService
+import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.viewmodels.NunjucksSupport
@@ -35,7 +38,11 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, renderer: Renderer, sessionRepository: SessionRepository)
+class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService,
+                                  renderer: Renderer,
+                                  sessionRepository: SessionRepository,
+                                  registrationService: BusinessMatchingWithoutIdService,
+                                  subscriptionService: SubscriptionService)
     extends Logging
     with NunjucksSupport {
 

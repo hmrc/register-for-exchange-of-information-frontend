@@ -30,8 +30,7 @@ import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
 import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
@@ -47,11 +46,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
-  sessionRepository: SessionRepository,
   standardActionSets: StandardActionSets,
   subscriptionService: SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
-  taxEnrolmentsService: TaxEnrolmentService,
   countryFactory: CountryListFactory,
   controllerHelper: ControllerHelper,
   registrationService: BusinessMatchingWithoutIdService,
@@ -96,8 +93,8 @@ class CheckYourAnswersController @Inject() (
       (for {
         safeId         <- EitherT(getSafeIdFromRegistration(regime))
         subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
-        orders         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID, regime))
-      } yield orders)
+        result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID, regime))
+      } yield result)
         .valueOrF {
           case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>
             logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
