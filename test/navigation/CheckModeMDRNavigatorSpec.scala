@@ -640,10 +640,13 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(AddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                   .success
                   .value
+                  .remove(IndividualContactEmailPage)
+                  .success
+                  .value
 
               navigator
                 .nextPage(AddressWithoutIdPage, CheckMode, MDR, updatedAnswers)
-                .mustBe(routes.ContactEmailController.onPageLoad(CheckMode, MDR))
+                .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode, MDR))
           }
         }
 
@@ -695,10 +698,13 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .set(SelectAddressPage, "Some Address")
                 .success
                 .value
+                .remove(IndividualContactEmailPage)
+                .success
+                .value
 
             navigator
               .nextPage(SelectAddressPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactEmailController.onPageLoad(CheckMode, MDR))
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode, MDR))
         }
       }
 
@@ -714,7 +720,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(SelectAddressPage, "Some Address")
                   .success
                   .value
-                  .set(ContactEmailPage, "email@email.com")
+                  .set(IndividualContactEmailPage, "email@email.com")
                   .success
                   .value
 
@@ -735,10 +741,13 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .set(AddressUKPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                 .success
                 .value
+                .remove(IndividualContactEmailPage)
+                .success
+                .value
 
             navigator
               .nextPage(AddressUKPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactEmailController.onPageLoad(CheckMode, MDR))
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode, MDR))
         }
       }
 
@@ -754,7 +763,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .set(AddressUKPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                   .success
                   .value
-                  .set(ContactEmailPage, "email@email.com")
+                  .set(IndividualContactEmailPage, "email@email.com")
                   .success
                   .value
 

@@ -28,29 +28,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
   val messages: Messages
 ) extends RowBuilder {
 
-  def individualContactPhone: Option[Row] = {
-    val numberOrNot = userAnswers.get(pages.IndividualContactPhonePage) match {
-      case Some(answer) => answer
-      case _            => "None"
-    }
-    Some(
-      toRow(
-        msgKey = "contactPhone",
-        value = lit"$numberOrNot",
-        href = routes.IndividualContactPhoneController.onPageLoad(CheckMode, regime).url
-      )
-    )
-  }
-
-  def individualHaveContactTelephone: Option[Row] = userAnswers.get(pages.IndividualHaveContactTelephonePage) map {
-    answer =>
-      toRow(
-        msgKey = "individualHaveContactTelephone",
-        value = msg"site.edit",
-        href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode, regime).url
-      )
-  }
-
   def confirmBusiness: Option[Row] = {
     val paragraphClass = """govuk-!-margin-0"""
     (userAnswers.get(pages.IsThisYourBusinessPage), userAnswers.get(RegistrationInfoPage)) match {
@@ -372,4 +349,19 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
         href = routes.IndividualContactEmailController.onPageLoad(CheckMode, regime).url
       )
   }
+
+  def individualContactPhone: Option[Row] = {
+    val numberOrNot = userAnswers.get(pages.IndividualContactPhonePage) match {
+      case Some(answer) => answer
+      case _            => "None"
+    }
+    Some(
+      toRow(
+        msgKey = "contactPhone",
+        value = lit"$numberOrNot",
+        href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode, regime).url
+      )
+    )
+  }
+
 }

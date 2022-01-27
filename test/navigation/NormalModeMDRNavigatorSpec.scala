@@ -208,7 +208,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
               navigator
                 .nextPage(AddressWithoutIdPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.ContactEmailController.onPageLoad(NormalMode, MDR))
+                .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
           }
         }
 
@@ -272,7 +272,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(SelectAddressPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode, MDR))
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -287,7 +287,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(AddressUKPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode, MDR))
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -453,7 +453,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(IsThisYourBusinessPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode, MDR))
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
         }
       }
 

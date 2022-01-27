@@ -18,12 +18,10 @@ package controllers
 
 import controllers.actions._
 import forms.IndividualHaveContactTelephoneFormProvider
-
-import javax.inject.Inject
-import models.{Mode, Regime}
 import models.requests.DataRequest
-import navigation.{ContactDetailsNavigator, Navigator}
-import pages.{IndividualHaveContactTelephonePage, SndContactNamePage}
+import models.{Mode, Regime}
+import navigation.ContactDetailsNavigator
+import pages.IndividualHaveContactTelephonePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -34,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IndividualHaveContactTelephoneController @Inject() (

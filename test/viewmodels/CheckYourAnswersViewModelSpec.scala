@@ -133,10 +133,10 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(WhatIsYourNamePage, Name("name", "last"))
         .success
         .value
-        .set(ContactEmailPage, "hello")
+        .set(IndividualContactEmailPage, "email@email.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
@@ -167,13 +167,13 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(ContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, "test@gmail.com")
         .success
         .value
         .set(WhatIsYourDateOfBirthPage, LocalDate.now())
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
         .set(AddressWithoutIdPage, address)

@@ -166,7 +166,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
           }
         }
 
-      "must go from IsContactTelephone page to CheckYourAnswers page if NO is selected " +
+      "must go from 'Can we contact you by telephone?' page to CheckYourAnswers page if NO is selected " +
         "and user registering as individual without ID" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
@@ -178,17 +178,17 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
                   .success
                   .value
-                  .set(IsContactTelephonePage, false)
+                  .set(IndividualHaveContactTelephonePage, false)
                   .success
                   .value
 
               navigator
-                .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+                .nextPage(IndividualHaveContactTelephonePage, CheckMode, MDR, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
           }
         }
 
-      "must go from IsContactTelephone page to CheckYourAnswers page if NO is selected " +
+      "must go from 'Can we contact you by telephone?' page to CheckYourAnswers page if NO is selected " +
         "and user registering as individual with ID" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
@@ -200,12 +200,12 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(BusinessTypePage, BusinessType.Sole)
                   .success
                   .value
-                  .set(IsContactTelephonePage, false)
+                  .set(IndividualHaveContactTelephonePage, false)
                   .success
                   .value
 
               navigator
-                .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+                .nextPage(IndividualHaveContactTelephonePage, CheckMode, MDR, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
           }
         }
