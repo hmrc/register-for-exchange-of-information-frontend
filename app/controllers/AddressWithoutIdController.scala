@@ -120,7 +120,7 @@ class AddressWithoutIdController @Inject() (
         Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
     }
 
-    Json.obj("value" -> "", "text" -> "") +: countryJsonList
+    Json.obj("value" -> "", "text" -> "&nbsp") +: countryJsonList
   }
 
   private def getRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
