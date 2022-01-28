@@ -4,7 +4,8 @@ if(selectCountry) {
   accessibleAutocomplete.enhanceSelectElement({
     element: selectCountry,
     showAllValues: true,
-    selectElement: selectCountry
+    selectElement: selectCountry,
+    defaultValue: ''
   })
 
   autocompleteErrorStyle();
