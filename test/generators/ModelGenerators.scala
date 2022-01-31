@@ -16,6 +16,7 @@
 
 package generators
 
+import models.email.EmailRequest
 import models.subscription.request._
 import models.{Address, Country, UniqueTaxpayerReference}
 import org.scalacheck.Arbitrary.arbitrary
@@ -197,6 +198,15 @@ trait ModelGenerators {
     for {
       utr <- arbitrary[String]
     } yield UniqueTaxpayerReference(utr)
+  }
+
+  implicit val arbitraryEmailRequest: Arbitrary[EmailRequest] = Arbitrary {
+    for {
+      to          <- arbitrary[List[String]]
+      id          <- arbitrary[String]
+      contactName <- arbitrary[Map[String, String]]
+
+    } yield EmailRequest(to, id, contactName)
   }
 
 }
