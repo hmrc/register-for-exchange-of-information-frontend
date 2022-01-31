@@ -17,8 +17,6 @@
 package pages
 
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.matching.MatchingType.AsIndividual
-import models.matching.RegistrationInfo
 import models.{Address, AddressLookup, Country, Name, NonUkName, UserAnswers, WhatAreYouRegisteringAs}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
