@@ -25,20 +25,8 @@ object PageLists {
   val removePage: (Try[UserAnswers], QuestionPage[_]) => Try[UserAnswers] =
     (ua: Try[UserAnswers], page: QuestionPage[_]) => ua.flatMap(_.remove(page))
 
-  val secondContactDetailsPages = List(SndContactNamePage, SndContactEmailPage, SndConHavePhonePage, SndContactPhonePage)
-
-  val firstContactDetailsPages = List(ContactNamePage, ContactEmailPage, IsContactTelephonePage, ContactPhonePage)
-
-  val allContactDetailPages = secondContactDetailsPages ++ firstContactDetailsPages :+ SecondContactPage
-
-  // with id
-
-  val individualWithIDPages = List(WhatIsYourNationalInsuranceNumberPage, WhatIsYourNamePage, WhatIsYourDateOfBirthPage)
-
   val businessWithIDPages =
-    List(UTRPage, BusinessNamePage, SoleNamePage, WhatIsYourDateOfBirthPage, SoleDateOfBirthPage, IsThisYourBusinessPage)
-
-  // without id
+    List(UTRPage, BusinessNamePage, SoleNamePage, SoleDateOfBirthPage, IsThisYourBusinessPage)
 
   val businessWithOutIDPages = List(
     BusinessWithoutIDNamePage,
@@ -47,6 +35,12 @@ object PageLists {
     AddressWithoutIdPage,
     AddressLookupPage,
     AddressUKPage
+  )
+
+  val individualWithIDPages = List(
+    WhatIsYourNationalInsuranceNumberPage,
+    WhatIsYourNamePage,
+    WhatIsYourDateOfBirthPage
   )
 
   val individualWithOutIDPages = List(

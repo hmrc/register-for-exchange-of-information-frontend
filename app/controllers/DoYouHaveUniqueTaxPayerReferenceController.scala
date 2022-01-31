@@ -44,7 +44,6 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   navigator: MDRNavigator,
   standardActionSets: StandardActionSets,
   formProvider: DoYouHaveUniqueTaxPayerReferenceFormProvider,
-  matchingService: BusinessMatchingWithIdService,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)

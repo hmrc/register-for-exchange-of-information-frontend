@@ -41,17 +41,44 @@ import scala.util.Try
 
 case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteringAs] {
 
+  private val cleanBusinessPages = List(
+    UTRPage,
+    BusinessNamePage,
+    SoleNamePage,
+    SoleDateOfBirthPage,
+    IsThisYourBusinessPage,
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage,
+    AddressLookupPage,
+    AddressUKPage
+  )
+
+  private val cleanIndividualPages = List(
+    WhatIsYourNationalInsuranceNumberPage,
+    WhatIsYourNamePage,
+    WhatIsYourDateOfBirthPage,
+    DoYouHaveNINPage,
+    NonUkNamePage,
+    DoYouLiveInTheUKPage,
+    WhatIsYourPostcodePage,
+    AddressWithoutIdPage,
+    AddressLookupPage,
+    AddressUKPage,
+    SelectAddressPage,
+    SelectedAddressLookupPage
+  )
+
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whatAreYouRegisteringAs"
 
   override def cleanup(value: Option[WhatAreYouRegisteringAs], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(RegistrationTypeBusiness) =>
-        (businessWithIDPages ++ individualWithIDPages ++ individualWithOutIDPages ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 
-      case Some(RegistrationTypeIndividual) =>
-        (businessWithIDPages ++ businessWithOutIDPages ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+      case Some(RegistrationTypeBusiness) => cleanIndividualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+
+      case Some(RegistrationTypeIndividual) => cleanBusinessPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)
     }

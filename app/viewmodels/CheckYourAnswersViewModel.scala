@@ -48,7 +48,6 @@ object CheckYourAnswersViewModel {
     } else {
       Seq(
         helper.doYouHaveUniqueTaxPayerReference,
-        helper.confirmBusiness,
         helper.whatAreYouRegisteringAs,
         helper.doYouHaveNIN,
         helper.nino,
