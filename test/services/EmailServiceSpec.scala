@@ -52,6 +52,8 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
   val emailService: EmailService = app.injector.instanceOf[EmailService]
 
+  val subscriptionID = SubscriptionID("XADAC0000123456")
+
   "Email Service" - {
     "sendAnLogEmail" - {
       "must submit to the email connector with valid business details and return Right(202)" in {
@@ -68,16 +70,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(ACCEPTED, ""))
           )
 
-        val result = emailService.sendAnLogEmail(userAnswers)
+        val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
@@ -100,16 +99,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(NOT_FOUND, ""))
           )
 
-        val result = emailService.sendAnLogEmail(userAnswers)
+        val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
@@ -132,52 +128,19 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(BAD_REQUEST, ""))
           )
 
-        val result = emailService.sendAnLogEmail(userAnswers)
+        val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
             result.right mustBe RightProjection(Right(BAD_REQUEST))
 
             verify(mockEmailConnector, times(1)).sendEmail(any())(any())
-        }
-      }
-
-      "must return Right Internal Server Error when the MDRID is missing" in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-          .success
-          .value
-          .set(ContactNamePage, "")
-          .success
-          .value
-          .set(ContactEmailPage, "test@test.com")
-          .success
-          .value
-
-        when(mockEmailConnector.sendEmail(any())(any()))
-          .thenReturn(
-            Future.successful(HttpResponse(ACCEPTED, ""))
-          )
-
-        val result = emailService.sendAnLogEmail(userAnswers)
-
-        whenReady(result) {
-          result =>
-            result.right mustBe RightProjection(Right(INTERNAL_SERVER_ERROR))
-
-            verify(mockEmailConnector, times(0)).sendEmail(any())(any())
         }
       }
     }
@@ -196,16 +159,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(OK, ""))
           )
 
-        val result = emailService.sendEmail(userAnswers)
+        val result = emailService.sendEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
@@ -229,16 +189,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(OK, ""))
           )
 
-        val result = emailService.sendEmail(userAnswers)
+        val result = emailService.sendEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
@@ -262,16 +219,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(OK, ""))
           )
 
-        val result = emailService.sendEmail(userAnswers)
+        val result = emailService.sendEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
@@ -295,16 +249,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(OK, ""))
           )
 
-        val result = emailService.sendEmail(userAnswers)
+        val result = emailService.sendEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
@@ -334,16 +285,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(SndContactEmailPage, "test@test.com")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(OK, ""))
           )
 
-        val result = emailService.sendEmail(userAnswers)
+        val result = emailService.sendEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>
@@ -367,16 +315,13 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(ContactEmailPage, "test")
           .success
           .value
-          .set(SubscriptionIDPage, SubscriptionID("XADAC0000123456"))
-          .success
-          .value
 
         when(mockEmailConnector.sendEmail(any())(any()))
           .thenReturn(
             Future.successful(HttpResponse(OK, ""))
           )
 
-        val result = emailService.sendEmail(userAnswers)
+        val result = emailService.sendEmail(userAnswers, subscriptionID)
 
         whenReady(result) {
           result =>

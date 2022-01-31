@@ -17,14 +17,11 @@
 package services
 
 import base.{MockServiceApp, SpecBase}
-import cats.data.EitherT
-import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.SafeId
-import models.register.response.RegistrationWithoutIDResponse
 import models.{Address, Country, MDR, Name}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}

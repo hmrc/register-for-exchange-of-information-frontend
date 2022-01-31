@@ -34,8 +34,8 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
   executionContext: ExecutionContext
 ) extends Logging {
 
-  def sendAnLogEmail(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Either[ApiError, Int]] =
-    sendEmail(userAnswers) map {
+  def sendAnLogEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Either[ApiError, Int]] =
+    sendEmail(userAnswers, subscriptionID) map {
       case Some(resp) =>
         resp.status match {
           case NOT_FOUND   => logger.warn("The template cannot be found within the email service")
@@ -49,7 +49,7 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
         Right(INTERNAL_SERVER_ERROR)
     }
 
-  def sendEmail(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] = {
+  def sendEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] = {
 
     val emailAddress = userAnswers.get(ContactEmailPage)
 
@@ -86,37 +86,38 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
         case _ => None
       }
 
-    val subscription: Option[SubscriptionID] = userAnswers.get(SubscriptionIDPage)
-
     val secondaryEmailAddress = userAnswers.get(SndContactEmailPage)
     val secondaryName         = userAnswers.get(SndContactNamePage)
 
-    subscription match {
-      case Some(mdr) =>
-        for {
+    for {
 
-          primaryResponse <- emailAddress
-            .filter(EmailAddress.isValid)
-            .fold(Future.successful(Option.empty[HttpResponse])) {
-              email =>
-                emailConnector
-                  .sendEmail(EmailRequest.mdrRegistration(email, contactName, emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)), mdr.value))
-                  .map(Some.apply)
-            }
+      primaryResponse <- emailAddress
+        .filter(EmailAddress.isValid)
+        .fold(Future.successful(Option.empty[HttpResponse])) {
+          email =>
+            emailConnector
+              .sendEmail(
+                EmailRequest.mdrRegistration(email, contactName, emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)), subscriptionID.value)
+              )
+              .map(Some.apply)
+        }
 
-          _ <- secondaryEmailAddress
-            .filter(EmailAddress.isValid)
-            .fold(Future.successful(Option.empty[HttpResponse])) {
-              secondaryEmailAddress =>
-                emailConnector
-                  .sendEmail(
-                    EmailRequest
-                      .mdrRegistration(secondaryEmailAddress, secondaryName, emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)), mdr.value)
+      _ <- secondaryEmailAddress
+        .filter(EmailAddress.isValid)
+        .fold(Future.successful(Option.empty[HttpResponse])) {
+          secondaryEmailAddress =>
+            emailConnector
+              .sendEmail(
+                EmailRequest
+                  .mdrRegistration(secondaryEmailAddress,
+                                   secondaryName,
+                                   emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)),
+                                   subscriptionID.value
                   )
-                  .map(Some.apply)
-            }
-        } yield primaryResponse
-      case _ => Future.successful(None)
-    }
+              )
+              .map(Some.apply)
+        }
+    } yield primaryResponse
+
   }
 }
