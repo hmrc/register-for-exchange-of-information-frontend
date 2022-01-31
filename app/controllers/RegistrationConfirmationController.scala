@@ -18,7 +18,6 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import handlers.ErrorHandler
 import models.Regime
 import pages.SubscriptionIDPage
 import play.api.Logging
@@ -36,7 +35,6 @@ class RegistrationConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
   appConfig: FrontendAppConfig,
   standardActionSets: StandardActionSets,
-  errorHandler: ErrorHandler,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
@@ -45,18 +43,18 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedWithoutEnrolmentCheck(regime).async {
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
-          val json = Json.obj(
-            "regime"             -> regime.toString,
-            "subscriptionID"     -> id.value,
-            "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
-            "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
-          )
           sessionRepository.clear(request.userId) flatMap {
             _ =>
+              val json = Json.obj(
+                "regime"             -> regime.toString,
+                "subscriptionID"     -> id.value,
+                "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
+                "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
+              )
               renderer.render("registrationConfirmation.njk", json).map(Ok(_))
           }
         case None =>

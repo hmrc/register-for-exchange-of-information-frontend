@@ -16,8 +16,6 @@
 
 package models
 
-import models.error.ApiError
-import models.error.ApiError.MandatoryInformationMissingError
 import pages.QuestionPage
 import play.api.libs.Files.logger
 import play.api.libs.json._

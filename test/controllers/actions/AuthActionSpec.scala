@@ -184,40 +184,6 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       }
     }
 
-    "the user has an mdr enrolment" - {
-
-      "must redirect the user to the mandatory disclosure rules start page" in {
-
-        val mockAuthConnector: AuthConnector = mock[AuthConnector]
-        val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
-
-        val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ None
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
-        val controller = new Harness(authAction)
-        val result     = controller.onPageLoad()(FakeRequest())
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("http://localhost:10018/report-under-mandatory-disclosure-rules")
-      }
-
-      "must redirect user to the unauthorised page if mdr enrolment id not activated" in {
-
-        val mockAuthConnector: AuthConnector = mock[AuthConnector]
-        val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG", Seq(), "notYetActivated", None)
-
-        val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ None
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
-        val controller = new Harness(authAction)
-        val result     = controller.onPageLoad()(FakeRequest())
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("http://localhost:10018/report-under-mandatory-disclosure-rules")
-      }
-    }
   }
 }
 
