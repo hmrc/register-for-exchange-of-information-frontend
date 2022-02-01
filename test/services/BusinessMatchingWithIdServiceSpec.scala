@@ -25,6 +25,7 @@ import models.BusinessType.LimitedCompany
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationInfo, RegistrationRequest, SafeId}
+import models.register.request.RegisterWithID
 import models.register.response.RegistrationWithIDResponse
 import models.{MDR, Name}
 import org.mockito.ArgumentMatchers.any
@@ -70,7 +71,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(MDR, RegistrationRequest("NINO", "CC123456C", name.fullName, None))
+          service.sendIndividualRegistrationInformation(RegisterWithID(MDR, name, LocalDate.now(), "NINO", "CC123456C"))
 
         result.futureValue mustBe Right(IndRegistrationInfo(SafeId("XE0000123456789")))
       }
@@ -82,7 +83,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(MDR, RegistrationRequest("UTR", "CC123456C", name.fullName, None))
+          service.sendIndividualRegistrationInformation(RegisterWithID(MDR, name, LocalDate.now(), "NINO", "CC123456C"))
 
         result.futureValue mustBe Left(NotFoundError)
       }

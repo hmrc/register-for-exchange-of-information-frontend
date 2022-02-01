@@ -18,9 +18,9 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.matching.RegistrationRequest
+import models.register.request.RegisterWithID
 import models.requests.DataRequest
-import models.{BusinessType, Mode, Regime}
+import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -52,10 +52,10 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
-        buildRegistrationRequest match {
+        buildRegisterWithID(regime) match {
           case Some(registrationRequest) =>
             matchingService
-              .sendIndividualRegistrationInformation(regime, registrationRequest)
+              .sendIndividualRegistrationInformation(registrationRequest)
               .flatMap {
                 case Right(info) =>
                   request.userAnswers.set(RegistrationInfoPage, info).map(sessionRepository.set)
@@ -79,16 +79,10 @@ class WeHaveConfirmedYourIdentityController @Inject() (
 
     }
 
-  private def buildIndividualName(implicit request: DataRequest[AnyContent]): Option[String] =
-    request.userAnswers.get(BusinessTypePage) match {
-      case Some(BusinessType.Sole) => request.userAnswers.get(SoleNamePage).map(_.fullName)
-      case _                       => request.userAnswers.get(WhatIsYourNamePage).map(_.fullName)
-    }
-
-  private def buildRegistrationRequest(implicit request: DataRequest[AnyContent]): Option[RegistrationRequest] =
+  private def buildRegisterWithID(regime: Regime)(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
     for {
       nino <- request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
-      name <- buildIndividualName
+      name <- request.userAnswers.get(WhatIsYourNamePage)
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
-    } yield RegistrationRequest("NINO", nino.nino, name, None, Option(dob))
+    } yield RegisterWithID(regime, name, dob, "NINO", nino.nino)
 }

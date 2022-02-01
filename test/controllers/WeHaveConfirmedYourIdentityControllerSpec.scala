@@ -71,7 +71,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return OK and the correct view for a GET when there is a match" in {
 
-      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
@@ -97,7 +97,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
-      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
@@ -117,7 +117,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
 
-      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
@@ -141,7 +141,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
     "return redirect for a GET when there is no match" in {
 
-      when(mockMatchingService.sendIndividualRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)

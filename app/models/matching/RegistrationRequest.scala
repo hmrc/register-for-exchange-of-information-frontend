@@ -17,7 +17,7 @@
 package models.matching
 
 import models.BusinessType
-import play.api.libs.json.{__, OFormat, OWrites, Reads}
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
@@ -26,36 +26,9 @@ case class RegistrationRequest(identifierType: String,
                                name: String,
                                businessType: Option[BusinessType] = None,
                                dob: Option[LocalDate] = None
-) {
-
-  def sameAs(registrationRequest: RegistrationRequest): Boolean =
-    identifier.equals(registrationRequest.identifier) &&
-      name.toLowerCase.equals(registrationRequest.name.toLowerCase) &&
-      businessType.equals(registrationRequest.businessType) &&
-      dob.equals(registrationRequest.dob)
-}
+)
 
 object RegistrationRequest {
 
-  import play.api.libs.functional.syntax._
-
-  val reads: Reads[RegistrationRequest] =
-    (
-      (__ \ "identifierType").read[String] and
-        (__ \ "identifier").read[String] and
-        (__ \ "name").read[String] and
-        (__ \ "businessType").readNullable[BusinessType] and
-        (__ \ "dob").readNullable[LocalDate]
-    )(RegistrationRequest.apply _)
-
-  val writes: OWrites[RegistrationRequest] =
-    (
-      (__ \ "identifierType").write[String] and
-        (__ \ "identifier").write[String] and
-        (__ \ "name").write[String] and
-        (__ \ "businessType").writeNullable[BusinessType] and
-        (__ \ "dob").writeNullable[LocalDate]
-    )(unlift(RegistrationRequest.unapply))
-
-  implicit val format: OFormat[RegistrationRequest] = OFormat(reads, writes)
+  implicit val format: OFormat[RegistrationRequest] = Json.format[RegistrationRequest]
 }
