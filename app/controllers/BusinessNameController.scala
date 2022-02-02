@@ -93,7 +93,7 @@ class BusinessNameController @Inject() (
                 formWithErrors => render(mode, regime, formWithErrors, businessTypeText).map(BadRequest(_)),
                 value =>
                   for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(BusinessNamePage, value, true))
+                    updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
               )
