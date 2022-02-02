@@ -40,13 +40,17 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
           SelectedAddressLookupPage,
           DoYouLiveInTheUKPage,
           WhatIsYourPostcodePage,
-          IndividualContactEmailPage,
-          IndividualHaveContactTelephonePage,
-          IndividualContactPhonePage
+          WhatIsYourDateOfBirthPage
         ).foldLeft(Try(userAnswers))(
           PageLists.removePage
         )
-      case Some(false) => List(WhatIsYourNationalInsuranceNumberPage).foldLeft(Try(userAnswers))(PageLists.removePage)
-      case _           => super.cleanup(value, userAnswers)
+
+      case Some(false) =>
+        List(
+          WhatIsYourNationalInsuranceNumberPage,
+          WhatIsYourDateOfBirthPage
+        ).foldLeft(Try(userAnswers))(PageLists.removePage)
+
+      case _ => super.cleanup(value, userAnswers)
     }
 }

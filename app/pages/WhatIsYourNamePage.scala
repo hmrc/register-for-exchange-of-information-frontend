@@ -29,7 +29,8 @@ case object WhatIsYourNamePage extends QuestionPage[Name] {
 
   override def cleanup(value: Option[Name], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(_) => List(NonUkNamePage).foldLeft(Try(userAnswers))(PageLists.removePage)
-      case _       => super.cleanup(value, userAnswers)
+      case Some(_) =>
+        List(NonUkNamePage).foldLeft(Try(userAnswers))(PageLists.removePage)
+      case _ => super.cleanup(value, userAnswers)
     }
 }

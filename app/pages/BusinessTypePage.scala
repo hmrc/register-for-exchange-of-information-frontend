@@ -16,13 +16,49 @@
 
 package pages
 
-import models.BusinessType
+import models.BusinessType.Sole
+import models.{BusinessType, UserAnswers}
 import play.api.libs.json.JsPath
 
+import scala.util.Try
+
 case object BusinessTypePage extends QuestionPage[BusinessType] {
+
+  private val otherBusinessTypePages = List(
+    UTRPage,
+    BusinessNamePage,
+    SoleNamePage,
+    IsThisYourBusinessPage,
+    ContactNamePage,
+    ContactEmailPage,
+    IsContactTelephonePage,
+    ContactPhonePage,
+    SecondContactPage,
+    SndContactNamePage,
+    SndContactEmailPage,
+    SndConHavePhonePage,
+    SndContactPhonePage,
+    RegistrationInfoPage
+  )
+
+  private val soleTraderPages = List(
+    UTRPage,
+    BusinessNamePage,
+    SoleNamePage,
+    IsThisYourBusinessPage,
+    RegistrationInfoPage,
+    IndividualContactEmailPage,
+    IndividualHaveContactTelephonePage,
+    IndividualContactPhonePage
+  )
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "businessType"
 
+  override def cleanup(value: Option[BusinessType], userAnswers: UserAnswers): Try[UserAnswers] = value match {
+    case Some(Sole) => otherBusinessTypePages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case Some(_)    => soleTraderPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case _          => super.cleanup(value, userAnswers)
+  }
 }

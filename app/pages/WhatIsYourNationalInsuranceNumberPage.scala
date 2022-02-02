@@ -28,15 +28,4 @@ case object WhatIsYourNationalInsuranceNumberPage extends QuestionPage[Nino] {
 
   override def toString: String = "whatIsYourNationalInsuranceNumber"
 
-  override def cleanup(value: Option[Nino], userAnswers: UserAnswers): Try[UserAnswers] = value match {
-    case Some(_) =>
-      List(
-        WhatIsYourNamePage,
-        WhatIsYourDateOfBirthPage,
-        RegistrationInfoPage
-      ).foldLeft(Try(userAnswers))(PageLists.removePage)
-
-    case _ => super.cleanup(value, userAnswers)
-  }
-
 }

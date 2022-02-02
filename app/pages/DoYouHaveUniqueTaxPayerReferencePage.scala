@@ -23,13 +23,53 @@ import scala.util.Try
 
 case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
 
+  private val cleanBusinessPages = List(
+    BusinessTypePage,
+    UTRPage,
+    BusinessNamePage,
+    SoleNamePage,
+    SoleDateOfBirthPage,
+    IsThisYourBusinessPage,
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage,
+    AddressLookupPage,
+    AddressUKPage,
+    ContactNamePage,
+    ContactEmailPage,
+    IsContactTelephonePage,
+    ContactPhonePage,
+    SecondContactPage,
+    SndContactNamePage,
+    SndContactEmailPage,
+    SndConHavePhonePage,
+    SndContactPhonePage
+  )
+
+  private val cleanIndividualPages = List(
+    BusinessTypePage,
+    WhatAreYouRegisteringAsPage,
+    WhatIsYourNationalInsuranceNumberPage,
+    WhatIsYourNamePage,
+    WhatIsYourDateOfBirthPage,
+    DoYouHaveNINPage,
+    NonUkNamePage,
+    DoYouLiveInTheUKPage,
+    WhatIsYourPostcodePage,
+    AddressWithoutIdPage,
+    AddressLookupPage,
+    AddressUKPage,
+    SelectAddressPage,
+    SelectedAddressLookupPage
+  )
+
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "doYouHaveUniqueTaxPayerReference"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = value match {
-    case Some(true)  => userAnswers.remove(WhatAreYouRegisteringAsPage)
-    case Some(false) => userAnswers.remove(BusinessTypePage)
+    case Some(true)  => cleanIndividualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case Some(false) => cleanBusinessPages.foldLeft(Try(userAnswers))(PageLists.removePage)
     case _           => super.cleanup(value, userAnswers)
   }
 }

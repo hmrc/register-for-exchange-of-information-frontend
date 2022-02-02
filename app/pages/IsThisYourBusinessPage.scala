@@ -31,8 +31,7 @@ case object IsThisYourBusinessPage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(true) =>
-        addressPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+      case Some(true) => addressPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)
 

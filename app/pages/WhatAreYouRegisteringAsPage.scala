@@ -62,7 +62,7 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
-    AddressWithoutIdPage,
+    AddressWithoutIdPage, // TODO - split Individual / Business without ID Address Page
     AddressLookupPage,
     AddressUKPage,
     SelectAddressPage,
@@ -82,5 +82,4 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
 
       case _ => super.cleanup(value, userAnswers)
     }
-
 }

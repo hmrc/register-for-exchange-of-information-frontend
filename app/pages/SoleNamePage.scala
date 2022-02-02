@@ -27,6 +27,4 @@ case object SoleNamePage extends QuestionPage[Name] {
 
   override def toString: String = "soleName"
 
-  override def cleanup(value: Option[Name], userAnswers: UserAnswers): Try[UserAnswers] =
-    List(ContactNamePage, ContactEmailPage, IsContactTelephonePage, ContactPhonePage, RegistrationInfoPage).foldLeft(Try(userAnswers))(PageLists.removePage)
 }
