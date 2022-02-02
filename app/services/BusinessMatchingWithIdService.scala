@@ -64,12 +64,12 @@ class BusinessMatchingWithIdService @Inject() (registrationConnector: Registrati
       }
       .value
 
-  def sendIndividualRegistrationInformation(regime: Regime, registrationRequest: RegistrationRequest)(implicit
+  def sendIndividualRegistrationInformation(registerWithID: RegisterWithID)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, IndRegistrationInfo]] =
     registrationConnector
-      .withIndividualNino(RegisterWithID(regime, registrationRequest))
+      .withIndividualNino(registerWithID)
       .subflatMap {
         response =>
           response.safeId
