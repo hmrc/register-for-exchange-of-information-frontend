@@ -20,12 +20,8 @@ import cats.implicits._
 import connectors.RegistrationConnector
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
-import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, RegistrationRequest}
+import models.matching.{IndRegistrationInfo, OrgRegistrationInfo}
 import models.register.request.RegisterWithID
-import models.requests.DataRequest
-import models.{BusinessType, Regime}
-import pages._
-import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -33,27 +29,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingWithIdService @Inject() (registrationConnector: RegistrationConnector) {
 
-  private def buildBusinessName(implicit request: DataRequest[AnyContent]): Option[String] =
-    request.userAnswers.get(BusinessTypePage) match {
-      case Some(BusinessType.Sole) => request.userAnswers.get(SoleNamePage).map(_.fullName)
-      case _                       => request.userAnswers.get(BusinessNamePage)
-    }
-
-  def buildBusinessRegistrationRequest(implicit request: DataRequest[AnyContent]): Either[ApiError, RegistrationRequest] =
-    (for {
-      utr          <- request.userAnswers.get(UTRPage)
-      businessName <- buildBusinessName
-      businessType = request.userAnswers.get(BusinessTypePage)
-      dateOfBirth  = request.userAnswers.get(SoleDateOfBirthPage)
-    } yield RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, businessType, dateOfBirth))
-      .toRight(MandatoryInformationMissingError())
-
-  def sendBusinessRegistrationInformation(regime: Regime, registrationRequest: RegistrationRequest)(implicit
+  def sendBusinessRegistrationInformation(registerWithID: RegisterWithID)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, OrgRegistrationInfo]] =
     registrationConnector
-      .withOrganisationUtr(RegisterWithID(regime, registrationRequest))
+      .withOrganisationUtr(registerWithID)
       .subflatMap {
         response =>
           (for {

@@ -16,7 +16,7 @@
 
 package models.register.request.details
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 sealed trait PartnerDetails
 
@@ -24,11 +24,11 @@ case class WithIDIndividual(
   firstName: String,
   middleName: Option[String],
   lastName: String,
-  dateOfBirth: String
+  dateOfBirth: Option[String]
 ) extends PartnerDetails
 
 object WithIDIndividual {
-  implicit val format = Json.format[WithIDIndividual]
+  implicit val format: OFormat[WithIDIndividual] = Json.format[WithIDIndividual]
 }
 
 case class WithIDOrganisation(
@@ -37,5 +37,5 @@ case class WithIDOrganisation(
 ) extends PartnerDetails
 
 object WithIDOrganisation {
-  implicit val format = Json.format[WithIDOrganisation]
+  implicit val format: OFormat[WithIDOrganisation] = Json.format[WithIDOrganisation]
 }

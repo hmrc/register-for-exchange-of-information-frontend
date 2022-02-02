@@ -27,7 +27,7 @@ case class RegisterWithID(registerWithIDRequest: RegisterWithIDRequest)
 object RegisterWithID {
   implicit val format: Format[RegisterWithID] = Json.format[RegisterWithID]
 
-  def apply(regime: Regime, name: Name, dob: LocalDate, identifierName: String, identifierValue: String): RegisterWithID =
+  def apply(regime: Regime, name: Name, dob: Option[LocalDate], identifierName: String, identifierValue: String): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
         RequestCommon(regime.toUpperCase),

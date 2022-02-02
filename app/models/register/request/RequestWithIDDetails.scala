@@ -75,13 +75,13 @@ object RequestWithIDDetails {
       )
   }
 
-  def apply(name: Name, dob: LocalDate, identifierName: String, identifierValue: String): RequestWithIDDetails =
+  def apply(name: Name, dob: Option[LocalDate], identifierName: String, identifierValue: String): RequestWithIDDetails =
     RequestWithIDDetails(
       identifierName,
       identifierValue,
       requiresNameMatch = true,
       isAnAgent = false, //This may change
-      WithIDIndividual(name.firstName, None, name.lastName, dob.format(dateFormat))
+      WithIDIndividual(name.firstName, None, name.lastName, dob.map(_.format(dateFormat)))
     )
 
   def apply(registrationRequest: RegistrationRequest): RequestWithIDDetails =

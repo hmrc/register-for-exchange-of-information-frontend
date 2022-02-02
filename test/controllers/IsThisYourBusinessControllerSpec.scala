@@ -17,11 +17,11 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.BusinessType.LimitedCompany
+import models.BusinessType.{LimitedCompany, Sole}
 import models.error.ApiError.BadRequestError
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
-import models.{CheckMode, MDR, NormalMode, SubscriptionID, UserAnswers}
+import models.{CheckMode, MDR, Name, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages._
@@ -84,10 +84,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
-        .thenReturn(Right(registrationRequest))
-
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
@@ -116,12 +113,51 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
+    "must return OK and the correct view for a GET for BusinessType as SoleTrader" in {
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+
+      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      val updatedUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(BusinessTypePage, Sole)
+        .success
+        .value
+        .set(UTRPage, utr)
+        .success
+        .value
+        .set(SoleNamePage, Name("name", "name"))
+        .success
+        .value
+
+      retrieveUserAnswersData(updatedUserAnswers)
+      val request        = FakeRequest(GET, loadRoute)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+
+      val expectedJson = Json.obj(
+        "form"   -> form,
+        "action" -> loadRoute,
+        "radios" -> Radios.yesNo(form("value"))
+      )
+
+      templateCaptor.getValue mustEqual "isThisYourBusiness.njk"
+      jsonCaptor.getValue must containJson(expectedJson)
+    }
+
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
-      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
-        .thenReturn(Right(registrationRequest))
-
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
@@ -142,10 +178,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
 
-      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
-        .thenReturn(Right(registrationRequest))
-
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
@@ -170,10 +203,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
-        .thenReturn(Right(registrationRequest))
-
-      when(mockMatchingService.sendBusinessRegistrationInformation(any(), any())(any(), any()))
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
@@ -181,15 +211,12 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(BusinessNamePage, "name")
-        .success
-        .value
+      val userAnswers: UserAnswers = validUserAnswers
         .set(IsThisYourBusinessPage, true)
         .success
         .value
 
-      retrieveUserAnswersData(validUserAnswers)
+      retrieveUserAnswersData(userAnswers)
       val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
@@ -217,9 +244,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
-      when(mockMatchingService.buildBusinessRegistrationRequest(any()))
-        .thenReturn(Right(registrationRequest))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 

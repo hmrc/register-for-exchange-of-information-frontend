@@ -71,7 +71,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(RegisterWithID(MDR, name, LocalDate.now(), "NINO", "CC123456C"))
+          service.sendIndividualRegistrationInformation(RegisterWithID(MDR, name, Some(LocalDate.now()), "NINO", "CC123456C"))
 
         result.futureValue mustBe Right(IndRegistrationInfo(SafeId("XE0000123456789")))
       }
@@ -83,7 +83,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(RegisterWithID(MDR, name, LocalDate.now(), "NINO", "CC123456C"))
+          service.sendIndividualRegistrationInformation(RegisterWithID(MDR, name, Some(LocalDate.now()), "NINO", "CC123456C"))
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -99,8 +99,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendBusinessRegistrationInformation(
-            MDR,
-            RegistrationRequest("UTR", "XE0000123456789", "name", Some(LimitedCompany))
+            RegisterWithID(MDR, RegistrationRequest("UTR", "XE0000123456789", "name", Some(LimitedCompany)))
           )
 
         result.futureValue mustBe Right(
@@ -114,11 +113,9 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
+        val registerWithID = RegisterWithID(MDR, RegistrationRequest("UTR", "UTR", "name", Some(LimitedCompany)))
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendBusinessRegistrationInformation(
-            MDR,
-            RegistrationRequest("UTR", "UTR", "name", Some(LimitedCompany))
-          )
+          service.sendBusinessRegistrationInformation(registerWithID)
 
         result.futureValue mustBe Left(NotFoundError)
       }
