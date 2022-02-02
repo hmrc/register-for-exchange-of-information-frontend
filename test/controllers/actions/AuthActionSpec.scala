@@ -168,7 +168,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url)
       }
 
-      "must redirect the user to the unauthorised assistant page" in {
+      "must redirect the user to MDR registration page when assistant" in {
         val mockAuthConnector: AuthConnector = mock[AuthConnector]
         val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
 
@@ -179,8 +179,10 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
+        val expectedRedirectUrl = s"${appConfig.MDRReportUrl}"
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad(MDR).url)
+        redirectLocation(result) mustBe Some(expectedRedirectUrl)
       }
     }
 
