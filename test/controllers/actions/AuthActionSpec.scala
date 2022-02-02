@@ -179,7 +179,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
-        val expectedRedirectUrl = s"${appConfig.MDRReportUrl}"
+        val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(expectedRedirectUrl)

@@ -71,7 +71,7 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
         case _ ~ _ ~ Some(Agent) ~ _ =>
           Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad(regime)))
         case _ ~ enrolments ~ _ ~ Some(Assistant) if !enrolments.enrolments.exists(_.key == "HMRC-DAC6-ORG") =>
-          Future.successful(Redirect(config.MDRReportUrl))
+          Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
         case Some(internalID) ~ enrolments ~ Some(affinityGroup) ~ _ => block(IdentifierRequest(request, internalID, affinityGroup, enrolments.enrolments))
         case _                                                       => throw new UnauthorizedException("Unable to retrieve internal Id")
       }
