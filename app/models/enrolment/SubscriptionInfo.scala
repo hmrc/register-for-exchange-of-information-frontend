@@ -89,7 +89,7 @@ object SubscriptionInfo {
     }
 
   private def getNonUkPostCodeIfProvided(userAnswers: UserAnswers): Option[String] =
-    userAnswers.get(AddressWithoutIdPage) match {
+    userAnswers.get(BusinessAddressWithoutIdPage) match {
       case Some(address) => address.postCode
       case _             => None
     }

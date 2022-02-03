@@ -17,43 +17,31 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{MDR, NormalMode, UserAnswers}
+import forms.AddressWithoutIdFormProvider
+import models.{Address, Country, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.WhatIsYourDateOfBirthPage
+import pages.{BusinessAddressWithoutIdPage, IndividualAddressWithoutIdPage}
+import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import utils.DateInput
 
-import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
+class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.WhatIsYourDateOfBirthController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.IndividualAddressWithoutIdController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.IndividualAddressWithoutIdController.onSubmit(NormalMode, MDR).url
 
-  private def form = new forms.DateOfBirthFormProvider().apply()
+  val formProvider        = new AddressWithoutIdFormProvider()
+  val form: Form[Address] = formProvider(Seq(Country("valid", "GB", "United Kingdom")))
+  val address: Address    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GB", "United Kingdom"))
 
-  val validAnswer = LocalDate.now(ZoneOffset.UTC)
+  val userAnswers = UserAnswers(userAnswersId).set(IndividualAddressWithoutIdPage, address).success.value
 
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
-
-  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, loadRoute)
-
-  def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest(POST, submitRoute)
-      .withFormUrlEncodedBody(
-        "value.day"   -> validAnswer.getDayOfMonth.toString,
-        "value.month" -> validAnswer.getMonthValue.toString,
-        "value.year"  -> validAnswer.getYear.toString
-      )
-
-  "WhatIsYourDateOfBirth Controller" - {
+  "AddressWithoutId Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -61,24 +49,22 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
+      val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, getRequest).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val viewModel = DateInput.localDate(form("value"))
-
       val expectedJson = Json.obj(
         "form"   -> form,
-        "action" -> submitRoute,
-        "date"   -> viewModel
+        "action" -> submitRoute
       )
 
-      templateCaptor.getValue mustEqual "dateOfBirth.njk"
+      templateCaptor.getValue mustEqual "addressWithoutId.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -87,12 +73,12 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourDateOfBirthPage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
+      val request        = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, getRequest).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -100,21 +86,20 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
       val filledForm = form.bind(
         Map(
-          "value.day"   -> validAnswer.getDayOfMonth.toString,
-          "value.month" -> validAnswer.getMonthValue.toString,
-          "value.year"  -> validAnswer.getYear.toString
+          "addressLine1" -> "value 1",
+          "addressLine2" -> "value 2",
+          "addressLine3" -> "value 3",
+          "addressLine4" -> "value 4",
+          "postCode"     -> "XX9 9XX",
+          "country"      -> "GB"
         )
       )
-
-      val viewModel = DateInput.localDate(filledForm("value"))
-
       val expectedJson = Json.obj(
         "form"   -> filledForm,
-        "action" -> submitRoute,
-        "date"   -> viewModel
+        "action" -> submitRoute
       )
 
-      templateCaptor.getValue mustEqual "dateOfBirth.njk"
+      templateCaptor.getValue mustEqual "addressWithoutId.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -122,8 +107,19 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val result = route(app, postRequest).value
+      retrieveUserAnswersData(userAnswers)
+      val request =
+        FakeRequest(POST, submitRoute)
+          .withFormUrlEncodedBody(
+            ("addressLine1", "value 1"),
+            ("addressLine2", "value 2"),
+            ("addressLine3", "value 3"),
+            ("addressLine4", "value 4"),
+            ("postCode", "XX9 9XX"),
+            ("country", "US")
+          )
+
+      val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
 
@@ -147,15 +143,12 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val viewModel = DateInput.localDate(boundForm("value"))
-
       val expectedJson = Json.obj(
         "form"   -> boundForm,
-        "action" -> submitRoute,
-        "date"   -> viewModel
+        "action" -> submitRoute
       )
 
-      templateCaptor.getValue mustEqual "dateOfBirth.njk"
+      templateCaptor.getValue mustEqual "addressWithoutId.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
   }

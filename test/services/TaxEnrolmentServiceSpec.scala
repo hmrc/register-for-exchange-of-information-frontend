@@ -80,7 +80,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(BusinessAddressWithoutIdPage, address)
         .success
         .value
         .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
@@ -117,7 +117,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(BusinessAddressWithoutIdPage, address)
         .success
         .value
         .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
@@ -156,7 +156,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(BusinessAddressWithoutIdPage, address)
         .success
         .value
         .set(RegistrationInfoPage, IndRegistrationInfo(safeId))

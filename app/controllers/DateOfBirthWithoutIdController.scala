@@ -21,7 +21,7 @@ import forms.DateOfBirthFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.MDRNavigator
-import pages.WhatIsYourDateOfBirthPage
+import pages.DateOfBirthWithoutIdPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -37,7 +37,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatIsYourDateOfBirthController @Inject() (
+class DateOfBirthWithoutIdController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
@@ -56,7 +56,7 @@ class WhatIsYourDateOfBirthController @Inject() (
     val data = Json.obj(
       "form"   -> form,
       "regime" -> regime.toUpperCase,
-      "action" -> routes.WhatIsYourDateOfBirthController.onSubmit(mode, regime).url,
+      "action" -> routes.DateOfBirthWithoutIdController.onSubmit(mode, regime).url,
       "date"   -> DateInput.localDate(form("value"))
     )
     renderer.render("dateOfBirth.njk", data)
@@ -65,7 +65,7 @@ class WhatIsYourDateOfBirthController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
-        render(mode, regime, request.userAnswers.get(WhatIsYourDateOfBirthPage).fold(form)(form.fill)).map(Ok(_))
+        render(mode, regime, request.userAnswers.get(DateOfBirthWithoutIdPage).fold(form)(form.fill)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
@@ -77,9 +77,9 @@ class WhatIsYourDateOfBirthController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourDateOfBirthPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthWithoutIdPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(DateOfBirthWithoutIdPage, mode, regime, updatedAnswers))
           )
     }
 }

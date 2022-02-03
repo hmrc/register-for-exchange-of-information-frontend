@@ -32,7 +32,7 @@ object PageLists {
     BusinessWithoutIDNamePage,
     BusinessHaveDifferentNamePage,
     WhatIsTradingNamePage,
-    AddressWithoutIdPage,
+    BusinessAddressWithoutIdPage,
     AddressLookupPage,
     AddressUKPage
   )
@@ -48,7 +48,7 @@ object PageLists {
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
-    AddressWithoutIdPage,
+    BusinessAddressWithoutIdPage,
     AddressLookupPage,
     AddressUKPage,
     SelectAddressPage,

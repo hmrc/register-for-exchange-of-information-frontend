@@ -145,7 +145,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
       }
 
       "must go from IsContactTelephone page to 'is there someone else we can contact' page if NO is selected " +
-        "and user registering as business with ID" in {
+        "and user registering as business with ID and second contact page has NO value" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
@@ -159,10 +159,38 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(IsContactTelephonePage, false)
                   .success
                   .value
+                  .remove(SecondContactPage)
+                  .success
+                  .value
 
               navigator
                 .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
                 .mustBe(routes.SecondContactController.onPageLoad(CheckMode, MDR))
+          }
+        }
+
+      "must go from IsContactTelephone page to 'is there someone else we can contact' page if NO is selected " +
+        "and user registering as business with ID and second contact page has SOME value" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                  .success
+                  .value
+                  .set(BusinessTypePage, BusinessType.LimitedPartnership)
+                  .success
+                  .value
+                  .set(IsContactTelephonePage, false)
+                  .success
+                  .value
+                  .set(SecondContactPage, true)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(IsContactTelephonePage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
           }
         }
 

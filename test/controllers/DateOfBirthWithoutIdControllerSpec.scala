@@ -20,7 +20,7 @@ import base.ControllerSpecBase
 import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.WhatIsYourDateOfBirthPage
+import pages.{DateOfBirthWithoutIdPage, WhatIsYourDateOfBirthPage}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
@@ -31,10 +31,10 @@ import utils.DateInput
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
-class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
+class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.WhatIsYourDateOfBirthController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.DateOfBirthWithoutIdController.onSubmit(NormalMode, MDR).url
 
   private def form = new forms.DateOfBirthFormProvider().apply()
 
@@ -87,7 +87,7 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourDateOfBirthPage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(DateOfBirthWithoutIdPage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])

@@ -137,7 +137,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(NonUkNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, MDR))
+              .mustBe(routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -189,7 +189,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(DoYouLiveInTheUKPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode, MDR))
+              .mustBe(routes.IndividualAddressWithoutIdController.onPageLoad(NormalMode, MDR))
         }
       }
 
@@ -202,12 +202,12 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                   .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
                   .success
                   .value
-                  .set(AddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
+                  .set(IndividualAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                   .success
                   .value
 
               navigator
-                .nextPage(AddressWithoutIdPage, NormalMode, MDR, updatedAnswers)
+                .nextPage(IndividualAddressWithoutIdPage, NormalMode, MDR, updatedAnswers)
                 .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
           }
         }
@@ -221,12 +221,12 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                   .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
                   .success
                   .value
-                  .set(AddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
+                  .set(BusinessAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                   .success
                   .value
 
               navigator
-                .nextPage(AddressWithoutIdPage, NormalMode, MDR, updatedAnswers)
+                .nextPage(BusinessAddressWithoutIdPage, NormalMode, MDR, updatedAnswers)
                 .mustBe(routes.ContactNameController.onPageLoad(NormalMode, MDR))
           }
         }
@@ -350,7 +350,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
 
             navigator
               .nextPage(BusinessHaveDifferentNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.AddressWithoutIdController.onPageLoad(NormalMode, MDR))
+              .mustBe(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode, MDR))
         }
       }
 

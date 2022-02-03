@@ -53,6 +53,7 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
             ContactEmailPage,
             routes.ContactEmailController.onPageLoad(CheckMode, regime)
           )
+
     case ContactEmailPage =>
       regime =>
         ua =>

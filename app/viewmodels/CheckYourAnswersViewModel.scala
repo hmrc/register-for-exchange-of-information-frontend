@@ -54,9 +54,10 @@ object CheckYourAnswersViewModel {
         helper.whatIsYourName,
         helper.nonUkName,
         helper.whatIsYourDateOfBirth,
+        helper.dateOfBirthWithoutId,
         helper.businessWithoutIDName,
         helper.whatIsTradingName,
-        if (isBusiness) helper.addressWithoutIdBusiness else helper.addressWithoutIdIndividual,
+        if (isBusiness) helper.businessAddressWithoutID else helper.individualAddressWithoutID,
         helper.addressUK,
         helper.selectAddress
       ).flatten

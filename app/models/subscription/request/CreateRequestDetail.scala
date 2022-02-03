@@ -75,7 +75,7 @@ object CreateRequestDetail {
                 userAnswers.get(DoYouLiveInTheUKPage).contains(true)
             }
           case Some(RegistrationTypeBusiness) =>
-            userAnswers.get(AddressWithoutIdPage).exists(_.isGB)
+            userAnswers.get(BusinessAddressWithoutIdPage).exists(_.isGB)
           case _ => false
         }
     }

@@ -21,7 +21,7 @@ import forms.AddressWithoutIdFormProvider
 import models.{Address, Country, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.AddressWithoutIdPage
+import pages.BusinessAddressWithoutIdPage
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
@@ -30,16 +30,16 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class AddressWithoutIdControllerSpec extends ControllerSpecBase {
+class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.AddressWithoutIdController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.AddressWithoutIdController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode, MDR).url
+  lazy val submitRoute = routes.BusinessAddressWithoutIdController.onSubmit(NormalMode, MDR).url
 
   val formProvider        = new AddressWithoutIdFormProvider()
   val form: Form[Address] = formProvider(Seq(Country("valid", "GB", "United Kingdom")))
   val address: Address    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GB", "United Kingdom"))
 
-  val userAnswers = UserAnswers(userAnswersId).set(AddressWithoutIdPage, address).success.value
+  val userAnswers = UserAnswers(userAnswersId).set(BusinessAddressWithoutIdPage, address).success.value
 
   "AddressWithoutId Controller" - {
 

@@ -40,7 +40,7 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(SoleDateOfBirthPage.type, JsValue)] ::
       arbitrary[(SoleNamePage.type, JsValue)] ::
       arbitrary[(AddressUKPage.type, JsValue)] ::
-      arbitrary[(AddressWithoutIdPage.type, JsValue)] ::
+      arbitrary[(BusinessAddressWithoutIdPage.type, JsValue)] ::
       arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
       arbitrary[(pages.WhatIsYourDateOfBirthPage.type, JsValue)] ::
       arbitrary[(WhatIsYourNamePage.type, JsValue)] ::

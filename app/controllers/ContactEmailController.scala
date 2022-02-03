@@ -88,5 +88,4 @@ class ContactEmailController @Inject() (
               } yield Redirect(navigator.nextPage(ContactEmailPage, mode, regime, updatedAnswers))
           )
     }
-
 }

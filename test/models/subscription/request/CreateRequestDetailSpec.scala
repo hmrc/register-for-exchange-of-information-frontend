@@ -180,7 +180,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, businessAddress)
+        .set(BusinessAddressWithoutIdPage, businessAddress)
         .success
         .value
         .set(SecondContactPage, false)
@@ -210,7 +210,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, businessAddress)
+        .set(BusinessAddressWithoutIdPage, businessAddress)
         .success
         .value
         .set(SecondContactPage, false)
@@ -244,7 +244,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(BusinessAddressWithoutIdPage, address)
         .success
         .value
         .set(DoYouLiveInTheUKPage, true)
@@ -281,7 +281,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(BusinessAddressWithoutIdPage, address)
         .success
         .value
         .set(SecondContactPage, false)

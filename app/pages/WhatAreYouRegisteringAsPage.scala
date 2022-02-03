@@ -50,6 +50,7 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
     BusinessWithoutIDNamePage,
     BusinessHaveDifferentNamePage,
     WhatIsTradingNamePage,
+    BusinessAddressWithoutIdPage,
     AddressLookupPage,
     AddressUKPage
   )
@@ -62,7 +63,7 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
-    AddressWithoutIdPage, // TODO - split Individual / Business without ID Address Page
+    IndividualAddressWithoutIdPage,
     AddressLookupPage,
     AddressUKPage,
     SelectAddressPage,

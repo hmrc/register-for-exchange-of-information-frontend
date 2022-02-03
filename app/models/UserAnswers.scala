@@ -53,7 +53,7 @@ final case class UserAnswers(
         page.cleanup(Some(value), updatedAnswers)
     }
   }
-  
+
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {

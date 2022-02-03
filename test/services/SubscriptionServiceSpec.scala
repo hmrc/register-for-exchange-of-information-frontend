@@ -79,7 +79,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(BusinessAddressWithoutIdPage, address)
         .success
         .value
 

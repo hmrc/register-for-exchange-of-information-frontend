@@ -16,17 +16,14 @@
 
 package pages
 
-import models.Address
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.JsPath
 
-class AddressPageSpec extends PageBehaviours {
+import java.time.LocalDate
 
-  "AddressWithoutIdPage" - {
+case object DateOfBirthWithoutIdPage extends QuestionPage[LocalDate] {
 
-    beRetrievable[Address](BusinessAddressWithoutIdPage)
+  override def path: JsPath = JsPath \ toString
 
-    beSettable[Address](BusinessAddressWithoutIdPage)
+  override def toString: String = "DateOfBirthWithoutId"
 
-    beRemovable[Address](BusinessAddressWithoutIdPage)
-  }
 }

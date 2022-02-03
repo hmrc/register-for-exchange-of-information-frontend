@@ -53,7 +53,7 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
           case Some(lookup) => lookup.toAddress
           case _ =>
             request.userAnswers
-              .get(AddressWithoutIdPage) // orElse ?
+              .get(BusinessAddressWithoutIdPage) // orElse ?
               .fold(request.userAnswers.get(AddressUKPage))(Some.apply)
         }
       case _ => request.userAnswers.get(AddressUKPage)
@@ -78,7 +78,7 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
       organisationName <- request.userAnswers.get(BusinessWithoutIDNamePage)
       phoneNumber  = request.userAnswers.get(ContactPhonePage)
       emailAddress = request.userAnswers.get(ContactEmailPage)
-      address <- request.userAnswers.get(AddressWithoutIdPage)
+      address <- request.userAnswers.get(BusinessAddressWithoutIdPage)
     } yield sendBusinessRegistration(regime, organisationName, address, ContactDetails(phoneNumber, emailAddress)))
       .getOrElse(registrationError)
 

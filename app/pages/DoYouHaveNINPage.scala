@@ -17,7 +17,6 @@
 package pages
 
 import models.UserAnswers
-import pages.PageLists._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
@@ -33,20 +32,21 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
       case Some(true) =>
         List(
           NonUkNamePage,
-          AddressWithoutIdPage,
+          IndividualAddressWithoutIdPage,
           AddressLookupPage,
           AddressUKPage,
           SelectAddressPage,
           SelectedAddressLookupPage,
           DoYouLiveInTheUKPage,
           WhatIsYourPostcodePage,
-          WhatIsYourDateOfBirthPage
+          DateOfBirthWithoutIdPage
         ).foldLeft(Try(userAnswers))(
           PageLists.removePage
         )
 
       case Some(false) =>
         List(
+          WhatIsYourNamePage,
           WhatIsYourNationalInsuranceNumberPage,
           WhatIsYourDateOfBirthPage
         ).foldLeft(Try(userAnswers))(PageLists.removePage)

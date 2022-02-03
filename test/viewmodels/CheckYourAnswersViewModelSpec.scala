@@ -99,7 +99,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, businessAddress)
+        .set(BusinessAddressWithoutIdPage, businessAddress)
         .success
         .value
         .set(SecondContactPage, false)
@@ -176,7 +176,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
         .set(DoYouLiveInTheUKPage, false)

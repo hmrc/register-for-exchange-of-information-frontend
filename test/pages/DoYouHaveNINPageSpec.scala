@@ -68,7 +68,7 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
             .set(NonUkNamePage, NonUkName("firstName", "lastName"))
             .success
             .value
-            .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+            .set(DateOfBirthWithoutIdPage, LocalDate.now())
             .success
             .value
             .set(DoYouLiveInTheUKPage, true)
@@ -80,7 +80,7 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
             .set(AddressUKPage, Address("", None, "", None, None, Country("", "", "")))
             .success
             .value
-            .set(AddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
+            .set(IndividualAddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
             .success
             .value
             .set(SelectAddressPage, "SomeAddress")
@@ -94,11 +94,11 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
             .value
 
           result.get(NonUkNamePage) must not be defined
-          result.get(WhatIsYourDateOfBirthPage) must not be defined
+          result.get(DateOfBirthWithoutIdPage) must not be defined
           result.get(DoYouLiveInTheUKPage) must not be defined
           result.get(WhatIsYourPostcodePage) must not be defined
           result.get(AddressUKPage) must not be defined
-          result.get(AddressWithoutIdPage) must not be defined
+          result.get(IndividualAddressWithoutIdPage) must not be defined
           result.get(SelectAddressPage) must not be defined
           result.get(SelectedAddressLookupPage) must not be defined
       }
