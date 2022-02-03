@@ -168,7 +168,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url)
       }
 
-      "must redirect the user to the unauthorised assistant page" in {
+      "must redirect the user to MDR registration page when assistant with MDR credentials" in {
         val mockAuthConnector: AuthConnector = mock[AuthConnector]
         val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
 
@@ -179,11 +179,28 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
+        val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad(MDR).url)
+        redirectLocation(result) mustBe Some(expectedRedirectUrl)
       }
     }
 
+  }
+
+  "must redirect the user to unauthorised page when assistant" in {
+    val mockAuthConnector: AuthConnector = mock[AuthConnector]
+    val emptyEnrolments: Enrolment       = Enrolment(key = "")
+
+    val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(emptyEnrolments)) ~ None ~ Some(Assistant)
+    when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+    val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+    val controller = new Harness(authAction)
+    val result     = controller.onPageLoad()(FakeRequest())
+
+    status(result) mustBe SEE_OTHER
+    redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad(MDR).url)
   }
 }
 
