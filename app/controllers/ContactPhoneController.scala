@@ -56,7 +56,7 @@ class ContactPhoneController @Inject() (
     val suffix = isBusinessOrIndividual()
     val name   = request.userAnswers.get(ContactNamePage)
     Json.obj(
-      "form"      -> request.userAnswers.get(ContactPhonePage).fold(form)(form.fill),
+      "form"      -> form,
       "regime"    -> regime.toUpperCase,
       "name"      -> name,
       "pageTitle" -> s"contactPhone.title.$suffix",
@@ -69,7 +69,8 @@ class ContactPhoneController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
-        renderer.render("contactPhone.njk", data(mode, regime, form)).map(Ok(_))
+        val formWithData = request.userAnswers.get(ContactPhonePage).fold(form)(form.fill)
+        renderer.render("contactPhone.njk", data(mode, regime, formWithData)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
