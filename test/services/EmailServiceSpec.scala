@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import play.api.Application
-import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.http.Status.{ACCEPTED, BAD_REQUEST, NOT_FOUND}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.OK
