@@ -19,10 +19,11 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.matching.OrgRegistrationInfo
+import models.matching.{OrgRegistrationInfo, RegistrationRequest}
+import models.register.request.RegisterWithID
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
-import models.{Mode, NormalMode, Regime}
+import models.{BusinessType, Mode, NormalMode, Regime}
 import navigation.MDRNavigator
 import pages._
 import play.api.Logging
@@ -89,9 +90,9 @@ class IsThisYourBusinessController @Inject() (
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
-      matchingService.buildBusinessRegistrationRequest match {
-        case Right(registrationRequest) =>
-          matchingService.sendBusinessRegistrationInformation(regime, registrationRequest).flatMap {
+      buildRegisterWithId(regime) match {
+        case Some(registerWithID) =>
+          matchingService.sendBusinessRegistrationInformation(registerWithID).flatMap {
             case Right(response) =>
               request.userAnswers.set(RegistrationInfoPage, response).map(sessionRepository.set)
               result(mode, regime, form, response)
@@ -101,7 +102,7 @@ class IsThisYourBusinessController @Inject() (
         case _ =>
           renderer
             .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-            .map(ServiceUnavailable(_))
+            .map(InternalServerError(_))
       }
   }
 
@@ -125,5 +126,24 @@ class IsThisYourBusinessController @Inject() (
             } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
         )
   }
+
+  def buildRegisterWithId(regime: Regime)(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
+    request.userAnswers.get(BusinessTypePage) flatMap {
+      case BusinessType.Sole => buildIndividualRegistrationRequest(regime)
+      case _                 => buildBusinessRegistrationRequest(regime)
+    }
+
+  def buildBusinessRegistrationRequest(regime: Regime)(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
+    for {
+      utr          <- request.userAnswers.get(UTRPage)
+      businessName <- request.userAnswers.get(BusinessNamePage)
+      businessType = request.userAnswers.get(BusinessTypePage)
+    } yield RegisterWithID(regime, RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, businessType, None))
+
+  def buildIndividualRegistrationRequest(regime: Regime)(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
+    for {
+      utr             <- request.userAnswers.get(UTRPage)
+      soleTradersName <- request.userAnswers.get(SoleNamePage)
+    } yield RegisterWithID(regime, soleTradersName, None, "UTR", utr.uniqueTaxPayerReference)
 
 }

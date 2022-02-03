@@ -84,5 +84,5 @@ class WeHaveConfirmedYourIdentityController @Inject() (
       nino <- request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
       name <- request.userAnswers.get(WhatIsYourNamePage)
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
-    } yield RegisterWithID(regime, name, dob, "NINO", nino.nino)
+    } yield RegisterWithID(regime, name, Some(dob), "NINO", nino.nino)
 }
