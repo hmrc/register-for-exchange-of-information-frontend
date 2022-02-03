@@ -70,7 +70,7 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
         case _ ~ _ ~ Some(Agent) ~ _ =>
           Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad(regime)))
-        case _ ~ enrolments ~ _ ~ Some(Assistant) if enrolments.enrolments.exists(_.key == "HMRC-MDR-ORG") =>
+        case _ ~ enrolments ~ _ ~ Some(Assistant) if enrolments.enrolments.exists(_.key == enrolmentKey) =>
           Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
         case _ ~ _ ~ _ ~ Some(Assistant) =>
           Future.successful(Redirect(controllers.routes.UnauthorisedAssistantController.onPageLoad(regime)))
