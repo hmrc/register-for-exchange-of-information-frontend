@@ -34,7 +34,6 @@ package pages
 
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models.{UserAnswers, WhatAreYouRegisteringAs}
-import pages.PageLists._
 import play.api.libs.json.JsPath
 
 import scala.util.Try

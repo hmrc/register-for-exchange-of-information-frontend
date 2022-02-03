@@ -90,7 +90,9 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
 
     case IndividualHaveContactTelephonePage => regime => ua => individualHasContactTelephoneRoute(CheckMode)(regime)(ua)
     case IndividualContactPhonePage         => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    case SecondContactPage                  => isSecondContact(CheckMode)
+
+    case SecondContactPage =>
+      regime => ua => isSecondContact(CheckMode)(regime)(ua)
 
     case SndContactNamePage =>
       regime =>
@@ -132,7 +134,8 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
 
   private def isSecondContact(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
     ua.get(SecondContactPage) map {
-      case true  => routes.SndContactNameController.onPageLoad(mode, regime)
+      case true =>
+        checkNextPageForValueThenRoute(mode, regime, ua, SndContactNamePage, routes.SndContactNameController.onPageLoad(mode, regime)).get
       case false => routes.CheckYourAnswersController.onPageLoad(regime)
     }
 
