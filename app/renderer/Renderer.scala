@@ -20,11 +20,11 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import models.Regime
 import models.error.ApiError
-import models.error.ApiError.{BadRequestError, ServiceUnavailableError}
+import models.error.ApiError.ServiceUnavailableError
 import play.api.Logging
 import play.api.libs.json.{JsObject, Json, OWrites}
-import play.api.mvc.{RequestHeader, Result}
-import play.api.mvc.Results.{BadRequest, InternalServerError, ServiceUnavailable}
+import play.api.mvc.Results.{InternalServerError, ServiceUnavailable}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.hmrcfrontend.config.TrackingConsentConfig
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
@@ -69,8 +69,6 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
     )
 
     error match {
-      case BadRequestError =>
-        thereIsAProblemView.map(BadRequest(_))
       case ServiceUnavailableError =>
         thereIsAProblemView.map(ServiceUnavailable(_))
       case error =>
@@ -78,5 +76,10 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
         thereIsAProblemView.map(InternalServerError(_))
     }
   }
+
+  def renderThereIsAProblemPage(regime: Regime)(implicit request: Request[_], ec: ExecutionContext): Future[Result] =
+    renderer
+      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+      .map(InternalServerError(_))
 
 }

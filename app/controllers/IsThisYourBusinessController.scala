@@ -100,16 +100,13 @@ class IsThisYourBusinessController @Inject() (
               Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad(regime)))
           }
         case _ =>
-          renderer
-            .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-            .map(InternalServerError(_))
+          renderer.renderThereIsAProblemPage(regime)
       }
   }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
-      val thereIsAProblem =
-        renderer.render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries)).map(ServiceUnavailable(_))
+      val thereIsAProblem = renderer.renderThereIsAProblemPage(regime)
       form
         .bindFromRequest()
         .fold(

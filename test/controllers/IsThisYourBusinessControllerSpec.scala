@@ -194,7 +194,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
+      status(result) mustEqual INTERNAL_SERVER_ERROR
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
@@ -273,7 +273,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val result = route(app, request).value
 
-      status(result) mustEqual SERVICE_UNAVAILABLE
+      status(result) mustEqual INTERNAL_SERVER_ERROR
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 

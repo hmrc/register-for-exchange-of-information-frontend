@@ -588,42 +588,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithID(MDR).url
       }
 
-      "must render 'thereIsAProblem' page when 'createSubscription' fails with BadRequestError" in {
-
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Left(BadRequestError)))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val userAnswers = UserAnswers("Id")
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-          .success
-          .value
-          .set(DoYouHaveNINPage, true)
-          .success
-          .value
-
-        retrieveUserAnswersData(userAnswers)
-
-        val request = FakeRequest(POST, submitRoute)
-
-        val result = route(app, request).value
-
-        status(result) mustEqual BAD_REQUEST
-
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-        templateCaptor.getValue mustEqual "thereIsAProblem.njk"
-      }
-
       "must render 'thereIsAProblem' page when 'createSubscription' fails with UnableToCreateEMTPSubscriptionError" in {
 
         when(mockRenderer.render(any(), any())(any()))

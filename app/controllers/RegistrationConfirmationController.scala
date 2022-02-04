@@ -33,11 +33,11 @@ import scala.concurrent.ExecutionContext
 
 class RegistrationConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
-  appConfig: FrontendAppConfig,
+  val appConfig: FrontendAppConfig,
   standardActionSets: StandardActionSets,
   sessionRepository: SessionRepository,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  val renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -59,7 +59,7 @@ class RegistrationConfirmationController @Inject() (
           }
         case None =>
           logger.info("SubscriptionIDPage: Subscription Id is missing")
-          renderer.render("thereIsAProblem.njk", Json.obj()).map(InternalServerError(_))
+          renderer.renderThereIsAProblemPage(regime)
       }
   }
 }
