@@ -42,6 +42,13 @@
 
           {{ govukRadios({
             name: 'value',
+            fieldset: {
+                legend: {
+                  text: messages('isThisYourBusiness.title'),
+                  isPageHeading: false,
+                  classes: "govuk-visually-hidden"
+                }
+              },
             items: radios,
             errorMessage: form.value.error
           }) }}
