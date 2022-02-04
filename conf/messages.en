@@ -143,7 +143,7 @@ contactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;001,
 contactPhone.checkYourAnswersLabel = Telephone number
 contactPhone.checkYourAnswersLabel.hiddenText = telephone number
 contactPhone.error.required = Enter a telephone number
-contactPhone.error.invalid = Enter a telephone number in the correct format
+contactPhone.error.invalid = Enter a real telephone number
 contactPhone.error.length = Telephone number must be 24 characters or less
 
 secondContact.title = Is there someone else we can contact?
@@ -182,7 +182,7 @@ sndContactPhone.hint = Enter a telephone number, like&nbsp;01632&nbsp;960&nbsp;0
 sndContactPhone.checkYourAnswersLabel = Second contact telephone number
 sndContactPhone.checkYourAnswersLabel.hiddenText = second contact telephone number
 sndContactPhone.error.required = Enter a telephone number
-sndContactPhone.error.invalid = Enter a telephone number in the correct format
+sndContactPhone.error.invalid = Enter a real telephone number
 sndContactPhone.error.length = Telephone number must be 24 characters or less
 
 checkYourAnswers.title = Check your answers before you register to report for MDR
