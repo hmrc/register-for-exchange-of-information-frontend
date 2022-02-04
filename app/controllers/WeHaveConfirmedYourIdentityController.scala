@@ -38,13 +38,13 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   standardActionSets: StandardActionSets,
-  appConfig: FrontendAppConfig,
+  val appConfig: FrontendAppConfig,
   navigator: MDRNavigator,
   val controllerComponents: MessagesControllerComponents,
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
-  renderer: Renderer
+  val renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -72,9 +72,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
                   Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
               }
           case _ =>
-            renderer
-              .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-              .map(ServiceUnavailable(_))
+            renderer.renderThereIsAProblemPage(regime)
         }
 
     }
