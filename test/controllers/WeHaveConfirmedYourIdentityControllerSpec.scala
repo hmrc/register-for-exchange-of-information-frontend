@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.error.ApiError.{BadRequestError, NotFoundError}
+import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.matching.IndRegistrationInfo
 import models.{MDR, Name, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -142,7 +142,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     "return redirect for a GET when there is no match" in {
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Left(NotFoundError)))
+        .thenReturn(Future.successful(Left(ServiceUnavailableError)))
 
       retrieveUserAnswersData(validUserAnswers)
       val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
@@ -152,6 +152,27 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad("identity", MDR).url
+    }
+
+    "return return Internal Server Error for a GET when an error other than ServiceUnavailableError is returned" in {
+
+      when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
+        .thenReturn(Future.successful(Left(NotFoundError)))
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      retrieveUserAnswersData(validUserAnswers)
+      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(app, request).value
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
     }
 
     "return return Internal Server Error for a GET when there is no data" in {

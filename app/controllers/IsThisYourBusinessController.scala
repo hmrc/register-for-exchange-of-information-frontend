@@ -19,6 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
+import models.error.ApiError.NotFoundError
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.register.response.details.AddressResponse
@@ -96,8 +97,10 @@ class IsThisYourBusinessController @Inject() (
             case Right(response) =>
               request.userAnswers.set(RegistrationInfoPage, response).map(sessionRepository.set)
               result(mode, regime, form, response)
-            case _ =>
+            case Left(NotFoundError) =>
               Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad(regime)))
+            case _ =>
+              renderer.renderThereIsAProblemPage(regime)
           }
         case _ =>
           renderer.renderThereIsAProblemPage(regime)
