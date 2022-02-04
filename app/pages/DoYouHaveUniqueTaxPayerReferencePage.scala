@@ -30,9 +30,6 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
     SoleNamePage,
     SoleDateOfBirthPage,
     IsThisYourBusinessPage,
-//    BusinessWithoutIDNamePage,
-//    BusinessHaveDifferentNamePage,
-//    WhatIsTradingNamePage,
     AddressLookupPage,
     AddressUKPage,
     ContactNamePage,
@@ -43,7 +40,8 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
     SndContactNamePage,
     SndContactEmailPage,
     SndConHavePhonePage,
-    SndContactPhonePage
+    SndContactPhonePage,
+    RegistrationInfoPage
   )
 
   private val cleanIndividualPages = List(
@@ -52,15 +50,18 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,
     WhatIsYourDateOfBirthPage,
+    DateOfBirthWithoutIdPage,
     DoYouHaveNINPage,
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
     BusinessAddressWithoutIdPage,
+    IndividualAddressWithoutIdPage,
     AddressLookupPage,
     AddressUKPage,
     SelectAddressPage,
-    SelectedAddressLookupPage
+    SelectedAddressLookupPage,
+    RegistrationInfoPage
   )
 
   override def path: JsPath = JsPath \ toString

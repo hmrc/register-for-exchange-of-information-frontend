@@ -58,6 +58,7 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,
     WhatIsYourDateOfBirthPage,
+    DateOfBirthWithoutIdPage,
     DoYouHaveNINPage,
     NonUkNamePage,
     DoYouLiveInTheUKPage,

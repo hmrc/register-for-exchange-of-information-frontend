@@ -48,7 +48,8 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
         List(
           WhatIsYourNamePage,
           WhatIsYourNationalInsuranceNumberPage,
-          WhatIsYourDateOfBirthPage
+          WhatIsYourDateOfBirthPage,
+          RegistrationInfoPage
         ).foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)

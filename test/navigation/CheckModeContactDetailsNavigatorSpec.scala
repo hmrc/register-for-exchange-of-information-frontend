@@ -283,12 +283,34 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                 .set(SecondContactPage, true)
                 .success
                 .value
+                .remove(SndContactNamePage)
+                .success
+                .value
 
             navigator
               .nextPage(SecondContactPage, CheckMode, MDR, updatedAnswers)
               .mustBe(routes.SndContactNameController.onPageLoad(CheckMode, MDR))
         }
       }
+
+      "must go from Second Contact page to CheckYourAnswers page if YES is selected " +
+        "and Second Contact Name page contains an answer" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(SecondContactPage, true)
+                  .success
+                  .value
+                  .set(SndContactNamePage, "someName")
+                  .success
+                  .value
+
+              navigator
+                .nextPage(SecondContactPage, CheckMode, MDR, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+          }
+        }
 
       "must go from Second Contact page to CheckYourAnswers page if NO is selected" in {
         forAll(arbitrary[UserAnswers]) {

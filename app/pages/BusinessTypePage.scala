@@ -38,7 +38,10 @@ case object BusinessTypePage extends QuestionPage[BusinessType] {
     SndContactEmailPage,
     SndConHavePhonePage,
     SndContactPhonePage,
-    RegistrationInfoPage
+    RegistrationInfoPage,
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage
   )
 
   private val soleTraderPages = List(
@@ -49,7 +52,10 @@ case object BusinessTypePage extends QuestionPage[BusinessType] {
     RegistrationInfoPage,
     IndividualContactEmailPage,
     IndividualHaveContactTelephonePage,
-    IndividualContactPhonePage
+    IndividualContactPhonePage,
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage
   )
 
   override def path: JsPath = JsPath \ toString
