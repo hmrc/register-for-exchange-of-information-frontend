@@ -142,7 +142,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
     "return redirect for a GET when there is no match" in {
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Left(ServiceUnavailableError)))
+        .thenReturn(Future.successful(Left(NotFoundError)))
 
       retrieveUserAnswersData(validUserAnswers)
       val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR).url)
@@ -154,10 +154,10 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       redirectLocation(result).value mustEqual controllers.routes.WeCouldNotConfirmController.onPageLoad("identity", MDR).url
     }
 
-    "return return Internal Server Error for a GET when an error other than ServiceUnavailableError is returned" in {
+    "return return Internal Server Error for a GET when an error other than NotFoundError is returned" in {
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Left(NotFoundError)))
+        .thenReturn(Future.successful(Left(ServiceUnavailableError)))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
