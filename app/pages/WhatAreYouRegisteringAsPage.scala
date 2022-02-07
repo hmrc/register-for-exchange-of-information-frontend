@@ -40,7 +40,7 @@ import scala.util.Try
 
 case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteringAs] {
 
-  private val cleanBusinessPages = List(
+  private val businessPages = List(
     UTRPage,
     BusinessNamePage,
     SoleNamePage,
@@ -54,7 +54,7 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
     AddressUKPage
   )
 
-  private val cleanIndividualPages = List(
+  private val individualPages = List(
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,
     WhatIsYourDateOfBirthPage,
@@ -77,9 +77,9 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
   override def cleanup(value: Option[WhatAreYouRegisteringAs], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
 
-      case Some(RegistrationTypeBusiness) => cleanIndividualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+      case Some(RegistrationTypeBusiness) => individualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 
-      case Some(RegistrationTypeIndividual) => cleanBusinessPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+      case Some(RegistrationTypeIndividual) => businessPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)
     }

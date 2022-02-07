@@ -23,7 +23,7 @@ import scala.util.Try
 
 case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
 
-  private val cleanBusinessPages = List(
+  private val businessPages = List(
     BusinessTypePage,
     UTRPage,
     BusinessNamePage,
@@ -44,7 +44,7 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
     RegistrationInfoPage
   )
 
-  private val cleanIndividualPages = List(
+  private val individualPages = List(
     BusinessTypePage,
     WhatAreYouRegisteringAsPage,
     WhatIsYourNationalInsuranceNumberPage,
@@ -69,8 +69,8 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
   override def toString: String = "doYouHaveUniqueTaxPayerReference"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = value match {
-    case Some(true)  => cleanIndividualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-    case Some(false) => cleanBusinessPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case Some(true)  => individualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case Some(false) => businessPages.foldLeft(Try(userAnswers))(PageLists.removePage)
     case _           => super.cleanup(value, userAnswers)
   }
 }

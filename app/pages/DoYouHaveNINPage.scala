@@ -23,6 +23,27 @@ import scala.util.Try
 
 case object DoYouHaveNINPage extends QuestionPage[Boolean] {
 
+  private val withoutNINOPages =
+    List(
+      NonUkNamePage,
+      IndividualAddressWithoutIdPage,
+      AddressLookupPage,
+      AddressUKPage,
+      SelectAddressPage,
+      SelectedAddressLookupPage,
+      DoYouLiveInTheUKPage,
+      WhatIsYourPostcodePage,
+      DateOfBirthWithoutIdPage
+    )
+
+  private val withNINOPages =
+    List(
+      WhatIsYourNamePage,
+      WhatIsYourNationalInsuranceNumberPage,
+      WhatIsYourDateOfBirthPage,
+      RegistrationInfoPage
+    )
+
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "doYouHaveNIN"
@@ -30,28 +51,9 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(true) =>
-        List(
-          NonUkNamePage,
-          IndividualAddressWithoutIdPage,
-          AddressLookupPage,
-          AddressUKPage,
-          SelectAddressPage,
-          SelectedAddressLookupPage,
-          DoYouLiveInTheUKPage,
-          WhatIsYourPostcodePage,
-          DateOfBirthWithoutIdPage
-        ).foldLeft(Try(userAnswers))(
-          PageLists.removePage
-        )
-
+        withoutNINOPages.foldLeft(Try(userAnswers))(PageLists.removePage)
       case Some(false) =>
-        List(
-          WhatIsYourNamePage,
-          WhatIsYourNationalInsuranceNumberPage,
-          WhatIsYourDateOfBirthPage,
-          RegistrationInfoPage
-        ).foldLeft(Try(userAnswers))(PageLists.removePage)
-
+        withNINOPages.foldLeft(Try(userAnswers))(PageLists.removePage)
       case _ => super.cleanup(value, userAnswers)
     }
 }

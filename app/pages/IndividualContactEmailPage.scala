@@ -23,6 +23,19 @@ import scala.util.Try
 
 case object IndividualContactEmailPage extends QuestionPage[String] {
 
+  private val businessContactPages =
+    List(
+      ContactNamePage,
+      ContactEmailPage,
+      IsContactTelephonePage,
+      ContactPhonePage,
+      SecondContactPage,
+      SndContactNamePage,
+      SndContactEmailPage,
+      SndConHavePhonePage,
+      SndContactPhonePage
+    )
+
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "individualContactEmail"
@@ -30,18 +43,7 @@ case object IndividualContactEmailPage extends QuestionPage[String] {
   override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(_) =>
-        List(
-          ContactNamePage,
-          ContactEmailPage,
-          IsContactTelephonePage,
-          ContactPhonePage,
-          SecondContactPage,
-          SndContactNamePage,
-          SndContactEmailPage,
-          SndConHavePhonePage,
-          SndContactPhonePage
-        ).foldLeft(Try(userAnswers))(PageLists.removePage)
-
+        businessContactPages.foldLeft(Try(userAnswers))(PageLists.removePage)
       case _ => super.cleanup(value, userAnswers)
     }
 }
