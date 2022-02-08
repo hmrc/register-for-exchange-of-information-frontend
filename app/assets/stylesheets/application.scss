@@ -20,3 +20,7 @@ svg.autocomplete__dropdown-arrow-down {
 .bottom-margin {
   margin-bottom: 2em;
 }
+
+body:not(.js-enabled) .js-enabled {
+  display: none;
+}
