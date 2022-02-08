@@ -1,4 +1,4 @@
-{% extends "includes/layout.njk" %}
+    {% extends "includes/layout.njk" %}
 
 {% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 {% from "govuk/components/input/macro.njk"         import govukInput %}
@@ -41,6 +41,8 @@
           },
           id: "value",
           name: "value",
+          type: "tel",
+          autocomplete: "tel",
           hint: {
             html: hintText
           },
