@@ -18,6 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.error.ApiError.NotFoundError
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
 import models.{Mode, Regime}
@@ -68,8 +69,10 @@ class WeHaveConfirmedYourIdentityController @Inject() (
                       )
                       renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
                   }
-                case _ =>
+                case Left(NotFoundError) =>
                   Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity", regime)))
+                case _ =>
+                  renderer.renderThereIsAProblemPage(regime)
               }
           case _ =>
             renderer.renderThereIsAProblemPage(regime)

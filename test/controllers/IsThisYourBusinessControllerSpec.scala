@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.BusinessType.{LimitedCompany, Sole}
-import models.error.ApiError.BadRequestError
+import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
 import models.{CheckMode, MDR, Name, NormalMode, SubscriptionID, UserAnswers}
@@ -260,6 +260,27 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
+    }
+
+    "return return Internal Server Error for a GET when an error other than NotFoundError eturned" in {
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
+        .thenReturn(Future.successful(Left(ServiceUnavailableError)))
+
+      when(mockRenderer.render(any(), any())(any()))
+        .thenReturn(Future.successful(Html("")))
+
+      retrieveUserAnswersData(validUserAnswers)
+      val request        = FakeRequest(GET, routes.IsThisYourBusinessController.onPageLoad(NormalMode, MDR).url)
+      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+
+      val result = route(app, request).value
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+
+      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
     }
 
     "must return Internal Server Error when invalid data is submitted" in {
