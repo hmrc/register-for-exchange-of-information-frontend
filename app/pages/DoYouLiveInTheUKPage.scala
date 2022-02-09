@@ -17,7 +17,6 @@
 package pages
 
 import models.UserAnswers
-import pages.WhatAreYouRegisteringAsPage.cleanIndividualPages
 import play.api.libs.json.JsPath
 
 import scala.util.Try

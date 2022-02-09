@@ -68,5 +68,7 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
       updatedAnswers <- Future.fromTry(request.userAnswers.set(SubscriptionIDPage, subscriptionId))
       _              <- sessionRepository.set(updatedAnswers)
       result         <- createEnrolment(safeId, request.userAnswers, subscriptionId, regime)
-    } yield result
+    } yield {
+      result
+    }
 }

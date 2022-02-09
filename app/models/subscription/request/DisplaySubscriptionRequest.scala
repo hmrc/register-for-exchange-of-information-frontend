@@ -42,7 +42,9 @@ object DisplaySubscriptionRequest {
 
   def convertTo(regime: Regime, safeId: String): DisplaySubscriptionRequest =
     regime match {
-      case MDR    => DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
-      case regime => throw new RuntimeException(s"Not supporting the regime: $regime ")
+      case MDR =>
+        DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
+      case regime =>
+        throw new RuntimeException(s"Not supporting the regime: $regime ")
     }
 }

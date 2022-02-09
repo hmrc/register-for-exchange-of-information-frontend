@@ -16,13 +16,11 @@
 
 package models.subscription.request
 
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
-import models.error.ApiError
-import models.error.ApiError.MandatoryInformationMissingError
-import models.{BusinessType, UserAnswers}
+import models.UserAnswers
 import pages._
 import play.api.libs.functional.syntax.unlift
 import play.api.libs.json._
+import utils.UserAnswersHelper
 
 import scala.language.implicitConversions
 
@@ -95,7 +93,7 @@ object IndividualDetails {
 
 case class PrimaryContact(contactInformation: ContactInformation, email: String, phone: Option[String], mobile: Option[String])
 
-object PrimaryContact {
+object PrimaryContact extends UserAnswersHelper {
 
   implicit lazy val reads: Reads[PrimaryContact] = {
     import play.api.libs.functional.syntax._
@@ -119,38 +117,33 @@ object PrimaryContact {
 
   def convertTo(userAnswers: UserAnswers): Option[PrimaryContact] = {
 
-    val contactNumber = userAnswers.get(ContactPhonePage)
+    lazy val buildBusinessContact =
+      (for {
+        businessEmail       <- userAnswers.get(ContactEmailPage)
+        businessContactInfo <- OrganisationDetails.convertTo(userAnswers.get(ContactNamePage))
+      } yield Some(
+        PrimaryContact(contactInformation = businessContactInfo, email = businessEmail, phone = userAnswers.get(ContactPhonePage), mobile = None)
+      )).flatten
 
-    val individualOrSoleTrader = {
-      (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
-        case (Some(RegistrationTypeIndividual), _) => true
-        case (_, Some(BusinessType.Sole))          => true
-        case _                                     => false
-      }
+    lazy val buildIndividualContact =
+      (for {
+        individualEmail       <- userAnswers.get(IndividualContactEmailPage)
+        individualContactInfo <- IndividualDetails.convertTo(userAnswers)
+      } yield Some(
+        PrimaryContact(contactInformation = individualContactInfo, email = individualEmail, phone = userAnswers.get(IndividualContactPhonePage), mobile = None)
+      )).flatten
+
+    if (isRegisteringAsBusiness(userAnswers)) {
+      buildBusinessContact
+    } else {
+      buildIndividualContact
     }
-
-    (for {
-      email     <- userAnswers.get(ContactEmailPage)
-      havePhone <- userAnswers.get(IsContactTelephonePage)
-      contactInformation <-
-        if (individualOrSoleTrader) {
-          IndividualDetails.convertTo(userAnswers)
-        } else {
-          OrganisationDetails.convertTo(userAnswers.get(ContactNamePage))
-        }
-    } yield
-      if (havePhone && userAnswers.get(ContactPhonePage).isEmpty) {
-        None
-      } else {
-        Some(PrimaryContact(contactInformation = contactInformation, email = email, phone = contactNumber, mobile = None))
-      }).flatten
-
   }
 }
 
 case class SecondaryContact(contactInformation: ContactInformation, email: String, phone: Option[String], mobile: Option[String])
 
-object SecondaryContact {
+object SecondaryContact extends UserAnswersHelper {
 
   implicit lazy val reads: Reads[SecondaryContact] = {
     import play.api.libs.functional.syntax._
@@ -172,36 +165,19 @@ object SecondaryContact {
     )(unlift(SecondaryContact.unapply))
   }
 
-  def convertTo(userAnswers: UserAnswers): Either[ApiError, Option[SecondaryContact]] = {
+  def convertTo(userAnswers: UserAnswers): Option[SecondaryContact] = {
 
-    val individualOrSoleTrader = {
-      (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
-        case (Some(RegistrationTypeIndividual), _) => true
-        case (_, Some(BusinessType.Sole))          => true
-        case _                                     => false
-      }
-    }
+    lazy val buildSecondContact =
+      for {
+        orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
+        secondaryEmail <- userAnswers.get(SndContactEmailPage)
+      } yield SecondaryContact(contactInformation = orgDetails, email = secondaryEmail, phone = userAnswers.get(SndContactPhonePage), mobile = None)
 
-    val secondaryContactNumber = userAnswers.get(SndContactPhonePage)
-
-    (individualOrSoleTrader, userAnswers.get(SecondContactPage), userAnswers.get(SndConHavePhonePage)) match {
-      case (true, _, _) =>
-        Right(None)
-      case (false, Some(true), Some(true)) if secondaryContactNumber.isDefined =>
-        Right(secondaryContact(userAnswers, secondaryContactNumber))
-      case (false, Some(true), Some(false)) =>
-        Right(secondaryContact(userAnswers, None))
-      case (false, Some(false), _) =>
-        Right(None)
+    (isRegisteringAsBusiness(userAnswers), userAnswers.get(SecondContactPage)) match {
+      case (true, Some(true)) =>
+        buildSecondContact
       case _ =>
-        Left(MandatoryInformationMissingError())
+        None
     }
-
   }
-
-  private def secondaryContact(userAnswers: UserAnswers, secondaryContactNumber: Option[String]) =
-    for {
-      orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
-      secondaryEmail <- userAnswers.get(SndContactEmailPage)
-    } yield SecondaryContact(contactInformation = orgDetails, email = secondaryEmail, phone = secondaryContactNumber, mobile = None)
 }

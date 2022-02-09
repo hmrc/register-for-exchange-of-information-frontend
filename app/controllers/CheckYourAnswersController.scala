@@ -19,9 +19,7 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.StandardActionSets
-import models.BusinessType.Sole
 import models.Regime
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
@@ -37,7 +35,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.CountryListFactory
+import utils.{CountryListFactory, UserAnswersHelper}
 import viewmodels.{CheckYourAnswersViewModel, Section}
 
 import javax.inject.Inject
@@ -57,12 +55,13 @@ class CheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with NunjucksSupport
-    with Logging {
+    with Logging
+    with UserAnswersHelper {
 
   def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
     implicit request =>
       val viewModel: Seq[Section] =
-        CheckYourAnswersViewModel.buildPages(request.userAnswers, regime, countryFactory, isRegisteringAsBusiness())
+        CheckYourAnswersViewModel.buildPages(request.userAnswers, regime, countryFactory, isRegisteringAsBusiness(request.userAnswers))
 
       renderer
         .render(
@@ -81,11 +80,14 @@ class CheckYourAnswersController @Inject() (
     request.userAnswers.get(RegistrationInfoPage) match {
       case Some(registration) =>
         val safeId = registration match {
-          case OrgRegistrationInfo(safeId, _, _) => safeId
-          case IndRegistrationInfo(safeId)       => safeId
+          case OrgRegistrationInfo(safeId, _, _) =>
+            safeId
+          case IndRegistrationInfo(safeId) =>
+            safeId
         }
         Future.successful(Right(safeId))
-      case _ => registrationService.registerWithoutId(regime)
+      case _ =>
+        registrationService.registerWithoutId(regime)
     }
 
   def onSubmit(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
@@ -113,15 +115,4 @@ class CheckYourAnswersController @Inject() (
         }
 
   }
-
-  private def isRegisteringAsBusiness()(implicit request: DataRequest[AnyContent]): Boolean =
-    (request.userAnswers.get(WhatAreYouRegisteringAsPage),
-     request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage),
-     request.userAnswers.get(BusinessTypePage)
-    ) match {
-      case (None, Some(true), Some(Sole))                   => false
-      case (None, Some(true), _)                            => true
-      case (Some(RegistrationTypeBusiness), Some(false), _) => true
-      case _                                                => false
-    }
 }

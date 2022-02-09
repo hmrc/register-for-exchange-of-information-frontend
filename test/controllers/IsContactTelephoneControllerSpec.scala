@@ -34,7 +34,7 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.IsContactTelephoneController.onPageLoad(NormalMode, MDR).url
   lazy val submitRoute = routes.IsContactTelephoneController.onSubmit(NormalMode, MDR).url
 
-  private def form = new forms.IsContactTelephoneFormProvider().apply("business")
+  private def form = new forms.IsContactTelephoneFormProvider().apply()
 
   val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
 

@@ -49,17 +49,17 @@ class IsContactTelephoneController @Inject() (
     with NunjucksSupport
     with UserAnswersHelper {
 
-  def form(suffix: String) = formProvider(suffix)
+  private val form = formProvider()
 
-  private def data(mode: Mode, regime: Regime, form: Form[Boolean], suffix: String)(implicit request: DataRequest[AnyContent]): JsObject = {
+  private def data(mode: Mode, regime: Regime, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): JsObject = {
     val name       = request.userAnswers.get(ContactNamePage)
     val filledForm = request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)
     Json.obj(
       "form"      -> filledForm,
       "regime"    -> regime.toUpperCase,
       "name"      -> name,
-      "pageTitle" -> s"isContactTelephone.title.$suffix",
-      "heading"   -> s"isContactTelephone.heading.$suffix",
+      "pageTitle" -> s"isContactTelephone.title.business",
+      "heading"   -> s"isContactTelephone.heading.business",
       "action"    -> routes.IsContactTelephoneController.onSubmit(mode, regime).url,
       "radios"    -> Radios.yesNo(filledForm("value"))
     )
@@ -68,18 +68,16 @@ class IsContactTelephoneController @Inject() (
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
-        val suffix = isBusinessOrIndividual()
-        renderer.render("isContactTelephone.njk", data(mode, regime, form(suffix), suffix)).map(Ok(_))
+        renderer.render("isContactTelephone.njk", data(mode, regime, form)).map(Ok(_))
     }
 
   def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
     standardActionSets.identifiedUserWithData(regime).async {
       implicit request =>
-        val suffix = isBusinessOrIndividual()
-        form(suffix)
+        form
           .bindFromRequest()
           .fold(
-            formWithErrors => renderer.render("isContactTelephone.njk", data(mode, regime, formWithErrors, suffix)).map(BadRequest(_)),
+            formWithErrors => renderer.render("isContactTelephone.njk", data(mode, regime, formWithErrors)).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))

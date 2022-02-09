@@ -36,7 +36,8 @@ case class Address(
     Some(country.description)
   ).flatten
 
-  val isGB = this.country.code == "GB"
+  val isGB: Boolean           = this.country.code == "GB"
+  val isOtherCountry: Boolean = this.country.code != "GB"
 }
 
 object Address {
