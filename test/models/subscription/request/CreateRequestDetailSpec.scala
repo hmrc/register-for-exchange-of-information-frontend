@@ -40,8 +40,8 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         "AB123456Z",
         Some("Tools for Traders Limited"),
         true,
-        PrimaryContact(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
-        Some(SecondaryContact(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None))
+        ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
+        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None))
       )
 
       val json: String =
@@ -77,7 +77,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         IDNumber = "SAFEID",
         tradingName = Some("traderName"),
         isGBUser = true,
-        primaryContact = PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None),
+        primaryContact = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None),
         secondaryContact = None
       )
 
@@ -283,31 +283,5 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
       request.isGBUser mustBe false
     }
-
-//    "must create a request with the isGBUser flag set to false when criteria is missing" in {
-//      val userAnswers = UserAnswers("")
-//      val updatedUserAnswers = userAnswers
-//        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-//        .success
-//        .value
-//        .set(IndividualContactEmailPage, "hello")
-//        .success
-//        .value
-//        .set(NonUkNamePage, NonUkName("a", "b"))
-//        .success
-//        .value
-//        .set(IndividualHaveContactTelephonePage, true)
-//        .success
-//        .value
-//        .set(IndividualContactPhonePage, "1122334455")
-//        .success
-//        .value
-//
-//      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
-//
-//      request.isGBUser mustBe false
-//    }
-
   }
-
 }

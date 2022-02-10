@@ -34,7 +34,8 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
     }
 
     "must return SubscriptionRequest for the input 'UserAnswers'" in {
-      val requestDtls = CreateRequestDetail("SAFE", "SAFEID", None, true, PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
+      val requestDtls =
+        CreateRequestDetail("SAFE", "SAFEID", None, true, ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
 
       val userAnswers = UserAnswers("id")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)

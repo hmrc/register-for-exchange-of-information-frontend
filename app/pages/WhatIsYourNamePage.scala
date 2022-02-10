@@ -27,4 +27,8 @@ case object WhatIsYourNamePage extends QuestionPage[Name] {
 
   override def toString: String = "whatIsYourName"
 
+  override def cleanup(value: Option[Name], userAnswers: UserAnswers): Try[UserAnswers] = value match {
+    case Some(_) => userAnswers.remove(WhatIsYourDateOfBirthPage)
+    case _       => super.cleanup(value, userAnswers)
+  }
 }

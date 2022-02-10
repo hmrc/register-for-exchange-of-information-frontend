@@ -24,11 +24,11 @@ import utils.UserAnswersHelper
 
 import scala.language.implicitConversions
 
-sealed trait ContactInformation
+sealed trait ContactType
 
-object ContactInformation {
+object ContactType {
 
-  implicit lazy val reads: Reads[ContactInformation] = {
+  implicit lazy val reads: Reads[ContactType] = {
 
     implicit class ReadsWithContravariantOr[A](a: Reads[A]) {
       def or[B >: A](b: Reads[B]): Reads[B] =
@@ -42,13 +42,13 @@ object ContactInformation {
       IndividualDetails.reads
   }
 
-  implicit val writes: Writes[ContactInformation] = Writes[ContactInformation] {
+  implicit val writes: Writes[ContactType] = Writes[ContactType] {
     case o: OrganisationDetails => Json.toJson(o)
     case i: IndividualDetails   => Json.toJson(i)
   }
 }
 
-case class OrganisationDetails(organisationName: String) extends ContactInformation
+case class OrganisationDetails(organisationName: String) extends ContactType
 
 object OrganisationDetails {
 
@@ -64,7 +64,7 @@ object OrganisationDetails {
     contactName.map(OrganisationDetails(_))
 }
 
-case class IndividualDetails(firstName: String, middleName: Option[String], lastName: String) extends ContactInformation
+case class IndividualDetails(firstName: String, middleName: Option[String], lastName: String) extends ContactType
 
 object IndividualDetails {
 
@@ -91,38 +91,38 @@ object IndividualDetails {
     }
 }
 
-case class PrimaryContact(contactInformation: ContactInformation, email: String, phone: Option[String], mobile: Option[String])
+case class ContactInformation(contactInformation: ContactType, email: String, phone: Option[String], mobile: Option[String])
 
-object PrimaryContact extends UserAnswersHelper {
+object ContactInformation extends UserAnswersHelper {
 
-  implicit lazy val reads: Reads[PrimaryContact] = {
+  implicit lazy val reads: Reads[ContactInformation] = {
     import play.api.libs.functional.syntax._
     (
-      __.read[ContactInformation] and
+      __.read[ContactType] and
         (__ \ "email").read[String] and
         (__ \ "phone").readNullable[String] and
         (__ \ "mobile").readNullable[String]
-    )(PrimaryContact.apply _)
+    )(ContactInformation.apply _)
   }
 
-  implicit lazy val writes: OWrites[PrimaryContact] = {
+  implicit lazy val writes: OWrites[ContactInformation] = {
     import play.api.libs.functional.syntax._
     (
-      __.write[ContactInformation] and
+      __.write[ContactType] and
         (__ \ "email").write[String] and
         (__ \ "phone").writeNullable[String] and
         (__ \ "mobile").writeNullable[String]
-    )(unlift(PrimaryContact.unapply))
+    )(unlift(ContactInformation.unapply))
   }
 
-  def convertTo(userAnswers: UserAnswers): Option[PrimaryContact] = {
+  def convertToPrimary(userAnswers: UserAnswers): Option[ContactInformation] = {
 
     lazy val buildBusinessContact =
       (for {
         businessEmail       <- userAnswers.get(ContactEmailPage)
         businessContactInfo <- OrganisationDetails.convertTo(userAnswers.get(ContactNamePage))
       } yield Some(
-        PrimaryContact(contactInformation = businessContactInfo, email = businessEmail, phone = userAnswers.get(ContactPhonePage), mobile = None)
+        ContactInformation(contactInformation = businessContactInfo, email = businessEmail, phone = userAnswers.get(ContactPhonePage), mobile = None)
       )).flatten
 
     lazy val buildIndividualContact =
@@ -130,7 +130,11 @@ object PrimaryContact extends UserAnswersHelper {
         individualEmail       <- userAnswers.get(IndividualContactEmailPage)
         individualContactInfo <- IndividualDetails.convertTo(userAnswers)
       } yield Some(
-        PrimaryContact(contactInformation = individualContactInfo, email = individualEmail, phone = userAnswers.get(IndividualContactPhonePage), mobile = None)
+        ContactInformation(contactInformation = individualContactInfo,
+                           email = individualEmail,
+                           phone = userAnswers.get(IndividualContactPhonePage),
+                           mobile = None
+        )
       )).flatten
 
     if (isRegisteringAsBusiness(userAnswers)) {
@@ -139,42 +143,17 @@ object PrimaryContact extends UserAnswersHelper {
       buildIndividualContact
     }
   }
-}
 
-case class SecondaryContact(contactInformation: ContactInformation, email: String, phone: Option[String], mobile: Option[String])
-
-object SecondaryContact extends UserAnswersHelper {
-
-  implicit lazy val reads: Reads[SecondaryContact] = {
-    import play.api.libs.functional.syntax._
-    (
-      __.read[ContactInformation] and
-        (__ \ "email").read[String] and
-        (__ \ "phone").readNullable[String] and
-        (__ \ "mobile").readNullable[String]
-    )(SecondaryContact.apply _)
-  }
-
-  implicit lazy val writes: OWrites[SecondaryContact] = {
-    import play.api.libs.functional.syntax._
-    (
-      __.write[ContactInformation] and
-        (__ \ "email").write[String] and
-        (__ \ "phone").writeNullable[String] and
-        (__ \ "mobile").writeNullable[String]
-    )(unlift(SecondaryContact.unapply))
-  }
-
-  def convertTo(userAnswers: UserAnswers): Option[SecondaryContact] = {
+  def convertToSecondary(userAnswers: UserAnswers): Option[ContactInformation] = {
 
     lazy val buildSecondContact =
       for {
         orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
         secondaryEmail <- userAnswers.get(SndContactEmailPage)
-      } yield SecondaryContact(contactInformation = orgDetails, email = secondaryEmail, phone = userAnswers.get(SndContactPhonePage), mobile = None)
+      } yield ContactInformation(contactInformation = orgDetails, email = secondaryEmail, phone = userAnswers.get(SndContactPhonePage), mobile = None)
 
-    (isRegisteringAsBusiness(userAnswers), userAnswers.get(SecondContactPage)) match {
-      case (true, Some(true)) =>
+    userAnswers.get(SecondContactPage) match {
+      case Some(true) =>
         buildSecondContact
       case _ =>
         None

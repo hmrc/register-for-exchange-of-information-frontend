@@ -67,7 +67,8 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
     AddressLookupPage,
     AddressUKPage,
     SelectAddressPage,
-    SelectedAddressLookupPage
+    SelectedAddressLookupPage,
+    RegistrationInfoPage
   )
 
   override def path: JsPath = JsPath \ toString

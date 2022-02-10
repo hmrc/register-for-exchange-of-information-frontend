@@ -40,14 +40,13 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
       case _           => businessRegistration(regime)
     }
 
-  private def buildIndividualName(implicit request: DataRequest[AnyContent]): Option[Name] = {
+  private def buildIndividualName(implicit request: DataRequest[AnyContent]): Option[Name] =
     request.userAnswers.get(DoYouHaveNINPage) match {
       case Some(false) => request.userAnswers.get(NonUkNamePage).map(_.toName)
       case _           => request.userAnswers.get(WhatIsYourNamePage)
     }
-  }
 
-  private def buildIndividualAddress(implicit request: DataRequest[AnyContent]): Option[Address] = {
+  private def buildIndividualAddress(implicit request: DataRequest[AnyContent]): Option[Address] =
     request.userAnswers.get(DoYouHaveNINPage) match {
       case Some(false) =>
         request.userAnswers.get(SelectedAddressLookupPage) match {
@@ -59,7 +58,6 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
         }
       case _ => request.userAnswers.get(AddressUKPage)
     }
-  }
 
   private val registrationError = Future.successful(Left(MandatoryInformationMissingError()))
 
@@ -69,13 +67,10 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
     (for {
       name <- buildIndividualName
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage).orElse(request.userAnswers.get(DateOfBirthWithoutIdPage))
-//      dobWithoutId <- request.userAnswers.get(DateOfBirthWithoutIdPage)
       phoneNumber  = request.userAnswers.get(IndividualContactPhonePage)
       emailAddress = request.userAnswers.get(IndividualContactEmailPage)
       address <- buildIndividualAddress
-    } yield {
-      sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress))
-    }).getOrElse(registrationError)
+    } yield sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress))).getOrElse(registrationError)
 
   private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (for {

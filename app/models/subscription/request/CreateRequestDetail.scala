@@ -26,8 +26,8 @@ case class CreateRequestDetail(IDType: String,
                                IDNumber: String,
                                tradingName: Option[String],
                                isGBUser: Boolean,
-                               primaryContact: PrimaryContact,
-                               secondaryContact: Option[SecondaryContact]
+                               primaryContact: ContactInformation,
+                               secondaryContact: Option[ContactInformation]
 )
 
 object CreateRequestDetail extends UserAnswersHelper {
@@ -35,26 +35,17 @@ object CreateRequestDetail extends UserAnswersHelper {
   implicit val format: OFormat[CreateRequestDetail] = Json.format[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
-
-    val getOptionalSecondContact =
-      if (isRegisteringAsBusiness(userAnswers)) {
-        SecondaryContact.convertTo(userAnswers)
-      } else {
-        None
-      }
-
+  def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] =
     for {
-      primaryContact <- PrimaryContact.convertTo(userAnswers)
+      primaryContact <- ContactInformation.convertToPrimary(userAnswers)
     } yield CreateRequestDetail(
       IDType = idType,
       IDNumber = safeId.value,
       tradingName = userAnswers.get(WhatIsTradingNamePage),
       isGBUser = isGBUser(userAnswers),
       primaryContact = primaryContact,
-      secondaryContact = getOptionalSecondContact
+      secondaryContact = ContactInformation.convertToSecondary(userAnswers)
     )
-  }
 
   private def isGBUser(userAnswers: UserAnswers): Boolean =
     if (userAnswers.get(BusinessAddressWithoutIdPage).exists(_.isOtherCountry) || userAnswers.get(IndividualAddressWithoutIdPage).exists(_.isOtherCountry)) {
@@ -62,5 +53,4 @@ object CreateRequestDetail extends UserAnswersHelper {
     } else {
       true
     }
-
 }
