@@ -20,6 +20,7 @@ import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
+import scala.collection.immutable
 import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters extends Transforms {
@@ -195,6 +196,27 @@ trait Formatters extends Transforms {
             case str if str.length > maxLength => Left(Seq(FormError(key, lengthKey)))
             case str                           => Right(str)
           }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    }
+
+  protected def validatedUtrFormatter(requiredKey: String, invalidKey: String, lengthKey: String, regex: String, msgArg: String = ""): Formatter[String] =
+    new Formatter[String] {
+
+      def formatError(key: String, errorKey: String, msgArg: String = ""): FormError =
+        if (msgArg.isEmpty) FormError(key, errorKey) else FormError(key, requiredKey, Seq(msgArg))
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+        val fixedLength = 10
+        val trimmedUtr  = data.get(key).map(_.replaceAll("\\s", ""))
+        trimmedUtr match {
+          case None | Some("")                    => Left(Seq(formatError(key, requiredKey, msgArg)))
+          case Some(s) if !s.matches(regex)       => Left(Seq(formatError(key, invalidKey, msgArg)))
+          case Some(s) if s.length != fixedLength => Left(Seq(formatError(key, lengthKey, msgArg)))
+          case Some(s)                            => Right(s)
+        }
+      }
 
       override def unbind(key: String, value: String): Map[String, String] =
         Map(key -> value)
