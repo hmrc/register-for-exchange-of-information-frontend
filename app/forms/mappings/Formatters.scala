@@ -204,7 +204,7 @@ trait Formatters extends Transforms {
     new Formatter[String] {
 
       def formatError(key: String, errorKey: String, msgArg: String = ""): FormError =
-        if (msgArg.isEmpty) FormError(key, errorKey) else FormError(key, requiredKey, Seq(msgArg))
+        if (msgArg.isEmpty) FormError(key, errorKey) else FormError(key, errorKey, Seq(msgArg))
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
         val fixedLength = 10
