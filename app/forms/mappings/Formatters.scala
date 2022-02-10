@@ -20,7 +20,6 @@ import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
-import scala.collection.immutable
 import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters extends Transforms {
