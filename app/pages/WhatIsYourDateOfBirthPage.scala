@@ -16,11 +16,9 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
 import java.time.LocalDate
-import scala.util.Try
 
 case object WhatIsYourDateOfBirthPage extends QuestionPage[LocalDate] {
 

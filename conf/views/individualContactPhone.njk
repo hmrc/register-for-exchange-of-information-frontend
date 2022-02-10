@@ -12,7 +12,8 @@
 
 {% block beforeContent %}
   {{ govukBackLink({
-    text: messages("site.back")
+    text: messages("site.back"),
+    classes: "js-enabled"
   }) }}
 {% endblock %}
 
@@ -41,6 +42,8 @@
             },
             id: "value",
             name: "value",
+            type: "tel",
+            autocomplete: "tel",
             hint: {
               html: messages('contactPhone.hint')
             },
