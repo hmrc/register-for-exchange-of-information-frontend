@@ -59,7 +59,7 @@ class AddressUKController @Inject() (
       "form"      -> form,
       "regime"    -> regime.toUpperCase,
       "action"    -> routes.AddressUKController.onSubmit(mode, regime).url,
-      "countries" -> Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> true)
+      "countries" -> Seq(Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> true))
     )
     renderer.render("addressUK.njk", data)
   }
