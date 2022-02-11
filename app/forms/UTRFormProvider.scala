@@ -26,12 +26,10 @@ import javax.inject.Inject
 
 class UTRFormProvider @Inject() extends Mappings with RegexConstants {
 
-  private val maxLength = 10
-
   def apply(msgArg: String): Form[UniqueTaxpayerReference] =
     Form(
       mapping(
-        "value" -> validatedFixedLengthText("utr.error.required", "utr.error.invalid", "utr.error.length", utrRegex, maxLength, msgArg)
+        "value" -> validatedUTR("utr.error.required", "utr.error.invalid", "utr.error.length", utrRegex, msgArg)
       )(UniqueTaxpayerReference.apply)(UniqueTaxpayerReference.unapply)
     )
 }

@@ -21,6 +21,7 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.data.{Form, FormError}
+import utils.RegexConstants
 
 object MappingsSpec {
 
@@ -41,7 +42,7 @@ object MappingsSpec {
   }
 }
 
-class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mappings {
+class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mappings with RegexConstants {
 
   import MappingsSpec._
 
@@ -164,6 +165,56 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind an empty map" in {
       val result = testForm.bind(Map.empty[String, String])
       result.errors must contain(FormError("value", "error.required"))
+    }
+  }
+
+  "validatedUTR" - {
+
+    val allowedUtrLength = 10
+
+    val testForm: Form[String] =
+      Form(
+        "value" -> validatedUTR("error.required", "error.invalid", "error.length", utrRegex)
+      )
+
+    "bind a valid utr" in {
+      val result = testForm.bind(Map("value" -> "1234567890"))
+      result.get mustEqual "1234567890"
+    }
+
+    "bind a utr with spaces" in {
+      val result = testForm.bind(Map("value" -> " 123  4567  890 "))
+      result.get mustEqual "1234567890"
+    }
+
+    "not bind an empty string" in {
+      val result = testForm.bind(Map("value" -> ""))
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "not bind an empty map" in {
+      val result = testForm.bind(Map.empty[String, String])
+      result.errors must contain(FormError("value", "error.required"))
+    }
+
+    "not bind an invalid option" in {
+      val result = testForm.bind(Map("value" -> "12345ABCDE"))
+      result.errors must contain(FormError("value", "error.invalid"))
+    }
+
+    "not bind a too long UTR" in {
+      val result = testForm.bind(Map("value" -> "123456789012345"))
+      result.errors must contain(FormError("value", "error.length"))
+    }
+
+    "not bind a too short UTR" in {
+      val result = testForm.bind(Map("value" -> "12345"))
+      result.errors must contain(FormError("value", "error.length"))
+    }
+
+    "unbind a valid value" in {
+      val result = testForm.fill("1234567890")
+      result.apply("value").value.value mustEqual "1234567890"
     }
   }
 }
