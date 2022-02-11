@@ -53,7 +53,7 @@ class IndividualAddressWithoutIdController @Inject() (
     with NunjucksSupport
     with Logging {
 
-  val countriesList: Option[Seq[Country]] = countryListFactory.countryList
+  val countriesList: Option[Seq[Country]] = countryListFactory.countryListWithoutGB
 
   private def render(mode: Mode, regime: Regime, form: Form[Address], countries: Seq[Country])(implicit
     request: DataRequest[AnyContent]
@@ -64,7 +64,7 @@ class IndividualAddressWithoutIdController @Inject() (
       "action"      -> routes.IndividualAddressWithoutIdController.onSubmit(mode, regime).url,
       "pageHeading" -> "addressWithoutId.individual.heading",
       "pageTitle"   -> "addressWithoutId.individual.title",
-      "countries"   -> countryJsonList(form.data, countries)
+      "countries"   -> countryListFactory.countryJsonList(form.data, countries)
     )
     renderer.render("addressWithoutId.njk", data)
   }
@@ -74,10 +74,8 @@ class IndividualAddressWithoutIdController @Inject() (
       implicit request =>
         countriesList match {
           case Some(countries) =>
-            val filteredCountries = countries.filter(_.code != "GB")
-
-            val form = formProvider(filteredCountries)
-            render(mode, regime, request.userAnswers.get(IndividualAddressWithoutIdPage).fold(form)(form.fill), filteredCountries)
+            val form = formProvider(countries)
+            render(mode, regime, request.userAnswers.get(IndividualAddressWithoutIdPage).fold(form)(form.fill), countries)
               .map(Ok(_))
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
@@ -90,11 +88,10 @@ class IndividualAddressWithoutIdController @Inject() (
       implicit request =>
         countriesList match {
           case Some(countries) =>
-            val filteredCountries = countries.filter(_.code != "GB")
-            formProvider(countries.filter(_.code != "GB"))
+            formProvider(countries)
               .bindFromRequest()
               .fold(
-                formWithErrors => render(mode, regime, formWithErrors, filteredCountries).map(BadRequest(_)),
+                formWithErrors => render(mode, regime, formWithErrors, countries).map(BadRequest(_)),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualAddressWithoutIdPage, value))
@@ -106,17 +103,4 @@ class IndividualAddressWithoutIdController @Inject() (
             Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
         }
     }
-
-  private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
-    def containsCountry(country: Country): Boolean =
-      value.get("country") match {
-        case Some(countrycode) => countrycode == country.code
-        case _                 => false
-      }
-    val countryJsonList = countries.map {
-      country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
-    }
-    Json.obj("value" -> "", "text" -> "&nbsp") +: countryJsonList
-  }
 }

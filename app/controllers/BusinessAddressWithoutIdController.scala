@@ -18,11 +18,10 @@ package controllers
 
 import controllers.actions._
 import forms.AddressWithoutIdFormProvider
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.requests.DataRequest
 import models.{Address, Country, Mode, Regime}
 import navigation.MDRNavigator
-import pages.{BusinessAddressWithoutIdPage, WhatAreYouRegisteringAsPage}
+import pages.BusinessAddressWithoutIdPage
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,7 +52,7 @@ class BusinessAddressWithoutIdController @Inject() (
     with NunjucksSupport
     with Logging {
 
-  val countriesList: Option[Seq[Country]] = countryListFactory.countryList
+  val countriesList: Option[Seq[Country]] = countryListFactory.countryListWithoutGB
 
   private def render(mode: Mode, regime: Regime, form: Form[Address], countries: Seq[Country])(implicit
     request: DataRequest[AnyContent]
@@ -64,7 +63,7 @@ class BusinessAddressWithoutIdController @Inject() (
       "action"      -> routes.BusinessAddressWithoutIdController.onSubmit(mode, regime).url,
       "pageHeading" -> "addressWithoutId.business.heading",
       "pageTitle"   -> "addressWithoutId.business.title",
-      "countries"   -> countryJsonList(form.data, countries)
+      "countries"   -> countryListFactory.countryJsonList(form.data, countries)
     )
     renderer.render("addressWithoutId.njk", data)
   }
@@ -74,9 +73,8 @@ class BusinessAddressWithoutIdController @Inject() (
       implicit request =>
         countriesList match {
           case Some(countries) =>
-            val filteredCountries = countries
-            val form              = formProvider(filteredCountries)
-            render(mode, regime, request.userAnswers.get(BusinessAddressWithoutIdPage).fold(form)(form.fill), filteredCountries)
+            val form = formProvider(countries)
+            render(mode, regime, request.userAnswers.get(BusinessAddressWithoutIdPage).fold(form)(form.fill), countries)
               .map(Ok(_))
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
@@ -104,17 +102,4 @@ class BusinessAddressWithoutIdController @Inject() (
             Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
         }
     }
-
-  private def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
-    def containsCountry(country: Country): Boolean =
-      value.get("country") match {
-        case Some(countryCode) => countryCode == country.code
-        case _                 => false
-      }
-    val countryJsonList = countries.map {
-      country =>
-        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
-    }
-    Json.obj("value" -> "", "text" -> "&nbsp") +: countryJsonList
-  }
 }

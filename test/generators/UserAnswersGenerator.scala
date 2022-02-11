@@ -37,7 +37,6 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(NonUkNamePage.type, JsValue)] ::
       arbitrary[(DoYouLiveInTheUKPage.type, JsValue)] ::
       arbitrary[(AddressUKPage.type, JsValue)] ::
-      arbitrary[(SoleDateOfBirthPage.type, JsValue)] ::
       arbitrary[(SoleNamePage.type, JsValue)] ::
       arbitrary[(AddressUKPage.type, JsValue)] ::
       arbitrary[(BusinessAddressWithoutIdPage.type, JsValue)] ::

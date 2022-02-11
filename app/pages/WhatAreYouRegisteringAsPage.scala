@@ -44,7 +44,6 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
     UTRPage,
     BusinessNamePage,
     SoleNamePage,
-    SoleDateOfBirthPage,
     IsThisYourBusinessPage,
     BusinessWithoutIDNamePage,
     BusinessHaveDifferentNamePage,

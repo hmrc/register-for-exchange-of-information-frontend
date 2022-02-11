@@ -19,7 +19,7 @@ package utils
 import config.FrontendAppConfig
 import models.Country
 import play.api.Environment
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 
 import javax.inject.{Inject, Singleton}
 
@@ -40,5 +40,24 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
     _.filter(
       (p: Country) => p.code == code
     ).head.description
+  }
+
+  lazy val countryListWithoutGB: Option[Seq[Country]] = countryList.map {
+    _.filter(
+      x => x.code != "GB"
+    )
+  }
+
+  def countryJsonList(value: Map[String, String], countries: Seq[Country]): Seq[JsObject] = {
+    def containsCountry(country: Country): Boolean =
+      value.get("country") match {
+        case Some(countryCode) => countryCode == country.code
+        case _                 => false
+      }
+    val countryJsonList = countries.map {
+      country =>
+        Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
+    }
+    Json.obj("value" -> "", "text" -> "&nbsp") +: countryJsonList
   }
 }

@@ -28,7 +28,6 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
     UTRPage,
     BusinessNamePage,
     SoleNamePage,
-    SoleDateOfBirthPage,
     IsThisYourBusinessPage,
     AddressLookupPage,
     AddressUKPage,

@@ -44,6 +44,25 @@ class CountryListFactorySpec extends SpecBase {
       factory.countryList mustBe Some(Seq(Country("valid", "XX", "Somewhere")))
     }
 
+    "return option of country sequence without GB when given a valid json file" in {
+
+      val conf: FrontendAppConfig = mock[FrontendAppConfig]
+      val env                     = mock[Environment]
+
+      val countries = Json.arr(Json.obj("state" -> "valid", "code" -> "ZW", "description" -> "Zimbabwe"),
+                               Json.obj("state" -> "valid", "code" -> "GB", "description" -> "Great Britain")
+      )
+
+      when(conf.countryCodeJson).thenReturn("countries.json")
+
+      val is = new ByteArrayInputStream(countries.toString.getBytes)
+      when(env.resourceAsStream(any())).thenReturn(Some(is))
+
+      val factory = sut(env, conf)
+
+      factory.countryListWithoutGB mustBe Some(Seq(Country("valid", "ZW", "Zimbabwe")))
+    }
+
     "return None when country list cannot be loaded from environment" in {
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
       val env                     = mock[Environment]

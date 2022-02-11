@@ -95,14 +95,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitrarySoleDateOfBirthUserAnswersEntry: Arbitrary[(pages.SoleDateOfBirthPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[pages.SoleDateOfBirthPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
-      } yield (page, value)
-    }
-
   implicit lazy val arbitrarySoleNameUserAnswersEntry: Arbitrary[(pages.SoleNamePage.type, JsValue)] =
     Arbitrary {
       for {

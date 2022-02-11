@@ -103,9 +103,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .set(SoleNamePage, Name("firstName", "lastName"))
             .success
             .value
-            .set(SoleDateOfBirthPage, LocalDate.now())
-            .success
-            .value
             .set(IsThisYourBusinessPage, true)
             .success
             .value
@@ -128,7 +125,6 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
           result.get(UTRPage) must not be defined
           result.get(BusinessNamePage) must not be defined
           result.get(SoleNamePage) must not be defined
-          result.get(SoleDateOfBirthPage) must not be defined
           result.get(IsThisYourBusinessPage) must not be defined
           result.get(BusinessWithoutIDNamePage) must not be defined
           result.get(BusinessHaveDifferentNamePage) must not be defined

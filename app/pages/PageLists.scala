@@ -26,7 +26,7 @@ object PageLists {
     (ua: Try[UserAnswers], page: QuestionPage[_]) => ua.flatMap(_.remove(page))
 
   val businessWithIDPages =
-    List(UTRPage, BusinessNamePage, SoleNamePage, SoleDateOfBirthPage, IsThisYourBusinessPage)
+    List(UTRPage, BusinessNamePage, SoleNamePage, IsThisYourBusinessPage)
 
   val businessWithOutIDPages = List(
     BusinessWithoutIDNamePage,
