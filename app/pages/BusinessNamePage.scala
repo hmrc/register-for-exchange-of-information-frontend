@@ -28,4 +28,8 @@ case object BusinessNamePage extends QuestionPage[String] {
 
   override def toString: String = "businessName"
 
+  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] = value match {
+    case Some(_) => userAnswers.remove(SoleNamePage)
+    case _       => super.cleanup(value, userAnswers)
+  }
 }

@@ -44,7 +44,6 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
   )
 
   private val individualPages = List(
-    BusinessTypePage,
     WhatAreYouRegisteringAsPage,
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,

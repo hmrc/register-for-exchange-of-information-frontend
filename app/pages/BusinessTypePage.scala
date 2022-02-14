@@ -25,9 +25,6 @@ import scala.util.Try
 case object BusinessTypePage extends QuestionPage[BusinessType] {
 
   private val otherBusinessTypePages = List(
-    UTRPage,
-    BusinessNamePage,
-    SoleNamePage,
     IsThisYourBusinessPage,
     ContactNamePage,
     ContactEmailPage,
@@ -45,9 +42,6 @@ case object BusinessTypePage extends QuestionPage[BusinessType] {
   )
 
   private val soleTraderPages = List(
-    UTRPage,
-    BusinessNamePage,
-    SoleNamePage,
     IsThisYourBusinessPage,
     RegistrationInfoPage,
     IndividualContactEmailPage,
