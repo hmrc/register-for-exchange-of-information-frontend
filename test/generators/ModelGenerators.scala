@@ -118,26 +118,17 @@ trait ModelGenerators {
     } yield IndividualDetails(firstName, middleName, lastName)
   }
 
-  implicit lazy val arbitraryContactInformation: Arbitrary[ContactInformation] = Arbitrary {
-    Gen.oneOf[ContactInformation](arbitrary[OrganisationDetails], arbitrary[IndividualDetails])
+  implicit lazy val arbitraryContactInformation: Arbitrary[ContactType] = Arbitrary {
+    Gen.oneOf[ContactType](arbitrary[OrganisationDetails], arbitrary[IndividualDetails])
   }
 
-  implicit val arbitraryPrimaryContact: Arbitrary[PrimaryContact] = Arbitrary {
+  implicit val arbitraryPrimaryContact: Arbitrary[ContactInformation] = Arbitrary {
     for {
-      contactInformation <- arbitrary[ContactInformation]
+      contactInformation <- arbitrary[ContactType]
       email              <- arbitrary[String]
       phone              <- Gen.option(arbitrary[String])
       mobile             <- Gen.option(arbitrary[String])
-    } yield PrimaryContact(contactInformation, email, phone, mobile)
-  }
-
-  implicit val arbitrarySecondaryContact: Arbitrary[SecondaryContact] = Arbitrary {
-    for {
-      contactInformation <- arbitrary[ContactInformation]
-      email              <- arbitrary[String]
-      phone              <- Gen.option(arbitrary[String])
-      mobile             <- Gen.option(arbitrary[String])
-    } yield SecondaryContact(contactInformation, email, phone, mobile)
+    } yield ContactInformation(contactInformation, email, phone, mobile)
   }
 
   implicit val arbitraryCreateRequestDetail: Arbitrary[CreateRequestDetail] = Arbitrary {
@@ -146,8 +137,8 @@ trait ModelGenerators {
       idNumber         <- arbitrary[String]
       tradingName      <- Gen.option(arbitrary[String])
       isGBUser         <- arbitrary[Boolean]
-      primaryContact   <- arbitrary[PrimaryContact]
-      secondaryContact <- Gen.option(arbitrary[SecondaryContact])
+      primaryContact   <- arbitrary[ContactInformation]
+      secondaryContact <- Gen.option(arbitrary[ContactInformation])
     } yield CreateRequestDetail(idType, idNumber, tradingName, isGBUser, primaryContact, secondaryContact)
   }
 

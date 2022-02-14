@@ -97,7 +97,7 @@ trait PageBehaviours extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
           page        <- genP
           savedValue  <- arbitrary[A]
           userAnswers <- arbitrary[UserAnswers]
-        } yield (page, userAnswers.setOrCleanup(page, savedValue, false).success.value)
+        } yield (page, userAnswers.set(page, savedValue).success.value)
 
         forAll(gen) {
           case (page, userAnswers) =>

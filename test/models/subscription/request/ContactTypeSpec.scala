@@ -18,8 +18,8 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
+import models.BusinessType.LimitedCompany
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
-import models.error.ApiError.MandatoryInformationMissingError
 import models.{BusinessType, Name, NonUkName, UserAnswers}
 import org.scalatest.EitherValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -27,7 +27,7 @@ import pages._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Nino
 
-class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with EitherValues {
+class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyChecks with EitherValues {
 
   "ContactInformation" - {
     "must serialise and de-serialise PrimaryContact" in {
@@ -35,17 +35,17 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         Json.parse("""
           |{"organisation":{"organisationName":"name"},"email":"test@t.com"}""".stripMargin)
 
-      val primaryContact = PrimaryContact(OrganisationDetails("name"), "test@t.com", None, None)
+      val primaryContact = ContactInformation(OrganisationDetails("name"), "test@t.com", None, None)
       Json.toJson(primaryContact) mustBe json
-      json.as[PrimaryContact] mustBe primaryContact
+      json.as[ContactInformation] mustBe primaryContact
     }
 
     "must serialise and de-serialise SecondaryContact" in {
       val json: JsValue = Json.parse("""{"individual":{"firstName":"name","lastName":"last"},"email":"test@t.com"}""".stripMargin)
 
-      val secondaryContact = SecondaryContact(IndividualDetails("name", None, "last"), "test@t.com", None, None)
+      val secondaryContact = ContactInformation(IndividualDetails("name", None, "last"), "test@t.com", None, None)
       Json.toJson(secondaryContact) mustBe json
-      json.as[SecondaryContact] mustBe secondaryContact
+      json.as[ContactInformation] mustBe secondaryContact
     }
 
     "must return PrimaryContact for the input 'Business with/without Id UserAnswers' " in {
@@ -60,7 +60,7 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .success
         .value
 
-      PrimaryContact.convertTo(userAnswers).value mustBe PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None)
+      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None)
     }
 
     "must return PrimaryContact for the input 'Individual with Id UserAnswers' " in {
@@ -77,14 +77,14 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .set(WhatIsYourNamePage, Name("Name", "Name"))
         .success
         .value
-        .set(ContactEmailPage, "test@test.com")
+        .set(IndividualContactEmailPage, "test@test.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
-      PrimaryContact.convertTo(userAnswers).value mustBe PrimaryContact(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
+      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
     }
 
     "must return PrimaryContact for the input 'Individual without Id UserAnswers' " in {
@@ -98,14 +98,14 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .set(NonUkNamePage, NonUkName("Name", "Name"))
         .success
         .value
-        .set(ContactEmailPage, "test@test.com")
+        .set(IndividualContactEmailPage, "test@test.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
-      PrimaryContact.convertTo(userAnswers).value mustBe PrimaryContact(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
+      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
     }
 
     "must return PrimaryContact for the input 'UserAnswers with BusinessType as Sole trader'" in {
@@ -119,14 +119,14 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .set(SoleNamePage, Name("Name", "Name"))
         .success
         .value
-        .set(ContactEmailPage, "test@test.com")
+        .set(IndividualContactEmailPage, "test@test.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
-      PrimaryContact.convertTo(userAnswers).value mustBe PrimaryContact(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
+      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
     }
 
     "must return SecondaryContact for the input 'Business with/without Id UserAnswers' " in {
@@ -147,8 +147,8 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .success
         .value
 
-      val expectedValue = SecondaryContact(OrganisationDetails("Name Name"), "test@test.com", Some("11222244"), None)
-      SecondaryContact.convertTo(userAnswers).value.value mustBe expectedValue
+      val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", Some("11222244"), None)
+      ContactInformation.convertToSecondary(userAnswers).value mustBe expectedValue
     }
 
     "must return SecondaryContact for the input 'Business with/without Id UserAnswers' when SndConHavePhonePage is false" in {
@@ -166,23 +166,8 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .success
         .value
 
-      val expectedValue = SecondaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None)
-      SecondaryContact.convertTo(userAnswers).value.value mustBe expectedValue
-    }
-
-    "must return None for the input 'Business with/without Id UserAnswers' when SecondContactPage is false " in {
-      val userAnswers = UserAnswers("id")
-        .set(SecondContactPage, false)
-        .success
-        .value
-        .set(SndContactEmailPage, "test@test.com")
-        .success
-        .value
-        .set(SndContactNamePage, "Name Name")
-        .success
-        .value
-
-      SecondaryContact.convertTo(userAnswers).value mustBe None
+      val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None)
+      ContactInformation.convertToSecondary(userAnswers).value mustBe expectedValue
     }
 
     "must return None when SecondContactPage is true and SndConHavePhonePage is true and SndContactPhonePage is empty" in {
@@ -199,8 +184,12 @@ class ContactInformationSpec extends SpecBase with Generators with ScalaCheckPro
         .set(SndConHavePhonePage, true)
         .success
         .value
+        .set(SndContactPhonePage, "07540000000")
+        .success
+        .value
 
-      SecondaryContact.convertTo(userAnswers).left.value mustBe MandatoryInformationMissingError()
+      val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", Some("07540000000"), None)
+      ContactInformation.convertToSecondary(userAnswers).value mustBe expectedValue
     }
   }
 }

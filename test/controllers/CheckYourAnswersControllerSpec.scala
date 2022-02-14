@@ -91,6 +91,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
           .set(ContactNamePage, firstContactName)
           .success
           .value
@@ -128,6 +131,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
           .set(ContactNamePage, firstContactName)
           .success
           .value
@@ -162,6 +168,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
           .set(ContactNamePage, firstContactName)
           .success
           .value

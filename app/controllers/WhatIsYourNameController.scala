@@ -74,7 +74,7 @@ class WhatIsYourNameController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourNamePage, value, true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, regime, updatedAnswers))
           )

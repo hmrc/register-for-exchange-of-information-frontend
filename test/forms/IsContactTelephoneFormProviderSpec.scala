@@ -24,20 +24,20 @@ class IsContactTelephoneFormProviderSpec extends BooleanFieldBehaviours {
   val requiredKey = "isContactTelephone.error.required.business"
   val invalidKey  = "error.boolean"
 
-  val form = new IsContactTelephoneFormProvider()("business")
+  val form = new IsContactTelephoneFormProvider()
 
   ".value" - {
 
     val fieldName = "value"
 
     behave like booleanField(
-      form,
+      form(),
       fieldName,
       invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
-      form,
+      form(),
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )

@@ -46,21 +46,19 @@ class ContactPhoneController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with UserAnswersHelper {
+    with NunjucksSupport {
 
   private val form = formProvider()
 
   private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
 
-    val suffix = isBusinessOrIndividual()
-    val name   = request.userAnswers.get(ContactNamePage)
+    val name = request.userAnswers.get(ContactNamePage)
     Json.obj(
       "form"      -> form,
       "regime"    -> regime.toUpperCase,
       "name"      -> name,
-      "pageTitle" -> s"contactPhone.title.$suffix",
-      "heading"   -> s"contactPhone.heading.$suffix",
+      "pageTitle" -> "contactPhone.title.business",
+      "heading"   -> "contactPhone.heading.business",
       "hintText"  -> hintWithNoBreakSpaces(),
       "action"    -> routes.ContactPhoneController.onSubmit(mode, regime).url
     )

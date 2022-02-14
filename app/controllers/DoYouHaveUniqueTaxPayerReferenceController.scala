@@ -44,7 +44,6 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   navigator: MDRNavigator,
   standardActionSets: StandardActionSets,
   formProvider: DoYouHaveUniqueTaxPayerReferenceFormProvider,
-  matchingService: BusinessMatchingWithIdService,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -81,7 +80,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(DoYouHaveUniqueTaxPayerReferencePage, value, true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, regime, updatedAnswers))
           )

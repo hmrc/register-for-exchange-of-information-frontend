@@ -23,7 +23,7 @@ import play.api.data.Form
 import java.time.LocalDate
 import javax.inject.Inject
 
-class WhatIsYourDateOfBirthFormProvider @Inject() extends Mappings {
+class DateOfBirthFormProvider @Inject() extends Mappings {
 
   def apply(): Form[LocalDate] =
     Form(

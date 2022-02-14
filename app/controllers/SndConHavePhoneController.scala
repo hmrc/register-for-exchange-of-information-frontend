@@ -80,7 +80,7 @@ class SndConHavePhoneController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(SndConHavePhonePage, value, checkPreviousUserAnswer = true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SndConHavePhonePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(SndConHavePhonePage, mode, regime, updatedAnswers))
           )

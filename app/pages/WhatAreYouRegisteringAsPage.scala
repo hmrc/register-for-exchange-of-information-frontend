@@ -34,12 +34,41 @@ package pages
 
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models.{UserAnswers, WhatAreYouRegisteringAs}
-import pages.PageLists._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
 
 case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteringAs] {
+
+  private val businessPages = List(
+    UTRPage,
+    BusinessNamePage,
+    SoleNamePage,
+    IsThisYourBusinessPage,
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage,
+    BusinessAddressWithoutIdPage,
+    AddressLookupPage,
+    AddressUKPage
+  )
+
+  private val individualPages = List(
+    WhatIsYourNationalInsuranceNumberPage,
+    WhatIsYourNamePage,
+    WhatIsYourDateOfBirthPage,
+    DateOfBirthWithoutIdPage,
+    DoYouHaveNINPage,
+    NonUkNamePage,
+    DoYouLiveInTheUKPage,
+    WhatIsYourPostcodePage,
+    IndividualAddressWithoutIdPage,
+    AddressLookupPage,
+    AddressUKPage,
+    SelectAddressPage,
+    SelectedAddressLookupPage,
+    RegistrationInfoPage
+  )
 
   override def path: JsPath = JsPath \ toString
 
@@ -47,13 +76,11 @@ case object WhatAreYouRegisteringAsPage extends QuestionPage[WhatAreYouRegisteri
 
   override def cleanup(value: Option[WhatAreYouRegisteringAs], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(RegistrationTypeBusiness) =>
-        (businessWithIDPages ++ individualWithIDPages ++ individualWithOutIDPages ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
 
-      case Some(RegistrationTypeIndividual) =>
-        (businessWithIDPages ++ businessWithOutIDPages ++ allContactDetailPages).foldLeft(Try(userAnswers))(PageLists.removePage)
+      case Some(RegistrationTypeBusiness) => individualPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+
+      case Some(RegistrationTypeIndividual) => businessPages.foldLeft(Try(userAnswers))(PageLists.removePage)
 
       case _ => super.cleanup(value, userAnswers)
     }
-
 }

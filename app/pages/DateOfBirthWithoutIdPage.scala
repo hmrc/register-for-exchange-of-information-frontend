@@ -16,12 +16,14 @@
 
 package pages
 
-import models.Address
 import play.api.libs.json.JsPath
 
-case object AddressWithoutIdPage extends QuestionPage[Address] {
+import java.time.LocalDate
+
+case object DateOfBirthWithoutIdPage extends QuestionPage[LocalDate] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "addressWithoutId"
+  override def toString: String = "DateOfBirthWithoutId"
+
 }

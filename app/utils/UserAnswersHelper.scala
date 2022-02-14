@@ -16,16 +16,16 @@
 
 package utils
 
-import models.requests.DataRequest
-import pages.ContactNamePage
-import play.api.mvc.AnyContent
+import models.BusinessType.Sole
+import models.UserAnswers
+import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
+import pages.{BusinessTypePage, WhatAreYouRegisteringAsPage}
 
 trait UserAnswersHelper {
 
-  def isBusinessOrIndividual()(implicit request: DataRequest[AnyContent]): String =
-    request.userAnswers.get(ContactNamePage) match {
-      case Some(_) => "business"
-      case _       => "individual"
-
+  def isRegisteringAsBusiness(ua: UserAnswers): Boolean =
+    ua.get(WhatAreYouRegisteringAsPage).orElse(ua.get(BusinessTypePage)) match {
+      case Some(RegistrationTypeIndividual) | Some(Sole) => false
+      case _                                             => true
     }
 }

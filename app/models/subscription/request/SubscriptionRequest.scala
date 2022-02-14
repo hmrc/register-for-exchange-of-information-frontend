@@ -30,5 +30,4 @@ object SubscriptionRequest {
       requestDetails =>
         SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon(regime), requestDetails)
     }
-
 }

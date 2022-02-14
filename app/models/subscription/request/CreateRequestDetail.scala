@@ -16,67 +16,41 @@
 
 package models.subscription.request
 
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.UserAnswers
 import models.matching.SafeId
-import models.{BusinessType, UserAnswers}
 import pages._
 import play.api.libs.json.{Json, OFormat}
+import utils.UserAnswersHelper
 
 case class CreateRequestDetail(IDType: String,
                                IDNumber: String,
                                tradingName: Option[String],
                                isGBUser: Boolean,
-                               primaryContact: PrimaryContact,
-                               secondaryContact: Option[SecondaryContact]
+                               primaryContact: ContactInformation,
+                               secondaryContact: Option[ContactInformation]
 )
 
-object CreateRequestDetail {
+object CreateRequestDetail extends UserAnswersHelper {
 
   implicit val format: OFormat[CreateRequestDetail] = Json.format[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
-
-    val individualOrSoleTrader = {
-      (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
-        case (Some(RegistrationTypeIndividual), _) => true
-        case (_, Some(BusinessType.Sole))          => true
-        case _                                     => false
-      }
-    }
-    val secondContact = if (individualOrSoleTrader) { Right(None) }
-    else { SecondaryContact.convertTo(userAnswers) }
-
-    secondContact match {
-      case Right(secondContact) =>
-        for {
-          primaryContact <- PrimaryContact.convertTo(userAnswers)
-        } yield CreateRequestDetail(
-          IDType = idType,
-          IDNumber = safeId.value,
-          tradingName = userAnswers.get(WhatIsTradingNamePage),
-          isGBUser = isGBUser(userAnswers),
-          primaryContact = primaryContact,
-          secondaryContact = secondContact
-        )
-      case _ => None
-    }
-  }
+  def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] =
+    for {
+      primaryContact <- ContactInformation.convertToPrimary(userAnswers)
+    } yield CreateRequestDetail(
+      IDType = idType,
+      IDNumber = safeId.value,
+      tradingName = userAnswers.get(WhatIsTradingNamePage),
+      isGBUser = isGBUser(userAnswers),
+      primaryContact = primaryContact,
+      secondaryContact = ContactInformation.convertToSecondary(userAnswers)
+    )
 
   private def isGBUser(userAnswers: UserAnswers): Boolean =
-    userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {
-      case Some(true) => true
-      case _ =>
-        userAnswers.get(WhatAreYouRegisteringAsPage) match {
-          case Some(RegistrationTypeIndividual) =>
-            userAnswers.get(DoYouHaveNINPage) match {
-              case Some(true) => true
-              case _ =>
-                userAnswers.get(DoYouLiveInTheUKPage).contains(true)
-            }
-          case Some(RegistrationTypeBusiness) =>
-            userAnswers.get(AddressWithoutIdPage).exists(_.isGB)
-          case _ => false
-        }
+    if (userAnswers.get(BusinessAddressWithoutIdPage).exists(_.isOtherCountry) || userAnswers.get(IndividualAddressWithoutIdPage).exists(_.isOtherCountry)) {
+      false
+    } else {
+      true
     }
 }

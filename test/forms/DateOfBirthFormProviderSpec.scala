@@ -21,9 +21,9 @@ import play.api.data.Form
 
 import java.time.{LocalDate, ZoneOffset}
 
-class WhatIsYourDateOfBirthFormProviderSpec extends DateBehaviours {
+class DateOfBirthFormProviderSpec extends DateBehaviours {
 
-  val form = new WhatIsYourDateOfBirthFormProvider()()
+  val form = new DateOfBirthFormProvider()()
 
   ".value" - {
 

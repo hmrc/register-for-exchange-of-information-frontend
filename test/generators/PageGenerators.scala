@@ -20,6 +20,15 @@ import org.scalacheck.Arbitrary
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryIndividualContactPhonePage: Arbitrary[pages.IndividualContactPhonePage.type] =
+    Arbitrary(pages.IndividualContactPhonePage)
+
+  implicit lazy val arbitraryIndividualHaveContactTelephonePage: Arbitrary[pages.IndividualHaveContactTelephonePage.type] =
+    Arbitrary(pages.IndividualHaveContactTelephonePage)
+
+  implicit lazy val arbitraryIndividualContactEmailPage: Arbitrary[pages.IndividualContactEmailPage.type] =
+    Arbitrary(pages.IndividualContactEmailPage)
+
   implicit lazy val arbitraryWhatIsTradingNamePage: Arbitrary[pages.WhatIsTradingNamePage.type] =
     Arbitrary(pages.WhatIsTradingNamePage)
 
@@ -38,17 +47,14 @@ trait PageGenerators {
   implicit lazy val arbitraryDoYouLiveInTheUKPage: Arbitrary[pages.DoYouLiveInTheUKPage.type] =
     Arbitrary(pages.DoYouLiveInTheUKPage)
 
-  implicit lazy val arbitrarySoleDateOfBirthPage: Arbitrary[pages.SoleDateOfBirthPage.type] =
-    Arbitrary(pages.SoleDateOfBirthPage)
-
   implicit lazy val arbitrarySoleNamePage: Arbitrary[pages.SoleNamePage.type] =
     Arbitrary(pages.SoleNamePage)
 
   implicit lazy val arbitraryAddressUKPage: Arbitrary[pages.AddressUKPage.type] =
     Arbitrary(pages.AddressUKPage)
 
-  implicit lazy val arbitraryAddressWithoutIdPage: Arbitrary[pages.AddressWithoutIdPage.type] =
-    Arbitrary(pages.AddressWithoutIdPage)
+  implicit lazy val arbitraryAddressWithoutIdPage: Arbitrary[pages.BusinessAddressWithoutIdPage.type] =
+    Arbitrary(pages.BusinessAddressWithoutIdPage)
 
   implicit lazy val arbitraryWhatIsYourDateOfBirthPage: Arbitrary[pages.WhatIsYourDateOfBirthPage.type] =
     Arbitrary(pages.WhatIsYourDateOfBirthPage)

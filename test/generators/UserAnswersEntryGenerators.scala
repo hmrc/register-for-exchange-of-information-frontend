@@ -23,6 +23,30 @@ import uk.gov.hmrc.domain.Nino
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryIndividualContactPhoneUserAnswersEntry: Arbitrary[(pages.IndividualContactPhonePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.IndividualContactPhonePage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIndividualHaveContactTelephoneUserAnswersEntry: Arbitrary[(pages.IndividualHaveContactTelephonePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.IndividualHaveContactTelephonePage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryIndividualContactEmailUserAnswersEntry: Arbitrary[(pages.IndividualContactEmailPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.IndividualContactEmailPage.type]
+        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryWhatIsTradingNameUserAnswersEntry: Arbitrary[(pages.WhatIsTradingNamePage.type, JsValue)] =
     Arbitrary {
       for {
@@ -71,14 +95,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitrarySoleDateOfBirthUserAnswersEntry: Arbitrary[(pages.SoleDateOfBirthPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[pages.SoleDateOfBirthPage.type]
-        value <- arbitrary[String].suchThat(_.nonEmpty).map(Json.toJson(_))
-      } yield (page, value)
-    }
-
   implicit lazy val arbitrarySoleNameUserAnswersEntry: Arbitrary[(pages.SoleNamePage.type, JsValue)] =
     Arbitrary {
       for {
@@ -95,10 +111,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryAddressWithoutIdUserAnswersEntry: Arbitrary[(pages.AddressWithoutIdPage.type, JsValue)] =
+  implicit lazy val arbitraryAddressWithoutIdUserAnswersEntry: Arbitrary[(pages.BusinessAddressWithoutIdPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[pages.AddressWithoutIdPage.type]
+        page  <- arbitrary[pages.BusinessAddressWithoutIdPage.type]
         value <- arbitrary[models.Address].map(Json.toJson(_))
       } yield (page, value)
     }

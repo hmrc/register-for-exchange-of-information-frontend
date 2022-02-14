@@ -128,7 +128,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def addressWithoutIdIndividual: Option[Row] = userAnswers.get(pages.AddressWithoutIdPage) map {
+  def individualAddressWithoutID: Option[Row] = userAnswers.get(pages.IndividualAddressWithoutIdPage) map {
     answer =>
       toRow(
         msgKey = "addressWithoutId.individual",
@@ -137,12 +137,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       )
   }
 
-  def addressWithoutIdBusiness: Option[Row] = userAnswers.get(pages.AddressWithoutIdPage) map {
+  def businessAddressWithoutID: Option[Row] = userAnswers.get(pages.BusinessAddressWithoutIdPage) map {
     answer =>
       toRow(
         msgKey = "addressWithoutId.business",
         value = formatAddress(answer),
-        href = routes.AddressWithoutIdController.onPageLoad(CheckMode, regime).url
+        href = routes.BusinessAddressWithoutIdController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -170,6 +170,15 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
         msgKey = "whatIsYourDateOfBirth",
         value = lit"${answer.format(dateFormatter)}",
         href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime).url
+      )
+  }
+
+  def dateOfBirthWithoutId: Option[Row] = userAnswers.get(pages.DateOfBirthWithoutIdPage) map {
+    answer =>
+      toRow(
+        msgKey = "whatIsYourDateOfBirth",
+        value = lit"${answer.format(dateFormatter)}",
+        href = routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode, regime).url
       )
   }
 
@@ -340,4 +349,28 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
         href = routes.ContactEmailController.onPageLoad(CheckMode, regime).url
       )
   }
+
+  def individualContactEmail: Option[Row] = userAnswers.get(pages.IndividualContactEmailPage) map {
+    answer =>
+      toRow(
+        msgKey = "contactEmail",
+        value = lit"$answer",
+        href = routes.IndividualContactEmailController.onPageLoad(CheckMode, regime).url
+      )
+  }
+
+  def individualContactPhone: Option[Row] = {
+    val numberOrNot = userAnswers.get(pages.IndividualContactPhonePage) match {
+      case Some(answer) => answer
+      case _            => "None"
+    }
+    Some(
+      toRow(
+        msgKey = "contactPhone",
+        value = lit"$numberOrNot",
+        href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode, regime).url
+      )
+    )
+  }
+
 }

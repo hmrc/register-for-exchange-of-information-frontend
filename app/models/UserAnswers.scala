@@ -54,31 +54,6 @@ final case class UserAnswers(
     }
   }
 
-  def setOrCleanup[A](page: QuestionPage[A], value: A, checkPreviousUserAnswer: Boolean = false)(implicit
-    writes: Writes[A],
-    reads: Reads[A]
-  ): Try[UserAnswers] = {
-
-    val originalValue: Option[A] = if (checkPreviousUserAnswer) get(page) else None
-    val updatedData = data.setObject(page.path, Json.toJson(value)) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(errors) =>
-        Failure(JsResultException(errors))
-    }
-
-    updatedData.flatMap {
-      d =>
-        // We only clear down answers when an answer changes
-        if (originalValue.contains(value)) {
-          Try(copy(data = d))
-        } else {
-          val updatedAnswers = copy(data = d)
-          page.cleanup(Some(value), updatedAnswers)
-        }
-    }
-  }
-
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.removeObject(page.path) match {

@@ -27,15 +27,24 @@ case object DoYouLiveInTheUKPage extends QuestionPage[Boolean] {
 
   override def toString: String = "doYouLiveInTheUK"
 
-  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    value match {
-      case Some(true) =>
-        List(AddressWithoutIdPage).foldLeft(Try(userAnswers))(PageLists.removePage)
-      case Some(false) =>
-        List(AddressUKPage, AddressLookupPage, SelectAddressPage, SelectedAddressLookupPage, WhatIsYourPostcodePage)
-          .foldLeft(Try(userAnswers))(PageLists.removePage)
-      case _ =>
-        super.cleanup(value, userAnswers)
-    }
+  override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = value match {
+
+    case Some(true) =>
+      List(
+        IndividualAddressWithoutIdPage
+      ).foldLeft(Try(userAnswers))(PageLists.removePage)
+
+    case Some(false) =>
+      List(
+        WhatIsYourPostcodePage,
+        SelectAddressPage,
+        AddressUKPage,
+        SelectedAddressLookupPage,
+        AddressLookupPage
+      ).foldLeft(Try(userAnswers))(PageLists.removePage)
+
+    case _ => super.cleanup(value, userAnswers)
+
+  }
 
 }

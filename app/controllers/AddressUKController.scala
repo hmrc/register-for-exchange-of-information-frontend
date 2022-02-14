@@ -59,7 +59,7 @@ class AddressUKController @Inject() (
       "form"      -> form,
       "regime"    -> regime.toUpperCase,
       "action"    -> routes.AddressUKController.onSubmit(mode, regime).url,
-      "countries" -> countryJsonList
+      "countries" -> Seq(Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> true))
     )
     renderer.render("addressUK.njk", data)
   }
@@ -97,8 +97,4 @@ class AddressUKController @Inject() (
             Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
         }
     }
-
-  private def countryJsonList: Seq[JsObject] = Seq(
-    Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> true)
-  )
 }

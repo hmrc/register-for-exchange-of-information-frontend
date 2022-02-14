@@ -16,11 +16,9 @@
 
 package pages
 
-import models.UserAnswers
 import play.api.libs.json.JsPath
 
 import java.time.LocalDate
-import scala.util.Try
 
 case object WhatIsYourDateOfBirthPage extends QuestionPage[LocalDate] {
 
@@ -28,7 +26,4 @@ case object WhatIsYourDateOfBirthPage extends QuestionPage[LocalDate] {
 
   override def toString: String = "whatIsYourDateOfBirth"
 
-  override def cleanup(value: Option[LocalDate], userAnswers: UserAnswers): Try[UserAnswers] =
-    List(DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage, RegistrationInfoPage)
-      .foldLeft(Try(userAnswers))(PageLists.removePage)
 }

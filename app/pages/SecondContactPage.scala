@@ -30,7 +30,7 @@ case object SecondContactPage extends QuestionPage[Boolean] {
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(false) =>
-        PageLists.secondContactDetailsPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+        List(SndContactNamePage, SndContactEmailPage, SndConHavePhonePage, SndContactPhonePage).foldLeft(Try(userAnswers))(PageLists.removePage)
       case _ =>
         super.cleanup(value, userAnswers)
     }

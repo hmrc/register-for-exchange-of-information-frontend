@@ -28,6 +28,8 @@ case object NonUkNamePage extends QuestionPage[NonUkName] {
   override def toString: String = "nonUkName"
 
   override def cleanup(value: Option[NonUkName], userAnswers: UserAnswers): Try[UserAnswers] =
-    List(WhatIsYourDateOfBirthPage, DoYouLiveInTheUKPage, WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, AddressWithoutIdPage)
-      .foldLeft(Try(userAnswers))(PageLists.removePage)
+    value match {
+      case Some(_) => List(WhatIsYourNamePage).foldLeft(Try(userAnswers))(PageLists.removePage)
+      case _       => super.cleanup(value, userAnswers)
+    }
 }

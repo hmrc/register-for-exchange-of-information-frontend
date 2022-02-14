@@ -103,10 +103,20 @@ POST       /:regime/register/date-of-birth                       controllers.Wha
 GET        /:regime/register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 POST       /:regime/register/change-date-of-birth                controllers.WhatIsYourDateOfBirthController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 
-GET        /:regime/register/without-id/address                  controllers.AddressWithoutIdController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
-POST       /:regime/register/without-id/address                  controllers.AddressWithoutIdController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
-GET        /:regime/register/without-id/change-address           controllers.AddressWithoutIdController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
-POST       /:regime/register/without-id/change-address           controllers.AddressWithoutIdController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+GET        /:regime/register/without-id/date-of-birth                       controllers.DateOfBirthWithoutIdController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
+POST       /:regime/register/without-id/date-of-birth                       controllers.DateOfBirthWithoutIdController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
+GET        /:regime/register/without-id/change-date-of-birth                controllers.DateOfBirthWithoutIdController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+POST       /:regime/register/without-id/change-date-of-birth                controllers.DateOfBirthWithoutIdController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+
+GET        /:regime/register/without-id/business-address                  controllers.BusinessAddressWithoutIdController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
+POST       /:regime/register/without-id/business-address                  controllers.BusinessAddressWithoutIdController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
+GET        /:regime/register/without-id/change-business-address           controllers.BusinessAddressWithoutIdController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+POST       /:regime/register/without-id/change-business-address           controllers.BusinessAddressWithoutIdController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+
+GET        /:regime/register/without-id/individual-address                  controllers.IndividualAddressWithoutIdController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
+POST       /:regime/register/without-id/individual-address                  controllers.IndividualAddressWithoutIdController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
+GET        /:regime/register/without-id/change-individual-address           controllers.IndividualAddressWithoutIdController.onPageLoad(mode: models.Mode = models.CheckMode, regime:  models.Regime)
+POST       /:regime/register/without-id/change-individual-address           controllers.IndividualAddressWithoutIdController.onSubmit(mode: models.Mode = models.CheckMode, regime:  models.Regime)
 
 GET        /:regime/register/without-id/address-uk                     controllers.AddressUKController.onPageLoad(mode: models.Mode = models.NormalMode, regime:  models.Regime)
 POST       /:regime/register/without-id/address-uk                     controllers.AddressUKController.onSubmit(mode: models.Mode = models.NormalMode, regime:  models.Regime)
@@ -188,3 +198,18 @@ GET        /:regime/register/problem/organisation-with-utr-pre-registered       
 GET        /:regime/register/problem/organisation-without-utr-pre-registered                    controllers.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime: models.Regime)
 
 GET        /:regime/register/problem/individual-pre-registered                                  controllers.IndividualAlreadyRegisteredController.onPageLoad(regime: models.Regime)
+
+GET        /:regime/register/individual-email                        controllers.IndividualContactEmailController.onPageLoad(mode: models.Mode = models.NormalMode, regime: models.Regime)
+POST       /:regime/register/individual-email                        controllers.IndividualContactEmailController.onSubmit(mode: models.Mode = models.NormalMode, regime: models.Regime)
+GET        /:regime/register/change-individual-email                  controllers.IndividualContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
+POST       /:regime/register/change-individual-email                  controllers.IndividualContactEmailController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)
+
+GET        /:regime/register/individual-have-phone                        controllers.IndividualHaveContactTelephoneController.onPageLoad(mode: models.Mode = models.NormalMode, regime: models.Regime)
+POST       /:regime/register/individual-have-phone                        controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode, regime: models.Regime)
+GET        /:regime/register/change-individual-have-phone                  controllers.IndividualHaveContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
+POST       /:regime/register/change-individual-have-phone                  controllers.IndividualHaveContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)
+
+GET        /:regime/register/individual-phone                        controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.NormalMode, regime: models.Regime)
+POST       /:regime/register/individual-phone                        controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode, regime: models.Regime)
+GET        /:regime/register/change-individual-phone                  controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
+POST       /:regime/register/change-individual-phone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)

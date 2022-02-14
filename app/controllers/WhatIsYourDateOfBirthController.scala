@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import forms.WhatIsYourDateOfBirthFormProvider
+import forms.DateOfBirthFormProvider
 import models.requests.DataRequest
 import models.{Mode, Regime}
 import navigation.MDRNavigator
@@ -42,7 +42,7 @@ class WhatIsYourDateOfBirthController @Inject() (
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
   standardActionSets: StandardActionSets,
-  formProvider: WhatIsYourDateOfBirthFormProvider,
+  formProvider: DateOfBirthFormProvider,
   val controllerComponents: MessagesControllerComponents,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -59,7 +59,7 @@ class WhatIsYourDateOfBirthController @Inject() (
       "action" -> routes.WhatIsYourDateOfBirthController.onSubmit(mode, regime).url,
       "date"   -> DateInput.localDate(form("value"))
     )
-    renderer.render("whatIsYourDateOfBirth.njk", data)
+    renderer.render("dateOfBirth.njk", data)
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
@@ -77,7 +77,7 @@ class WhatIsYourDateOfBirthController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(WhatIsYourDateOfBirthPage, value, checkPreviousUserAnswer = true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourDateOfBirthPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourDateOfBirthPage, mode, regime, updatedAnswers))
           )

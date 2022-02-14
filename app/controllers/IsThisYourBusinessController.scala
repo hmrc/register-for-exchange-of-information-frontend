@@ -123,7 +123,7 @@ class IsThisYourBusinessController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, NormalMode, regime, updatedAnswers))
+            } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, mode, regime, updatedAnswers))
         )
   }
 

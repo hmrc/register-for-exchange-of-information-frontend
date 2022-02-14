@@ -17,7 +17,7 @@
 package pages
 
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.{Address, AddressLookup, Country, Name, NonUkName, UserAnswers, WhatAreYouRegisteringAs}
+import models.{Address, AddressLookup, Country, Name, NonUkName, UniqueTaxpayerReference, UserAnswers, WhatAreYouRegisteringAs}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Nino
@@ -69,6 +69,9 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .set(AddressUKPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
             .success
             .value
+            .set(IndividualAddressWithoutIdPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
+            .success
+            .value
             .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
             .success
             .value
@@ -82,6 +85,7 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
           result.get(AddressLookupPage) must not be defined
           result.get(RegistrationInfoPage) must not be defined
           result.get(AddressUKPage) must not be defined
+          result.get(IndividualAddressWithoutIdPage) must not be defined
       }
     }
 
@@ -90,6 +94,18 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
+            .set(UTRPage, UniqueTaxpayerReference("123"))
+            .success
+            .value
+            .set(BusinessNamePage, "businessName")
+            .success
+            .value
+            .set(SoleNamePage, Name("firstName", "lastName"))
+            .success
+            .value
+            .set(IsThisYourBusinessPage, true)
+            .success
+            .value
             .set(BusinessWithoutIDNamePage, "businessName")
             .success
             .value
@@ -99,18 +115,21 @@ class WhatAreYouRegisteringAsPageSpec extends PageBehaviours {
             .set(WhatIsTradingNamePage, "tradingName")
             .success
             .value
-            .set(AddressWithoutIdPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
+            .set(BusinessAddressWithoutIdPage, Address("addressLine1", None, "addressLine2", None, None, Country("", "UK", "United Kingdom")))
             .success
             .value
             .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
             .success
             .value
 
+          result.get(UTRPage) must not be defined
+          result.get(BusinessNamePage) must not be defined
+          result.get(SoleNamePage) must not be defined
+          result.get(IsThisYourBusinessPage) must not be defined
           result.get(BusinessWithoutIDNamePage) must not be defined
           result.get(BusinessHaveDifferentNamePage) must not be defined
           result.get(WhatIsTradingNamePage) must not be defined
-          result.get(WhatIsTradingNamePage) must not be defined
-          result.get(AddressWithoutIdPage) must not be defined
+          result.get(BusinessAddressWithoutIdPage) must not be defined
       }
     }
   }

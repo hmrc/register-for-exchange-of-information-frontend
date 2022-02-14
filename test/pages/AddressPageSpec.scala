@@ -23,10 +23,10 @@ class AddressPageSpec extends PageBehaviours {
 
   "AddressWithoutIdPage" - {
 
-    beRetrievable[Address](AddressWithoutIdPage)
+    beRetrievable[Address](BusinessAddressWithoutIdPage)
 
-    beSettable[Address](AddressWithoutIdPage)
+    beSettable[Address](BusinessAddressWithoutIdPage)
 
-    beRemovable[Address](AddressWithoutIdPage)
+    beRemovable[Address](BusinessAddressWithoutIdPage)
   }
 }

@@ -73,13 +73,13 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(ContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, "test@gmail.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
 
@@ -94,37 +94,6 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       val result = service.checkAndCreateSubscription(MDR, safeId, emptyUserAnswers)
       result.futureValue mustBe Right(subscriptionID)
-    }
-
-    "must return 'MandatoryInformationMissingError' when one of the mandatory answers is missing" in {
-      val subscriptionID                                      = SubscriptionID("id")
-      val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Right(subscriptionID))
-
-      when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
-      when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
-
-      val userAnswers = UserAnswers("")
-        .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-        .success
-        .value
-        .set(BusinessHaveDifferentNamePage, true)
-        .success
-        .value
-        .set(WhatIsTradingNamePage, "traderName")
-        .success
-        .value
-        .set(ContactEmailPage, "test@test.com")
-        .success
-        .value
-        .set(ContactNamePage, "Name Name")
-        .success
-        .value
-        .set(IsContactTelephonePage, true)
-        .success
-        .value
-
-      val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
-      result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
 
     "must return MandatoryInformationMissingError when UserAnswers is empty" in {

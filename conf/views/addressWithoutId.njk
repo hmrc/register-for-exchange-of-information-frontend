@@ -8,19 +8,8 @@
 {% from "govuk/components/fieldset/macro.njk"      import govukFieldset %}
 {% from "macros/title.njk"                         import title %}
 
-{% if registeringAsBusiness %}
- {% set heading1 = messages("addressWithoutId.business.heading") %}
-{% else %}
-   {% set heading1 = messages("addressWithoutId.individual.heading") %}
-{% endif %}
-
-
 {% block pageTitle %}
-   {% if registeringAsBusiness %}
-         {{ title(messages("addressWithoutId.business.title"), form.errors) }}
-   {% else %}
-      {{ title(messages("addressWithoutId.individual.title"), form.errors) }}
-   {% endif %}
+      {{ title(messages(pageTitle), form.errors) }}
 {% endblock %}
 
  {% block beforeContent %}
@@ -47,7 +36,7 @@
 
          {% call govukFieldset({
            legend: {
-             text: heading1,
+             text: messages(pageHeading),
              classes: "govuk-fieldset__legend--l",
              isPageHeading: true
            }

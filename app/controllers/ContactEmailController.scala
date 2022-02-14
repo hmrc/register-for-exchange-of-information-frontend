@@ -30,7 +30,6 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
-import utils.UserAnswersHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,24 +45,20 @@ class ContactEmailController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
-    with UserAnswersHelper {
+    with NunjucksSupport {
 
   private val form = formProvider()
 
   private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
-
-    val suffix = isBusinessOrIndividual()
-    val name   = request.userAnswers.get(ContactNamePage)
+    val name = request.userAnswers.get(ContactNamePage)
     Json.obj(
       "form"      -> request.userAnswers.get(ContactEmailPage).fold(form)(form.fill),
       "regime"    -> regime.toUpperCase,
       "name"      -> name,
-      "pageTitle" -> s"contactEmail.title.$suffix",
-      "heading"   -> s"contactEmail.heading.$suffix",
+      "pageTitle" -> "contactEmail.title.business",
+      "heading"   -> "contactEmail.heading.business",
       "action"    -> routes.ContactEmailController.onSubmit(mode, regime).url
     )
-
   }
 
   def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
@@ -89,5 +84,4 @@ class ContactEmailController @Inject() (
               } yield Redirect(navigator.nextPage(ContactEmailPage, mode, regime, updatedAnswers))
           )
     }
-
 }

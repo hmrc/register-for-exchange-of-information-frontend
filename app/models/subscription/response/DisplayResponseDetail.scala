@@ -16,14 +16,14 @@
 
 package models.subscription.response
 
-import models.subscription.request.{PrimaryContact, SecondaryContact}
+import models.subscription.request.ContactInformation
 import play.api.libs.json.{Json, OFormat}
 
 case class DisplayResponseDetail(subscriptionID: String,
                                  tradingName: Option[String],
                                  isGBUser: Boolean,
-                                 primaryContact: PrimaryContact,
-                                 secondaryContact: Option[SecondaryContact]
+                                 primaryContact: ContactInformation,
+                                 secondaryContact: Option[ContactInformation]
 )
 
 object DisplayResponseDetail {

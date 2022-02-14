@@ -16,10 +16,8 @@
 
 package pages
 
-import models.{Name, UserAnswers}
+import models.Name
 import play.api.libs.json.JsPath
-
-import scala.util.Try
 
 case object WhatIsYourNamePage extends QuestionPage[Name] {
 
@@ -27,6 +25,4 @@ case object WhatIsYourNamePage extends QuestionPage[Name] {
 
   override def toString: String = "whatIsYourName"
 
-  override def cleanup(value: Option[Name], userAnswers: UserAnswers): Try[UserAnswers] =
-    List(WhatIsYourDateOfBirthPage).foldLeft(Try(userAnswers))(PageLists.removePage)
 }

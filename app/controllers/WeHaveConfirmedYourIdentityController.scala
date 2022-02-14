@@ -21,7 +21,7 @@ import controllers.actions._
 import models.error.ApiError.NotFoundError
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
-import models.{Mode, Regime}
+import models.{Mode, Regime, UserAnswers}
 import navigation.MDRNavigator
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -77,7 +77,6 @@ class WeHaveConfirmedYourIdentityController @Inject() (
           case _ =>
             renderer.renderThereIsAProblemPage(regime)
         }
-
     }
 
   private def buildRegisterWithID(regime: Regime)(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =

@@ -75,7 +75,7 @@ class DoYouLiveInTheUKController @Inject() (
             formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.setOrCleanup(DoYouLiveInTheUKPage, value, checkPreviousUserAnswer = true))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouLiveInTheUKPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(DoYouLiveInTheUKPage, mode, regime, updatedAnswers))
           )

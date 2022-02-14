@@ -16,23 +16,12 @@
 
 package pages
 
-import org.scalacheck.Arbitrary
-import pages.behaviours.PageBehaviours
+import models.Address
+import play.api.libs.json.JsPath
 
-import java.time.LocalDate
+case object IndividualAddressWithoutIdPage extends QuestionPage[Address] {
 
-class SoleDateOfBirthPageSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ toString
 
-  "SoleDateOfBirthPage" - {
-
-    implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
-      datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
-    }
-
-    beRetrievable[LocalDate](SoleDateOfBirthPage)
-
-    beSettable[LocalDate](SoleDateOfBirthPage)
-
-    beRemovable[LocalDate](SoleDateOfBirthPage)
-  }
+  override def toString: String = "IndividualAddressWithoutId"
 }

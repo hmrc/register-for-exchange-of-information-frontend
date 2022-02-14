@@ -16,6 +16,8 @@
 
 package pages
 
+import models.{Name, UserAnswers}
+import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
 class BusinessNamePageSpec extends PageBehaviours {
@@ -27,5 +29,23 @@ class BusinessNamePageSpec extends PageBehaviours {
     beSettable[String](BusinessNamePage)
 
     beRemovable[String](BusinessNamePage)
+  }
+
+  "cleanup" - {
+
+    "must remove sole trader name when user enters a business name" in {
+      forAll(arbitrary[UserAnswers]) {
+        userAnswers =>
+          val result = userAnswers
+            .set(SoleNamePage, Name("Sole", "Trader"))
+            .success
+            .value
+            .set(BusinessNamePage, "Organisation")
+            .success
+            .value
+
+          result.get(SoleNamePage) must not be defined
+      }
+    }
   }
 }

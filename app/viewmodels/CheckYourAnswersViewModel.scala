@@ -36,7 +36,7 @@ object CheckYourAnswersViewModel {
 
     Seq(
       Section(regDetails, buildDetails(userAnswers, helper, isBusiness)),
-      Section(contactHeading, buildFirstContact(helper))
+      Section(contactHeading, buildFirstContact(helper, isBusiness))
     ) ++: secContact
   }
 
@@ -48,16 +48,16 @@ object CheckYourAnswersViewModel {
     } else {
       Seq(
         helper.doYouHaveUniqueTaxPayerReference,
-        helper.confirmBusiness,
         helper.whatAreYouRegisteringAs,
         helper.doYouHaveNIN,
         helper.nino,
         helper.whatIsYourName,
         helper.nonUkName,
         helper.whatIsYourDateOfBirth,
+        helper.dateOfBirthWithoutId,
         helper.businessWithoutIDName,
         helper.whatIsTradingName,
-        if (isBusiness) helper.addressWithoutIdBusiness else helper.addressWithoutIdIndividual,
+        if (isBusiness) helper.businessAddressWithoutID else helper.individualAddressWithoutID,
         helper.addressUK,
         helper.selectAddress
       ).flatten
@@ -71,10 +71,10 @@ object CheckYourAnswersViewModel {
       helper.sndContactPhone
     ).flatten
 
-  private def buildFirstContact(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
-    Seq(
-      helper.contactName,
-      helper.contactEmail,
-      helper.contactPhone
-    ).flatten
+  private def buildFirstContact(helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryList.Row] =
+    if (isBusiness) {
+      Seq(helper.contactName, helper.contactEmail, helper.contactPhone).flatten
+    } else {
+      Seq(helper.contactName, helper.individualContactEmail, helper.individualContactPhone).flatten
+    }
 }

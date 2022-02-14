@@ -36,7 +36,7 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, MDR).url
   lazy val submitRoute = routes.WhatIsYourDateOfBirthController.onSubmit(NormalMode, MDR).url
 
-  private def form = new forms.WhatIsYourDateOfBirthFormProvider().apply()
+  private def form = new forms.DateOfBirthFormProvider().apply()
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
@@ -78,7 +78,7 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
         "date"   -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "whatIsYourDateOfBirth.njk"
+      templateCaptor.getValue mustEqual "dateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -114,7 +114,7 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
         "date"   -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "whatIsYourDateOfBirth.njk"
+      templateCaptor.getValue mustEqual "dateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
 
@@ -155,7 +155,7 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
         "date"   -> viewModel
       )
 
-      templateCaptor.getValue mustEqual "whatIsYourDateOfBirth.njk"
+      templateCaptor.getValue mustEqual "dateOfBirth.njk"
       jsonCaptor.getValue must containJson(expectedJson)
     }
   }

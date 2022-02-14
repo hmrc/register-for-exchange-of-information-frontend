@@ -40,8 +40,8 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         "AB123456Z",
         Some("Tools for Traders Limited"),
         true,
-        PrimaryContact(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
-        Some(SecondaryContact(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None))
+        ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
+        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None))
       )
 
       val json: String =
@@ -77,7 +77,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         IDNumber = "SAFEID",
         tradingName = Some("traderName"),
         isGBUser = true,
-        primaryContact = PrimaryContact(OrganisationDetails("Name Name"), "test@test.com", None, None),
+        primaryContact = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None),
         secondaryContact = None
       )
 
@@ -147,13 +147,10 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(WhatIsYourNamePage, Name("name", "last"))
         .success
         .value
-        .set(ContactEmailPage, "hello")
+        .set(IndividualContactEmailPage, "hello")
         .success
         .value
-        .set(IsContactTelephonePage, false)
-        .success
-        .value
-        .set(SecondContactPage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
@@ -180,7 +177,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, businessAddress)
+        .set(BusinessAddressWithoutIdPage, businessAddress)
         .success
         .value
         .set(SecondContactPage, false)
@@ -210,7 +207,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IsContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, businessAddress)
+        .set(BusinessAddressWithoutIdPage, businessAddress)
         .success
         .value
         .set(SecondContactPage, false)
@@ -238,19 +235,16 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(ContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, "test@gmail.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, address)
+        .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
         .set(DoYouLiveInTheUKPage, true)
-        .success
-        .value
-        .set(SecondContactPage, false)
         .success
         .value
 
@@ -275,16 +269,13 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(ContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, "test@gmail.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
-        .set(AddressWithoutIdPage, address)
-        .success
-        .value
-        .set(SecondContactPage, false)
+        .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
 
@@ -292,31 +283,5 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
       request.isGBUser mustBe false
     }
-
-    "must create a request with the isGBUser flag set to false when criteria is missing" in {
-      val userAnswers = UserAnswers("")
-      val updatedUserAnswers = userAnswers
-        .set(ContactEmailPage, "hello")
-        .success
-        .value
-        .set(ContactNamePage, "Name Name")
-        .success
-        .value
-        .set(IsContactTelephonePage, true)
-        .success
-        .value
-        .set(ContactPhonePage, "1122334455")
-        .success
-        .value
-        .set(SecondContactPage, false)
-        .success
-        .value
-
-      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
-
-      request.isGBUser mustBe false
-    }
-
   }
-
 }

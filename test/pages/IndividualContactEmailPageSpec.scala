@@ -16,17 +16,16 @@
 
 package pages
 
-import models.BusinessType
 import pages.behaviours.PageBehaviours
 
-class BusinessTypeSpec extends PageBehaviours {
+class IndividualContactEmailPageSpec extends PageBehaviours {
 
-  "BussinessTypePage" - {
+  "IndividualContactEmailPage" - {
 
-    beRetrievable[BusinessType](BusinessTypePage)
+    beRetrievable[String](IndividualContactEmailPage)
 
-    beSettable[BusinessType](BusinessTypePage)
+    beSettable[String](IndividualContactEmailPage)
 
-    beRemovable[BusinessType](BusinessTypePage)
+    beRemovable[String](IndividualContactEmailPage)
   }
 }

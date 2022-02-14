@@ -53,7 +53,7 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
           case Some(lookup) => lookup.toAddress
           case _ =>
             request.userAnswers
-              .get(AddressWithoutIdPage) // orElse ?
+              .get(IndividualAddressWithoutIdPage) // orElse ?
               .fold(request.userAnswers.get(AddressUKPage))(Some.apply)
         }
       case _ => request.userAnswers.get(AddressUKPage)
@@ -66,19 +66,18 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
   )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (for {
       name <- buildIndividualName
-      dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
-      phoneNumber  = request.userAnswers.get(ContactPhonePage)
-      emailAddress = request.userAnswers.get(ContactEmailPage)
+      dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage).orElse(request.userAnswers.get(DateOfBirthWithoutIdPage))
+      phoneNumber  = request.userAnswers.get(IndividualContactPhonePage)
+      emailAddress = request.userAnswers.get(IndividualContactEmailPage)
       address <- buildIndividualAddress
-    } yield sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress)))
-      .getOrElse(registrationError)
+    } yield sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress))).getOrElse(registrationError)
 
   private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (for {
       organisationName <- request.userAnswers.get(BusinessWithoutIDNamePage)
       phoneNumber  = request.userAnswers.get(ContactPhonePage)
       emailAddress = request.userAnswers.get(ContactEmailPage)
-      address <- request.userAnswers.get(AddressWithoutIdPage)
+      address <- request.userAnswers.get(BusinessAddressWithoutIdPage)
     } yield sendBusinessRegistration(regime, organisationName, address, ContactDetails(phoneNumber, emailAddress)))
       .getOrElse(registrationError)
 
