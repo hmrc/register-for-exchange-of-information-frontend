@@ -22,7 +22,7 @@
   {{ hmrcHeader({
     homepageUrl: "https://www.gov.uk",
     serviceName: messages("site.service_name", regime | upper),
-    serviceUrl: "/register-for-exchange-of-information",
+    serviceUrl: routes.controllers.IndexController.onPageLoad(regime | lower).url,
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",
     signOutHref: routes.controllers.auth.AuthController.signOut(regime | lower).url
