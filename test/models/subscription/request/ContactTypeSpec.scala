@@ -18,7 +18,6 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.BusinessType.LimitedCompany
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.{BusinessType, Name, NonUkName, UserAnswers}
 import org.scalatest.EitherValues

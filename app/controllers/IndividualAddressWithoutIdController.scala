@@ -18,15 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.AddressWithoutIdFormProvider
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.requests.DataRequest
 import models.{Address, Country, Mode, Regime}
 import navigation.MDRNavigator
-import pages.{BusinessAddressWithoutIdPage, IndividualAddressWithoutIdPage, WhatAreYouRegisteringAsPage}
+import pages.IndividualAddressWithoutIdPage
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import renderer.Renderer

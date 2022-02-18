@@ -17,7 +17,6 @@
 package pages
 
 import models.UserAnswers
-import pages.PageLists._
 import play.api.libs.json.JsPath
 
 import scala.util.Try
