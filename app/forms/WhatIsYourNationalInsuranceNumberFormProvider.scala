@@ -32,6 +32,7 @@ class WhatIsYourNationalInsuranceNumberFormProvider @Inject() extends Mappings w
     Form(
       "value" -> text("whatIsYourNationalInsuranceNumber.error.required")
         .transform[String](nino => removeWhitespace(nino.toUpperCase), nino => nino)
+        .verifying(regexp(ninoFormatRegex, "whatIsYourNationalInsuranceNumber.error.format.invalid"))
         .verifying(regexp(ninoRegex, "whatIsYourNationalInsuranceNumber.error.invalid"))
         .verifying(maxLength(maxLength, "whatIsYourNationalInsuranceNumber.error.length"))
     )

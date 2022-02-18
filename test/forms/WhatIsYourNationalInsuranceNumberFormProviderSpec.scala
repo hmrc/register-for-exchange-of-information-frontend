@@ -21,10 +21,11 @@ import play.api.data.FormError
 
 class WhatIsYourNationalInsuranceNumberFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "whatIsYourNationalInsuranceNumber.error.required"
-  val invalidKey  = "whatIsYourNationalInsuranceNumber.error.invalid"
-  val lengthKey   = "whatIsYourNationalInsuranceNumber.error.length"
-  val maxLength   = 9
+  val requiredKey      = "whatIsYourNationalInsuranceNumber.error.required"
+  val invalidFormatKey = "whatIsYourNationalInsuranceNumber.error.format.invalid"
+  val invalidKey       = "whatIsYourNationalInsuranceNumber.error.invalid"
+  val lengthKey        = "whatIsYourNationalInsuranceNumber.error.length"
+  val maxLength        = 9
 
   val form = new WhatIsYourNationalInsuranceNumberFormProvider()()
 
@@ -42,8 +43,11 @@ class WhatIsYourNationalInsuranceNumberFormProviderSpec extends StringFieldBehav
       form,
       fieldName,
       maxLength = maxLength,
-      invalidError = FormError(fieldName, invalidKey, Seq(ninoRegex)),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      errors = Seq(
+        FormError(fieldName, invalidFormatKey, Seq(ninoFormatRegex)),
+        FormError(fieldName, invalidKey, Seq(ninoRegex)),
+        FormError(fieldName, lengthKey, Seq(maxLength))
+      )
     )
 
     behave like mandatoryField(
