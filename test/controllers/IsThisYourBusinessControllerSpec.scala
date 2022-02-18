@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.BusinessType.{LimitedCompany, Sole}
-import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
+import models.error.ApiError.{BadRequestError, ServiceUnavailableError}
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
 import models.{CheckMode, MDR, Name, NormalMode, SubscriptionID, UserAnswers}
