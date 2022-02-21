@@ -79,7 +79,7 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
 
   def renderThereIsAProblemPage(regime: Regime)(implicit request: Request[_], ec: ExecutionContext): Future[Result] =
     renderer
-      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries, "config" -> config))
+      .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
       .map(InternalServerError(_))
 
 }
