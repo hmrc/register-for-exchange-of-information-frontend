@@ -44,9 +44,7 @@ class WhatIsYourNationalInsuranceNumberFormProviderSpec extends StringFieldBehav
       fieldName,
       maxLength = maxLength,
       errors = Seq(
-        FormError(fieldName, invalidFormatKey, Seq(ninoFormatRegex)),
-        FormError(fieldName, invalidKey, Seq(ninoRegex)),
-        FormError(fieldName, lengthKey, Seq(maxLength))
+        FormError(fieldName, invalidFormatKey, Seq(ninoFormatRegex))
       )
     )
 
@@ -54,6 +52,13 @@ class WhatIsYourNationalInsuranceNumberFormProviderSpec extends StringFieldBehav
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+
+    behave like fieldWithInvalidData(
+      form,
+      fieldName,
+      invalidString = "QQ 12 34 56 C",
+      error = FormError(fieldName, invalidKey, Seq(ninoRegex))
     )
   }
 }

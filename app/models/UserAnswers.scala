@@ -16,7 +16,6 @@
 
 package models
 
-import pages.QuestionPage
 import play.api.libs.Files.logger
 import play.api.libs.json._
 import queries.{Gettable, Settable}
