@@ -24,7 +24,7 @@ import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.register.response.details.AddressResponse
 import models.requests.DataRequest
-import models.{BusinessType, Mode, NormalMode, Regime}
+import models.{BusinessType, Mode, Regime}
 import navigation.MDRNavigator
 import pages._
 import play.api.Logging

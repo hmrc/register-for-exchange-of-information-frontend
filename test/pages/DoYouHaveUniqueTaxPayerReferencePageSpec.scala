@@ -16,12 +16,11 @@
 
 package pages
 
-import models.BusinessType.{LimitedCompany, Sole}
+import models.BusinessType.LimitedCompany
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
-import models.{Address, AddressLookup, Country, Name, NonUkName, UniqueTaxpayerReference, UserAnswers, WhatAreYouRegisteringAs}
 import models.matching.{OrgRegistrationInfo, SafeId}
-import models.register.request.details.Organisation
 import models.register.response.details.AddressResponse
+import models.{Address, AddressLookup, Country, Name, NonUkName, UniqueTaxpayerReference, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Nino

@@ -70,7 +70,6 @@ class MDRNavigator @Inject() () extends Navigator {
     case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
     case WhatIsYourNationalInsuranceNumberPage => regime => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode, regime))
     case WhatIsYourNamePage                   => regime => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime))
-    case DateOfBirthWithoutIdPage             => whatIsYourDateOfBirthRoutes(CheckMode)
 
 
     case RegistrationInfoPage                 => regime => ua =>

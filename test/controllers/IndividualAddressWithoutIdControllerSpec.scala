@@ -21,7 +21,7 @@ import forms.AddressWithoutIdFormProvider
 import models.{Address, Country, MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{BusinessAddressWithoutIdPage, IndividualAddressWithoutIdPage}
+import pages.IndividualAddressWithoutIdPage
 import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest

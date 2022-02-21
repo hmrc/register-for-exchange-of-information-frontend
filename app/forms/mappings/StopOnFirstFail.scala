@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package pages
+package forms.mappings
 
-import models.UserAnswers
-import play.api.libs.json.JsPath
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-import scala.util.Try
+object StopOnFirstFail {
 
-case object BusinessNamePage extends QuestionPage[String] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "businessName"
-
-  override def cleanup(value: Option[String], userAnswers: UserAnswers): Try[UserAnswers] = value match {
-    case Some(_) => userAnswers.remove(SoleNamePage)
-    case _       => super.cleanup(value, userAnswers)
+  def apply[T](constraints: Constraint[T]*) = Constraint {
+    field: T =>
+      constraints.toList dropWhile (_(field) == Valid) match {
+        case Nil             => Valid
+        case constraint :: _ => constraint(field)
+      }
   }
+
+  def constraint[T](message: String, validator: (T) => Boolean) =
+    Constraint(
+      (data: T) => if (validator(data)) Valid else Invalid(Seq(ValidationError(message)))
+    )
 }

@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.mappings.{Mappings, StopOnFirstFail}
 import play.api.data.Form
 import utils.RegexConstants
 
@@ -32,7 +32,12 @@ class WhatIsYourNationalInsuranceNumberFormProvider @Inject() extends Mappings w
     Form(
       "value" -> text("whatIsYourNationalInsuranceNumber.error.required")
         .transform[String](nino => removeWhitespace(nino.toUpperCase), nino => nino)
-        .verifying(regexp(ninoRegex, "whatIsYourNationalInsuranceNumber.error.invalid"))
-        .verifying(maxLength(maxLength, "whatIsYourNationalInsuranceNumber.error.length"))
+        .verifying(
+          StopOnFirstFail[String](
+            regexp(ninoFormatRegex, "whatIsYourNationalInsuranceNumber.error.format.invalid"),
+            regexp(ninoRegex, "whatIsYourNationalInsuranceNumber.error.invalid"),
+            maxLength(maxLength, "whatIsYourNationalInsuranceNumber.error.length")
+          )
+        )
     )
 }

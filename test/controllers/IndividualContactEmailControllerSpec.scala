@@ -17,11 +17,10 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{ContactEmailPage, ContactNamePage, IndividualContactEmailPage, WhatAreYouRegisteringAsPage}
+import pages.IndividualContactEmailPage
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
