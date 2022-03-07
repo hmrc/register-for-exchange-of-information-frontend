@@ -26,14 +26,13 @@ import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import play.api.Application
-import play.api.http.Status.{ACCEPTED, BAD_REQUEST, NOT_FOUND}
+import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.OK
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future
-import scala.util.Either.RightProjection
 
 class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
@@ -56,7 +55,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
   "Email Service" - {
     "sendAnLogEmail" - {
-      "must submit to the email connector with valid business details and return Right(202)" in {
+      "must submit to the email connector with valid business details Organisation and return Some(Accepted)" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
@@ -80,12 +79,67 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         whenReady(result) {
           result =>
-            result.right mustBe RightProjection(Right(ACCEPTED))
+            result mustBe ACCEPTED
 
             verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
-      "must submit to the email connector and return Right(NOT_FOUND) when the template is missing" in {
+      "must submit to the email connector with valid business details Individual and return Some(Accepted)" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .success
+          .value
+          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .success
+          .value
+          .set(ContactNamePage, "")
+          .success
+          .value
+          .set(IndividualContactEmailPage, "test@test.com")
+          .success
+          .value
+
+        when(mockEmailConnector.sendEmail(any())(any()))
+          .thenReturn(
+            Future.successful(HttpResponse(ACCEPTED, ""))
+          )
+
+        val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
+
+        whenReady(result) {
+          result =>
+            result mustBe ACCEPTED
+
+            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+        }
+      }
+      "must Internal_Server_Error when both Contact and Individual emails pages are missing" in {
+        val userAnswers = UserAnswers(userAnswersId)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .success
+          .value
+          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .success
+          .value
+          .set(ContactNamePage, "")
+          .success
+          .value
+
+        when(mockEmailConnector.sendEmail(any())(any()))
+          .thenReturn(
+            Future.successful(HttpResponse(ACCEPTED, ""))
+          )
+
+        val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
+
+        whenReady(result) {
+          result =>
+            result mustBe INTERNAL_SERVER_ERROR
+
+            verify(mockEmailConnector, times(0)).sendEmail(any())(any())
+        }
+      }
+      "must submit to the email connector and return Some(NOT_FOUND) when the template is missing" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
@@ -109,12 +163,12 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         whenReady(result) {
           result =>
-            result.right mustBe RightProjection(Right(NOT_FOUND))
+            result mustBe NOT_FOUND
 
             verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
-      "must submit to the email connector and return Right(BAD_REQUEST) email service rejects request" in {
+      "must submit to the email connector and return Some(BAD_REQUEST) email service rejects request" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
@@ -138,7 +192,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         whenReady(result) {
           result =>
-            result.right mustBe RightProjection(Right(BAD_REQUEST))
+            result mustBe BAD_REQUEST
 
             verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }

@@ -96,7 +96,6 @@ class CheckYourAnswersController @Inject() (
         safeId         <- EitherT(getSafeIdFromRegistration(regime))
         subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
         result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID, regime))
-        _              <- EitherT(emailService.sendAnLogEmail(request.userAnswers, subscriptionID))
       } yield result)
         .valueOrF {
           case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>

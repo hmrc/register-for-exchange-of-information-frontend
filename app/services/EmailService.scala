@@ -18,7 +18,6 @@ package services
 
 import connectors.EmailConnector
 import models.email.{EmailRequest, EmailTemplate, EmailUserType}
-import models.error.ApiError
 import models.{SubscriptionID, UserAnswers}
 import pages._
 import play.api.Logging
@@ -34,7 +33,7 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
   executionContext: ExecutionContext
 ) extends Logging {
 
-  def sendAnLogEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Either[ApiError, Int]] =
+  def sendAnLogEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Int] =
     sendEmail(userAnswers, subscriptionID) map {
       case Some(resp) =>
         resp.status match {
@@ -43,66 +42,63 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
           case ACCEPTED    => logger.info("Email queued")
           case _           => logger.warn(s"Unhandled status received from email service ${resp.status}")
         }
-        Right(resp.status)
+        resp.status
       case _ =>
-        logger.warn("Failed to send email")
-        Right(INTERNAL_SERVER_ERROR)
+        logger.warn("The email could not be sent to the EMAIL service")
+        INTERNAL_SERVER_ERROR
     }
 
-  def sendEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] = {
+  private def getContactName(userAnswers: UserAnswers) = (userAnswers.get(ContactNamePage).isDefined,
+                                                          userAnswers.get(WhatIsYourNamePage).isDefined,
+                                                          userAnswers.get(NonUkNamePage).isDefined,
+                                                          userAnswers.get(SoleNamePage).isDefined
+  ) match {
+    case (true, false, false, false) =>
+      userAnswers
+        .get(ContactNamePage)
+        .map(
+          n => n
+        )
+    case (false, true, false, false) =>
+      userAnswers
+        .get(WhatIsYourNamePage)
+        .map(
+          n => s"${n.firstName} ${n.lastName}"
+        )
+    case (false, false, true, false) =>
+      userAnswers
+        .get(NonUkNamePage)
+        .map(
+          n => s"${n.givenName} ${n.familyName}"
+        )
+    case (false, false, false, true) =>
+      userAnswers
+        .get(SoleNamePage)
+        .map(
+          n => s"${n.firstName} ${n.lastName}"
+        )
+    case _ => None
+  }
 
-    val emailAddress = userAnswers.get(ContactEmailPage)
+  private def getEmail(userAnswers: UserAnswers) = userAnswers.get(ContactEmailPage).orElse(userAnswers.get(IndividualContactEmailPage))
 
-    val contactName =
-      (userAnswers.get(ContactNamePage).isDefined,
-       userAnswers.get(WhatIsYourNamePage).isDefined,
-       userAnswers.get(NonUkNamePage).isDefined,
-       userAnswers.get(SoleNamePage).isDefined
-      ) match {
-        case (true, false, false, false) =>
-          userAnswers
-            .get(ContactNamePage)
-            .map(
-              n => n
-            )
-        case (false, true, false, false) =>
-          userAnswers
-            .get(WhatIsYourNamePage)
-            .map(
-              n => s"${n.firstName} ${n.lastName}"
-            )
-        case (false, false, true, false) =>
-          userAnswers
-            .get(NonUkNamePage)
-            .map(
-              n => s"${n.givenName} ${n.familyName}"
-            )
-        case (false, false, false, true) =>
-          userAnswers
-            .get(SoleNamePage)
-            .map(
-              n => s"${n.firstName} ${n.lastName}"
-            )
-        case _ => None
-      }
-
-    val secondaryEmailAddress = userAnswers.get(SndContactEmailPage)
-    val secondaryName         = userAnswers.get(SndContactNamePage)
-
+  def sendEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
     for {
 
-      primaryResponse <- emailAddress
+      primaryResponse <- getEmail(userAnswers)
         .filter(EmailAddress.isValid)
         .fold(Future.successful(Option.empty[HttpResponse])) {
           email =>
             emailConnector
               .sendEmail(
-                EmailRequest.mdrRegistration(email, contactName, emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)), subscriptionID.value)
+                EmailRequest
+                  .mdrRegistration(email, getContactName(userAnswers), emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)), subscriptionID.value)
               )
               .map(Some.apply)
         }
 
-      _ <- secondaryEmailAddress
+      _ <- userAnswers
+        .get(SndContactEmailPage)
         .filter(EmailAddress.isValid)
         .fold(Future.successful(Option.empty[HttpResponse])) {
           secondaryEmailAddress =>
@@ -110,7 +106,7 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
               .sendEmail(
                 EmailRequest
                   .mdrRegistration(secondaryEmailAddress,
-                                   secondaryName,
+                                   userAnswers.get(SndContactNamePage),
                                    emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)),
                                    subscriptionID.value
                   )
@@ -119,5 +115,4 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
         }
     } yield primaryResponse
 
-  }
 }
