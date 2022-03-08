@@ -138,13 +138,16 @@ trait Formatters extends Transforms {
                 case true  => Left(Seq(FormError(key, errorKey)))
                 case false => Left(Seq(FormError(key, errorKey, Seq(msgArg))))
               }
-            case s1 => Right(s1.replaceAll("&nbsp;", ""))
+            case s1 => Right(removeNonBreakingSpaces(s1))
           }
       }
 
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
   }
+
+  private def removeNonBreakingSpaces(str: String) =
+    str.replaceAll("\u00A0", " ")
 
   protected def validatedOptionalTextFormatter(invalidKey: String, lengthKey: String, regex: String, length: Int): Formatter[Option[String]] =
     new Formatter[Option[String]] {
@@ -186,7 +189,7 @@ trait Formatters extends Transforms {
     new Formatter[String] {
       private val dataFormatter: Formatter[String] = stringTrimFormatter(requiredKey, msgArg)
 
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
         dataFormatter
           .bind(key, data)
           .right
@@ -195,7 +198,6 @@ trait Formatters extends Transforms {
             case str if str.length > maxLength => Left(Seq(FormError(key, lengthKey)))
             case str                           => Right(str)
           }
-      }
 
       override def unbind(key: String, value: String): Map[String, String] =
         Map(key -> value)
