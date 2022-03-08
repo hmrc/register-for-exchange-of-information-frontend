@@ -31,10 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class EmailConnector @Inject() (val config: FrontendAppConfig, http: HttpClient)(implicit ex: ExecutionContext) extends Logging {
 
   def sendEmail(emailRequest: EmailRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    http.POST[EmailRequest, HttpResponse](s"${config.sendEmailUrl}/hmrc/email", emailRequest) map {
-      resp =>
-        resp
-    } recoverWith {
+    http.POST[EmailRequest, HttpResponse](s"${config.sendEmailUrl}/hmrc/email", emailRequest) recoverWith {
       case e: Exception =>
         logger.warn(s"The email could not be sent to the EMAIL service")
         logger.warn(s"${e.getMessage}")
