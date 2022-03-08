@@ -270,7 +270,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(WhatIsYourNamePage, Name("", ""))
           .success
           .value
-          .set(ContactEmailPage, "test@test.com")
+          .set(IndividualContactEmailPage, "test@test.com")
           .success
           .value
 
@@ -300,7 +300,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(NonUkNamePage, NonUkName("", ""))
           .success
           .value
-          .set(ContactEmailPage, "test@test.com")
+          .set(IndividualContactEmailPage, "test@test.com")
           .success
           .value
 
