@@ -139,7 +139,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
             verify(mockEmailConnector, times(0)).sendEmail(any())(any())
         }
       }
-      "must submit to the email connector and return Some(NOT_FOUND) when the template is missing" in {
+      "must submit to the email connector and return NOT_FOUND when the template is missing" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
@@ -168,7 +168,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
             verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
-      "must submit to the email connector and return Some(BAD_REQUEST) email service rejects request" in {
+      "must submit to the email connector and return BAD_REQUEST email service rejects request" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
