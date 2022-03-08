@@ -193,7 +193,7 @@ trait Formatters extends Transforms {
           .flatMap {
             case str if !str.matches(regex)    => Left(Seq(FormError(key, invalidKey)))
             case str if str.length > maxLength => Left(Seq(FormError(key, lengthKey)))
-            case str                           => Right(str.replace("&nbsp;", ""))
+            case str                           => Right(str.replaceAll("&nbsp;", ""))
           }
 
       override def unbind(key: String, value: String): Map[String, String] =
