@@ -42,8 +42,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
         .value
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad(MDR).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
 
@@ -59,8 +59,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad(MDR).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
+      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
 

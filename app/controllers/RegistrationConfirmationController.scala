@@ -26,6 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import repositories.SessionRepository
+import services.EmailService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -36,6 +37,7 @@ class RegistrationConfirmationController @Inject() (
   val appConfig: FrontendAppConfig,
   standardActionSets: StandardActionSets,
   sessionRepository: SessionRepository,
+  emailService: EmailService,
   val controllerComponents: MessagesControllerComponents,
   val renderer: Renderer
 )(implicit ec: ExecutionContext)
@@ -47,15 +49,18 @@ class RegistrationConfirmationController @Inject() (
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
-          sessionRepository.clear(request.userId) flatMap {
+          emailService.sendAnLogEmail(request.userAnswers, id) flatMap {
             _ =>
-              val json = Json.obj(
-                "regime"             -> regime.toString,
-                "subscriptionID"     -> id.value,
-                "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
-                "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
-              )
-              renderer.render("registrationConfirmation.njk", json).map(Ok(_))
+              sessionRepository.clear(request.userId) flatMap {
+                _ =>
+                  val json = Json.obj(
+                    "regime"             -> regime.toString,
+                    "subscriptionID"     -> id.value,
+                    "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
+                    "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
+                  )
+                  renderer.render("registrationConfirmation.njk", json).map(Ok(_))
+              }
           }
         case None =>
           logger.info("SubscriptionIDPage: Subscription Id is missing")
