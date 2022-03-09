@@ -28,6 +28,6 @@ class ContactPhoneFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(): Form[String] =
     Form(
-      "value" -> validatedText("contactPhone.error.required", "contactPhone.error.invalid", "contactPhone.error.length", phoneRegex, maxLength)
+      "value" -> validatedText("contactPhone.error.required", "contactPhone.error.invalid", "contactPhone.error.length", digitsAndWhiteSpaceOnly, maxLength)
     )
 }
