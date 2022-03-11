@@ -35,7 +35,8 @@ class SndContactEmailFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validEmailAddress,
+      errorToIgnore = Some(lengthKey)
     )
 
     behave like fieldWithInvalidData(

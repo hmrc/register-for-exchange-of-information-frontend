@@ -35,7 +35,8 @@ class ContactEmailFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      validEmailAddress
+      validEmailAddress,
+      errorToIgnore = Some(lengthKey)
     )
 
     behave like fieldWithInvalidData(

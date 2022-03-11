@@ -52,12 +52,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validAddressLine: Gen[String] = RegexpGen.from(apiAddressRegex)
 
-//  def validOrganisationName(maxLength: Int): Gen[String] = for {
-//    specialChars <- Gen.oneOf(""" &`-'\^""".toCharArray)
-//    length       <- Gen.chooseNum(1, maxLength - 1)
-//    chars        <- listOfN(length, Gen.alphaNumChar)
-//  } yield chars.mkString + specialChars.toString
-
   def validOrganisationName(maxLength: Int): Gen[String] = for {
     length <- Gen.chooseNum(maxLength, maxLength)
     chars  <- listOfN(length, RegexpGen.from(orgNameRegex))
@@ -90,15 +84,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validPersonalName(maxLength: Int): Gen[String] = RegexpGen.from(individualNameRegex) suchThat (_.length > maxLength)
 
-  def validPhoneNumber: Gen[String] = RegexpGen.from(phoneRegex)
-
-  def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex).toString.replace("..",".")
+  def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex)
 
   def validEmailAddressToLong(maxLength: Int): Gen[String] =
     for {
-      part     <- listOfN(maxLength, Gen.alphaChar).map(_.mkString)
+      part <- listOfN(maxLength, Gen.alphaChar).map(_.mkString)
 
-    }  yield s"${part}.${part}@${part}.${part}"
+    } yield s"$part.$part@$part.$part"
 
   def validNonApiName: Gen[String] = RegexpGen.from(nonApiNameRegex)
 
@@ -196,8 +188,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     chars     <- listOfN(length, arbitrary[Char])
   } yield chars.mkString
 
-  def phoneLongerThan(ln: Int): Gen[String] = for {
+  def phoneMaxLength(ln: Int): Gen[String] = for {
     length <- Gen.chooseNum(ln, 24)
+    chars  <- listOfN(length, Gen.chooseNum(0, 9))
+  } yield "+" + chars.mkString
+
+  def validPhoneNumber(ln: Int): Gen[String] = for {
+    length <- Gen.chooseNum(1, ln - 1)
     chars  <- listOfN(length, Gen.chooseNum(0, 9))
   } yield "+" + chars.mkString
 

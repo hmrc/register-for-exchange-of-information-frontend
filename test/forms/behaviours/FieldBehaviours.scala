@@ -29,15 +29,20 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
 
   val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  def fieldThatBindsValidData(form: Form[_], fieldName: String, validDataGenerator: Gen[String]): Unit =
+  def fieldThatBindsValidData(form: Form[_], fieldName: String, validDataGenerator: Gen[String], errorToIgnore: Option[String] = None): Unit =
     "must bind valid data" in {
 
       forAll(validDataGenerator -> "validDataItem") {
         dataItem: String =>
           val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-          println(s"\n\n\n$dataItem\n")
           result.value.value mustBe dataItem
-          result.errors mustBe empty
+          errorToIgnore match {
+            case Some(errMsg) =>
+              result.errors.filter {
+                !_.messages.contains(errMsg)
+              } mustBe empty
+            case None => result.errors mustBe empty
+          }
       }
     }
 
