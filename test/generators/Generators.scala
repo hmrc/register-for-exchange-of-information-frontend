@@ -57,9 +57,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def validPhoneNumber: Gen[String] = RegexpGen.from(phoneRegex)
 
-  def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex)
+  def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex).toString.replace("..",".")
 
-  def validEmailAdressToLong(maxLength: Int): Gen[String] = validEmailAddress suchThat (_.length > maxLength)
+  def validEmailAddressToLong(maxLength: Int): Gen[String] =
+    for {
+      part     <- listOfN(maxLength, Gen.alphaChar).map(_.mkString)
+
+    }  yield s"${part}.${part}@${part}.${part}"
 
   def validNonApiName: Gen[String] = RegexpGen.from(nonApiNameRegex)
 
