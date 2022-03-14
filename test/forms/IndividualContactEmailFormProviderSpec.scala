@@ -35,7 +35,7 @@ class IndividualContactEmailFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       validEmailAddress,
-      errorToIgnore = Some(lengthKey)
+      errorToFind = Some(invalidKey)
     )
 
     behave like fieldWithInvalidData(
