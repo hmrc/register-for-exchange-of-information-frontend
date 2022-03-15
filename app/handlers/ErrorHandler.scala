@@ -61,7 +61,7 @@ class ErrorHandler @Inject() (
       case _ =>
         renderer
           .render("thereIsAProblem.njk", Json.obj("regime" -> MDR.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
-          .map(InternalServerError(_))
+          .map(Ok(_))
     }
   }
 
@@ -76,7 +76,7 @@ class ErrorHandler @Inject() (
       case _ =>
         renderer
           .render("thereIsAProblem.njk", Json.obj("regime" -> MDR.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
-          .map(InternalServerError(_))
+          .map(Ok(_))
     }
   }
 
