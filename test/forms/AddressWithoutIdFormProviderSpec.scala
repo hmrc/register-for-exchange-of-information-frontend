@@ -19,6 +19,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import models.Country
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
 
@@ -37,7 +38,8 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
+      RegexpGen.from(apiAddressRegex),
+      errorToFind = Some(invalidKey)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -76,7 +78,8 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
+      RegexpGen.from(apiAddressRegex),
+      errorToFind = Some(invalidKey)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -104,7 +107,8 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
+      RegexpGen.from(apiAddressRegex),
+      errorToFind = Some(invalidKey)
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -143,7 +147,8 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyStringWithinMaxLengthByRegex(addressLineMaxLength, apiAddressRegex)
+      RegexpGen.from(apiAddressRegex),
+      errorToFind = Some(invalidKey)
     )
 
     behave like fieldWithMaxLengthAlpha(

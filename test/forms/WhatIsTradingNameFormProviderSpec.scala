@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class WhatIsTradingNameFormProviderSpec extends StringFieldBehaviours {
 
@@ -34,7 +35,8 @@ class WhatIsTradingNameFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyStringWithinMaxLengthByRegex(maxLength, apiOrganisationNameRegex)
+      RegexpGen.from(individualNameRegex),
+      errorToFind = Some(apiOrganisationNameRegex)
     )
 
     behave like fieldWithMaxLengthAlpha(

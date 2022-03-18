@@ -92,8 +92,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
     } yield s"$part.$part@$part.$part"
 
-  def validNonApiName: Gen[String] = RegexpGen.from(nonApiNameRegex)
-
   def validNino: Gen[String] = for {
     first   <- Gen.oneOf("ACEHJLMOPRSWXY".toCharArray)
     second  <- Gen.oneOf("ABCEGHJKLMNPRSTWXYZ".toCharArray)
@@ -106,10 +104,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   val safeIDRegex              = "^[0-9A-Za-z]{1,15}"
   def validSafeID: Gen[String] = RegexpGen.from(safeIDRegex)
-
-  def validArrangementID: Gen[String] = RegexpGen.from(arrangementIDRegex)
-
-  def validDisclosureID: Gen[String] = RegexpGen.from(disclosureIDRegex)
 
   def validPostCodes: Gen[String] = {
     val disallowed = List('c', 'i', 'k', 'm', 'o', 'v')

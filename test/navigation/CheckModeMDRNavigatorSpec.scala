@@ -33,7 +33,7 @@ import java.time.LocalDate
 class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator: MDRNavigator = new MDRNavigator
-  val checkYourAnswers: Call  = (Navigator.checkYourAnswers)(MDR)
+  val checkYourAnswers: Call  = Navigator.checkYourAnswers(MDR)
 
   "Navigator" - {
 

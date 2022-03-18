@@ -32,7 +32,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
     "must check the next page for a value before routing" - {
 
       val goto: Call = Call("GET", "/next-page")
-      val cya: Call  = (Navigator.checkYourAnswers)(MDR)
+      val cya: Call  = Navigator.checkYourAnswers(MDR)
 
       case object NextPage extends QuestionPage[String] {
         override def path: JsPath = JsPath \ toString
