@@ -35,7 +35,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey  = "addressWithoutId.error.addressLine1.invalid"
     val lengthKey   = "addressWithoutId.error.addressLine1.length"
 
-    behave like fieldWithoutInvalidError(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(apiAddressRegex),
@@ -75,7 +75,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey = "addressWithoutId.error.addressLine2.invalid"
     val lengthKey  = "addressWithoutId.error.addressLine2.length"
 
-    behave like fieldWithoutInvalidError(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(apiAddressRegex),
@@ -104,7 +104,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey  = "addressWithoutId.error.addressLine3.invalid"
     val lengthKey   = "addressWithoutId.error.addressLine3.length"
 
-    behave like fieldWithoutInvalidError(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(apiAddressRegex),
@@ -144,7 +144,7 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey = "addressWithoutId.error.addressLine4.invalid"
     val lengthKey  = "addressWithoutId.error.addressLine4.length"
 
-    behave like fieldWithoutInvalidError(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(apiAddressRegex),

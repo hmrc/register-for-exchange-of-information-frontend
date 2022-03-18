@@ -32,7 +32,7 @@ class SoleNameFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "soleName.error.firstName.length"
     val maxLength   = 35
 
-    behave like fieldWithoutInvalidError(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(individualNameRegex),
@@ -68,7 +68,7 @@ class SoleNameFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "soleName.error.lastName.length"
     val maxLength   = 35
 
-    behave like fieldWithoutInvalidError(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(individualNameRegex),
