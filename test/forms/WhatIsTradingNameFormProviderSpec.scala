@@ -32,11 +32,11 @@ class WhatIsTradingNameFormProviderSpec extends StringFieldBehaviours {
     val invalidKey  = "whatIsTradingName.error.businessName.invalid"
     val maxLength   = 80
 
-    behave like fieldThatBindsValidData(
+    behave like fieldWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(individualNameRegex),
-      errorToFind = Some(apiOrganisationNameRegex)
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(

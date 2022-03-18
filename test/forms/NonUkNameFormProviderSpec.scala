@@ -32,11 +32,11 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "nonUkName.error.givenName.length"
     val invalidKey  = "nonUkName.error.givenName.invalid"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(individualNameRegex),
-      errorToFind = Some(invalidKey)
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -68,11 +68,11 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "nonUkName.error.familyName.length"
     val invalidKey  = "nonUkName.error.familyName.invalid"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(individualNameRegex),
-      errorToFind = Some(invalidKey)
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(

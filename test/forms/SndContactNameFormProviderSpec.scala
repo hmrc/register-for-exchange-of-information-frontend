@@ -33,11 +33,11 @@ class SndContactNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldWithoutInvalidError(
       form,
       fieldName,
       RegexpGen.from(orgNameRegex),
-      errorToFind = Some(invalidKey)
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
