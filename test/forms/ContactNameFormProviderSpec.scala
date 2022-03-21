@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class ContactNameFormProviderSpec extends StringFieldBehaviours {
 
@@ -33,10 +34,11 @@ class ContactNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      validNonApiName
+      RegexpGen.from(orgNameRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(

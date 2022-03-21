@@ -19,6 +19,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import models.Country
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class AddressUKFormProviderSpec extends StringFieldBehaviours {
 
@@ -33,10 +34,11 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     val invalidKey  = "addressUK.error.addressLine1.invalid"
     val lengthKey   = "addressUK.error.addressLine1.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -72,10 +74,11 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     val invalidKey = "addressUK.error.addressLine2.invalid"
     val lengthKey  = "addressUK.error.addressLine2.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -100,10 +103,11 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     val invalidKey  = "addressUK.error.addressLine3.invalid"
     val lengthKey   = "addressUK.error.addressLine3.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -139,10 +143,11 @@ class AddressUKFormProviderSpec extends StringFieldBehaviours {
     val invalidKey = "addressUK.error.addressLine4.invalid"
     val lengthKey  = "addressUK.error.addressLine4.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(

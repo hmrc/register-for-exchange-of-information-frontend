@@ -35,7 +35,7 @@ class UTRFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validUtr
     )
 
     behave like fieldWithFixedLengthNumeric(

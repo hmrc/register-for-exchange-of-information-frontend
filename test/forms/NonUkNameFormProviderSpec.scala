@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class NonUkNameFormProviderSpec extends StringFieldBehaviours {
 
@@ -31,10 +32,11 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "nonUkName.error.givenName.length"
     val invalidKey  = "nonUkName.error.givenName.invalid"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(individualNameRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -66,10 +68,11 @@ class NonUkNameFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "nonUkName.error.familyName.length"
     val invalidKey  = "nonUkName.error.familyName.invalid"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      RegexpGen.from(individualNameRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(

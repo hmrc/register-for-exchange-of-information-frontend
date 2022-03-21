@@ -19,6 +19,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import models.Country
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
 
@@ -34,10 +35,11 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey  = "addressWithoutId.error.addressLine1.invalid"
     val lengthKey   = "addressWithoutId.error.addressLine1.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      validAddressLine
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -73,10 +75,11 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey = "addressWithoutId.error.addressLine2.invalid"
     val lengthKey  = "addressWithoutId.error.addressLine2.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      validAddressLine
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -101,10 +104,11 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey  = "addressWithoutId.error.addressLine3.invalid"
     val lengthKey   = "addressWithoutId.error.addressLine3.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      validAddressLine
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -140,10 +144,11 @@ class AddressWithoutIdFormProviderSpec extends StringFieldBehaviours {
     val invalidKey = "addressWithoutId.error.addressLine4.invalid"
     val lengthKey  = "addressWithoutId.error.addressLine4.length"
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      validAddressLine
+      RegexpGen.from(apiAddressRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(

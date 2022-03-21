@@ -31,10 +31,11 @@ class IndividualContactEmailFormProviderSpec extends StringFieldBehaviours {
     val lengthKey   = "contactEmail.error.length"
     val maxLength   = 132
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      validEmailAddress,
+      invalidKey
     )
 
     behave like fieldWithInvalidData(
