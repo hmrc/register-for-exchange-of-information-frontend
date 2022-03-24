@@ -48,10 +48,11 @@ class BusinessNotIdentifiedController @Inject() (
       }
 
       val data = Json.obj(
-        "regime"     -> regime.toUpperCase,
-        "contactUrl" -> contactLink,
-        "lostUtrUrl" -> appConfig.lostUTRUrl,
-        "startUrl"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
+        "regime"       -> regime.toUpperCase,
+        "emailAddress" -> appConfig.emailEnquiries,
+        "contactUrl"   -> contactLink,
+        "lostUtrUrl"   -> appConfig.lostUTRUrl,
+        "startUrl"     -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
       )
       renderer.render("businessNotIdentified.njk", data).map(Ok(_))
   }

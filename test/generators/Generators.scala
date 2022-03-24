@@ -18,7 +18,6 @@ package generators
 
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
-import org.scalacheck.rng.Seed
 import org.scalacheck.{Gen, Shrink}
 import utils.RegexConstants
 import wolfendale.scalacheck.regexp.RegexpGen

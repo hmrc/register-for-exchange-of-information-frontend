@@ -458,20 +458,23 @@ unauthorisedAgent.paragraph.2.b = signing in with your own or your organisation�
 unauthorisedAgent.paragraph.3 = You cannot report cross-border arrangements for other organisations or individuals, they must do it themselves.
 
 
-businessNotIdentified.title = Your business could not be identified
-businessNotIdentified.heading = Your business could not be identified
-businessNotIdentified.p1 = This could be because of several reasons.
-businessNotIdentified.subheading1 = Try entering your business name again
-businessNotIdentified.p2 = Check if your business name uses:
+businessNotIdentified.title = We are yet to identify your business
+businessNotIdentified.heading = We are yet to identify your business
+businessNotIdentified.p1 = To help us find your business, check you have entered your correct business name and your correct Unique Taxpayer Reference (UTR).
+businessNotIdentified.subheading1 = Try entering your UTR again
+businessNotIdentified.p2 = If entering your UTR again does not work, you can
+businessNotIdentified.p2.link = find a lost UTR number (opens in new tab)
+businessNotIdentified.subheading2 = Try entering your business name again
+businessNotIdentified.p3 = Check if your business name uses:
 businessNotIdentified.bullet1 = capital letters
 businessNotIdentified.bullet2 = spaces
-businessNotIdentified.bullet3 = Limited or LTD
-businessNotIdentified.p3 = If you do not know your exact business name, you can
-businessNotIdentified.p3.link = contact HMRC (opens in new tab)
-businessNotIdentified.subheading2 = Try entering your Unique Taxpayer Reference again
-businessNotIdentified.p4 = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment or Corporation Tax. It may be called ‘reference’, ‘UTR’ or ‘official use’.
-businessNotIdentified.p5 = You can discover help for
-businessNotIdentified.p5.link = finding a lost UTR number (opens in new tab)
+businessNotIdentified.bullet3 = limited or LTD
+businessNotIdentified.p4 = If we still cannot identify your business, or you do not know your exact business name, you can
+businessNotIdentified.p4.link = contact HMRC (opens in new tab)
+businessNotIdentified.subheading3 = Email HMRC if you still need help
+businessNotIdentified.p5 = You can email
+businessNotIdentified.p5.link = enquiries.aeoi@hmrc.gov.uk
+businessNotIdentified.p5b = if we still cannot find your business.
 businessNotIdentified.button = Try again
 
 registrationConfirmation.title = Registration successful

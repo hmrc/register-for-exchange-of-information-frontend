@@ -20,7 +20,7 @@ import base.ControllerSpecBase
 import models.{MDR, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{DateOfBirthWithoutIdPage, WhatIsYourDateOfBirthPage}
+import pages.DateOfBirthWithoutIdPage
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
