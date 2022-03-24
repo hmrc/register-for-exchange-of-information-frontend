@@ -170,8 +170,6 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
   "validatedUTR" - {
 
-    val allowedUtrLength = 10
-
     val testForm: Form[String] =
       Form(
         "value" -> validatedUTR("error.required", "error.invalid", "error.length", utrRegex)
