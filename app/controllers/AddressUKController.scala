@@ -73,7 +73,7 @@ class AddressUKController @Inject() (
             render(mode, regime, request.userAnswers.get(AddressUKPage).fold(form)(form.fill)).map(Ok(_))
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
-            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
         }
     }
 
@@ -94,7 +94,7 @@ class AddressUKController @Inject() (
               )
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
-            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
         }
     }
 }
