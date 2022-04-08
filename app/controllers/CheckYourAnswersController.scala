@@ -99,16 +99,17 @@ class CheckYourAnswersController @Inject() (
       } yield result)
         .valueOrF {
           case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>
-            logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
+            logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
             Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
           case EnrolmentExistsError(groupIds) =>
-            logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
+            logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
               Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
             } else {
               Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
             }
           case MandatoryInformationMissingError(_) =>
+            logger.warn(s"CheckYourAnswersController: Mandatory information is missing")
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
           case error => renderer.renderError(error, regime)
         }

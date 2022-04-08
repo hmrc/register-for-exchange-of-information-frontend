@@ -46,16 +46,17 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
     taxEnrolmentService.checkAndCreateEnrolment(safeId, userAnswers, subscriptionId, regime) flatMap {
       case Right(_) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad(regime)))
       case Left(EnrolmentExistsError(groupIds)) if request.affinityGroup == AffinityGroup.Individual =>
-        logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
+        logger.info(s"ControllerHelper: EnrolmentExistsError for the the groupIds $groupIds")
         Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
       case Left(EnrolmentExistsError(groupIds)) =>
-        logger.info(s"EnrolmentExistsError for the the groupIds $groupIds")
+        logger.info(s"ControllerHelper: EnrolmentExistsError for the the groupIds $groupIds")
         if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
           Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
         } else {
           Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
         }
       case Left(MandatoryInformationMissingError(_)) =>
+        logger.warn(s"ControllerHelper: Mandatory information is missing")
         Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
       case Left(error) => renderer.renderError(error, regime)
     }

@@ -33,8 +33,7 @@ class EmailConnector @Inject() (val config: FrontendAppConfig, http: HttpClient)
   def sendEmail(emailRequest: EmailRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.POST[EmailRequest, HttpResponse](s"${config.sendEmailUrl}/hmrc/email", emailRequest) recoverWith {
       case e: Exception =>
-        logger.warn(s"The email could not be sent to the EMAIL service")
-        logger.warn(s"${e.getMessage}")
+        logger.warn(s"EmailConnector: The email could not be sent to the EMAIL service - ${e.getMessage}")
         Future.successful(HttpResponse(INTERNAL_SERVER_ERROR, "The email could not be sent to the EMAIL service"))
     }
 
