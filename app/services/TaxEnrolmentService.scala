@@ -40,11 +40,11 @@ class TaxEnrolmentService @Inject() (taxEnrolmentsConnector: TaxEnrolmentsConnec
           case Right(subscriptionInfo: SubscriptionInfo) =>
             taxEnrolmentsConnector.createEnrolment(subscriptionInfo, regime).value
           case Left(apiError: ApiError) =>
-            logger.error("checkAndCreateEnrolment:Could not create subscription info for enrolment missing Safe ID")
+            logger.error("checkAndCreateEnrolment: Could not create subscription info for enrolment missing Safe ID")
             Future.successful(Left(apiError))
         }
       case Left(apiError: ApiError) =>
-        logger.error("checkAndCreateEnrolment:Could not create subscription info for enrolment missing Safe ID")
+        logger.error("checkAndCreateEnrolment: Could not create subscription info for enrolment missing Safe ID")
         Future.successful(Left(apiError))
     }
 

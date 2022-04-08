@@ -63,7 +63,7 @@ class RegistrationConfirmationController @Inject() (
               }
           }
         case None =>
-          logger.info("SubscriptionIDPage: Subscription Id is missing")
+          logger.warn("SubscriptionIDPage: Subscription Id is missing")
           renderer.renderThereIsAProblemPage(regime)
       }
   }

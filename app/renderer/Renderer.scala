@@ -67,12 +67,11 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
         "emailAddress" -> appConfig.emailEnquiries
       )
     )
-
+    logger.warn(s"Error received from API: $error")
     error match {
       case ServiceUnavailableError =>
         thereIsAProblemView.map(ServiceUnavailable(_))
       case error =>
-        logger.info(s"Error received from API: $error")
         thereIsAProblemView.map(InternalServerError(_))
     }
   }
