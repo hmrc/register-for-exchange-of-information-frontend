@@ -72,13 +72,6 @@ thereIsAProblem.paragraph.1 = Try again later.
 thereIsAProblem.paragraph.2.a = If you need to contact someone about your MDR reporting, you can email
 thereIsAProblem.emailAddress = enquiries.aeoi@hmrc.gov.uk
 
-journeyRecovery.continue.title = Sorry, there is a problem with the service
-journeyRecovery.continue.heading = Sorry, there is a problem with the service
-journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
-journeyRecovery.startAgain.title = Sorry, there is a problem with the service
-journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
-journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
-
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
