@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
 
@@ -28,12 +29,15 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
     val fieldName   = "firstName"
     val requiredKey = "whatIsYourName.error.firstName.required"
     val lengthKey   = "whatIsYourName.error.firstName.length"
-    val maxLength   = 35
+    val invalidKey  = "whatIsYourName.error.firstName.invalid"
 
-    behave like fieldThatBindsValidData(
+    val maxLength = 35
+
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      nonEmptyStringWithinMaxLengthByRegex(maxLength, individualNameRegex)
+      RegexpGen.from(individualNameRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
@@ -54,13 +58,15 @@ class WhatIsYourNameFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName   = "lastName"
     val requiredKey = "whatIsYourName.error.lastName.required"
+    val invalidKey  = "whatIsYourName.error.lastName.invalid"
     val lengthKey   = "whatIsYourName.error.lastName.length"
     val maxLength   = 35
 
-    behave like fieldThatBindsValidData(
+    behave like fieldThatBindsValidDataWithoutInvalidError(
       form,
       fieldName,
-      nonEmptyStringWithinMaxLengthByRegex(maxLength, individualNameRegex)
+      RegexpGen.from(individualNameRegex),
+      invalidKey
     )
 
     behave like fieldWithMaxLengthAlpha(
