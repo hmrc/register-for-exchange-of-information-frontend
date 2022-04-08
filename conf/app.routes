@@ -14,9 +14,6 @@ GET         /:regime/account/sign-out-survey                     controllers.aut
 GET         /:regime/account/sign-out                            controllers.auth.AuthController.signOutNoSurvey(regime: models.Regime)
 GET         /:regime/account/signed-out                          controllers.auth.SignedOutController.onPageLoad(regime: models.Regime)
 
-# TODO verify if necessary
-GET         /:regime/journey-recovery                            controllers.JourneyRecoveryController.onPageLoad(regime: models.Regime, continueUrl: Option[uk.gov.hmrc.play.bootstrap.binders.RedirectUrl] ?= None)
-
 GET         /:regime/problem/there-is-a-problem                  controllers.ThereIsAProblemController.onPageLoad(regime: models.Regime)
 
 GET         /:regime/register/check-answers                               controllers.CheckYourAnswersController.onPageLoad(regime: models.Regime)

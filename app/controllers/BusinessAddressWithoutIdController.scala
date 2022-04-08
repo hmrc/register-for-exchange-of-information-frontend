@@ -78,7 +78,7 @@ class BusinessAddressWithoutIdController @Inject() (
               .map(Ok(_))
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
-            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
         }
     }
 
@@ -99,7 +99,7 @@ class BusinessAddressWithoutIdController @Inject() (
               )
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
-            Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
         }
     }
 }
