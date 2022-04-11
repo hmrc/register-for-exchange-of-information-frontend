@@ -5,19 +5,19 @@ object AppDependencies {
 
   val compile = Seq(
     play.sbt.PlayImport.ws,
-    "uk.gov.hmrc"       %% "play-frontend-hmrc"            % "3.0.0-play-28",
+    "uk.gov.hmrc"       %% "play-frontend-hmrc"            % "3.13.0-play-28",
 
-    "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.10.0-play-28",
-    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"    % "5.16.0",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"            % "0.56.0",
+    "uk.gov.hmrc"       %% "play-conditional-form-mapping" % "1.11.0-play-28",
+    "uk.gov.hmrc"       %% "bootstrap-frontend-play-28"    % "5.21.0",
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"            % "0.62.0",
 
     "uk.gov.hmrc"       %% "logback-json-logger"           % "5.1.0",
-    "uk.gov.hmrc"       %% "bootstrap-health-play-28"      % "5.3.0",
+    "uk.gov.hmrc"       %% "bootstrap-health-play-28"      % "5.21.0",
 
-    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.33.0-play-28",
+    "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.35.0-play-28",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.15.0-play-28",
-    "uk.gov.hmrc"       %% "domain"                        % "6.2.0-play-28",
-    "uk.gov.hmrc"       %% "emailaddress"                  % "3.5.0"
+    "uk.gov.hmrc"       %% "domain"                        % "8.0.0-play-28",
+    "uk.gov.hmrc"       %% "emailaddress"                  % "3.6.0"
   )
 
   val test = Seq(
