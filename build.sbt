@@ -24,7 +24,7 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(
     name := appName,
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.15",
     SilencerSettings(),
     ThisBuild / scalafmtOnCompile := true,
     RoutesKeys.routesImport += "models._",
