@@ -39,7 +39,7 @@ class AuditService @Inject() (
     detail: JsValue
   )(implicit
     hc: HeaderCarrier
-  ): Future[AuditResult] = {
+  ): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       ExtendedDataEvent(
         auditSource = appConfig.appName,
@@ -64,5 +64,4 @@ class AuditService @Inject() (
             auditResult
         }
     }
-  }
 }
