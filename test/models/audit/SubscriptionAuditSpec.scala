@@ -16,10 +16,6 @@
 
 package models.audit
 
-import play.api.libs.json.Json
+import base.SpecBase
 
-case class AuditResponse(status: String, statusCode: Int, subscriptionId: Option[String], failureReason: Option[String])
-
-object AuditResponse {
-  implicit val json = Json.format[AuditResponse]
-}
+class SubscriptionAuditSpec extends SpecBase {}

@@ -45,8 +45,8 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
   ): Future[AuditResult] = {
 
     val auditResponse: Future[AuditResponse] = response map {
-      case Right(subscriptionId) => AuditResponse(Status.OK, Some(subscriptionId.value))
-      case Left(value)           => AuditResponse(ApiError.convertToErrorCode(value), None)
+      case Right(subscriptionId) => AuditResponse("Success", Status.OK, Some(subscriptionId.value), None)
+      case Left(value)           => AuditResponse("Failure", ApiError.convertToErrorCode(value), None, Some(value.toString))
     }
 
     for {
@@ -67,8 +67,7 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
       case _ =>
         (SubscriptionRequest.convertTo(regime, safeID, userAnswers) match {
           case Some(subscriptionRequest) =>
-            val response = subscriptionConnector
-              .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
+            val response = subscriptionConnector.createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
 
             auditCreateSubscriptionEvent(regime, userAnswers, subscriptionRequest, response.value)
 
