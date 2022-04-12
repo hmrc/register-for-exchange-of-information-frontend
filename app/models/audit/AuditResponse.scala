@@ -18,7 +18,7 @@ package models.audit
 
 import play.api.libs.json.Json
 
-case class AuditResponse(statusCode: Int, subscriptionId: Option[String])
+case class AuditResponse(status: String, statusCode: Int, subscriptionId: Option[String], failureReason: Option[String])
 
 object AuditResponse {
   implicit val json = Json.format[AuditResponse]

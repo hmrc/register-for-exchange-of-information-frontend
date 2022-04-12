@@ -26,7 +26,7 @@ import models.matching.SafeId
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest, SubscriptionRequest}
 import models.{Regime, SubscriptionID, UserAnswers}
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
@@ -38,21 +38,21 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
   private def auditCreateSubscriptionEvent(regime: Regime,
                                            userAnswers: UserAnswers,
                                            subscriptionRequest: SubscriptionRequest,
-                                           response: EitherT[Future,ApiError, SubscriptionID]
+                                           response: Future[Either[ApiError, SubscriptionID]]
   )(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
-  ): EitherT[Future, ApiError, AuditResult] = {
+  ): Future[AuditResult] = {
 
-    val auditResponse: Future[AuditResponse] = response.value map {
-      case Right(subscriptionId) => AuditResponse(Status.OK, Some(subscriptionId.value))
-      case Left(value)           => AuditResponse(ApiError.convertToErrorCode(value), None)
+    val auditResponse: Future[AuditResponse] = response map {
+      case Right(subscriptionId) => AuditResponse("Success", Status.OK, Some(subscriptionId.value), None)
+      case Left(value)           => AuditResponse("Failure", ApiError.convertToErrorCode(value), None, Some(value.toString))
     }
 
     for {
-      response <- EitherT.right[ApiError](auditResponse)
-      details: JsValue = Json.toJson(SubscriptionAudit.apply(userAnswers, subscriptionRequest, response))
-      result <-  EitherT.right[ApiError](auditService.sendAuditEvent(EventName.getEventName(regime), details))
+      response <- auditResponse
+      details = Json.toJson(SubscriptionAudit.apply(userAnswers, subscriptionRequest, response))
+      result <- auditService.sendAuditEvent(EventName.getEventName(regime), details)
     } yield result
 
   }
@@ -67,13 +67,12 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
       case _ =>
         (SubscriptionRequest.convertTo(regime, safeID, userAnswers) match {
           case Some(subscriptionRequest) =>
-              for {
-                test <- subscriptionConnector.createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
-              } yield test.value match {
-                case x =>
-                auditCreateSubscriptionEvent(regime, userAnswers, subscriptionRequest, test)
-              }
+            val response = subscriptionConnector
+              .createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
 
+            auditCreateSubscriptionEvent(regime, userAnswers, subscriptionRequest, response.value)
+
+            response
           case _ =>
             EitherT.leftT(MandatoryInformationMissingError())
         }).value
