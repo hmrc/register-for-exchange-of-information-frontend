@@ -19,6 +19,7 @@ package models.error
 import cats.data.EitherT
 import models.enrolment.GroupIds
 import models.matching.RegistrationInfo
+import play.api.http.Status
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import uk.gov.hmrc.http.HttpReads
 import uk.gov.hmrc.http.HttpReads.{is4xx, is5xx}
@@ -41,6 +42,14 @@ object ApiError {
           case status if is5xx(status)                 => HttpReads.pure(Left(InternalServerError))
           case _                                       => HttpReads[A].map(Right.apply)
         }
+    }
+
+  def convertToErrorCode(apiError: ApiError): Int =
+    apiError match {
+      case NotFoundError           => Status.NOT_FOUND
+      case BadRequestError         => Status.BAD_REQUEST
+      case ServiceUnavailableError => Status.SERVICE_UNAVAILABLE
+      case _                       => Status.INTERNAL_SERVER_ERROR
     }
 
   def toError(errorDetail: ErrorDetail): ApiError = errorDetail match {

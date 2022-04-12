@@ -24,13 +24,13 @@ import generators.Generators
 import helpers.WireMockServerHandler
 import models.SubscriptionID
 import models.error.ApiError
-import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, NotFoundError, ServiceUnavailableError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionForCBCRequest, DisplaySubscriptionForMDRRequest}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.{CONFLICT, OK}
+import play.api.http.Status.{BAD_REQUEST, CONFLICT, NOT_FOUND, OK, SERVICE_UNAVAILABLE}
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -46,7 +46,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
   private val subscriptionUrl               = "/register-for-exchange-of-information/subscription"
-  private val errorCodes: Gen[Int]          = Gen.chooseNum(400, 599).suchThat(_ != 409)
+  private val errorCodes: Gen[Int]          = Gen.oneOf(Seq(400, 404, 403, 500, 501, 502, 503, 504))
 
   "SubscriptionConnector" - {
     "readSubscription" - {
@@ -121,10 +121,10 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "must return None when read subscription fails" in {
         val subMDRRequest = arbitrary[DisplaySubscriptionForMDRRequest].sample.value
-        forAll(errorCodes) {
-          errorCode =>
-            val subscriptionErrorResponse: String =
-              s"""
+        val errorCode     = errorCodes.sample.value
+
+        val subscriptionErrorResponse: String =
+          s"""
                  | "errorDetail": {
                  |    "timestamp": "2016-08-16T18:15:41Z",
                  |    "correlationId": "f058ebd6-02f7-4d3f-942e-904344e8cde5",
@@ -134,11 +134,10 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
                  |  }
                  |""".stripMargin
 
-            stubPostResponse("/read-subscription", errorCode, subscriptionErrorResponse)
+        stubPostResponse("/read-subscription", errorCode, subscriptionErrorResponse)
 
-            val result = connector.readSubscription(subMDRRequest)
-            result.futureValue mustBe None
-        }
+        val result = connector.readSubscription(subMDRRequest)
+        result.futureValue mustBe None
       }
     }
 
@@ -195,6 +194,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         val subscriptionErrorResponse: String =
           s"""
+             | {
              | "errorDetail": {
              |    "timestamp" : "2021-03-11T08:20:44Z",
              |    "correlationId": "c181e730-2386-4359-8ee0-f911d6e5f3bc",
@@ -207,6 +207,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
              |      ]
              |    }
              |  }
+             |  }
              |""".stripMargin
 
         stubPostResponse("/create-subscription", CONFLICT, subscriptionErrorResponse)
@@ -217,10 +218,11 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
       "must return UnableToCreateEMTPSubscriptionError when submission to backend fails" in {
         val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
-        forAll(errorCodes) {
-          errorCode =>
-            val subscriptionErrorResponse: String =
-              s"""
+        val errorCode     = errorCodes.sample.value
+
+        val subscriptionErrorResponse: String =
+          s"""
+               | {
                | "errorDetail": {
                |    "timestamp": "2016-08-16T18:15:41Z",
                |    "correlationId": "f058ebd6-02f7-4d3f-942e-904344e8cde5",
@@ -228,17 +230,29 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
                |    "errorMessage": "Internal error",
                |    "source": "Internal error"
                |  }
+               |  }
                |""".stripMargin
 
-            stubPostResponse("/create-subscription", errorCode, subscriptionErrorResponse)
+        stubPostResponse("/create-subscription", errorCode, subscriptionErrorResponse)
 
-            val result = connector.createSubscription(subMDRRequest)
-            result.value.futureValue mustBe Left(UnableToCreateEMTPSubscriptionError)
-        }
+        val result = connector.createSubscription(subMDRRequest)
+        result.value.futureValue mustBe Left(getApiError(errorCode))
       }
     }
 
   }
+
+  def getApiError(status: Int): ApiError =
+    status match {
+      case NOT_FOUND =>
+        NotFoundError
+      case BAD_REQUEST =>
+        BadRequestError
+      case SERVICE_UNAVAILABLE =>
+        ServiceUnavailableError
+      case _ =>
+        UnableToCreateEMTPSubscriptionError
+    }
 
   private def stubPostResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(

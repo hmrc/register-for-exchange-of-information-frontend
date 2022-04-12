@@ -19,7 +19,7 @@ package base
 import org.mockito.MockitoSugar
 import org.scalatest.TestSuite
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
+import play.api.{Application, Configuration}
 import play.api.inject.guice.GuiceApplicationBuilder
 
 trait MockServiceApp extends GuiceOneAppPerSuite with MockitoSugar {
@@ -32,4 +32,8 @@ trait MockServiceApp extends GuiceOneAppPerSuite with MockitoSugar {
   // Override to provide custom binding
   def guiceApplicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
+      .configure(
+        Configuration("metrics.enabled" -> "false", "auditing.enabled" -> false)
+      )
+
 }

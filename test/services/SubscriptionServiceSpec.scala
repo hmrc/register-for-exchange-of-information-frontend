@@ -30,6 +30,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,17 +38,19 @@ import scala.concurrent.Future
 class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoSugar with ScalaCheckPropertyChecks {
 
   val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
+  val mockAuditService: AuditService                   = mock[AuditService]
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder = super
     .guiceApplicationBuilder()
     .overrides(
-      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+      bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+      bind[AuditService].toInstance(mockAuditService)
     )
 
   val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
 
   override def beforeEach: Unit = {
-    reset(mockSubscriptionConnector)
+    reset(mockSubscriptionConnector, mockAuditService)
     super.beforeEach()
   }
 
@@ -58,6 +61,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
+      when(mockAuditService.sendAuditEvent(any(), any())(any())).thenReturn(Future.successful(Success))
 
       val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
@@ -85,6 +89,9 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
       result.futureValue mustBe Right(SubscriptionID("id"))
+
+      verify(mockSubscriptionConnector, times(1)).readSubscription(any())(any(), any())
+      verify(mockSubscriptionConnector, times(1)).createSubscription(any())(any(), any())
     }
 
     "must return 'SubscriptionID' when there is already a subscription exists" in {
