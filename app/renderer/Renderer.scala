@@ -71,7 +71,7 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
     error match {
       case ServiceUnavailableError =>
         thereIsAProblemView.map(ServiceUnavailable(_))
-      case error =>
+      case _ =>
         thereIsAProblemView.map(InternalServerError(_))
     }
   }

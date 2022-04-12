@@ -20,11 +20,11 @@ import cats.data.EitherT
 import config.FrontendAppConfig
 import models.SubscriptionID
 import models.error.ApiError
-import models.error.ApiError.{DuplicateSubmissionError, UnableToCreateEMTPSubscriptionError}
+import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, NotFoundError, ServiceUnavailableError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest}
 import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionResponse}
 import play.api.Logging
-import play.api.http.Status.CONFLICT
+import play.api.http.Status.{BAD_REQUEST, CONFLICT, NOT_FOUND, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
@@ -82,8 +82,20 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
             Left(DuplicateSubmissionError)
           case response =>
             logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
-            Left(UnableToCreateEMTPSubscriptionError)
+            handleError(response)
         }
     }
   }
+
+  def handleError[A](responseMessage: HttpResponse): Either[ApiError, A] =
+    responseMessage.status match {
+      case NOT_FOUND =>
+        Left(NotFoundError)
+      case BAD_REQUEST =>
+        Left(BadRequestError)
+      case SERVICE_UNAVAILABLE =>
+        Left(ServiceUnavailableError)
+      case _ =>
+        Left(UnableToCreateEMTPSubscriptionError)
+    }
 }

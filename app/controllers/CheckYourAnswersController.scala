@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
-import services.{BusinessMatchingWithoutIdService, EmailService, SubscriptionService}
+import services.{AuditService, BusinessMatchingWithoutIdService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -47,9 +47,9 @@ class CheckYourAnswersController @Inject() (
   subscriptionService: SubscriptionService,
   val controllerComponents: MessagesControllerComponents,
   countryFactory: CountryListFactory,
-  emailService: EmailService,
   controllerHelper: ControllerHelper,
   registrationService: BusinessMatchingWithoutIdService,
+  auditService: AuditService,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
