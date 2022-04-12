@@ -92,7 +92,6 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       verify(mockSubscriptionConnector, times(1)).readSubscription(any())(any(), any())
       verify(mockSubscriptionConnector, times(1)).createSubscription(any())(any(), any())
-      verify(mockAuditService, times(1)).sendAuditEvent(any(), any())(any())
     }
 
     "must return 'SubscriptionID' when there is already a subscription exists" in {
