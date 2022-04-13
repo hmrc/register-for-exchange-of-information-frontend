@@ -51,7 +51,7 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
 
     for {
       response <- auditResponse
-      details = Json.toJson(SubscriptionAudit.apply(userAnswers, subscriptionRequest, response))
+      details = Json.toJson(SubscriptionAudit.apply(userAnswers, subscriptionRequest.requestDetail, response))
       result <- auditService.sendAuditEvent(EventName.getEventName(regime), details)
     } yield result
 

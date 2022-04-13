@@ -16,7 +16,7 @@
 
 package models.audit
 
-import models.subscription.request.{ContactInformation, SubscriptionRequest}
+import models.subscription.request.{ContactInformation, CreateRequestDetail}
 import models.{BusinessType, UserAnswers}
 import pages.{BusinessTypePage, IsThisYourBusinessPage, UTRPage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.libs.json.{Json, OFormat}
@@ -36,7 +36,7 @@ case class SubscriptionAudit(
 
 object SubscriptionAudit {
 
-  def apply(userAnswers: UserAnswers, subscriptionRequest: SubscriptionRequest, auditResponse: AuditResponse): SubscriptionAudit = {
+  def apply(userAnswers: UserAnswers, requestDetail: CreateRequestDetail, auditResponse: AuditResponse): SubscriptionAudit = {
     val (utr, saUtr) = {
       userAnswers.get(BusinessTypePage) match {
         case Some(BusinessType.Sole) => (None, userAnswers.get(UTRPage))
@@ -46,15 +46,15 @@ object SubscriptionAudit {
     }
 
     SubscriptionAudit(
-      SAFEID = subscriptionRequest.requestDetail.IDNumber,
+      SAFEID = requestDetail.IDNumber,
       UTR = utr.fold(" ")(_.uniqueTaxPayerReference),
       NINO = userAnswers.get(WhatIsYourNationalInsuranceNumberPage).fold(" ")(_.nino),
       saUTR = saUtr.fold(" ")(_.uniqueTaxPayerReference),
       isBusiness = userAnswers.get(IsThisYourBusinessPage).getOrElse(false),
-      tradingName = subscriptionRequest.requestDetail.tradingName,
-      isGBUser = subscriptionRequest.requestDetail.isGBUser,
-      primaryContact = subscriptionRequest.requestDetail.primaryContact,
-      secondaryContact = subscriptionRequest.requestDetail.secondaryContact,
+      tradingName = requestDetail.tradingName,
+      isGBUser = requestDetail.isGBUser,
+      primaryContact = requestDetail.primaryContact,
+      secondaryContact = requestDetail.secondaryContact,
       response = auditResponse
     )
   }
