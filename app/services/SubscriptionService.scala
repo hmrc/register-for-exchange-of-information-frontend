@@ -45,8 +45,8 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
   ): Future[AuditResult] = {
 
     val auditResponse: Future[AuditResponse] = response map {
-      case Right(subscriptionId) => AuditResponse("Success", Status.OK, Some(subscriptionId.value), None)
-      case Left(value)           => AuditResponse("Failure", ApiError.convertToErrorCode(value), None, Some(value.toString))
+      case Right(subscriptionId) => AuditResponse("Success", Status.OK, Some(subscriptionId.value), Some(" ")) //Set FailureReason as empty as it was a requirement from txm team
+      case Left(value)           => AuditResponse("Failure", ApiError.convertToErrorCode(value), Some(" "), Some(value.toString)) //Set SubscriptionIs as empty as it was a requirement from txm team
     }
 
     for {
