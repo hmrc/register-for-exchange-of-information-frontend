@@ -37,8 +37,8 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
         ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
         Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None))
       )
-      val auditResponse       = AuditResponse("Success", 200, Some("sub"), None)
-      val address             = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
+      val auditResponse = AuditResponse("Success", 200, Some("sub"), None)
+      val address       = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
