@@ -47,9 +47,9 @@ object SubscriptionAudit {
 
     SubscriptionAudit(
       SAFEID = subscriptionRequest.requestDetail.IDNumber,
-      UTR = utr.fold("")(_.uniqueTaxPayerReference),
-      NINO = userAnswers.get(WhatIsYourNationalInsuranceNumberPage).fold("")(_.nino),
-      saUTR = saUtr.fold("")(_.uniqueTaxPayerReference),
+      UTR = utr.fold(" ")(_.uniqueTaxPayerReference),
+      NINO = userAnswers.get(WhatIsYourNationalInsuranceNumberPage).fold(" ")(_.nino),
+      saUTR = saUtr.fold(" ")(_.uniqueTaxPayerReference),
       isBusiness = userAnswers.get(IsThisYourBusinessPage).getOrElse(false),
       tradingName = subscriptionRequest.requestDetail.tradingName,
       isGBUser = subscriptionRequest.requestDetail.isGBUser,
