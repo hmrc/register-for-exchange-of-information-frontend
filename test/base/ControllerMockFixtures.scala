@@ -19,9 +19,10 @@ package base
 import connectors.AddressLookupConnector
 import controllers.actions._
 import matchers.JsonMatchers
-import models.UserAnswers
+import models.{Regime, UserAnswers}
 import navigation.{CBCRFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.{Mockito, MockitoSugar}
+import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

@@ -48,5 +48,6 @@ class RegimeSpec extends AnyFreeSpec with Matchers with EitherValues {
 
       result mustEqual "mdr"
     }
+
   }
 }

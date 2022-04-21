@@ -18,7 +18,7 @@ package generators
 
 import models.email.EmailRequest
 import models.subscription.request._
-import models.{Address, Country, UniqueTaxpayerReference}
+import models.{Address, Country, Regime, UniqueTaxpayerReference}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import uk.gov.hmrc.domain.Nino
@@ -48,6 +48,9 @@ trait ModelGenerators {
         name  <- arbitrary[String]
       } yield Country(state, code.mkString, name)
     }
+
+  implicit lazy val arbitraryRegime: Arbitrary[Regime] =
+    Arbitrary(Gen.oneOf(Regime.regimes))
 
   implicit lazy val arbitraryAddressWithoutId: Arbitrary[models.Address] =
     Arbitrary {

@@ -21,7 +21,7 @@
 {% block header %}
   {{ hmrcHeader({
     homepageUrl: "https://www.gov.uk",
-    serviceName: messages("site.service_name", regime | upper),
+    serviceName: messages("site.service_name_"+regime),
     serviceUrl: routes.controllers.IndexController.onPageLoad(regime | lower).url,
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",

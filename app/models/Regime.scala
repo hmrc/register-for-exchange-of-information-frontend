@@ -22,17 +22,18 @@ import play.api.mvc.PathBindable
 sealed trait Regime
 
 case object MDR extends WithName("mdr") with Regime
+case object CBC extends WithName("cbc") with Regime
 
 object Regime {
   case class UnknownRegimeException() extends Exception
+  val regimes: Seq[Regime] = Seq(MDR, CBC)
 
   implicit def regimePathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Regime] = new PathBindable[Regime] {
-
-    val regimes = Seq(MDR)
 
     override def bind(key: String, value: String): Either[String, Regime] =
       stringBinder.bind(key, value) match {
         case Right(MDR.toString) => Right(MDR)
+        case Right(CBC.toString) => Right(CBC)
         case _                   => Left("Unknown Regime")
       }
 
@@ -45,6 +46,7 @@ object Regime {
   def toRegime(string: String): Regime =
     string.toLowerCase match {
       case MDR.toString => MDR
+      case CBC.toString => CBC
     }
 
   implicit class RegimeExt(regime: Regime) {

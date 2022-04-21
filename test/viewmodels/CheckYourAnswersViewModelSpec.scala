@@ -33,7 +33,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
-  val regime: Regime                                   = MDR
+  override val regime: Regime                          = MDR
   val countryListFactory: CountryListFactory           = app.injector.instanceOf[CountryListFactory]
 
   "CheckYourAnswersViewModel" - {
