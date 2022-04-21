@@ -33,21 +33,15 @@ class CBCAllowedActionWithRegime @Inject() (
     extends ActionFilter[IdentifierRequest]
     with Logging {
 
-  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] = {
-    logger.warn("Entering filter")
+  override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     regime match {
       case CBC if appConfig.allowCBCregistration =>
-        logger.info("Allow CBC")
         Future.successful(None)
       case CBC if !appConfig.allowCBCregistration =>
         logger.info("CBC registration is disabled")
         Future.successful(Some(Redirect(controllers.routes.ThereIsAProblemController.onPageLoad(regime))))
       case MDR => Future.successful(None)
-      case _ =>
-        logger.info(s"Unrecognised regime ${regime.toString}")
-        Future.successful(Some(Redirect(controllers.routes.ThereIsAProblemController.onPageLoad(regime))))
     }
-  }
 }
 
 class CBCAllowedAction @Inject() (appConfig: FrontendAppConfig)(implicit val executionContext: ExecutionContext) {
