@@ -49,19 +49,5 @@ class RegimeSpec extends AnyFreeSpec with Matchers with EitherValues {
       result mustEqual "mdr"
     }
 
-    "bind to `cbcr` from path" in {
-      val result =
-        pathBindable.bind("key", "cbcr").value
-
-      result mustEqual CBCR
-    }
-
-    "unbind from `cbcr` to path" in {
-
-      val result =
-        pathBindable.unbind("key", CBCR)
-
-      result mustEqual "cbcr"
-    }
   }
 }
