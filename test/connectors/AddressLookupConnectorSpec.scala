@@ -21,7 +21,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.{AddressLookup, MDR}
+import models.{AddressLookup, MDR, Regime}
+import org.scalacheck.Arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
@@ -40,6 +41,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
   lazy val connector: AddressLookupConnector = app.injector.instanceOf[AddressLookupConnector]
   val addressLookupUrl                       = "/lookup"
   val postcode: String                       = "ZZ1 1ZZ"
+  val regime: Regime                         = Arbitrary.arbitrary[Regime].sample.value
 
   def addressJson: String =
     s"""[{
@@ -78,7 +80,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must return 200 (OK) status and an empty list if no match found" in {
         stubResponse(addressLookupUrl, OK, "[]")
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
         result.futureValue mustBe Nil
       }
 
@@ -90,14 +92,14 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("1 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode)
         )
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
         result.futureValue mustBe addressLookupResult
       }
 
       "must throw an exception when address lookup returns a 400 (BAD_REQUEST) status" in {
         stubResponse(addressLookupUrl, BAD_REQUEST, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
 
         assertThrows[Exception] {
           result.futureValue
@@ -107,7 +109,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must throw an exception when address lookup returns a 404 (NOT_FOUND) status" in {
         stubResponse(addressLookupUrl, NOT_FOUND, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
 
         assertThrows[Exception] {
           result.futureValue
@@ -117,7 +119,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must throw an exception when address lookup returns a 405 (METHOD_NOT_ALLOWED) status" in {
         stubResponse(addressLookupUrl, METHOD_NOT_ALLOWED, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
 
         assertThrows[Exception] {
           result.futureValue
@@ -127,7 +129,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
       "must throw an exception when address lookup returns a 500 (INTERNAL_SERVER_ERROR) status" in {
         stubResponse(addressLookupUrl, INTERNAL_SERVER_ERROR, "Some error")
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
 
         assertThrows[Exception] {
           result.futureValue
@@ -944,7 +946,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("153 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode)
         )
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
 
         result.futureValue mustBe addressLookupResult
       }
@@ -1214,7 +1216,7 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("Apartment 400"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode)
         )
 
-        val result = connector.addressLookupByPostcode(postcode, MDR)
+        val result = connector.addressLookupByPostcode(postcode, regime)
 
         result.futureValue mustBe addressLookupResult
       }
