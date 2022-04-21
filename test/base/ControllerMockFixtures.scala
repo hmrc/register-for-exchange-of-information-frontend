@@ -51,8 +51,6 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
 
-  val regime: Regime = Gen.oneOf(Regime.regimes).sample.value
-
   override def beforeEach: Unit = {
     Mockito.reset(
       mockRenderer,

@@ -99,7 +99,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendBusinessRegistrationInformation(
-            RegisterWithID(MDR, RegistrationRequest("UTR", "XE0000123456789", "name", Some(LimitedCompany)))
+            RegisterWithID(regime, RegistrationRequest("UTR", "XE0000123456789", "name", Some(LimitedCompany)))
           )
 
         result.futureValue mustBe Right(

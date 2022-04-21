@@ -21,8 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.{AddressLookup, MDR, Regime}
-import org.scalacheck.Arbitrary
+import models.AddressLookup
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status._
@@ -41,7 +40,6 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
   lazy val connector: AddressLookupConnector = app.injector.instanceOf[AddressLookupConnector]
   val addressLookupUrl                       = "/lookup"
   val postcode: String                       = "ZZ1 1ZZ"
-  val regime: Regime                         = Arbitrary.arbitrary[Regime].sample.value
 
   def addressJson: String =
     s"""[{
