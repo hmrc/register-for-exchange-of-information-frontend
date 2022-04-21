@@ -19,9 +19,10 @@ package base
 import connectors.AddressLookupConnector
 import controllers.actions._
 import matchers.JsonMatchers
-import models.UserAnswers
+import models.{Regime, UserAnswers}
 import navigation.{CBCRFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.{Mockito, MockitoSugar}
+import org.scalacheck.Gen
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -49,6 +50,8 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
+
+  val regime: Regime =  Gen.oneOf(Regime.regimes).sample.value
 
   override def beforeEach: Unit = {
     Mockito.reset(
