@@ -36,7 +36,7 @@ class NeedContactDetailsControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.NeedContactDetailsController.onPageLoad(MDR).url)
+      val request                                = FakeRequest(GET, routes.NeedContactDetailsController.onPageLoad(MDR).url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
