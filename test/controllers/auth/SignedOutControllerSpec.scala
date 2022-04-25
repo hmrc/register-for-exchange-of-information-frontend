@@ -18,7 +18,7 @@ package controllers.auth
 
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
-import models.{MDR, UserAnswers}
+import models.UserAnswers
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest

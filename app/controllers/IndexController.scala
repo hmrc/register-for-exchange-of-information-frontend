@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.{CBCAllowedAction, CheckEnrolledToServiceActionProvider, IdentifierAction}
-import models.{MDR, NormalMode, Regime}
+import models.{NormalMode, Regime}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,8 +35,8 @@ class IndexController @Inject() (
 
   def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen cbcAllowedAction(regime) andThen checkEnrolment(regime)).async {
     val result = regime match {
-      case MDR => Redirect(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime))
-      case _   => NotImplemented("Not Implemented")
+      case regime if Regime.regimes.contains(regime) => Redirect(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime))
+      case _                                         => NotImplemented("Not Implemented")
     }
     Future.successful(result)
   }

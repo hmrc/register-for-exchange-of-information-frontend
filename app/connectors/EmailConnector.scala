@@ -20,11 +20,10 @@ import config.FrontendAppConfig
 import models.email.EmailRequest
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-
-import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
