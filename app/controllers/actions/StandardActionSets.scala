@@ -29,17 +29,18 @@ class StandardActionSets @Inject() (identify: IdentifierAction,
                                     requireData: DataRequiredAction,
                                     initializeData: DataInitializeAction,
                                     checkEnrolment: CheckEnrolledToServiceActionProvider,
-                                    dependantAnswer: DependantAnswerProvider
+                                    dependantAnswer: DependantAnswerProvider,
+                                    cbcAllowedAction: CBCAllowedAction
 ) {
 
   def identifiedUserWithInitializedData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identify(regime) andThen checkEnrolment(regime) andThen getData() andThen initializeData(regime)
+    identify(regime) andThen checkEnrolment(regime) andThen cbcAllowedAction(regime) andThen getData() andThen initializeData(regime)
 
   def identifiedWithoutEnrolmentCheck(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identify(regime) andThen getData() andThen initializeData(regime)
+    identify(regime) andThen cbcAllowedAction(regime) andThen getData() andThen initializeData(regime)
 
   def identifiedUserWithData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identify(regime) andThen checkEnrolment(regime) andThen getData() andThen requireData(regime)
+    identify(regime) andThen checkEnrolment(regime) andThen cbcAllowedAction(regime) andThen getData() andThen requireData(regime)
 
   def identifiedUserWithDependantAnswer[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]): ActionBuilder[DataRequest, AnyContent] =
     identifiedUserWithData(regime) andThen dependantAnswer(answer, regime)

@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.{CheckEnrolledToServiceActionProvider, IdentifierAction}
+import controllers.actions.{CBCAllowedAction, CheckEnrolledToServiceActionProvider, IdentifierAction}
 import models.{MDR, NormalMode, Regime}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,11 +28,12 @@ import scala.concurrent.Future
 class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  checkEnrolment: CheckEnrolledToServiceActionProvider
+  checkEnrolment: CheckEnrolledToServiceActionProvider,
+  cbcAllowedAction: CBCAllowedAction
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen checkEnrolment(regime)).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen cbcAllowedAction(regime) andThen checkEnrolment(regime)).async {
     val result = regime match {
       case MDR => Redirect(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime))
       case _   => NotImplemented("Not Implemented")
