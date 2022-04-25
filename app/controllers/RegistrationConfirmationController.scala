@@ -54,7 +54,7 @@ class RegistrationConfirmationController @Inject() (
               sessionRepository.clear(request.userId) flatMap {
                 _ =>
                   val json = Json.obj(
-                    "regime"             -> regime.toString,
+                    "regime"             -> regime.toUpperCase,
                     "subscriptionID"     -> id.value,
                     "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
                     "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
