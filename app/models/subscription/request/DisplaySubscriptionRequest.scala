@@ -16,7 +16,7 @@
 
 package models.subscription.request
 
-import models.{MDR, Regime}
+import models.{CBC, MDR, Regime}
 import play.api.libs.json._
 
 sealed trait DisplaySubscriptionRequest
@@ -44,6 +44,8 @@ object DisplaySubscriptionRequest {
     regime match {
       case MDR =>
         DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
+      case CBC =>
+        DisplaySubscriptionForCBCRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
       case regime =>
         throw new RuntimeException(s"Not supporting the regime: $regime ")
     }

@@ -37,7 +37,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Nunj
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad(MDR).url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad(regime).url)
 
       val result = route(app, request).value
 
