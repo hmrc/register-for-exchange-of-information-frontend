@@ -17,11 +17,12 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import models.Regime
+import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
 import play.api.Logging
-import play.api.mvc.Results.Redirect
+import play.api.mvc.Results.{NotImplemented, Redirect}
 import play.api.mvc.{ActionFilter, Result}
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +34,11 @@ class CheckEnrolledToServiceAction @Inject() (val regime: Regime, config: Fronte
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
     if (request.enrolments.exists(_.key == config.enrolmentKey(regime.toString))) {
       logger.info(s"User is enrolled to the service ${regime.toString}")
-      Future.successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
+      (request.affinityGroup, regime) match {
+        case (_, MDR)            => Future.successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
+        case (Organisation, CBC) => Future.successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to redirect to CBC
+        case _                   => Future.successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
+      }
     } else {
       Future.successful(None)
     }
