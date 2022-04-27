@@ -289,6 +289,22 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       status(result) mustBe NOT_IMPLEMENTED
       //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with kickout page URL when working DAC6-1632
     }
+
+    "must redirect the user to CBC individual kickout page when Individual with CBC Regime and no enrolments" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set.empty) ~ Some(Individual) ~ None
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
+      val controller     = new Harness(authAction)
+      val result         = controller.onPageLoad()(FakeRequest())
+
+      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
+      status(result) mustBe NOT_IMPLEMENTED
+      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with kickout page URL when working DAC6-1632
+    }
   }
 }
 

@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.{CBCAllowedAction, IdentifierAction}
+import controllers.actions.StandardActionSets
 import models.{NormalMode, Regime}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -30,14 +30,13 @@ import scala.concurrent.ExecutionContext
 class NeedContactDetailsController @Inject() (
   override val messagesApi: MessagesApi,
   val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  cbcAllowedAction: CBCAllowedAction,
+  standardActionSets: StandardActionSets,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen cbcAllowedAction(regime)).async {
+  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheck(regime).async {
     implicit request =>
       val data = Json.obj(
         "regime" -> regime.toUpperCase,
