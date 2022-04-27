@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
-import models.{MDR, NormalMode}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,12 +37,12 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Nunj
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad(MDR).url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad(regime).url)
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, MDR).url
+      redirectLocation(result).value mustEqual routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
 
     }
   }
