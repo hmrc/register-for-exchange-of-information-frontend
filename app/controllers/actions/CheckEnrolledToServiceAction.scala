@@ -37,7 +37,10 @@ class CheckEnrolledToServiceAction @Inject() (val regime: Regime, config: Fronte
       (request.affinityGroup, regime) match {
         case (_, MDR)            => Future.successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
         case (Organisation, CBC) => Future.successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to redirect to CBC
-        case _                   => Future.successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
+        case _ =>
+          Future.successful(
+            Some(NotImplemented("Not Implimented - covered by DAC6-1632"))
+          ) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
       }
     } else {
       Future.successful(None)

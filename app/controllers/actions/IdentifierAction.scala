@@ -78,7 +78,9 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
         case _ ~ _ ~ _ ~ Some(Assistant) =>
           Future.successful(Redirect(controllers.routes.UnauthorisedAssistantController.onPageLoad(regime)))
         case Some(internalID) ~ enrolments ~ Some(Individual) ~ _ if regime == CBC =>
-          Future.successful(NotImplemented("Not Implemented")) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
+          Future.successful(
+            NotImplemented("Not Implimented - covered by DAC6-1632")
+          ) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
         case Some(internalID) ~ enrolments ~ Some(affinityGroup) ~ _ => block(IdentifierRequest(request, internalID, affinityGroup, enrolments.enrolments))
         case _                                                       => throw new UnauthorizedException("Unable to retrieve internal Id")
       }

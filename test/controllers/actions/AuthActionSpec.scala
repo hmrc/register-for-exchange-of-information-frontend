@@ -296,9 +296,9 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set.empty) ~ Some(Individual) ~ None
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
-      val controller     = new Harness(authAction)
-      val result         = controller.onPageLoad()(FakeRequest())
+      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
+      val controller = new Harness(authAction)
+      val result     = controller.onPageLoad()(FakeRequest())
 
       //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
 
