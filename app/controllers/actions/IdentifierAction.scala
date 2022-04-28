@@ -19,12 +19,12 @@ package controllers.actions
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
-import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
+import models.{CBC, MDR, Regime}
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, credentialRole}
@@ -79,7 +79,7 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
         case _ ~ _ ~ _ ~ Some(Assistant) =>
           Future.successful(Redirect(routes.UnauthorisedAssistantController.onPageLoad(regime)))
         case Some(_) ~ _ ~ Some(Individual) ~ _ if regime == CBC =>
-          Future.successful(Redirect(routes.affinityGroupProblemController.onPageLoad(regime)))
+          Future.successful(Redirect(routes.AffinityGroupProblemController.onPageLoad(regime)))
         case Some(internalID) ~ enrolments ~ Some(affinityGroup) ~ _ => block(IdentifierRequest(request, internalID, affinityGroup, enrolments.enrolments))
         case _                                                       => throw new UnauthorizedException("Unable to retrieve internal Id")
       }

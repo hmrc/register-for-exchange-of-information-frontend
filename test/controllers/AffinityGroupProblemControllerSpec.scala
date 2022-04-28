@@ -25,7 +25,7 @@ import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class affinityGroupProblemControllerSpec extends SpecBase with ControllerMockFixtures {
+class AffinityGroupProblemControllerSpec extends SpecBase with ControllerMockFixtures {
 
   "affinityGroupProblem Controller" - {
 
@@ -36,7 +36,7 @@ class affinityGroupProblemControllerSpec extends SpecBase with ControllerMockFix
 
       retrieveUserAnswersData(emptyUserAnswers)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.affinityGroupProblemController.onPageLoad(regime).url)
+      val request        = FakeRequest(GET, routes.AffinityGroupProblemController.onPageLoad(regime).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

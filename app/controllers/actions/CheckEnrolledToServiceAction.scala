@@ -39,7 +39,7 @@ class CheckEnrolledToServiceAction @Inject() (val regime: Regime, config: Fronte
       (request.affinityGroup, regime) match {
         case (_, MDR)            => successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
         case (Organisation, CBC) => successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to redirect to CBC
-        case _                   => successful(Some(Redirect(routes.affinityGroupProblemController.onPageLoad(regime))))
+        case _                   => successful(Some(Redirect(routes.AffinityGroupProblemController.onPageLoad(regime))))
       }
     } else {
       successful(None)

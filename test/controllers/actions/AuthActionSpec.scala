@@ -285,7 +285,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val controller     = new Harness(authAction andThen enrolledAction)
       val result         = controller.onPageLoad()(FakeRequest())
 
-      val expectedRedirectUrl = routes.affinityGroupProblemController.onPageLoad(regime).url
+      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(regime).url
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(expectedRedirectUrl)
@@ -301,7 +301,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
 
-      val expectedRedirectUrl = routes.affinityGroupProblemController.onPageLoad(regime).url
+      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(regime).url
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(expectedRedirectUrl)

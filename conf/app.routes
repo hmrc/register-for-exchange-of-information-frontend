@@ -211,4 +211,4 @@ POST       /:regime/register/individual-phone                        controllers
 GET        /:regime/register/change-individual-phone                  controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode, regime: models.Regime)
 POST       /:regime/register/change-individual-phone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode, regime: models.Regime)
 
-GET        /:regime/individual-not-allowed                       controllers.affinityGroupProblemController.onPageLoad(regime: models.Regime)
+GET        /:regime/individual-not-allowed                       controllers.AffinityGroupProblemController.onPageLoad(regime: models.Regime)
