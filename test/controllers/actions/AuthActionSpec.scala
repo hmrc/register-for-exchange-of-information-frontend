@@ -20,7 +20,7 @@ import base.{ControllerMockFixtures, SpecBase}
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import matchers.JsonMatchers
-import models.MDR
+import models.{CBC, MDR}
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import play.api.inject
@@ -28,7 +28,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
@@ -167,40 +167,144 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url)
       }
-
-      "must redirect the user to MDR registration page when assistant with MDR credentials" in {
-        val mockAuthConnector: AuthConnector = mock[AuthConnector]
-        val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
-
-        val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ Some(Assistant)
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
-
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
-        val controller = new Harness(authAction)
-        val result     = controller.onPageLoad()(FakeRequest())
-
-        val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(expectedRedirectUrl)
-      }
     }
 
-  }
+    "must redirect the user to MDR file upload service when assistant with MDR credentials" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
 
-  "must redirect the user to unauthorised page when assistant" in {
-    val mockAuthConnector: AuthConnector = mock[AuthConnector]
-    val emptyEnrolments: Enrolment       = Enrolment(key = "")
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ Some(Assistant)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-    val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(emptyEnrolments)) ~ None ~ Some(Assistant)
-    when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+      val controller = new Harness(authAction)
+      val result     = controller.onPageLoad()(FakeRequest())
 
-    val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
-    val controller = new Harness(authAction)
-    val result     = controller.onPageLoad()(FakeRequest())
+      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
 
-    status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad(MDR).url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(expectedRedirectUrl)
+    }
+
+    "must redirect the user to CBC service when assistant with CBC credentials" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val cbcEnrolment                     = Enrolment(key = "HMRC-CBC-ORG")
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(cbcEnrolment)) ~ None ~ Some(Assistant)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
+      val controller = new Harness(authAction)
+      val result     = controller.onPageLoad()(FakeRequest())
+
+      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
+      status(result) mustBe NOT_IMPLEMENTED
+      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with CBC URL
+    }
+
+    "must redirect the user to unauthorised page when assistant" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val emptyEnrolments: Enrolment       = Enrolment(key = "")
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(emptyEnrolments)) ~ None ~ Some(Assistant)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+      val controller = new Harness(authAction)
+      val result     = controller.onPageLoad()(FakeRequest())
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad(MDR).url)
+    }
+
+    "must redirect the user to MDR file upload service when Individual with MDR credentials" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ Some(Individual) ~ None
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(MDR)
+      val controller     = new Harness(authAction andThen enrolledAction)
+      val result         = controller.onPageLoad()(FakeRequest())
+
+      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(expectedRedirectUrl)
+    }
+
+    "must redirect the user to MDR file upload service when Organisation with MDR credentials" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ Some(Organisation) ~ None
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(MDR)
+      val controller     = new Harness(authAction andThen enrolledAction)
+      val result         = controller.onPageLoad()(FakeRequest())
+
+      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(expectedRedirectUrl)
+    }
+
+    "must redirect the user to CBC service when Organisation with CBC credentials" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val cbcEnrolment                     = Enrolment(key = "HMRC-CBC-ORG")
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(cbcEnrolment)) ~ Some(Organisation) ~ None
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
+      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(CBC)
+      val controller     = new Harness(authAction andThen enrolledAction)
+      val result         = controller.onPageLoad()(FakeRequest())
+
+      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
+      status(result) mustBe NOT_IMPLEMENTED
+      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with CBC URL
+    }
+
+    "must redirect the user to CBC individual kickout page when Individual with CBC credentials" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+      val cbcEnrolment                     = Enrolment(key = "HMRC-CBC-ORG")
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(cbcEnrolment)) ~ Some(Individual) ~ None
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
+      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(CBC)
+      val controller     = new Harness(authAction andThen enrolledAction)
+      val result         = controller.onPageLoad()(FakeRequest())
+
+      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
+      status(result) mustBe NOT_IMPLEMENTED
+      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with kickout page URL when working DAC6-1632
+    }
+
+    "must redirect the user to CBC individual kickout page when Individual with CBC Regime and no enrolments" in {
+      val mockAuthConnector: AuthConnector = mock[AuthConnector]
+
+      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set.empty) ~ Some(Individual) ~ None
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+
+      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
+      val controller = new Harness(authAction)
+      val result     = controller.onPageLoad()(FakeRequest())
+
+      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+
+      status(result) mustBe NOT_IMPLEMENTED
+      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with kickout page URL when working DAC6-1632
+    }
   }
 }
 

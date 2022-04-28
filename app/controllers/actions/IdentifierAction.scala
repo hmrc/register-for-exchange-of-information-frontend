@@ -18,12 +18,12 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import models.Regime
+import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, credentialRole}
@@ -71,9 +71,16 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
         case _ ~ _ ~ Some(Agent) ~ _ =>
           Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad(regime)))
         case _ ~ enrolments ~ _ ~ Some(Assistant) if enrolments.enrolments.exists(_.key == enrolmentKey) =>
-          Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
+          regime match {
+            case MDR => Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
+            case CBC => Future.successful(NotImplemented("Not Implemented")) //TODO: Change this to redirect to CBC
+          }
         case _ ~ _ ~ _ ~ Some(Assistant) =>
           Future.successful(Redirect(controllers.routes.UnauthorisedAssistantController.onPageLoad(regime)))
+        case Some(_) ~ _ ~ Some(Individual) ~ _ if regime == CBC =>
+          Future.successful(
+            NotImplemented("Not Implimented - covered by DAC6-1632")
+          ) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
         case Some(internalID) ~ enrolments ~ Some(affinityGroup) ~ _ => block(IdentifierRequest(request, internalID, affinityGroup, enrolments.enrolments))
         case _                                                       => throw new UnauthorizedException("Unable to retrieve internal Id")
       }

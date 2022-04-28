@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.Regime
-import models.requests.DataRequest
+import models.requests.{DataRequest, IdentifierRequest}
 import play.api.libs.json.Reads
 import play.api.mvc.{ActionBuilder, AnyContent}
 import queries.Gettable
@@ -33,14 +33,17 @@ class StandardActionSets @Inject() (identify: IdentifierAction,
                                     cbcAllowedAction: CBCAllowedAction
 ) {
 
+  def identifiedUserWithEnrolmentCheck(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] =
+    identify(regime) andThen checkEnrolment(regime) andThen cbcAllowedAction(regime)
+
   def identifiedUserWithInitializedData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identify(regime) andThen checkEnrolment(regime) andThen cbcAllowedAction(regime) andThen getData() andThen initializeData(regime)
+    identifiedUserWithEnrolmentCheck(regime) andThen getData() andThen initializeData(regime)
 
   def identifiedWithoutEnrolmentCheck(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
     identify(regime) andThen cbcAllowedAction(regime) andThen getData() andThen initializeData(regime)
 
   def identifiedUserWithData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identify(regime) andThen checkEnrolment(regime) andThen cbcAllowedAction(regime) andThen getData() andThen requireData(regime)
+    identifiedUserWithEnrolmentCheck(regime) andThen getData() andThen requireData(regime)
 
   def identifiedUserWithDependantAnswer[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]): ActionBuilder[DataRequest, AnyContent] =
     identifiedUserWithData(regime) andThen dependantAnswer(answer, regime)
