@@ -19,6 +19,7 @@ package controllers.actions
 import base.{ControllerMockFixtures, SpecBase}
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.routes
 import matchers.JsonMatchers
 import models.{CBC, MDR}
 import models.requests.IdentifierRequest
@@ -284,10 +285,10 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val controller     = new Harness(authAction andThen enrolledAction)
       val result         = controller.onPageLoad()(FakeRequest())
 
-      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+      val expectedRedirectUrl = routes.affinityGroupProblemController.onPageLoad(regime).url
 
-      status(result) mustBe NOT_IMPLEMENTED
-      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with kickout page URL when working DAC6-1632
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(expectedRedirectUrl)
     }
 
     "must redirect the user to CBC individual kickout page when Individual with CBC Regime and no enrolments" in {
@@ -300,10 +301,10 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
 
-      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
+      val expectedRedirectUrl = routes.affinityGroupProblemController.onPageLoad(regime).url
 
-      status(result) mustBe NOT_IMPLEMENTED
-      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with kickout page URL when working DAC6-1632
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(expectedRedirectUrl)
     }
   }
 }

@@ -18,6 +18,7 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.routes
 import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
 import play.api.Logging
@@ -76,11 +77,9 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
             case CBC => Future.successful(NotImplemented("Not Implemented")) //TODO: Change this to redirect to CBC
           }
         case _ ~ _ ~ _ ~ Some(Assistant) =>
-          Future.successful(Redirect(controllers.routes.UnauthorisedAssistantController.onPageLoad(regime)))
+          Future.successful(Redirect(routes.UnauthorisedAssistantController.onPageLoad(regime)))
         case Some(_) ~ _ ~ Some(Individual) ~ _ if regime == CBC =>
-          Future.successful(
-            NotImplemented("Not Implimented - covered by DAC6-1632")
-          ) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
+          Future.successful(Redirect(routes.affinityGroupProblemController.onPageLoad(regime)))
         case Some(internalID) ~ enrolments ~ Some(affinityGroup) ~ _ => block(IdentifierRequest(request, internalID, affinityGroup, enrolments.enrolments))
         case _                                                       => throw new UnauthorizedException("Unable to retrieve internal Id")
       }
