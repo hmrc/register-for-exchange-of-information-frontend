@@ -21,7 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
 import matchers.JsonMatchers
-import models.{CBC, MDR}
+import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import play.api.inject
@@ -285,7 +285,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val controller     = new Harness(authAction andThen enrolledAction)
       val result         = controller.onPageLoad()(FakeRequest())
 
-      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(regime).url
+      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(CBC).url
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(expectedRedirectUrl)
@@ -301,7 +301,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
 
-      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(regime).url
+      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(CBC).url
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(expectedRedirectUrl)
