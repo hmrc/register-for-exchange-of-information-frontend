@@ -17,6 +17,7 @@
 package controllers.actions
 
 import config.FrontendAppConfig
+import controllers.routes
 import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
 import play.api.Logging
@@ -25,6 +26,7 @@ import play.api.mvc.{ActionFilter, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 
 import javax.inject.Inject
+import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckEnrolledToServiceAction @Inject() (val regime: Regime, config: FrontendAppConfig)(implicit val executionContext: ExecutionContext)
@@ -35,15 +37,12 @@ class CheckEnrolledToServiceAction @Inject() (val regime: Regime, config: Fronte
     if (request.enrolments.exists(_.key == config.enrolmentKey(regime.toString))) {
       logger.info(s"User is enrolled to the service ${regime.toString}")
       (request.affinityGroup, regime) match {
-        case (_, MDR)            => Future.successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
-        case (Organisation, CBC) => Future.successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to redirect to CBC
-        case _ =>
-          Future.successful(
-            Some(NotImplemented("Not Implimented - covered by DAC6-1632"))
-          ) //TODO: Change this to new Individual CBC kick out page as part of DAC6-1632
+        case (_, MDR)            => successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
+        case (Organisation, CBC) => successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to redirect to CBC
+        case _                   => successful(Some(Redirect(routes.AffinityGroupProblemController.onPageLoad(regime))))
       }
     } else {
-      Future.successful(None)
+      successful(None)
     }
 }
 

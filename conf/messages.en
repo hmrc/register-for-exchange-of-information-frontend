@@ -504,3 +504,7 @@ individualAlreadyRegistered.heading = You are already registered to use the MDR 
 individualAlreadyRegistered.p1 = You can access the service using the same Government Gateway account that you used to register for MDR.
 individualAlreadyRegistered.link = Sign in to your Government Gateway account (opens in new tab)
 individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email
+
+affinityGroupProblem.title = Sorry, you’re unable to use this service
+affinityGroupProblem.heading = Sorry, you’re unable to use this service
+affinityGroupProblem.paragraph.1 = You’ve signed in as an Individual user. Individuals cannot register for this service.
