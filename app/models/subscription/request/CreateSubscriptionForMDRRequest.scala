@@ -17,9 +17,16 @@
 package models.subscription.request
 
 import play.api.libs.json.{Json, OWrites}
+import julienrf.json.derived
 
-case class CreateSubscriptionForMDRRequest(createSubscriptionForMDRRequest: SubscriptionRequest)
+sealed trait CreateSubscriptionRequest
+
+case class CreateSubscriptionForMDRRequest(createSubscriptionForMDRRequest: SubscriptionRequest) extends CreateSubscriptionRequest
 
 object CreateSubscriptionForMDRRequest {
   implicit val writes: OWrites[CreateSubscriptionForMDRRequest] = Json.writes[CreateSubscriptionForMDRRequest]
+}
+
+object CreateSubscriptionRequest {
+  implicit val format = derived.oformat[CreateSubscriptionRequest]()
 }

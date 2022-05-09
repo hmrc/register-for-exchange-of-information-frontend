@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, NotFoundError, ServiceUnavailableError, UnableToCreateEMTPSubscriptionError}
-import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest}
+import models.subscription.request.{CreateSubscriptionForMDRRequest, CreateSubscriptionRequest, DisplaySubscriptionRequest}
 import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionResponse}
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, CONFLICT, NOT_FOUND, SERVICE_UNAVAILABLE}
@@ -65,10 +65,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-subscription"
     EitherT {
       http
-        .POST[CreateSubscriptionForMDRRequest, HttpResponse](
+        .POST[CreateSubscriptionRequest, HttpResponse](
           submissionUrl,
           createSubscriptionForMDRRequest
-        )(wts = CreateSubscriptionForMDRRequest.writes, rds = readRaw, hc = hc, ec = ec)
+        )(wts = CreateSubscriptionRequest.format, rds = readRaw, hc = hc, ec = ec)
         .map {
           case response if is2xx(response.status) =>
             response.json

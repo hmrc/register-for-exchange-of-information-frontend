@@ -14,6 +14,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "play-nunjucks"                 % "0.35.0-play-28",
     "uk.gov.hmrc"       %% "play-nunjucks-viewmodel"       % "0.15.0-play-28",
     "uk.gov.hmrc"       %% "domain"                        % "8.0.0-play-28",
+    "org.julienrf"      %% "play-json-derived-codecs"  % "7.0.0",
     "uk.gov.hmrc"       %% "emailaddress"                  % "3.6.0"
   )
 
