@@ -30,7 +30,7 @@ import play.twirl.api.Html
 import scala.concurrent.Future
 
 class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMockFixtures {
-    val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "RegistrationConfirmation Controller" - {
 
@@ -47,7 +47,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
       retrieveUserAnswersData(userAnswers)
       val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor                             = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -73,7 +73,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
       retrieveUserAnswersData(emptyUserAnswers)
       val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor                             = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
