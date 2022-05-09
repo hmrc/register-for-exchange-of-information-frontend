@@ -85,7 +85,7 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
       }
       .recover {
         case _: NoActiveSession =>
-          Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl(regime))))
+          Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
         case _: AuthorisationException =>
           Redirect(controllers.routes.ThereIsAProblemController.onPageLoad(regime))
       }
