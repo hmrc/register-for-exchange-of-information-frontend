@@ -17,12 +17,10 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import config.FrontendAppConfig
 import models.{MDR, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.SubscriptionIDPage
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -30,7 +28,6 @@ import play.twirl.api.Html
 import scala.concurrent.Future
 
 class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMockFixtures {
-  val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "RegistrationConfirmation Controller" - {
 
@@ -47,7 +44,6 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
       retrieveUserAnswersData(userAnswers)
       val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor                             = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -55,15 +51,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
 
-      val expectedJson = Json.obj(
-        "regime"             -> regime.toUpperCase,
-        "subscriptionID"     -> "SID",
-        "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
-        "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
-      )
-
       templateCaptor.getValue mustEqual "registrationConfirmation.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "render 'Technical Difficulties' page when Subscription Id is missing" in {
@@ -73,7 +61,6 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
       retrieveUserAnswersData(emptyUserAnswers)
       val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor                             = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
