@@ -60,7 +60,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
       val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Right(subscriptionID))
 
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
-      when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
+      when(mockSubscriptionConnector.createSubscription(any(), any())(any(), any())).thenReturn(response)
       when(mockAuditService.sendAuditEvent(any(), any())(any())).thenReturn(Future.successful(Success))
 
       val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -91,7 +91,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
       result.futureValue mustBe Right(SubscriptionID("id"))
 
       verify(mockSubscriptionConnector, times(1)).readSubscription(any())(any(), any())
-      verify(mockSubscriptionConnector, times(1)).createSubscription(any())(any(), any())
+      verify(mockSubscriptionConnector, times(1)).createSubscription(any(), any())(any(), any())
     }
 
     "must return 'SubscriptionID' when there is already a subscription exists" in {
@@ -107,7 +107,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
       val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(MandatoryInformationMissingError()))
 
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
-      when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
+      when(mockSubscriptionConnector.createSubscription(any(), any())(any(), any())).thenReturn(response)
 
       val result = service.checkAndCreateSubscription(MDR, safeId, UserAnswers("id"))
 
@@ -136,7 +136,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
         val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(error))
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
-        when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
+        when(mockSubscriptionConnector.createSubscription(any(), any())(any(), any())).thenReturn(response)
 
         val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
 

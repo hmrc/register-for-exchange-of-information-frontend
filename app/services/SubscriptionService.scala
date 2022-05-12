@@ -73,7 +73,7 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
       case _ =>
         (SubscriptionRequest.convertTo(regime, safeID, userAnswers) match {
           case Some(subscriptionRequest) =>
-            val response = subscriptionConnector.createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
+            val response = subscriptionConnector.createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest), regime)
 
             auditCreateSubscriptionEvent(regime, userAnswers, subscriptionRequest, response.value)
 

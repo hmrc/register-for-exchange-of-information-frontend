@@ -22,7 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqua
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.SubscriptionID
+import models.{MDR, SubscriptionID}
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, NotFoundError, ServiceUnavailableError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionForCBCRequest, DisplaySubscriptionForMDRRequest}
@@ -162,7 +162,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubPostResponse("/create-subscription", OK, subscriptionResponse)
 
-        val result = connector.createSubscription(subMDRRequest)
+        val result = connector.createSubscription(subMDRRequest, MDR)
         result.value.futureValue mustBe Right(expectedResponse)
       }
 
@@ -185,7 +185,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubPostResponse("/create-subscription", OK, subscriptionResponse)
 
-        val result: EitherT[Future, ApiError, SubscriptionID] = connector.createSubscription(subMDRRequest)
+        val result: EitherT[Future, ApiError, SubscriptionID] = connector.createSubscription(subMDRRequest, MDR)
         result.value.futureValue mustBe Left(UnableToCreateEMTPSubscriptionError)
       }
 
@@ -212,7 +212,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubPostResponse("/create-subscription", CONFLICT, subscriptionErrorResponse)
 
-        val result = connector.createSubscription(subMDRRequest)
+        val result = connector.createSubscription(subMDRRequest, MDR)
         result.value.futureValue mustBe Left(DuplicateSubmissionError)
       }
 
@@ -235,7 +235,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubPostResponse("/create-subscription", errorCode, subscriptionErrorResponse)
 
-        val result = connector.createSubscription(subMDRRequest)
+        val result = connector.createSubscription(subMDRRequest, MDR)
         result.value.futureValue mustBe Left(getApiError(errorCode))
       }
     }

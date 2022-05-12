@@ -18,11 +18,11 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
-import models.SubscriptionID
+import models.{CBC, MDR, Regime, SubscriptionID}
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, NotFoundError, ServiceUnavailableError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.{CreateSubscriptionForMDRRequest, CreateSubscriptionRequest, DisplaySubscriptionRequest}
-import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionResponse}
+import models.subscription.response.{CreateSubscriptionForCBCResponse, CreateSubscriptionForMDRResponse, DisplaySubscriptionResponse}
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, CONFLICT, NOT_FOUND, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -59,7 +59,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
   }
 
   def createSubscription(
-    createSubscriptionForMDRRequest: CreateSubscriptionForMDRRequest
+    createSubscriptionRequest: CreateSubscriptionRequest,
+    regime: Regime
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, SubscriptionID] = {
 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-subscription"
@@ -67,16 +68,27 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       http
         .POST[CreateSubscriptionRequest, HttpResponse](
           submissionUrl,
-          createSubscriptionForMDRRequest
+          createSubscriptionRequest
         )(wts = CreateSubscriptionRequest.format, rds = readRaw, hc = hc, ec = ec)
         .map {
           case response if is2xx(response.status) =>
-            response.json
-              .asOpt[CreateSubscriptionForMDRResponse]
-              .map(
-                r => Right(SubscriptionID(r.createSubscriptionForMDRResponse.subscriptionID))
-              )
-              .getOrElse(Left(UnableToCreateEMTPSubscriptionError))
+            regime match {
+              case CBC =>
+                response.json
+                  .asOpt[CreateSubscriptionForCBCResponse]
+                  .map(
+                    r => Right(SubscriptionID(r.createSubscriptionForCBCResponse.subscriptionID))
+                  )
+                  .getOrElse(Left(UnableToCreateEMTPSubscriptionError))
+              case MDR =>
+                response.json
+                  .asOpt[CreateSubscriptionForMDRResponse]
+                  .map(
+                    r => Right(SubscriptionID(r.createSubscriptionForMDRResponse.subscriptionID))
+                  )
+                  .getOrElse(Left(UnableToCreateEMTPSubscriptionError))
+            }
+
           case response if response.status equals CONFLICT =>
             logger.warn(s"Duplicate submission to ETMP. ${response.status} response status")
             Left(DuplicateSubmissionError)
