@@ -17,12 +17,10 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 
 import javax.inject.Inject
 import scala.concurrent.Future.successful
@@ -33,9 +31,11 @@ class CheckEnrolledToServiceAction @Inject() (config: FrontendAppConfig)(implici
     with Logging {
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    request.affinityGroup match {
-      case Individual | Organisation => successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
-      case _                         => successful(Some(Redirect(routes.AffinityGroupProblemController.onPageLoad())))
+    if (request.enrolments.exists(_.key == config.enrolmentKey)) {
+      logger.info(s"User is enrolled to the MDR service")
+      successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
+    } else {
+      successful(None)
     }
 }
 
