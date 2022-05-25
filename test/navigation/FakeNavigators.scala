@@ -25,3 +25,9 @@ class MDRFakeNavigator(desiredRoute: Call) extends MDRNavigator {
   override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     desiredRoute
 }
+
+class ContactDetailsFakeNavigator(desiredRoute: Call) extends ContactDetailsNavigator {
+
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+    desiredRoute
+}

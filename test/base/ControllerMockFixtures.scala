@@ -20,7 +20,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import matchers.JsonMatchers
 import models.UserAnswers
-import navigation.{MDRFakeNavigator, MDRNavigator}
+import navigation.{ContactDetailsFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.{Mockito, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
@@ -38,12 +38,13 @@ import uk.gov.hmrc.viewmodels.NunjucksSupport
 trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with NunjucksSupport with JsonMatchers {
   self: SpecBase =>
 
-  def onwardRoute: Call                                  = Call("GET", "/foo")
-  final val mockRenderer: NunjucksRenderer               = mock[NunjucksRenderer]
-  final val mockDataRetrievalAction: DataRetrievalAction = mock[DataRetrievalAction]
-  final val mockSessionRepository: SessionRepository     = mock[SessionRepository]
-  final val mockAddressLookupConnector                   = mock[AddressLookupConnector]
-  protected val mdrFakeNavigator: MDRNavigator           = new MDRFakeNavigator(onwardRoute)
+  def onwardRoute: Call                                              = Call("GET", "/foo")
+  final val mockRenderer: NunjucksRenderer                           = mock[NunjucksRenderer]
+  final val mockDataRetrievalAction: DataRetrievalAction             = mock[DataRetrievalAction]
+  final val mockSessionRepository: SessionRepository                 = mock[SessionRepository]
+  final val mockAddressLookupConnector                               = mock[AddressLookupConnector]
+  protected val mdrFakeNavigator: MDRNavigator                       = new MDRFakeNavigator(onwardRoute)
+  protected val contactDetailsFakeNavigator: ContactDetailsNavigator = new ContactDetailsFakeNavigator(onwardRoute)
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
@@ -80,6 +81,7 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
         bind[NunjucksRenderer].toInstance(mockRenderer),
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[MDRNavigator].toInstance(mdrFakeNavigator),
+        bind[ContactDetailsNavigator].toInstance(contactDetailsFakeNavigator),
         bind[AddressLookupConnector].toInstance(mockAddressLookupConnector)
       )
 }

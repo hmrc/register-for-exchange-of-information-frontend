@@ -51,7 +51,6 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "regime"       -> "MDR",
         "withID"       -> true,
         "emailAddress" -> frontendAppConfig.emailEnquiries
       )
@@ -78,7 +77,6 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "regime"       -> "MDR",
         "withID"       -> false,
         "emailAddress" -> frontendAppConfig.emailEnquiries,
         "loginGG"      -> frontendAppConfig.loginUrl

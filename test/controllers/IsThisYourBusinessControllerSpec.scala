@@ -231,7 +231,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val expectedJson = Json.obj(
         "form"    -> filledForm,
-        "regime"  -> "MDR",
         "name"    -> "name",
         "address" -> List("line1"),
         "action"  -> loadRoute,
