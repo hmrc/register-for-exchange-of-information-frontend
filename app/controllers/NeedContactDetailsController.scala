@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.StandardActionSets
-import models.{NormalMode, Regime}
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,11 +36,10 @@ class NeedContactDetailsController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheck(regime).async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheck().async {
     implicit request =>
       val data = Json.obj(
-        "regime" -> regime.toUpperCase,
-        "action" -> routes.ContactNameController.onPageLoad(NormalMode, regime).url
+        "action" -> routes.ContactNameController.onPageLoad(NormalMode).url
       )
       renderer.render("needContactDetails.njk", data).map(Ok(_))
   }

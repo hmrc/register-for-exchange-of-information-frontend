@@ -12,8 +12,8 @@
   timeout: config.timeout,
   countdown: config.countdown,
   keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
-  signOutUrl: routes.controllers.auth.AuthController.signOut(regime | lower).url,
-  timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad(regime | lower).url
+  signOutUrl: routes.controllers.auth.AuthController.signOut().url,
+  timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad().url
 }) }}
   {% include "includes/head.njk" %}
 {% endblock %}
@@ -21,11 +21,11 @@
 {% block header %}
   {{ hmrcHeader({
     homepageUrl: "https://www.gov.uk",
-    serviceName: messages("site.service_name_"+regime),
-    serviceUrl: routes.controllers.IndexController.onPageLoad(regime | lower).url,
+    serviceName: messages("site.service_name_"),
+    serviceUrl: routes.controllers.IndexController.onPageLoad().url,
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",
-    signOutHref: routes.controllers.auth.AuthController.signOut(regime | lower).url
+    signOutHref: routes.controllers.auth.AuthController.signOut().url
   }) }}
 
 {% endblock %}

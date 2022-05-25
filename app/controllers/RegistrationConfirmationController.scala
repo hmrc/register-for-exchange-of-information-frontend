@@ -18,7 +18,6 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.Regime
 import pages.SubscriptionIDPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -45,7 +44,7 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedWithoutEnrolmentCheck(regime).async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedWithoutEnrolmentCheck().async {
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
@@ -54,7 +53,6 @@ class RegistrationConfirmationController @Inject() (
               sessionRepository.clear(request.userId) flatMap {
                 _ =>
                   val json = Json.obj(
-                    "regime"             -> regime.toUpperCase,
                     "subscriptionID"     -> id.value,
                     "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
                     "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
@@ -64,7 +62,7 @@ class RegistrationConfirmationController @Inject() (
           }
         case None =>
           logger.warn("SubscriptionIDPage: Subscription Id is missing")
-          renderer.renderThereIsAProblemPage(regime)
+          renderer.renderThereIsAProblemPage()
       }
   }
 }

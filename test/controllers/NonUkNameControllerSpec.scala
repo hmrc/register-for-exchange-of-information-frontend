@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{MDR, NonUkName, NormalMode, UserAnswers}
+import models.{NonUkName, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.NonUkNamePage
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class NonUkNameControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.NonUkNameController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.NonUkNameController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.NonUkNameController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.NonUkNameController.onSubmit(NormalMode).url
 
   private def form = new forms.NonUkNameFormProvider().apply()
 

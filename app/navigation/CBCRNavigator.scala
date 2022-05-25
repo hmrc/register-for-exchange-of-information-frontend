@@ -25,7 +25,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class CBCRNavigator @Inject() () extends Navigator {
 
-  override val normalRoutes: Page => Regime => UserAnswers => Option[Call] = ???
+  override val normalRoutes: Page => UserAnswers => Option[Call] = ???
 
-  override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = ???
+  override val checkRouteMap: Page => UserAnswers => Option[Call] = ???
 }

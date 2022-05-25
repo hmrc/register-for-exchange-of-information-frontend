@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.ContactPhoneFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
 import pages.{ContactNamePage, ContactPhonePage}
 import play.api.data.Form
@@ -49,39 +49,38 @@ class ContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
+  private def data(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
 
     val name = request.userAnswers.get(ContactNamePage)
     Json.obj(
       "form"      -> form,
-      "regime"    -> regime.toUpperCase,
       "name"      -> name,
       "pageTitle" -> "contactPhone.title.business",
       "heading"   -> "contactPhone.heading.business",
       "hintText"  -> hintWithNoBreakSpaces(),
-      "action"    -> routes.ContactPhoneController.onSubmit(mode, regime).url
+      "action"    -> routes.ContactPhoneController.onSubmit(mode).url
     )
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         val formWithData = request.userAnswers.get(ContactPhonePage).fold(form)(form.fill)
-        renderer.render("contactPhone.njk", data(mode, regime, formWithData)).map(Ok(_))
+        renderer.render("contactPhone.njk", data(mode, formWithData)).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => renderer.render("contactPhone.njk", data(mode, regime, formWithErrors)).map(BadRequest(_)),
+            formWithErrors => renderer.render("contactPhone.njk", data(mode, formWithErrors)).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactPhonePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(ContactPhonePage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(ContactPhonePage, mode, updatedAnswers))
           )
     }
 

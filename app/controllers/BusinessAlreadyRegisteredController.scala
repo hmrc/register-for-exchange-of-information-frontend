@@ -18,7 +18,6 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.Regime
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,10 +39,9 @@ class BusinessAlreadyRegisteredController @Inject() (
     with I18nSupport
     with NunjucksSupport {
 
-  def onPageLoadWithID(regime: Regime): Action[AnyContent] = identify(regime).async {
+  def onPageLoadWithID(): Action[AnyContent] = identify().async {
     implicit request =>
       val json = Json.obj(
-        "regime"       -> regime.toUpperCase,
         "withID"       -> true,
         "emailAddress" -> frontendAppConfig.emailEnquiries
       )
@@ -51,10 +49,9 @@ class BusinessAlreadyRegisteredController @Inject() (
       renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
   }
 
-  def onPageLoadWithoutID(regime: Regime): Action[AnyContent] = identify(regime).async {
+  def onPageLoadWithoutID(): Action[AnyContent] = identify().async {
     implicit request =>
       val json = Json.obj(
-        "regime"       -> regime.toUpperCase,
         "withID"       -> false,
         "emailAddress" -> frontendAppConfig.emailEnquiries,
         "loginGG"      -> frontendAppConfig.loginUrl

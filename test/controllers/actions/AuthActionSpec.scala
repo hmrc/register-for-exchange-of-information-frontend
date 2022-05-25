@@ -19,9 +19,7 @@ package controllers.actions
 import base.{ControllerMockFixtures, SpecBase}
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.routes
 import matchers.JsonMatchers
-import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
 import play.api.inject
@@ -66,7 +64,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
     "when the user hasn't logged in" - {
 
       "must redirect the user to log in " in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers).apply(MDR)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -79,7 +77,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
 
       "must redirect the user to log in " in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers).apply(MDR)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -92,12 +90,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers).apply(MDR)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url
+        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad().url
       }
     }
 
@@ -106,12 +104,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       "must redirect the user to the unauthorised page" in {
 
         val authAction =
-          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers).apply(MDR)
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url
+        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad().url
       }
     }
 
@@ -119,12 +117,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers).apply(MDR)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url
+        redirectLocation(result).value mustBe controllers.routes.ThereIsAProblemController.onPageLoad().url
       }
     }
 
@@ -132,12 +130,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers).apply(MDR)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url)
+        redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad().url)
       }
 
       "must redirect the user to the unauthorised agent page" in {
@@ -148,12 +146,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
         val retrieval: AuthRetrievals = None ~ emptyEnrolments ~ Some(Agent) ~ None
         when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAgentController.onPageLoad(MDR).url)
+        redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAgentController.onPageLoad().url)
       }
     }
 
@@ -161,12 +159,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers).apply(MDR)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad(MDR).url)
+        redirectLocation(result) mustBe Some(controllers.routes.ThereIsAProblemController.onPageLoad().url)
       }
     }
 
@@ -177,7 +175,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ Some(Assistant)
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
 
@@ -187,23 +185,6 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       redirectLocation(result) mustBe Some(expectedRedirectUrl)
     }
 
-    "must redirect the user to CBC service when assistant with CBC credentials" in {
-      val mockAuthConnector: AuthConnector = mock[AuthConnector]
-      val cbcEnrolment                     = Enrolment(key = "HMRC-CBC-ORG")
-
-      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(cbcEnrolment)) ~ None ~ Some(Assistant)
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
-
-      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
-      val controller = new Harness(authAction)
-      val result     = controller.onPageLoad()(FakeRequest())
-
-      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
-
-      status(result) mustBe NOT_IMPLEMENTED
-      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with CBC URL
-    }
-
     "must redirect the user to unauthorised page when assistant" in {
       val mockAuthConnector: AuthConnector = mock[AuthConnector]
       val emptyEnrolments: Enrolment       = Enrolment(key = "")
@@ -211,12 +192,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(emptyEnrolments)) ~ None ~ Some(Assistant)
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
+      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
       val controller = new Harness(authAction)
       val result     = controller.onPageLoad()(FakeRequest())
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad(MDR).url)
+      redirectLocation(result) mustBe Some(controllers.routes.UnauthorisedAssistantController.onPageLoad().url)
     }
 
     "must redirect the user to MDR file upload service when Individual with MDR credentials" in {
@@ -226,8 +207,8 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ Some(Individual) ~ None
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
-      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(MDR)
+      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
+      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply()
       val controller     = new Harness(authAction andThen enrolledAction)
       val result         = controller.onPageLoad()(FakeRequest())
 
@@ -244,64 +225,12 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksS
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ Some(Organisation) ~ None
       when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
 
-      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(MDR)
-      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(MDR)
+      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
+      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply()
       val controller     = new Harness(authAction andThen enrolledAction)
       val result         = controller.onPageLoad()(FakeRequest())
 
       val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(expectedRedirectUrl)
-    }
-
-    "must redirect the user to CBC service when Organisation with CBC credentials" in {
-      val mockAuthConnector: AuthConnector = mock[AuthConnector]
-      val cbcEnrolment                     = Enrolment(key = "HMRC-CBC-ORG")
-
-      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(cbcEnrolment)) ~ Some(Organisation) ~ None
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
-
-      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
-      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(CBC)
-      val controller     = new Harness(authAction andThen enrolledAction)
-      val result         = controller.onPageLoad()(FakeRequest())
-
-      //      val expectedRedirectUrl = s"${appConfig.mandatoryDisclosureRulesFrontendUrl}"
-
-      status(result) mustBe NOT_IMPLEMENTED
-      //      redirectLocation(result) mustBe Some(expectedRedirectUrl) TODO: Replace with CBC URL
-    }
-
-    "must redirect the user to CBC individual kickout page when Individual with CBC credentials" in {
-      val mockAuthConnector: AuthConnector = mock[AuthConnector]
-      val cbcEnrolment                     = Enrolment(key = "HMRC-CBC-ORG")
-
-      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(cbcEnrolment)) ~ Some(Individual) ~ None
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
-
-      val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
-      val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply(CBC)
-      val controller     = new Harness(authAction andThen enrolledAction)
-      val result         = controller.onPageLoad()(FakeRequest())
-
-      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(CBC).url
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(expectedRedirectUrl)
-    }
-
-    "must redirect the user to CBC individual kickout page when Individual with CBC Regime and no enrolments" in {
-      val mockAuthConnector: AuthConnector = mock[AuthConnector]
-
-      val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set.empty) ~ Some(Individual) ~ None
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
-
-      val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply(CBC)
-      val controller = new Harness(authAction)
-      val result     = controller.onPageLoad()(FakeRequest())
-
-      val expectedRedirectUrl = routes.AffinityGroupProblemController.onPageLoad(CBC).url
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result) mustBe Some(expectedRedirectUrl)

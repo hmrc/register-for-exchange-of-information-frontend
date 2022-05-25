@@ -24,25 +24,25 @@ import play.api.mvc.Call
 
 trait Navigator {
 
-  val normalRoutes: Page => Regime => UserAnswers => Option[Call]
+  val normalRoutes: Page => UserAnswers => Option[Call]
 
-  val checkRouteMap: Page => Regime => UserAnswers => Option[Call]
+  val checkRouteMap: Page => UserAnswers => Option[Call]
 
-  def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers): Call = mode match {
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(regime)(userAnswers) match {
+      normalRoutes(page)(userAnswers) match {
         case Some(call) => call
-        case None       => routes.IndexController.onPageLoad(regime)
+        case None       => routes.IndexController.onPageLoad()
       }
 
     case CheckMode =>
-      checkRouteMap(page)(regime)(userAnswers) match {
+      checkRouteMap(page)(userAnswers) match {
         case Some(call) => call
-        case None       => routes.IndexController.onPageLoad(regime)
+        case None       => routes.IndexController.onPageLoad()
       }
   }
 
-  def checkNextPageForValueThenRoute[A](mode: Mode, regime: Regime, ua: UserAnswers, page: QuestionPage[A], call: Call)(implicit rds: Reads[A]): Option[Call] =
+  def checkNextPageForValueThenRoute[A](mode: Mode, ua: UserAnswers, page: QuestionPage[A], call: Call)(implicit rds: Reads[A]): Option[Call] =
     if (
       mode.equals(CheckMode) && ua
         .get(page)
@@ -50,7 +50,7 @@ trait Navigator {
           _ => true
         )
     ) {
-      Some(routes.CheckYourAnswersController.onPageLoad(regime))
+      Some(routes.CheckYourAnswersController.onPageLoad())
     } else {
       Some(call)
     }
@@ -58,6 +58,6 @@ trait Navigator {
 
 object Navigator {
 
-  val missingInformation: Regime => Call = (regime: Regime) => controllers.routes.SomeInformationIsMissingController.onPageLoad(regime)
-  val checkYourAnswers: Regime => Call   = (regime: Regime) => controllers.routes.CheckYourAnswersController.onPageLoad(regime)
+  val missingInformation: Call = controllers.routes.SomeInformationIsMissingController.onPageLoad()
+  val checkYourAnswers: Call   = controllers.routes.CheckYourAnswersController.onPageLoad()
 }

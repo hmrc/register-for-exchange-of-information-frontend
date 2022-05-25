@@ -37,12 +37,12 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Nunj
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(GET, routes.IndexController.onPageLoad(regime).url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
+      redirectLocation(result).value mustEqual routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
 
     }
   }

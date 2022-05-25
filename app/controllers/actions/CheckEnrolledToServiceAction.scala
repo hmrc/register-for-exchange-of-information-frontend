@@ -18,36 +18,29 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import controllers.routes
-import models.{CBC, MDR, Regime}
 import models.requests.IdentifierRequest
 import play.api.Logging
-import play.api.mvc.Results.{NotImplemented, Redirect}
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 
 import javax.inject.Inject
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckEnrolledToServiceAction @Inject() (val regime: Regime, config: FrontendAppConfig)(implicit val executionContext: ExecutionContext)
+class CheckEnrolledToServiceAction @Inject() (config: FrontendAppConfig)(implicit val executionContext: ExecutionContext)
     extends ActionFilter[IdentifierRequest]
     with Logging {
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-    if (request.enrolments.exists(_.key == config.enrolmentKey(regime.toString))) {
-      logger.info(s"User is enrolled to the service ${regime.toString}")
-      (request.affinityGroup, regime) match {
-        case (_, MDR)            => successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
-        case (Organisation, CBC) => successful(Some(NotImplemented("Not Implemented"))) //TODO: Change this to redirect to CBC
-        case _                   => successful(Some(Redirect(routes.AffinityGroupProblemController.onPageLoad(regime))))
-      }
-    } else {
-      successful(None)
+    request.affinityGroup match {
+      case Individual | Organisation => successful(Some(Redirect(config.mandatoryDisclosureRulesFrontendUrl)))
+      case _                         => successful(Some(Redirect(routes.AffinityGroupProblemController.onPageLoad())))
     }
 }
 
 class CheckEnrolledToServiceActionProvider @Inject() (config: FrontendAppConfig)(implicit ec: ExecutionContext) {
 
-  def apply[T](regime: Regime): ActionFilter[IdentifierRequest] =
-    new CheckEnrolledToServiceAction(regime, config)
+  def apply[T](): ActionFilter[IdentifierRequest] =
+    new CheckEnrolledToServiceAction(config)
 }

@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.BusinessNameFormProvider
 import models.BusinessType._
 import models.requests.DataRequest
-import models.{BusinessType, Mode, Regime}
+import models.{BusinessType, Mode}
 import navigation.MDRNavigator
 import pages.{BusinessNamePage, BusinessTypePage}
 import play.api.data.Form
@@ -57,48 +57,47 @@ class BusinessNameController @Inject() (
       case _                                   => None
     }
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], businessType: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String], businessType: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
 
     val data = Json.obj(
       "form"     -> form,
-      "regime"   -> regime.toUpperCase,
       "titleTxt" -> s"businessName.title.$businessType",
       "heading"  -> s"businessName.heading.$businessType",
       "hint"     -> s"businessName.hint.$businessType",
-      "action"   -> routes.BusinessNameController.onSubmit(mode, regime).url
+      "action"   -> routes.BusinessNameController.onSubmit(mode).url
     )
     renderer.render("businessName.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
       implicit request =>
         selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
           case Some(businessTypeText) =>
             val form = formProvider(businessTypeText)
-            render(mode, regime, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessTypeText).map(Ok(_))
+            render(mode, request.userAnswers.get(BusinessNamePage).fold(form)(form.fill), businessTypeText).map(Ok(_))
 
-          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
       implicit request =>
         selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
           case Some(businessTypeText) =>
             formProvider(businessTypeText)
               .bindFromRequest()
               .fold(
-                formWithErrors => render(mode, regime, formWithErrors, businessTypeText).map(BadRequest(_)),
+                formWithErrors => render(mode, formWithErrors, businessTypeText).map(BadRequest(_)),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
                     _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(BusinessNamePage, mode, regime, updatedAnswers))
+                  } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
               )
 
-          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
 
     }

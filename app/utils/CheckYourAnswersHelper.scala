@@ -18,13 +18,13 @@ package utils
 
 import controllers.routes
 import models.matching.OrgRegistrationInfo
-import models.{CheckMode, Regime, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList._
 import uk.gov.hmrc.viewmodels._
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
+class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
   val messages: Messages
 ) extends RowBuilder {
 
@@ -53,7 +53,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
                  <p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
                  ${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
                   """),
-          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
+          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
         )
       case _ => None
     }
@@ -70,7 +70,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
         toRow(
           msgKey = "whatIsTradingName",
           value = lit"$value",
-          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
+          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode).url
         )
     }
 
@@ -79,7 +79,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "selectAddress",
         value = Html(s"${answer.replace(",", "<br>")}"),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
@@ -88,7 +88,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "businessWithoutIDName",
         value = lit"$answer",
-        href = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode, regime).url
+        href = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -97,7 +97,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "whatIsYourPostcode",
         value = msg"site.edit",
-        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode, regime).url
+        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode).url
       )
   }
 
@@ -106,7 +106,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "nonUkName",
         value = lit"${answer.givenName} ${answer.familyName}",
-        href = routes.NonUkNameController.onPageLoad(CheckMode, regime).url
+        href = routes.NonUkNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -115,7 +115,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "soleName",
         value = msg"site.edit",
-        href = routes.SoleNameController.onPageLoad(CheckMode, regime).url
+        href = routes.SoleNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -124,7 +124,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "addressUK",
         value = formatAddress(answer),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
@@ -133,7 +133,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "addressWithoutId.individual",
         value = formatAddress(answer),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
@@ -142,7 +142,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "addressWithoutId.business",
         value = formatAddress(answer),
-        href = routes.BusinessAddressWithoutIdController.onPageLoad(CheckMode, regime).url
+        href = routes.BusinessAddressWithoutIdController.onPageLoad(CheckMode).url
       )
   }
 
@@ -151,7 +151,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "doYouLiveInTheUK",
         value = yesOrNo(answer),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
@@ -160,7 +160,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "nonUkNameController",
         value = msg"site.edit",
-        href = routes.NonUkNameController.onPageLoad(CheckMode, regime).url
+        href = routes.NonUkNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -169,7 +169,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "whatIsYourDateOfBirth",
         value = lit"${answer.format(dateFormatter)}",
-        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime).url
+        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode).url
       )
   }
 
@@ -178,7 +178,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "whatIsYourDateOfBirth",
         value = lit"${answer.format(dateFormatter)}",
-        href = routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode, regime).url
+        href = routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode).url
       )
   }
 
@@ -187,7 +187,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "whatIsYourName",
         value = lit"${answer.firstName} ${answer.lastName}",
-        href = routes.WhatIsYourNameController.onPageLoad(CheckMode, regime).url
+        href = routes.WhatIsYourNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -196,7 +196,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "whatIsYourNationalInsuranceNumber",
         value = lit"$answer",
-        href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode, regime).url
+        href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode).url
       )
   }
 
@@ -205,7 +205,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "isThisYourBusiness",
         value = msg"site.edit",
-        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime).url
+        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
       )
   }
 
@@ -214,7 +214,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "businessName",
         value = msg"site.edit",
-        href = routes.BusinessNameController.onPageLoad(CheckMode, regime).url
+        href = routes.BusinessNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -223,7 +223,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "uTR",
         value = msg"site.edit",
-        href = routes.UTRController.onPageLoad(CheckMode, regime).url
+        href = routes.UTRController.onPageLoad(CheckMode).url
       )
   }
 
@@ -232,7 +232,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "bussinessType",
         value = msg"site.edit",
-        href = routes.BusinessTypeController.onPageLoad(CheckMode, regime).url
+        href = routes.BusinessTypeController.onPageLoad(CheckMode).url
       )
   }
 
@@ -241,7 +241,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "doYouHaveUniqueTaxPayerReference",
         value = yesOrNo(answer),
-        href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
       )
   }
 
@@ -250,7 +250,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "whatAreYouRegisteringAs",
         value = msg"whatAreYouRegisteringAs.$answer",
-        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, regime).url
+        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode).url
       )
   }
 
@@ -259,7 +259,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "doYouHaveNIN",
         value = yesOrNo(answer),
-        href = routes.DoYouHaveNINController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouHaveNINController.onPageLoad(CheckMode).url
       )
   }
 
@@ -268,7 +268,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "sndConHavePhone",
         value = yesOrNo(answer),
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
+        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 
@@ -278,7 +278,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "sndContactPhone",
         value = lit"$value",
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
+        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 
@@ -287,7 +287,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "sndContactEmail",
         value = lit"$answer",
-        href = routes.SndContactEmailController.onPageLoad(CheckMode, regime).url
+        href = routes.SndContactEmailController.onPageLoad(CheckMode).url
       )
   }
 
@@ -296,7 +296,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "sndContactName",
         value = lit"$answer",
-        href = routes.SndContactNameController.onPageLoad(CheckMode, regime).url
+        href = routes.SndContactNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -305,7 +305,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "secondContact",
         value = yesOrNo(answer),
-        href = routes.SecondContactController.onPageLoad(CheckMode, regime).url
+        href = routes.SecondContactController.onPageLoad(CheckMode).url
       )
   }
 
@@ -319,7 +319,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "contactPhone",
         value = lit"$value",
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode, regime).url
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
       )
     )
 
@@ -328,7 +328,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "isContactTelephone",
         value = yesOrNo(answer),
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode, regime).url
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
       )
   }
 
@@ -337,7 +337,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "contactName",
         value = lit"$answer",
-        href = routes.ContactNameController.onPageLoad(CheckMode, regime).url
+        href = routes.ContactNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -346,7 +346,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "contactEmail",
         value = lit"$answer",
-        href = routes.ContactEmailController.onPageLoad(CheckMode, regime).url
+        href = routes.ContactEmailController.onPageLoad(CheckMode).url
       )
   }
 
@@ -355,7 +355,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "contactEmail",
         value = lit"$answer",
-        href = routes.IndividualContactEmailController.onPageLoad(CheckMode, regime).url
+        href = routes.IndividualContactEmailController.onPageLoad(CheckMode).url
       )
   }
 
@@ -368,7 +368,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
       toRow(
         msgKey = "contactPhone",
         value = lit"$numberOrNot",
-        href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode, regime).url
+        href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode).url
       )
     )
   }

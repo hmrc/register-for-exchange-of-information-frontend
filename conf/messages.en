@@ -478,7 +478,6 @@ registrationConfirmation.subscriptionID.text = You will need to provide your MDR
 registrationConfirmation.email = We will send you an email to confirm you have registered.
 registrationConfirmation.submission.text = You can now
 registrationConfirmation.submission.text.MDR = for Mandatory Disclosure Rules (MDR).
-registrationConfirmation.submission.text.CBC = for Country-by-Country Rules (CBCR).
 registrationConfirmation.submission.link = report cross-border arrangements
 registrationConfirmation.survey.link = What did you think of this service? (opens in a new tab)
 

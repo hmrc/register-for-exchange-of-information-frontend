@@ -16,28 +16,21 @@
 
 package controllers
 
-import controllers.actions.{CBCAllowedAction, CheckEnrolledToServiceActionProvider, IdentifierAction}
-import models.{NormalMode, Regime}
+import controllers.actions.{CheckEnrolledToServiceActionProvider, IdentifierAction}
+import models.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.Future
 
-class IndexController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  checkEnrolment: CheckEnrolledToServiceActionProvider,
-  cbcAllowedAction: CBCAllowedAction
+class IndexController @Inject() (val controllerComponents: MessagesControllerComponents,
+                                 identify: IdentifierAction,
+                                 checkEnrolment: CheckEnrolledToServiceActionProvider
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = (identify(regime) andThen cbcAllowedAction(regime) andThen checkEnrolment(regime)).async {
-    val result = regime match {
-      case regime if Regime.regimes.contains(regime) => Redirect(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime))
-      case _                                         => NotImplemented("Not Implemented")
-    }
-    Future.successful(result)
+  def onPageLoad(): Action[AnyContent] = (identify() andThen checkEnrolment()) {
+    Redirect(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode))
   }
 }

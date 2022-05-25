@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.WhatIsYourNationalInsuranceNumberFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Regime}
 import navigation.MDRNavigator
 import pages.WhatIsYourNationalInsuranceNumberPage
 import play.api.data.Form
@@ -51,20 +51,18 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "regime" -> regime.toUpperCase,
-      "action" -> routes.WhatIsYourNationalInsuranceNumberController.onSubmit(mode, regime).url
+      "action" -> routes.WhatIsYourNationalInsuranceNumberController.onSubmit(mode).url
     )
     renderer.render("whatIsYourNationalInsuranceNumber.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         render(mode,
-               regime,
                request.userAnswers
                  .get(WhatIsYourNationalInsuranceNumberPage)
                  .fold(form)(
@@ -73,18 +71,18 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
         ).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, updatedAnswers))
           )
     }
 }

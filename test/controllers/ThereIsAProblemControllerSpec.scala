@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.{JsObject, Json}
@@ -37,7 +36,7 @@ class ThereIsAProblemControllerSpec extends SpecBase with ControllerMockFixtures
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 

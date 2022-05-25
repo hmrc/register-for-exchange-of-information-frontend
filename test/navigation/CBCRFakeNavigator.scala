@@ -16,12 +16,12 @@
 
 package navigation
 
-import models.{Mode, Regime, UserAnswers}
+import models.{Mode, UserAnswers}
 import pages._
 import play.api.mvc.Call
 
 class CBCRFakeNavigator(desiredRoute: Call) extends ContactDetailsNavigator {
 
-  override def nextPage(page: Page, mode: Mode, regime: Regime, userAnswers: UserAnswers): Call =
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
     desiredRoute
 }

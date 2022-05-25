@@ -36,7 +36,7 @@ class AffinityGroupProblemControllerSpec extends SpecBase with ControllerMockFix
 
       retrieveUserAnswersData(emptyUserAnswers)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.AffinityGroupProblemController.onPageLoad(regime).url)
+      val request        = FakeRequest(GET, routes.AffinityGroupProblemController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

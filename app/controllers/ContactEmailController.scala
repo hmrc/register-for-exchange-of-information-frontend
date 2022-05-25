@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.ContactEmailFormProvider
 import models.requests.DataRequest
-import models.{CheckMode, Mode, Regime}
+import models.{CheckMode, Mode}
 import navigation.ContactDetailsNavigator
 import pages.{ContactEmailPage, ContactNamePage}
 import play.api.data.Form
@@ -49,39 +49,38 @@ class ContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
+  private def data(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
     val name = request.userAnswers.get(ContactNamePage)
     Json.obj(
       "form"      -> request.userAnswers.get(ContactEmailPage).fold(form)(form.fill),
-      "regime"    -> regime.toUpperCase,
       "name"      -> name,
       "pageTitle" -> "contactEmail.title.business",
       "heading"   -> "contactEmail.heading.business",
-      "action"    -> routes.ContactEmailController.onSubmit(mode, regime).url
+      "action"    -> routes.ContactEmailController.onSubmit(mode).url
     )
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         if (mode == CheckMode) {
           request.userAnswers.remove(ContactEmailPage)
         }
-        renderer.render("contactEmail.njk", data(mode, regime, form)).map(Ok(_))
+        renderer.render("contactEmail.njk", data(mode, form)).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => renderer.render("contactEmail.njk", data(mode, regime, formWithErrors)).map(BadRequest(_)),
+            formWithErrors => renderer.render("contactEmail.njk", data(mode, formWithErrors)).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(ContactEmailPage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(ContactEmailPage, mode, updatedAnswers))
           )
     }
 }

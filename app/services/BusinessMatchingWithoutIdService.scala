@@ -23,7 +23,7 @@ import models.matching.SafeId
 import models.register.request.RegisterWithoutID
 import models.requests.DataRequest
 import models.shared.ContactDetails
-import models.{Address, Name, Regime}
+import models.{Address, Name}
 import pages._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,10 +34,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessMatchingWithoutIdService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
 
-  def registerWithoutId(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  def registerWithoutId()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     request.userAnswers.get(DoYouHaveNINPage) match {
-      case Some(false) => individualRegistration(regime)
-      case _           => businessRegistration(regime)
+      case Some(false) => individualRegistration()
+      case _           => businessRegistration()
     }
 
   private def buildIndividualName(implicit request: DataRequest[AnyContent]): Option[Name] =
@@ -61,38 +61,36 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
 
   private val registrationError = Future.successful(Left(MandatoryInformationMissingError()))
 
-  private def individualRegistration(
-    regime: Regime
-  )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  private def individualRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (for {
       name <- buildIndividualName
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage).orElse(request.userAnswers.get(DateOfBirthWithoutIdPage))
       phoneNumber  = request.userAnswers.get(IndividualContactPhonePage)
       emailAddress = request.userAnswers.get(IndividualContactEmailPage)
       address <- buildIndividualAddress
-    } yield sendIndividualRegistration(regime, name, dob, address, ContactDetails(phoneNumber, emailAddress))).getOrElse(registrationError)
+    } yield sendIndividualRegistration(name, dob, address, ContactDetails(phoneNumber, emailAddress))).getOrElse(registrationError)
 
-  private def businessRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  private def businessRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     (for {
       organisationName <- request.userAnswers.get(BusinessWithoutIDNamePage)
       phoneNumber  = request.userAnswers.get(ContactPhonePage)
       emailAddress = request.userAnswers.get(ContactEmailPage)
       address <- request.userAnswers.get(BusinessAddressWithoutIdPage)
-    } yield sendBusinessRegistration(regime, organisationName, address, ContactDetails(phoneNumber, emailAddress)))
+    } yield sendBusinessRegistration(organisationName, address, ContactDetails(phoneNumber, emailAddress)))
       .getOrElse(registrationError)
 
-  def sendIndividualRegistration(regime: Regime, name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails)(implicit
+  def sendIndividualRegistration(name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, SafeId]] =
     registrationConnector
-      .withIndividualNoId(RegisterWithoutID(regime, name, dob, address, contactDetails))
+      .withIndividualNoId(RegisterWithoutID(name, dob, address, contactDetails))
 
-  def sendBusinessRegistration(regime: Regime, businessName: String, address: Address, contactDetails: ContactDetails)(implicit
+  def sendBusinessRegistration(businessName: String, address: Address, contactDetails: ContactDetails)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Either[ApiError, SafeId]] =
     registrationConnector
-      .withOrganisationNoId(RegisterWithoutID(regime, businessName, address, contactDetails))
+      .withOrganisationNoId(RegisterWithoutID(businessName, address, contactDetails))
 
 }

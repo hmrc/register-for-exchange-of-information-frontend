@@ -18,7 +18,6 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
-import models.Regime
 import models.enrolment.SubscriptionInfo
 import models.error.ApiError
 import models.error.ApiError.{ServiceUnavailableError, UnableToCreateEnrolmentError}
@@ -37,11 +36,10 @@ class TaxEnrolmentsConnector @Inject() (
 ) extends Logging {
 
   def createEnrolment(
-    enrolmentInfo: SubscriptionInfo,
-    regime: Regime
+    enrolmentInfo: SubscriptionInfo
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, Int] = {
 
-    val url: String = s"${config.taxEnrolmentsUrl1}HMRC-${regime.toUpperCase}-ORG${config.taxEnrolmentsUrl2}"
+    val url: String = s"${config.taxEnrolmentsUrl1}HMRC-MDR-ORG${config.taxEnrolmentsUrl2}"
 
     val json = Json.toJson(enrolmentInfo.convertToEnrolmentRequest)
 

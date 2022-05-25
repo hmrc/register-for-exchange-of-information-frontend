@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.WhatAreYouRegisteringAsFormProvider
 import models.requests.DataRequest
-import models.{Mode, Regime, WhatAreYouRegisteringAs}
+import models.{Mode, WhatAreYouRegisteringAs}
 import navigation.MDRNavigator
 import pages.WhatAreYouRegisteringAsPage
 import play.api.data.Form
@@ -50,34 +50,33 @@ class WhatAreYouRegisteringAsController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[WhatAreYouRegisteringAs])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[WhatAreYouRegisteringAs])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "regime" -> regime.toUpperCase,
-      "action" -> routes.WhatAreYouRegisteringAsController.onSubmit(mode, regime).url,
+      "action" -> routes.WhatAreYouRegisteringAsController.onSubmit(mode).url,
       "radios" -> WhatAreYouRegisteringAs.radios(form)
     )
     renderer.render("whatAreYouRegisteringAs.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
-        render(mode, regime, request.userAnswers.get(WhatAreYouRegisteringAsPage).fold(form)(form.fill)).map(Ok(_))
+        render(mode, request.userAnswers.get(WhatAreYouRegisteringAsPage).fold(form)(form.fill)).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, updatedAnswers))
           )
     }
 }

@@ -20,11 +20,10 @@ import base.{ControllerMockFixtures, SpecBase}
 import config.FrontendAppConfig
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import models.MDR
-import play.api.libs.json.{JsObject, Json}
 
 import scala.concurrent.Future
 
@@ -41,7 +40,7 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
 
       retrieveUserAnswersData(emptyUserAnswers)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithID(MDR).url)
+      val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithID().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -68,7 +67,7 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
 
       retrieveUserAnswersData(emptyUserAnswers)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(MDR).url)
+      val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result     = route(app, request).value

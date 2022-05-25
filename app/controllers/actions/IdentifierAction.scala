@@ -20,11 +20,10 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
-import models.{CBC, MDR, Regime}
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, credentialRole}
@@ -35,7 +34,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction {
-  def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+  def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 }
 
 class AuthenticatedIdentifierAction @Inject() (
@@ -46,40 +45,33 @@ class AuthenticatedIdentifierAction @Inject() (
     extends IdentifierAction
     with AuthorisedFunctions {
 
-  override def apply(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
-    new AuthenticatedIdentifierActionWithRegime(authConnector, config, parser, regime)
+  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
+    new AuthenticatedIdentifierActionWithRegime(authConnector, config, parser)
 }
 
 class AuthenticatedIdentifierActionWithRegime @Inject() (
   val authConnector: AuthConnector,
   config: FrontendAppConfig,
-  val parser: BodyParsers.Default,
-  regime: Regime
+  val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends ActionBuilder[IdentifierRequest, AnyContent]
     with ActionFunction[Request, IdentifierRequest]
     with AuthorisedFunctions
     with Logging {
 
-  val enrolmentKey: String = config.enrolmentKey(regime.toString)
+  val enrolmentKey: String = config.enrolmentKey
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
     authorised()
       .retrieve(Retrievals.internalId and Retrievals.allEnrolments and affinityGroup and credentialRole) {
         case _ ~ _ ~ Some(Agent) ~ _ =>
-          Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad(regime)))
+          Future.successful(Redirect(controllers.routes.UnauthorisedAgentController.onPageLoad()))
         case _ ~ enrolments ~ _ ~ Some(Assistant) if enrolments.enrolments.exists(_.key == enrolmentKey) =>
-          regime match {
-            case MDR => Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
-            case CBC => Future.successful(NotImplemented("Not Implemented")) //TODO: Change this to redirect to CBC
-          }
+          Future.successful(Redirect(config.mandatoryDisclosureRulesFrontendUrl))
         case _ ~ _ ~ _ ~ Some(Assistant) =>
-          Future.successful(Redirect(routes.UnauthorisedAssistantController.onPageLoad(regime)))
-        case Some(_) ~ _ ~ Some(Individual) ~ _ if regime == CBC =>
-          Future.successful(Redirect(routes.AffinityGroupProblemController.onPageLoad(regime)))
+          Future.successful(Redirect(routes.UnauthorisedAssistantController.onPageLoad()))
         case Some(internalID) ~ enrolments ~ Some(affinityGroup) ~ _ => block(IdentifierRequest(request, internalID, affinityGroup, enrolments.enrolments))
         case _                                                       => throw new UnauthorizedException("Unable to retrieve internal Id")
       }
@@ -87,7 +79,7 @@ class AuthenticatedIdentifierActionWithRegime @Inject() (
         case _: NoActiveSession =>
           Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
         case _: AuthorisationException =>
-          Redirect(controllers.routes.ThereIsAProblemController.onPageLoad(regime))
+          Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())
       }
   }
 }

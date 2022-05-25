@@ -17,14 +17,13 @@
 package models.subscription.request
 
 import base.SpecBase
-import models.MDR
 import org.scalatest.matchers.must.Matchers
 
 class SubscriptionRequestCommonSpec extends SpecBase with Matchers {
 
   "SubscriptionRequestCommon" - {
     "must return create SubscriptionRequestCommon" in {
-      val requestCommon = SubscriptionRequestCommon.createSubscriptionRequestCommon(MDR)
+      val requestCommon = SubscriptionRequestCommon.createSubscriptionRequestCommon()
 
       requestCommon.regime mustBe "MDR"
       requestCommon.originatingSystem mustBe "MDTP"

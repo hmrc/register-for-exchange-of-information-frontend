@@ -21,10 +21,9 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqual
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.MDR
+import models.SubscriptionID
 import models.enrolment.GroupIds
 import models.error.ApiError.{EnrolmentExistsError, MalformedError}
-import models.SubscriptionID
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.http.Status.{NOT_FOUND, NO_CONTENT, OK}
@@ -64,14 +63,13 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
       |}""".stripMargin
 
   "EnrolmentStoreProxyConnector" - {
-    val regime = MDR
     "when calling enrolmentStatus" - {
 
       "return 200 and a enrolmentStatus response when already enrolment exists" in {
         val subscriptionID = SubscriptionID("xxx200")
         val groupIds       = Json.parse(enrolmentStoreProxyResponseJson).as[GroupIds]
         stubResponse(enrolmentStoreProxyMDR200Url, OK, enrolmentStoreProxyResponseJson)
-        val result = connector.enrolmentStatus(regime, subscriptionID)
+        val result = connector.enrolmentStatus(subscriptionID)
         result.value.futureValue mustBe Left(EnrolmentExistsError(groupIds))
       }
 
@@ -79,14 +77,14 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
         val subscriptionID = SubscriptionID("xxx204")
         stubResponse(enrolmentStoreProxyMDR204Url, NO_CONTENT, "")
 
-        val result = connector.enrolmentStatus(regime, subscriptionID)
+        val result = connector.enrolmentStatus(subscriptionID)
         result.value.futureValue mustBe Right(())
       }
 
       "return 204 enrolmentStatus response when principalGroupId is empty seq" in {
         val subscriptionID = SubscriptionID("xxx204")
         stubResponse(enrolmentStoreProxyMDR204Url, OK, enrolmentStoreProxyResponseNoPrincipalIdJson)
-        val result = connector.enrolmentStatus(regime, subscriptionID)
+        val result = connector.enrolmentStatus(subscriptionID)
         result.value.futureValue mustBe Right(())
       }
 
@@ -94,7 +92,7 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
         val subscriptionID = SubscriptionID("xxx404")
         stubResponse(enrolmentStoreProxyMDR204Url, NOT_FOUND, "")
 
-        val result = connector.enrolmentStatus(regime, subscriptionID)
+        val result = connector.enrolmentStatus(subscriptionID)
         result.value.futureValue mustBe Left(MalformedError(NOT_FOUND))
       }
 

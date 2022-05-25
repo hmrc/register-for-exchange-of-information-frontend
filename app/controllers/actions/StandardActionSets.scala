@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-import models.Regime
 import models.requests.{DataRequest, IdentifierRequest}
 import play.api.libs.json.Reads
 import play.api.mvc.{ActionBuilder, AnyContent}
@@ -29,23 +28,22 @@ class StandardActionSets @Inject() (identify: IdentifierAction,
                                     requireData: DataRequiredAction,
                                     initializeData: DataInitializeAction,
                                     checkEnrolment: CheckEnrolledToServiceActionProvider,
-                                    dependantAnswer: DependantAnswerProvider,
-                                    cbcAllowedAction: CBCAllowedAction
+                                    dependantAnswer: DependantAnswerProvider
 ) {
 
-  def identifiedUserWithEnrolmentCheck(regime: Regime): ActionBuilder[IdentifierRequest, AnyContent] =
-    identify(regime) andThen checkEnrolment(regime) andThen cbcAllowedAction(regime)
+  def identifiedUserWithEnrolmentCheck(): ActionBuilder[IdentifierRequest, AnyContent] =
+    identify() andThen checkEnrolment()
 
-  def identifiedUserWithInitializedData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identifiedUserWithEnrolmentCheck(regime) andThen getData() andThen initializeData(regime)
+  def identifiedUserWithInitializedData(): ActionBuilder[DataRequest, AnyContent] =
+    identifiedUserWithEnrolmentCheck() andThen getData() andThen initializeData()
 
-  def identifiedWithoutEnrolmentCheck(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identify(regime) andThen cbcAllowedAction(regime) andThen getData() andThen initializeData(regime)
+  def identifiedWithoutEnrolmentCheck(): ActionBuilder[DataRequest, AnyContent] =
+    identify() andThen getData() andThen initializeData()
 
-  def identifiedUserWithData(regime: Regime): ActionBuilder[DataRequest, AnyContent] =
-    identifiedUserWithEnrolmentCheck(regime) andThen getData() andThen requireData(regime)
+  def identifiedUserWithData(): ActionBuilder[DataRequest, AnyContent] =
+    identifiedUserWithEnrolmentCheck() andThen getData() andThen requireData()
 
-  def identifiedUserWithDependantAnswer[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]): ActionBuilder[DataRequest, AnyContent] =
-    identifiedUserWithData(regime) andThen dependantAnswer(answer, regime)
+  def identifiedUserWithDependantAnswer[T](answer: Gettable[T])(implicit reads: Reads[T]): ActionBuilder[DataRequest, AnyContent] =
+    identifiedUserWithData() andThen dependantAnswer(answer)
 
 }

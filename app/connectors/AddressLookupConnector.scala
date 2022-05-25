@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{AddressLookup, LookupAddressByPostcode, Regime}
+import models.{AddressLookup, LookupAddressByPostcode}
 import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.Reads
@@ -30,7 +30,7 @@ import scala.util.Try
 
 class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) extends Logging {
 
-  def addressLookupByPostcode(postCode: String, regime: Regime)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
+  def addressLookupByPostcode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 
     val addressLookupUrl: String = s"${config.addressLookUpUrl}/lookup"
 
@@ -38,7 +38,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     val lookupAddressByPostcode = LookupAddressByPostcode(postCode, None)
 
-    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> regime.toUpperCase)) flatMap {
+    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "MDR")) flatMap {
       case response if response.status equals OK =>
         Future.successful(
           sortAddresses(

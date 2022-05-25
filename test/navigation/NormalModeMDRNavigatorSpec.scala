@@ -29,7 +29,7 @@ import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 
-class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val navigator: MDRNavigator = new MDRNavigator
 
   "Navigator" - {
@@ -46,8 +46,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(NormalMode, MDR))
+              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(NormalMode))
         }
       }
 
@@ -61,8 +61,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode, MDR))
+              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, updatedAnswers)
+              .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode))
         }
       }
 
@@ -76,8 +76,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(DoYouHaveNINPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.NonUkNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
+              .mustBe(routes.NonUkNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -91,8 +91,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(DoYouHaveNINPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(NormalMode, MDR))
+              .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(NormalMode))
         }
       }
 
@@ -106,8 +106,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(WhatIsYourNationalInsuranceNumberPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(WhatIsYourNationalInsuranceNumberPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -121,8 +121,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(WhatIsYourNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode, MDR))
+              .nextPage(WhatIsYourNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
         }
       }
 
@@ -136,8 +136,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(NonUkNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode, MDR))
+              .nextPage(NonUkNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode))
         }
       }
 
@@ -154,8 +154,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(WhatIsYourDateOfBirthPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode, MDR))
+              .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
+              .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode))
         }
       }
 
@@ -173,8 +173,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                   .value
 
               navigator
-                .nextPage(WhatIsYourDateOfBirthPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode, MDR))
+                .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
+                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode))
           }
         }
 
@@ -188,8 +188,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(DoYouLiveInTheUKPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.IndividualAddressWithoutIdController.onPageLoad(NormalMode, MDR))
+              .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualAddressWithoutIdController.onPageLoad(NormalMode))
         }
       }
 
@@ -207,8 +207,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                   .value
 
               navigator
-                .nextPage(IndividualAddressWithoutIdPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
+                .nextPage(IndividualAddressWithoutIdPage, NormalMode, updatedAnswers)
+                .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
           }
         }
 
@@ -226,8 +226,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                   .value
 
               navigator
-                .nextPage(BusinessAddressWithoutIdPage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.ContactNameController.onPageLoad(NormalMode, MDR))
+                .nextPage(BusinessAddressWithoutIdPage, NormalMode, updatedAnswers)
+                .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
           }
         }
 
@@ -241,8 +241,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(DoYouLiveInTheUKPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourPostcodeController.onPageLoad(NormalMode, MDR))
+              .nextPage(DoYouLiveInTheUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourPostcodeController.onPageLoad(NormalMode))
         }
       }
 
@@ -256,8 +256,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(WhatIsYourPostcodePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode, MDR))
+              .nextPage(WhatIsYourPostcodePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SelectAddressController.onPageLoad(NormalMode))
         }
       }
 
@@ -271,8 +271,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(SelectAddressPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
+              .nextPage(SelectAddressPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
         }
       }
 
@@ -286,8 +286,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(AddressUKPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
+              .nextPage(AddressUKPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
         }
       }
 
@@ -301,8 +301,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -319,8 +319,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(BusinessWithoutIDNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(BusinessWithoutIDNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -334,8 +334,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(BusinessHaveDifferentNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsTradingNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.WhatIsTradingNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -349,8 +349,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(BusinessHaveDifferentNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode, MDR))
+              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode))
         }
       }
 
@@ -364,8 +364,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.BusinessTypeController.onPageLoad(NormalMode, MDR))
+              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessTypeController.onPageLoad(NormalMode))
         }
       }
 
@@ -379,8 +379,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(BusinessTypePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.UTRController.onPageLoad(NormalMode, MDR))
+              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .mustBe(routes.UTRController.onPageLoad(NormalMode))
         }
       }
 
@@ -397,8 +397,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(UTRPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SoleNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(UTRPage, NormalMode, updatedAnswers)
+              .mustBe(routes.SoleNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -415,8 +415,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(UTRPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.BusinessNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(UTRPage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -434,8 +434,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(SoleNamePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.IsThisYourBusinessController.onPageLoad(NormalMode, MDR))
+              .nextPage(SoleNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
         }
       }
 
@@ -452,8 +452,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(IsThisYourBusinessPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode, MDR))
+              .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
         }
       }
 
@@ -470,8 +470,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(IsThisYourBusinessPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -488,8 +488,8 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 .value
 
             navigator
-              .nextPage(IsThisYourBusinessPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.BusinessNotIdentifiedController.onPageLoad(MDR))
+              .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+              .mustBe(routes.BusinessNotIdentifiedController.onPageLoad())
         }
       }
     }

@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.{MDR, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.DoYouHaveUniqueTaxPayerReferencePage
@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class DoYouHaveUniqueTaxPayerReferenceControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val loadRoute   = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(NormalMode).url
 
   private def form = new forms.DoYouHaveUniqueTaxPayerReferenceFormProvider().apply()
 

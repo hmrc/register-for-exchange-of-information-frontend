@@ -33,7 +33,7 @@ import java.time.LocalDate
 class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
 
   val navigator: MDRNavigator = new MDRNavigator
-  val checkYourAnswers: Call  = Navigator.checkYourAnswers(MDR)
+  val checkYourAnswers: Call  = Navigator.checkYourAnswers
 
   "Navigator" - {
 
@@ -55,8 +55,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, MDR))
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
+                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode))
             }
           }
 
@@ -74,8 +74,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode, MDR))
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
+                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode))
             }
           }
 
@@ -93,8 +93,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, MDR))
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
+                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode))
             }
           }
 
@@ -112,8 +112,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode, MDR))
+                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
+                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode))
             }
           }
       }
@@ -137,8 +137,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(page = WhatAreYouRegisteringAsPage, mode = CheckMode, regime = MDR, userAnswers = updatedAnswers)
-                  .mustBe(routes.DoYouHaveNINController.onPageLoad(CheckMode, MDR))
+                  .nextPage(page = WhatAreYouRegisteringAsPage, mode = CheckMode, userAnswers = updatedAnswers)
+                  .mustBe(routes.DoYouHaveNINController.onPageLoad(CheckMode))
             }
           }
 
@@ -158,10 +158,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .nextPage(
                     page = WhatAreYouRegisteringAsPage,
                     mode = CheckMode,
-                    regime = MDR,
                     userAnswers = updatedAnswers
                   )
-                  .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(CheckMode, MDR))
+                  .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(CheckMode))
             }
           }
       }
@@ -182,8 +181,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
-                  .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode, MDR))
+                  .nextPage(DoYouHaveNINPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode))
             }
           }
 
@@ -201,8 +200,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
-                  .mustBe(routes.NonUkNameController.onPageLoad(CheckMode, MDR))
+                  .nextPage(DoYouHaveNINPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.NonUkNameController.onPageLoad(CheckMode))
             }
           }
       }
@@ -219,8 +218,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
               navigator
-                .nextPage(BusinessTypePage, CheckMode, MDR, updatedAnswers)
-                .mustBe(routes.UTRController.onPageLoad(CheckMode, MDR))
+                .nextPage(BusinessTypePage, CheckMode, updatedAnswers)
+                .mustBe(routes.UTRController.onPageLoad(CheckMode))
           }
         }
       }
@@ -241,8 +240,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(UTRPage, CheckMode, MDR, updatedAnswers)
-                  .mustBe(routes.SoleNameController.onPageLoad(CheckMode, MDR))
+                  .nextPage(UTRPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.SoleNameController.onPageLoad(CheckMode))
             }
           }
 
@@ -260,8 +259,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                   .value
 
                 navigator
-                  .nextPage(UTRPage, CheckMode, MDR, updatedAnswers)
-                  .mustBe(routes.BusinessNameController.onPageLoad(CheckMode, MDR))
+                  .nextPage(UTRPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.BusinessNameController.onPageLoad(CheckMode))
             }
           }
       }
@@ -279,8 +278,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                     .value
 
                 navigator
-                  .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, MDR, updatedAnswers)
-                  .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode, MDR))
+                  .nextPage(WhatIsYourNationalInsuranceNumberPage, CheckMode, updatedAnswers)
+                  .mustBe(routes.WhatIsYourNameController.onPageLoad(CheckMode))
             }
           }
       }
@@ -296,8 +295,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
+              .nextPage(WhatIsYourNamePage, CheckMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode))
         }
       }
     }
@@ -320,10 +319,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .nextPage(
                 page = BusinessWithoutIDNamePage,
                 mode = CheckMode,
-                regime = MDR,
                 userAnswers = updatedAnswers
               )
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
 
         }
       }
@@ -348,10 +346,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .nextPage(
                   page = BusinessHaveDifferentNamePage,
                   mode = CheckMode,
-                  regime = MDR,
                   userAnswers = updatedAnswers
                 )
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
@@ -369,10 +366,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .nextPage(
                   page = BusinessHaveDifferentNamePage,
                   mode = CheckMode,
-                  regime = MDR,
                   userAnswers = updatedAnswers
                 )
-                .mustBe(routes.WhatIsTradingNameController.onPageLoad(CheckMode, MDR))
+                .mustBe(routes.WhatIsTradingNameController.onPageLoad(CheckMode))
           }
         }
     }
@@ -398,10 +394,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .nextPage(
                   page = WhatIsTradingNamePage,
                   mode = CheckMode,
-                  regime = MDR,
                   userAnswers = updatedAnswers
                 )
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
@@ -426,10 +421,9 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .nextPage(
                 page = BusinessAddressWithoutIdPage,
                 mode = CheckMode,
-                regime = MDR,
                 userAnswers = updatedAnswers
               )
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -447,8 +441,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.NonUkNameController.onPageLoad(CheckMode, MDR))
+              .nextPage(DoYouHaveNINPage, CheckMode, updatedAnswers)
+              .mustBe(routes.NonUkNameController.onPageLoad(CheckMode))
         }
       }
 
@@ -466,8 +460,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(DoYouHaveNINPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode, MDR))
+              .nextPage(DoYouHaveNINPage, CheckMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode))
         }
       }
 
@@ -485,8 +479,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(WhatIsYourNamePage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, MDR))
+              .nextPage(WhatIsYourNamePage, CheckMode, updatedAnswers)
+              .mustBe(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode))
         }
       }
 
@@ -500,8 +494,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .value
 
           navigator
-            .nextPage(NonUkNamePage, CheckMode, MDR, updatedAnswers)
-            .mustBe(routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode, MDR))
+            .nextPage(NonUkNamePage, CheckMode, updatedAnswers)
+            .mustBe(routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode))
       }
     }
 
@@ -522,8 +516,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(DateOfBirthWithoutIdPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, MDR))
+              .nextPage(DateOfBirthWithoutIdPage, CheckMode, updatedAnswers)
+              .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(CheckMode))
         }
       }
 
@@ -544,8 +538,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(DateOfBirthWithoutIdPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .nextPage(DateOfBirthWithoutIdPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -563,8 +557,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(WhatIsYourDateOfBirthPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(CheckMode, MDR))
+              .nextPage(WhatIsYourDateOfBirthPage, CheckMode, updatedAnswers)
+              .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(CheckMode))
         }
       }
 
@@ -578,8 +572,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .value
 
           navigator
-            .nextPage(DoYouLiveInTheUKPage, CheckMode, MDR, updatedAnswers)
-            .mustBe(routes.IndividualAddressWithoutIdController.onPageLoad(CheckMode, MDR))
+            .nextPage(DoYouLiveInTheUKPage, CheckMode, updatedAnswers)
+            .mustBe(routes.IndividualAddressWithoutIdController.onPageLoad(CheckMode))
       }
     }
 
@@ -600,8 +594,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(IndividualAddressWithoutIdPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode, MDR))
+              .nextPage(IndividualAddressWithoutIdPage, CheckMode, updatedAnswers)
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode))
         }
       }
 
@@ -622,8 +616,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(BusinessAddressWithoutIdPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactNameController.onPageLoad(CheckMode, MDR))
+              .nextPage(BusinessAddressWithoutIdPage, CheckMode, updatedAnswers)
+              .mustBe(routes.ContactNameController.onPageLoad(CheckMode))
         }
       }
 
@@ -637,8 +631,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .value
 
           navigator
-            .nextPage(WhatIsYourPostcodePage, CheckMode, MDR, updatedAnswers)
-            .mustBe(routes.SelectAddressController.onPageLoad(CheckMode, MDR))
+            .nextPage(WhatIsYourPostcodePage, CheckMode, updatedAnswers)
+            .mustBe(routes.SelectAddressController.onPageLoad(CheckMode))
       }
     }
 
@@ -658,8 +652,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .value
 
           navigator
-            .nextPage(SelectAddressPage, CheckMode, MDR, updatedAnswers)
-            .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode, MDR))
+            .nextPage(SelectAddressPage, CheckMode, updatedAnswers)
+            .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode))
       }
     }
 
@@ -680,8 +674,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(SelectAddressPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .nextPage(SelectAddressPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -701,8 +695,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .value
 
           navigator
-            .nextPage(AddressUKPage, CheckMode, MDR, updatedAnswers)
-            .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode, MDR))
+            .nextPage(AddressUKPage, CheckMode, updatedAnswers)
+            .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode))
       }
     }
 
@@ -723,8 +717,8 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .value
 
             navigator
-              .nextPage(AddressUKPage, CheckMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .nextPage(AddressUKPage, CheckMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
   }

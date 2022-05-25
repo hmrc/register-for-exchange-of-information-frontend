@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.SelectAddressFormProvider
 import models.requests.DataRequest
-import models.{AddressLookup, Mode, Regime}
+import models.{AddressLookup, Mode}
 import navigation.MDRNavigator
 import pages.{AddressLookupPage, SelectAddressPage, SelectedAddressLookupPage}
 import play.api.data.Form
@@ -50,13 +50,12 @@ class SelectAddressController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], radios: Seq[Radios.Item])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val manualAddressURL: String = routes.AddressUKController.onPageLoad(mode, regime).url
+  private def render(mode: Mode, form: Form[String], radios: Seq[Radios.Item])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+    val manualAddressURL: String = routes.AddressUKController.onPageLoad(mode).url
 
     val data = Json.obj(
       "form"             -> form,
-      "regime"           -> regime.toUpperCase,
-      "action"           -> routes.SelectAddressController.onSubmit(mode, regime).url,
+      "action"           -> routes.SelectAddressController.onSubmit(mode).url,
       "mode"             -> mode,
       "manualAddressUrl" -> manualAddressURL,
       "radios"           -> radios
@@ -66,8 +65,8 @@ class SelectAddressController @Inject() (
 
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         request.userAnswers.get(AddressLookupPage) match {
           case Some(addresses) =>
@@ -81,14 +80,14 @@ class SelectAddressController @Inject() (
             )
             val radios: Seq[Radios.Item] = Radios(field = preparedForm("value"), items = addressItems)
 
-            render(mode, regime, preparedForm, radios).map(Ok(_))
+            render(mode, preparedForm, radios).map(Ok(_))
 
-          case None => Future.successful(Redirect(routes.AddressUKController.onPageLoad(mode, regime)))
+          case None => Future.successful(Redirect(routes.AddressUKController.onPageLoad(mode)))
         }
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         request.userAnswers.get(AddressLookupPage) match {
           case Some(addresses) =>
@@ -101,7 +100,7 @@ class SelectAddressController @Inject() (
               .fold(
                 formWithErrors => {
                   val radios: Seq[Radios.Item] = Radios(field = formWithErrors("value"), items = addressItems)
-                  render(mode, regime, formWithErrors, radios).map(BadRequest(_))
+                  render(mode, formWithErrors, radios).map(BadRequest(_))
                 },
                 value => {
 
@@ -111,11 +110,11 @@ class SelectAddressController @Inject() (
                     updatedAnswers                    <- Future.fromTry(request.userAnswers.set(SelectAddressPage, value))
                     updatedAnswersWithSelectedAddress <- Future.fromTry(updatedAnswers.set(SelectedAddressLookupPage, addressToStore))
                     _                                 <- sessionRepository.set(updatedAnswersWithSelectedAddress)
-                  } yield Redirect(navigator.nextPage(SelectAddressPage, mode, regime, updatedAnswersWithSelectedAddress))
+                  } yield Redirect(navigator.nextPage(SelectAddressPage, mode, updatedAnswersWithSelectedAddress))
                 }
               )
 
-          case None => Future.successful(Redirect(routes.AddressUKController.onPageLoad(mode, regime)))
+          case None => Future.successful(Redirect(routes.AddressUKController.onPageLoad(mode)))
         }
     }
 

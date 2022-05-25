@@ -17,7 +17,6 @@
 package controllers.actions
 
 import controllers.routes
-import models.Regime
 import models.requests.DataRequest
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Redirect
@@ -27,13 +26,13 @@ import queries.Gettable
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DependantAnswerAction[T] @Inject() (answer: Gettable[T], regime: Regime)(implicit val executionContext: ExecutionContext, val reads: Reads[T])
+class DependantAnswerAction[T] @Inject() (answer: Gettable[T])(implicit val executionContext: ExecutionContext, val reads: Reads[T])
     extends ActionFilter[DataRequest] {
 
   override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] =
     request.userAnswers.get(answer) match {
       case None =>
-        Future.successful(Some(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime))))
+        Future.successful(Some(Redirect(routes.SomeInformationIsMissingController.onPageLoad())))
       case Some(_) =>
         Future.successful(None)
     }
@@ -41,6 +40,6 @@ class DependantAnswerAction[T] @Inject() (answer: Gettable[T], regime: Regime)(i
 
 class DependantAnswerProvider @Inject() (implicit ec: ExecutionContext) {
 
-  def apply[T](answer: Gettable[T], regime: Regime)(implicit reads: Reads[T]): ActionFilter[DataRequest] =
-    new DependantAnswerAction(answer, regime)
+  def apply[T](answer: Gettable[T])(implicit reads: Reads[T]): ActionFilter[DataRequest] =
+    new DependantAnswerAction(answer)
 }

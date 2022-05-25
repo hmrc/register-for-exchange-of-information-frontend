@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.IndividualContactEmailFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
 import pages.IndividualContactEmailPage
 import play.api.data.Form
@@ -50,32 +50,31 @@ class IndividualContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "regime" -> regime.toUpperCase,
-      "action" -> routes.IndividualContactEmailController.onSubmit(mode, regime).url
+      "action" -> routes.IndividualContactEmailController.onSubmit(mode).url
     )
     renderer.render("individualContactEmail.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
-        render(mode, regime, request.userAnswers.get(IndividualContactEmailPage).fold(form)(form.fill)).map(Ok(_))
+        render(mode, request.userAnswers.get(IndividualContactEmailPage).fold(form)(form.fill)).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualContactEmailPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IndividualContactEmailPage, mode, regime, updatedAnswers))
+            } yield Redirect(navigator.nextPage(IndividualContactEmailPage, mode, updatedAnswers))
         )
   }
 }

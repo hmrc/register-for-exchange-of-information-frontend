@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.{MDR, SubscriptionID, UserAnswers}
+import models.{SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.SubscriptionIDPage
@@ -42,7 +42,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
         .value
 
       retrieveUserAnswersData(userAnswers)
-      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
+      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad().url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -59,7 +59,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
+      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad().url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

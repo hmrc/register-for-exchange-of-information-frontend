@@ -17,7 +17,6 @@
 package controllers
 
 import controllers.actions._
-import models.Regime
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,12 +35,11 @@ class SomeInformationIsMissingController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         val data = Json.obj(
-          "regime"   -> regime.toUpperCase,
-          "continue" -> routes.IndexController.onPageLoad(regime).url
+          "continue" -> routes.IndexController.onPageLoad().url
         )
         renderer.render("someInformationIsMissing.njk", data).map(Ok(_))
     }

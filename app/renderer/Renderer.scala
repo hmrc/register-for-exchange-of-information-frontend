@@ -18,7 +18,6 @@ package renderer
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import models.Regime
 import models.error.ApiError
 import models.error.ApiError.ServiceUnavailableError
 import play.api.Logging
@@ -59,11 +58,10 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
       "contactHost"                    -> appConfig.contactHost
     )
 
-  def renderError(error: ApiError, regime: Regime)(implicit request: RequestHeader, ec: ExecutionContext): Future[Result] = {
+  def renderError(error: ApiError)(implicit request: RequestHeader, ec: ExecutionContext): Future[Result] = {
     val thereIsAProblemView = render(
       "thereIsAProblem.njk",
       Json.obj(
-        "regime"       -> regime.toUpperCase,
         "emailAddress" -> appConfig.emailEnquiries
       )
     )
@@ -76,8 +74,8 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
     }
   }
 
-  def renderThereIsAProblemPage(regime: Regime)(implicit request: Request[_], ec: ExecutionContext): Future[Result] =
-    render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
+  def renderThereIsAProblemPage()(implicit request: Request[_], ec: ExecutionContext): Future[Result] =
+    render("thereIsAProblem.njk", Json.obj("emailAddress" -> appConfig.emailEnquiries))
       .map(InternalServerError(_))
 
 }

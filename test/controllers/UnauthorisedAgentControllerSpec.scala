@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -37,7 +36,7 @@ class UnauthorisedAgentControllerSpec extends SpecBase with ControllerMockFixtur
 
       retrieveUserAnswersData(emptyUserAnswers)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.UnauthorisedAgentController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.UnauthorisedAgentController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

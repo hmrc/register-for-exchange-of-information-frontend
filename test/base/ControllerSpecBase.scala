@@ -17,7 +17,6 @@
 package base
 
 import controllers.routes
-import models.MDR
 import play.api.test.{FakeRequest, Helpers}
 
 trait ControllerSpecBase extends SpecBase with ControllerMockFixtures {
@@ -37,7 +36,7 @@ trait ControllerSpecBase extends SpecBase with ControllerMockFixtures {
 
     status(result) mustEqual SEE_OTHER
 
-    redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad(MDR).url
+    redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
   }
 
   "must redirect for a GET if no existing data is found" in {
@@ -52,7 +51,7 @@ trait ControllerSpecBase extends SpecBase with ControllerMockFixtures {
 
     status(result) mustEqual SEE_OTHER
 
-    redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad(MDR).url
+    redirectLocation(result).value mustEqual routes.SessionExpiredController.onPageLoad().url
   }
 
 }
