@@ -16,7 +16,6 @@
 
 package models.subscription.request
 
-import models.{CBC, MDR, Regime}
 import play.api.libs.json._
 
 sealed trait DisplaySubscriptionRequest
@@ -40,13 +39,6 @@ object DisplaySubscriptionRequest {
     case o: DisplaySubscriptionForCBCRequest => Json.toJson(o)
   }
 
-  def convertTo(regime: Regime, safeId: String): DisplaySubscriptionRequest =
-    regime match {
-      case MDR =>
-        DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
-      case CBC =>
-        DisplaySubscriptionForCBCRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
-      case regime =>
-        throw new RuntimeException(s"Not supporting the regime: $regime ")
-    }
+  def convertTo(safeId: String): DisplaySubscriptionRequest =
+    DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(safeId))
 }

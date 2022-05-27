@@ -22,7 +22,7 @@ import helpers.RegisterHelper._
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.SafeId
-import models.{Address, Country, MDR, Name}
+import models.{Address, Country, Name}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}
 import play.api.inject.bind
@@ -67,7 +67,7 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(name, dob, address, contactDetails)
 
         result.futureValue mustBe Right(SafeId("XE0000123456789"))
       }
@@ -78,7 +78,7 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(MDR, name, dob, address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(name, dob, address, contactDetails)
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -92,7 +92,7 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration("name", address, contactDetails)
 
         result.futureValue mustBe Right(SafeId("XE0000123456789"))
       }
@@ -103,7 +103,7 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(MDR, "name", address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration("name", address, contactDetails)
 
         result.futureValue mustBe Left(NotFoundError)
       }

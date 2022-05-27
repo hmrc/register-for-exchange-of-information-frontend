@@ -25,7 +25,7 @@ import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, UnableToCreateEnrolmentError}
 import models.matching.IndRegistrationInfo
-import models.{Address, Country, MDR, NonUkName, SubscriptionID, UserAnswers}
+import models.{Address, Country, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages._
@@ -59,8 +59,8 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
 
-      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
-      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any(), any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
+      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -87,7 +87,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID)
 
       result.futureValue mustBe Right(NO_CONTENT)
     }
@@ -96,8 +96,8 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Left(UnableToCreateEnrolmentError))
 
-      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
-      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any(), any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
+      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -124,7 +124,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID)
 
       result.futureValue mustBe Left(UnableToCreateEnrolmentError)
     }
@@ -134,8 +134,8 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Left(UnableToCreateEnrolmentError))
       val groupIds                                 = GroupIds(Seq("groupId"), Seq.empty)
 
-      when(mockTaxEnrolmentsConnector.createEnrolment(any(), any())(any(), any())).thenReturn(response)
-      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any(), any())(any(), any()))
+      when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any()))
         .thenReturn(EitherT.fromEither[Future](Left(EnrolmentExistsError(groupIds))))
 
       val subscriptionID = SubscriptionID("id")
@@ -163,10 +163,9 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .success
         .value
 
-      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID, MDR)
+      val result = service.checkAndCreateEnrolment(safeId, userAnswers, subscriptionID)
 
       result.futureValue mustBe Left(EnrolmentExistsError(groupIds))
     }
   }
-
 }

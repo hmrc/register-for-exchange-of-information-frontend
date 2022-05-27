@@ -21,7 +21,7 @@ import models.BusinessType.{LimitedCompany, Sole}
 import models.error.ApiError.{BadRequestError, ServiceUnavailableError}
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
-import models.{CheckMode, MDR, Name, NormalMode, SubscriptionID, UserAnswers}
+import models.{CheckMode, Name, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages._
@@ -38,9 +38,9 @@ import scala.concurrent.Future
 
 class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val loadRoute   = routes.IsThisYourBusinessController.onPageLoad(NormalMode, MDR).url
-  lazy val checkRoute  = routes.IsThisYourBusinessController.onPageLoad(CheckMode, MDR).url
-  lazy val submitRoute = routes.IsThisYourBusinessController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.IsThisYourBusinessController.onPageLoad(NormalMode).url
+  lazy val checkRoute  = routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
+  lazy val submitRoute = routes.IsThisYourBusinessController.onSubmit(NormalMode).url
 
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 
@@ -87,7 +87,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
-      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -118,7 +118,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
-      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -160,8 +160,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
-      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -172,7 +172,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad(MDR).url
+      redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad().url
 
     }
 
@@ -181,8 +181,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
-      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -206,7 +206,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
-      when(mockSubscriptionService.getDisplaySubscriptionId(any(), any())(any(), any())).thenReturn(Future.successful(None))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
       when(mockRenderer.render(any(), any())(any()))
         .thenReturn(Future.successful(Html("")))
@@ -231,7 +231,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val expectedJson = Json.obj(
         "form"    -> filledForm,
-        "regime"  -> "MDR",
         "name"    -> "name",
         "address" -> List("line1"),
         "action"  -> loadRoute,
@@ -271,7 +270,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, routes.IsThisYourBusinessController.onPageLoad(NormalMode, MDR).url)
+      val request        = FakeRequest(GET, routes.IsThisYourBusinessController.onPageLoad(NormalMode).url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

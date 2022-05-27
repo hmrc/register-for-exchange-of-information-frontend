@@ -17,7 +17,6 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import models.Regime
 import play.api.Configuration
 import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
@@ -85,7 +84,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val selfAssessmentEnquiriesLink: String         = configuration.get[String]("urls.selfAssessmentEnquiries")
   lazy val emailEnquiries: String                      = configuration.get[String]("urls.emailEnquiries")
   lazy val countryCodeJson: String                     = configuration.get[String]("json.countries")
-  val enrolmentKey: String => String                   = (serviceName: String) => configuration.get[String](s"keys.enrolmentKey.$serviceName")
+  val enrolmentKey: String                             = configuration.get[String](s"keys.enrolmentKey.mdr")
   lazy val mandatoryDisclosureRulesFrontendUrl: String = configuration.get[String]("urls.mandatory-disclosure-rules-frontend")
 
   lazy val allowCBCregistration: Boolean = configuration.get[Boolean]("features.allow-cbr-registration")

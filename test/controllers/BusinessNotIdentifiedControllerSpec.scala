@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.BusinessType.{LimitedCompany, Sole}
-import models.{MDR, NormalMode}
+import models.NormalMode
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.BusinessTypePage
@@ -44,7 +44,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
       val userAnswers = emptyUserAnswers.set(BusinessTypePage, LimitedCompany).success.value
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad(regime = MDR).url)
+      val request        = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -57,7 +57,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
       val expectedJson = Json.obj(
         "contactUrl" -> corporationTaxEnquiriesLink,
         "lostUtrUrl" -> "https://www.gov.uk/find-lost-utr-number",
-        "startUrl"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, MDR).url
+        "startUrl"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "businessNotIdentified.njk"
@@ -73,7 +73,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
       val userAnswers = emptyUserAnswers.set(BusinessTypePage, Sole).success.value
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad(regime = MDR).url)
+      val request        = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -86,7 +86,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
       val expectedJson = Json.obj(
         "contactUrl" -> selfAssessmentEnquiriesLink,
         "lostUtrUrl" -> "https://www.gov.uk/find-lost-utr-number",
-        "startUrl"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, MDR).url
+        "startUrl"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
       )
 
       templateCaptor.getValue mustEqual "businessNotIdentified.njk"

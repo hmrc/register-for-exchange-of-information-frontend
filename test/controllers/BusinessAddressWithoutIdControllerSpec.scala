@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerSpecBase
 import forms.AddressWithoutIdFormProvider
-import models.{Address, Country, MDR, NormalMode, UserAnswers}
+import models.{Address, Country, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.BusinessAddressWithoutIdPage
@@ -32,8 +32,8 @@ import scala.concurrent.Future
 
 class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.BusinessAddressWithoutIdController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.BusinessAddressWithoutIdController.onSubmit(NormalMode).url
 
   val formProvider        = new AddressWithoutIdFormProvider()
   val form: Form[Address] = formProvider(Seq(Country("valid", "GB", "United Kingdom")))

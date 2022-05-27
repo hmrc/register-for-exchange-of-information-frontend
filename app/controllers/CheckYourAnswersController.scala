@@ -19,7 +19,6 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.StandardActionSets
-import models.Regime
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
@@ -58,25 +57,24 @@ class CheckYourAnswersController @Inject() (
     with Logging
     with UserAnswersHelper {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
       val viewModel: Seq[Section] =
-        CheckYourAnswersViewModel.buildPages(request.userAnswers, regime, countryFactory, isRegisteringAsBusiness(request.userAnswers))
+        CheckYourAnswersViewModel.buildPages(request.userAnswers, countryFactory, isRegisteringAsBusiness(request.userAnswers))
 
       renderer
         .render(
           "checkYourAnswers.njk",
           Json
             .obj(
-              "regime"   -> regime.toUpperCase,
               "sections" -> viewModel,
-              "action"   -> routes.CheckYourAnswersController.onSubmit(regime).url
+              "action"   -> routes.CheckYourAnswersController.onSubmit().url
             )
         )
         .map(Ok(_))
   }
 
-  private def getSafeIdFromRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  private def getSafeIdFromRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     request.userAnswers.get(RegistrationInfoPage) match {
       case Some(registration) =>
         val safeId = registration match {
@@ -87,31 +85,31 @@ class CheckYourAnswersController @Inject() (
         }
         Future.successful(Right(safeId))
       case _ =>
-        registrationService.registerWithoutId(regime)
+        registrationService.registerWithoutId()
     }
 
-  def onSubmit(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
       (for {
-        safeId         <- EitherT(getSafeIdFromRegistration(regime))
-        subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
-        result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID, regime))
+        safeId         <- EitherT(getSafeIdFromRegistration())
+        subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(safeId, request.userAnswers))
+        result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID))
       } yield result)
         .valueOrF {
           case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>
             logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
-            Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad()))
           case EnrolmentExistsError(groupIds) =>
             logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID()))
             } else {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID()))
             }
           case MandatoryInformationMissingError(_) =>
             logger.warn(s"CheckYourAnswersController: Mandatory information is missing")
-            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case error => renderer.renderError(error, regime)
+            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad()))
+          case error => renderer.renderError(error)
         }
 
   }

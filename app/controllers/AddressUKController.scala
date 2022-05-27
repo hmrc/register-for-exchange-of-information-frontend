@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.AddressUKFormProvider
 import models.requests.DataRequest
-import models.{Address, Country, Mode, Regime}
+import models.{Address, Country, Mode}
 import navigation.MDRNavigator
 import pages.AddressUKPage
 import play.api.Logging
@@ -54,47 +54,46 @@ class AddressUKController @Inject() (
 
   val countriesList: Option[Seq[Country]] = countryListFactory.countryList
 
-  private def render(mode: Mode, regime: Regime, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Address])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"      -> form,
-      "regime"    -> regime.toUpperCase,
-      "action"    -> routes.AddressUKController.onSubmit(mode, regime).url,
+      "action"    -> routes.AddressUKController.onSubmit(mode).url,
       "countries" -> Seq(Json.obj("text" -> "United Kingdom", "value" -> "GB", "selected" -> true))
     )
     renderer.render("addressUK.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         countriesList match {
           case Some(countries) =>
             val form = formProvider(countries)
-            render(mode, regime, request.userAnswers.get(AddressUKPage).fold(form)(form.fill)).map(Ok(_))
+            render(mode, request.userAnswers.get(AddressUKPage).fold(form)(form.fill)).map(Ok(_))
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
-            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         countriesList match {
           case Some(countries) =>
             formProvider(countries)
               .bindFromRequest()
               .fold(
-                formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+                formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressUKPage, value))
                     _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(AddressUKPage, mode, regime, updatedAnswers))
+                  } yield Redirect(navigator.nextPage(AddressUKPage, mode, updatedAnswers))
               )
           case None =>
             logger.error("Could not retrieve countries list from JSON file.")
-            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
     }
 }

@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{MDR, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{ContactNamePage, SecondContactPage}
@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class SecondContactControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.SecondContactController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.SecondContactController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.SecondContactController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.SecondContactController.onSubmit(NormalMode).url
 
   private def form = new forms.SecondContactFormProvider().apply()
 
@@ -151,7 +151,7 @@ class SecondContactControllerSpec extends ControllerSpecBase {
 
     status(result) mustEqual SEE_OTHER
     redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController
-      .onPageLoad(MDR)
+      .onPageLoad()
       .url
   }
 }

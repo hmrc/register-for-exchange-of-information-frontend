@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.UTRFormProvider
 import models.BusinessType._
 import models.requests.DataRequest
-import models.{BusinessType, Mode, Regime, UniqueTaxpayerReference}
+import models.{BusinessType, Mode, UniqueTaxpayerReference}
 import navigation.MDRNavigator
 import pages.{BusinessTypePage, UTRPage}
 import play.api.data.Form
@@ -56,7 +56,7 @@ class UTRController @Inject() (
 
   private def readKey(key: String)(implicit messages: Messages) = messages(key)
 
-  private def render(mode: Mode, regime: Regime, form: Form[UniqueTaxpayerReference], businessType: BusinessType)(implicit
+  private def render(mode: Mode, form: Form[UniqueTaxpayerReference], businessType: BusinessType)(implicit
     request: DataRequest[AnyContent]
   ): Future[api.Html] = {
     val taxType = businessType match {
@@ -66,17 +66,16 @@ class UTRController @Inject() (
 
     val data = Json.obj(
       "form"       -> form,
-      "regime"     -> regime.toUpperCase,
       "taxType"    -> taxType,
       "lostUTRUrl" -> appConfig.lostUTRUrl,
-      "action"     -> routes.UTRController.onSubmit(mode, regime).url,
+      "action"     -> routes.UTRController.onSubmit(mode).url,
       "hintText"   -> hintWithLostUtrLink(taxType)
     )
     renderer.render("utr.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
       implicit request =>
         val businessType = request.userAnswers.get(BusinessTypePage).get
 
@@ -84,11 +83,11 @@ class UTRController @Inject() (
           case Partnership | Sole | LimitedPartnership => readKey(sa)
           case _                                       => readKey(ct)
         })
-        render(mode, regime, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
+        render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage, regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
       implicit request =>
         val businessType = request.userAnswers.get(BusinessTypePage).get
 
@@ -98,12 +97,12 @@ class UTRController @Inject() (
         })
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors, businessType).map(BadRequest(_)),
+            formWithErrors => render(mode, formWithErrors, businessType).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(UTRPage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
           )
     }
 

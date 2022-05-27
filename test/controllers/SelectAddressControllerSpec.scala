@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import forms.SelectAddressFormProvider
-import models.{AddressLookup, MDR, NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{AddressLookupPage, SelectAddressPage}
@@ -36,8 +36,8 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
 
   override def onwardRoute: Call = Call("GET", "/foo")
 
-  val manualAddressURL: String        = "/register-for-exchange-of-information/mdr/register/without-id/address-uk"
-  lazy val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(NormalMode, MDR).url
+  val manualAddressURL: String        = "/register-for-exchange-of-information/register/without-id/address-uk"
+  lazy val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(NormalMode).url
 
   val formProvider       = new SelectAddressFormProvider()
   val form: Form[String] = formProvider()
@@ -134,7 +134,7 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
       val result  = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.AddressUKController.onPageLoad(NormalMode, MDR).url
+      redirectLocation(result).value mustEqual routes.AddressUKController.onPageLoad(NormalMode).url
     }
 
     "must redirect to the next page when valid data is submitted" in {

@@ -23,7 +23,7 @@ import connectors.SubscriptionConnector
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
-import models.{Address, Country, MDR, NonUkName, SubscriptionID, UserAnswers}
+import models.{Address, Country, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -87,7 +87,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .success
         .value
 
-      val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
+      val result = service.checkAndCreateSubscription(safeId, userAnswers)
       result.futureValue mustBe Right(SubscriptionID("id"))
 
       verify(mockSubscriptionConnector, times(1)).readSubscription(any())(any(), any())
@@ -99,7 +99,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(subscriptionID)))
 
-      val result = service.checkAndCreateSubscription(MDR, safeId, emptyUserAnswers)
+      val result = service.checkAndCreateSubscription(safeId, emptyUserAnswers)
       result.futureValue mustBe Right(subscriptionID)
     }
 
@@ -109,7 +109,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-      val result = service.checkAndCreateSubscription(MDR, safeId, UserAnswers("id"))
+      val result = service.checkAndCreateSubscription(safeId, UserAnswers("id"))
 
       result.futureValue mustBe Left(MandatoryInformationMissingError())
     }
@@ -138,7 +138,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
         when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
 
-        val result = service.checkAndCreateSubscription(MDR, safeId, userAnswers)
+        val result = service.checkAndCreateSubscription(safeId, userAnswers)
 
         result.futureValue mustBe Left(error)
       }
@@ -148,13 +148,13 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       "must return 'SubscriptionID' for valid input" in {
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
-        val result = service.getDisplaySubscriptionId(MDR, safeId)
+        val result = service.getDisplaySubscriptionId(safeId)
         result.futureValue mustBe Some(SubscriptionID("id"))
       }
 
       "must return 'None' for any failures of exceptions" in {
         when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
-        val result = service.getDisplaySubscriptionId(MDR, safeId)
+        val result = service.getDisplaySubscriptionId(safeId)
         result.futureValue mustBe None
       }
     }

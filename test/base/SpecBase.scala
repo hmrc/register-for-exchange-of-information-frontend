@@ -17,9 +17,8 @@
 package base
 
 import models.matching.SafeId
-import models.{Regime, UniqueTaxpayerReference, UserAnswers}
+import models.{UniqueTaxpayerReference, UserAnswers}
 import org.mockito.MockitoSugar
-import org.scalacheck.Gen
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -44,7 +43,5 @@ trait SpecBase
   implicit val hc: HeaderCarrier   = HeaderCarrier()
   val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("UTR")
   val safeId: SafeId               = SafeId("SAFEID")
-
-  val regime: Regime = Gen.oneOf(Regime.regimes).sample.value
 
 }

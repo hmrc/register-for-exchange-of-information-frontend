@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.libs.json.{JsObject, Json}
@@ -38,7 +37,7 @@ class SomeInformationIsMissingSpec extends SpecBase with ControllerMockFixtures 
 
       retrieveUserAnswersData(emptyUserAnswers)
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.SomeInformationIsMissingController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.SomeInformationIsMissingController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
       val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
@@ -48,7 +47,7 @@ class SomeInformationIsMissingSpec extends SpecBase with ControllerMockFixtures 
 
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
-      val expectedJson = Json.obj("regime" -> MDR.toUpperCase, "continue" -> routes.IndexController.onPageLoad(MDR).url)
+      val expectedJson = Json.obj("continue" -> routes.IndexController.onPageLoad().url)
 
       templateCaptor.getValue mustEqual "someInformationIsMissing.njk"
       jsonCaptor.getValue must containJson(expectedJson)

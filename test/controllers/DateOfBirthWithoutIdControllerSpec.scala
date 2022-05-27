@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{MDR, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.DateOfBirthWithoutIdPage
@@ -33,8 +33,8 @@ import scala.concurrent.Future
 
 class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.DateOfBirthWithoutIdController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.DateOfBirthWithoutIdController.onSubmit(NormalMode).url
 
   private def form = new forms.DateOfBirthFormProvider().apply()
 

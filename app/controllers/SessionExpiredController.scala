@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,12 +34,12 @@ class SessionExpiredController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>
       renderer
         .render(
           "sessionExpired.njk",
-          Json.obj("regime" -> regime.toUpperCase, "startUrl" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(models.NormalMode, regime).url)
+          Json.obj("startUrl" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(models.NormalMode).url)
         )
         .map(Ok(_).withNewSession)
   }

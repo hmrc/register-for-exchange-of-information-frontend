@@ -16,7 +16,6 @@
 
 package controllers.auth
 
-import models.Regime
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
@@ -32,8 +31,8 @@ class SignedOutController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("auth/signedOut.njk", regime.toJson).map(Ok(_))
+      renderer.render("auth/signedOut.njk").map(Ok(_))
   }
 }

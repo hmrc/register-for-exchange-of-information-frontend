@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import models.BusinessType.{LimitedCompany, UnincorporatedAssociation}
-import models.{NormalMode, Regime}
+import models.NormalMode
 import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -40,7 +40,7 @@ class BusinessNotIdentifiedController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
       val contactLink: String = request.userAnswers.get(BusinessTypePage) match {
         case Some(LimitedCompany) | Some(UnincorporatedAssociation) => appConfig.corporationTaxEnquiriesLink
@@ -48,11 +48,10 @@ class BusinessNotIdentifiedController @Inject() (
       }
 
       val data = Json.obj(
-        "regime"       -> regime.toUpperCase,
         "emailAddress" -> appConfig.emailEnquiries,
         "contactUrl"   -> contactLink,
         "lostUtrUrl"   -> appConfig.lostUTRUrl,
-        "startUrl"     -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
+        "startUrl"     -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
       )
       renderer.render("businessNotIdentified.njk", data).map(Ok(_))
   }

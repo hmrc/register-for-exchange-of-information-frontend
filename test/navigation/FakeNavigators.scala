@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package models.audit
+package navigation
 
-import models.{MDR, Regime}
+import models.{Mode, UserAnswers}
+import pages._
+import play.api.mvc.Call
 
-object EventName {
-  val CreateSubscription_MDR = "MandatoryDisclosureRulesSubscription"
-  val CreateSubscription_CBC = "CountryByCountryReportSubscription"
+class MDRFakeNavigator(desiredRoute: Call) extends MDRNavigator {
 
-  def getEventName(regime: Regime): String =
-    regime match {
-      case MDR => CreateSubscription_MDR
-      case _   => CreateSubscription_CBC //TODO may change
-    }
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+    desiredRoute
+}
 
+class ContactDetailsFakeNavigator(desiredRoute: Call) extends ContactDetailsNavigator {
+
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+    desiredRoute
 }

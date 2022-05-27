@@ -17,7 +17,6 @@
 package controllers
 
 import config.FrontendAppConfig
-import models.Regime
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -37,10 +36,9 @@ class ThereIsAProblemController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>
       val json = Json.obj(
-        "regime"       -> regime.toUpperCase,
         "emailAddress" -> frontendAppConfig.emailEnquiries
       )
       renderer.render("thereIsAProblem.njk", json).map(Ok(_))

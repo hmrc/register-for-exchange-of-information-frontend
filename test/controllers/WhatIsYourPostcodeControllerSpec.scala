@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{AddressLookup, MDR, NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourPostcodePage
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.WhatIsYourPostcodeController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.WhatIsYourPostcodeController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.WhatIsYourPostcodeController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.WhatIsYourPostcodeController.onSubmit(NormalMode).url
 
   private def form = new forms.WhatIsYourPostcodeFormProvider().apply()
 
@@ -100,7 +100,7 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
       )
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockAddressLookupConnector.addressLookupByPostcode(any(), any())(any(), any()))
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
         .thenReturn(Future.successful(addresses))
 
       retrieveUserAnswersData(emptyUserAnswers)
@@ -113,7 +113,7 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
       status(result) mustEqual SEE_OTHER
 
       redirectLocation(result).value mustEqual onwardRoute.url
-      verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any(), any())(any(), any())
+      verify(mockAddressLookupConnector, times(1)).addressLookupByPostcode(any())(any(), any())
 
     }
 

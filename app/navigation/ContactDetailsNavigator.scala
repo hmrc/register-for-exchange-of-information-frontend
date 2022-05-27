@@ -26,122 +26,110 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class ContactDetailsNavigator @Inject() () extends Navigator {
 
-  override val normalRoutes: Page => Regime => UserAnswers => Option[Call] = {
-    case ContactNamePage                    => regime => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode, regime))
-    case ContactEmailPage                   => regime => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode, regime))
-    case IsContactTelephonePage             => regime => isContactTelephoneRoutes(NormalMode)(regime)
-    case ContactPhonePage                   => regime => _ => Some(routes.SecondContactController.onPageLoad(NormalMode, regime))
-    case IndividualContactEmailPage         => regime => _ => Some(routes.IndividualHaveContactTelephoneController.onPageLoad(NormalMode, regime))
-    case IndividualHaveContactTelephonePage => regime => ua => individualHasContactTelephoneRoute(NormalMode)(regime)(ua)
-    case IndividualContactPhonePage         => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    case SecondContactPage                  => regime => isSecondContact(NormalMode)(regime)
-    case SndContactNamePage                 => regime => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode, regime))
-    case SndContactEmailPage                => regime => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode, regime))
-    case SndConHavePhonePage                => regime => haveSecondPhone(NormalMode)(regime)
-    case SndContactPhonePage                => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
-    case _                                  => _ => _ => None
+  override val normalRoutes: Page => UserAnswers => Option[Call] = {
+    case ContactNamePage                    => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
+    case ContactEmailPage                   => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode))
+    case IsContactTelephonePage             => isContactTelephoneRoutes(NormalMode)
+    case ContactPhonePage                   => _ => Some(routes.SecondContactController.onPageLoad(NormalMode))
+    case IndividualContactEmailPage         => _ => Some(routes.IndividualHaveContactTelephoneController.onPageLoad(NormalMode))
+    case IndividualHaveContactTelephonePage => ua => individualHasContactTelephoneRoute(NormalMode)(ua)
+    case IndividualContactPhonePage         => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case SecondContactPage                  => isSecondContact(NormalMode)
+    case SndContactNamePage                 => _ => Some(routes.SndContactEmailController.onPageLoad(NormalMode))
+    case SndContactEmailPage                => _ => Some(routes.SndConHavePhoneController.onPageLoad(NormalMode))
+    case SndConHavePhonePage                => haveSecondPhone(NormalMode)
+    case SndContactPhonePage                => _ => Some(routes.CheckYourAnswersController.onPageLoad())
+    case _                                  => _ => None
   }
 
-  override val checkRouteMap: Page => Regime => UserAnswers => Option[Call] = {
+  override val checkRouteMap: Page => UserAnswers => Option[Call] = {
     case ContactNamePage =>
-      regime =>
-        ua =>
-          checkNextPageForValueThenRoute(
-            CheckMode,
-            regime,
-            ua,
-            ContactEmailPage,
-            routes.ContactEmailController.onPageLoad(CheckMode, regime)
-          )
+      ua =>
+        checkNextPageForValueThenRoute(
+          CheckMode,
+          ua,
+          ContactEmailPage,
+          routes.ContactEmailController.onPageLoad(CheckMode)
+        )
 
     case ContactEmailPage =>
-      regime =>
-        ua =>
-          checkNextPageForValueThenRoute(
-            CheckMode,
-            regime,
-            ua,
-            IsContactTelephonePage,
-            routes.IsContactTelephoneController.onPageLoad(CheckMode, regime)
-          )
+      ua =>
+        checkNextPageForValueThenRoute(
+          CheckMode,
+          ua,
+          IsContactTelephonePage,
+          routes.IsContactTelephoneController.onPageLoad(CheckMode)
+        )
 
     case IsContactTelephonePage => isContactTelephoneRoutes(CheckMode)
 
     case ContactPhonePage =>
-      regime =>
-        ua =>
-          checkNextPageForValueThenRoute(
-            CheckMode,
-            regime,
-            ua,
-            SecondContactPage,
-            routes.SecondContactController.onPageLoad(CheckMode, regime)
-          )
+      ua =>
+        checkNextPageForValueThenRoute(
+          CheckMode,
+          ua,
+          SecondContactPage,
+          routes.SecondContactController.onPageLoad(CheckMode)
+        )
     case IndividualContactEmailPage =>
-      regime =>
-        ua =>
-          checkNextPageForValueThenRoute(
-            CheckMode,
-            regime,
-            ua,
-            IndividualHaveContactTelephonePage,
-            routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode, regime)
-          )
+      ua =>
+        checkNextPageForValueThenRoute(
+          CheckMode,
+          ua,
+          IndividualHaveContactTelephonePage,
+          routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode)
+        )
 
-    case IndividualHaveContactTelephonePage => regime => ua => individualHasContactTelephoneRoute(CheckMode)(regime)(ua)
-    case IndividualContactPhonePage         => regime => _ => Some(routes.CheckYourAnswersController.onPageLoad(regime))
+    case IndividualHaveContactTelephonePage => ua => individualHasContactTelephoneRoute(CheckMode)(ua)
+    case IndividualContactPhonePage         => _ => Some(routes.CheckYourAnswersController.onPageLoad())
 
     case SecondContactPage =>
-      regime => ua => isSecondContact(CheckMode)(regime)(ua)
+      ua => isSecondContact(CheckMode)(ua)
 
     case SndContactNamePage =>
-      regime =>
-        ua =>
-          checkNextPageForValueThenRoute(
-            CheckMode,
-            regime,
-            ua,
-            SndContactEmailPage,
-            routes.SndContactEmailController.onPageLoad(CheckMode, regime)
-          )
+      ua =>
+        checkNextPageForValueThenRoute(
+          CheckMode,
+          ua,
+          SndContactEmailPage,
+          routes.SndContactEmailController.onPageLoad(CheckMode)
+        )
     case SndContactEmailPage =>
-      regime =>
-        ua =>
-          checkNextPageForValueThenRoute(
-            CheckMode,
-            regime,
-            ua,
-            SndConHavePhonePage,
-            routes.SndConHavePhoneController.onPageLoad(CheckMode, regime)
-          )
+      ua =>
+        checkNextPageForValueThenRoute(
+          CheckMode,
+          ua,
+          SndConHavePhonePage,
+          routes.SndConHavePhoneController.onPageLoad(CheckMode)
+        )
 
     case SndConHavePhonePage => haveSecondPhone(CheckMode)
-    case _                   => regime => _ => Some(Navigator.checkYourAnswers(regime))
+    case _                   => _ => Some(Navigator.checkYourAnswers)
   }
 
-  private def isContactTelephoneRoutes(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+  private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IsContactTelephonePage) map {
-      case true => routes.ContactPhoneController.onPageLoad(mode, regime)
+      case true => routes.ContactPhoneController.onPageLoad(mode)
       case false =>
-        checkNextPageForValueThenRoute(mode, regime, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode, regime)).get
+        checkNextPageForValueThenRoute(mode, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode)).get
     }
 
-  private def individualHasContactTelephoneRoute(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+  private def individualHasContactTelephoneRoute(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(IndividualHaveContactTelephonePage) map {
-      case true  => routes.IndividualContactPhoneController.onPageLoad(mode, regime)
-      case false => routes.CheckYourAnswersController.onPageLoad(regime)
+      case true  => routes.IndividualContactPhoneController.onPageLoad(mode)
+      case false => routes.CheckYourAnswersController.onPageLoad()
     }
 
-  private def isSecondContact(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+  private def isSecondContact(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(SecondContactPage) map {
       case true =>
-        checkNextPageForValueThenRoute(mode, regime, ua, SndContactNamePage, routes.SndContactNameController.onPageLoad(mode, regime)).get
-      case false => routes.CheckYourAnswersController.onPageLoad(regime)
+        checkNextPageForValueThenRoute(mode, ua, SndContactNamePage, routes.SndContactNameController.onPageLoad(mode)).get
+      case false => routes.CheckYourAnswersController.onPageLoad()
     }
 
-  private def haveSecondPhone(mode: Mode)(regime: Regime)(ua: UserAnswers): Option[Call] =
+  private def haveSecondPhone(mode: Mode)(ua: UserAnswers): Option[Call] =
     ua.get(SndConHavePhonePage) map {
-      case true  => routes.SndContactPhoneController.onPageLoad(mode, regime)
-      case false => routes.CheckYourAnswersController.onPageLoad(regime)
+      case true  => routes.SndContactPhoneController.onPageLoad(mode)
+      case false => routes.CheckYourAnswersController.onPageLoad()
     }
 }

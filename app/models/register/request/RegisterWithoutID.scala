@@ -18,7 +18,7 @@ package models.register.request
 
 import models.register.request.details.{AddressRequest, Individual, NoIdOrganisation}
 import models.shared.ContactDetails
-import models.{Address, Name, Regime}
+import models.{Address, Name}
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -31,18 +31,18 @@ object RegisterWithoutID {
 
   implicit val format = Json.format[RegisterWithoutID]
 
-  def apply(regime: Regime, name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
+  def apply(name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
-        RequestCommon(regime.toUpperCase),
+        RequestCommon("MDR"),
         RequestWithoutIDDetails(None, Option(Individual(name, dob)), AddressRequest(address), contactDetails, None)
       )
     )
 
-  def apply(regime: Regime, organisationName: String, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
+  def apply(organisationName: String, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
-        RequestCommon(regime.toUpperCase),
+        RequestCommon("MDR"),
         RequestWithoutIDDetails(Option(organisationName).map(NoIdOrganisation(_)), None, AddressRequest(address), contactDetails, None)
       )
     )

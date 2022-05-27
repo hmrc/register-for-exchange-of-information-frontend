@@ -16,18 +16,18 @@
 
 package viewmodels
 
-import models.{Regime, UserAnswers}
+import models.UserAnswers
 import play.api.i18n.Messages
 import uk.gov.hmrc.viewmodels.SummaryList
 import utils.{CheckYourAnswersHelper, CountryListFactory}
 
 object CheckYourAnswersViewModel {
 
-  def buildPages(userAnswers: UserAnswers, regime: Regime, countryFactory: CountryListFactory, isBusiness: Boolean)(implicit
+  def buildPages(userAnswers: UserAnswers, countryFactory: CountryListFactory, isBusiness: Boolean)(implicit
     messages: Messages
   ): Seq[Section] = {
 
-    val helper            = new CheckYourAnswersHelper(userAnswers, regime, countryListFactory = countryFactory)
+    val helper            = new CheckYourAnswersHelper(userAnswers, countryListFactory = countryFactory)
     val (contact, header) = if (isBusiness) ("firstContact", "businessDetails") else ("contactDetails", "individualDetails")
 
     val regDetails     = messages(s"checkYourAnswers.$header.h2")

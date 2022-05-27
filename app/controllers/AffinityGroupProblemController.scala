@@ -16,9 +16,7 @@
 
 package controllers
 
-import models.Regime
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,12 +32,9 @@ class AffinityGroupProblemController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] =
+  def onPageLoad(): Action[AnyContent] =
     Action.async {
       implicit request =>
-        val json = Json.obj(
-          "regime" -> regime.toUpperCase
-        )
-        renderer.render("affinityGroupProblem.njk", json).map(Ok(_))
+        renderer.render("affinityGroupProblem.njk").map(Ok(_))
     }
 }

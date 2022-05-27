@@ -17,7 +17,6 @@
 package handlers
 
 import config.FrontendAppConfig
-import models.Regime
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -42,41 +41,26 @@ class ErrorHandler @Inject() (
     with I18nSupport
     with Logging {
 
-  private def extractRegime(path: String): String = {
-    val regime = path.split("/")(2)
-    if (Regime.regimes.contains(Regime.toRegime(regime))) {
-      regime
-    } else {
-      throw new Exception(s"Encountered a regime $regime that not allowed in the system")
-    }
-  }
-
   override def onClientError(request: RequestHeader, statusCode: Int, message: String = ""): Future[Result] = {
 
     implicit val rh: RequestHeader = request
-    val regime                     = extractRegime(rh.path)
 
     statusCode match {
       case BAD_REQUEST =>
         renderer
-          .render("badRequest.njk",
-                  Json.obj(
-                    "regime" -> regime.toUpperCase
-                  )
-          )
+          .render("badRequest.njk")
           .map(BadRequest(_))
       case NOT_FOUND =>
         renderer
           .render("pageNotFound.njk",
                   Json.obj(
-                    "regime"       -> regime.toUpperCase,
                     "emailAddress" -> frontendAppConfig.emailEnquiries
                   )
           )
           .map(NotFound(_))
       case _ =>
         renderer
-          .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
+          .render("thereIsAProblem.njk", Json.obj("emailAddress" -> frontendAppConfig.emailEnquiries))
           .map(InternalServerError(_))
     }
   }
@@ -84,14 +68,13 @@ class ErrorHandler @Inject() (
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
 
     implicit val rh: RequestHeader = request
-    val regime                     = extractRegime(rh.path)
     logError(request, exception)
     exception match {
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>
         renderer
-          .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
+          .render("thereIsAProblem.njk", Json.obj("emailAddress" -> frontendAppConfig.emailEnquiries))
           .map(InternalServerError(_))
     }
   }
