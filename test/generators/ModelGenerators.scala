@@ -79,12 +79,12 @@ trait ModelGenerators {
 
   implicit lazy val arbitraryBussinessType: Arbitrary[models.BusinessType] =
     Arbitrary {
-      Gen.oneOf(models.BusinessType.values.toSeq)
+      Gen.oneOf(models.BusinessType.values)
     }
 
   implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
     Arbitrary {
-      Gen.oneOf(models.WhatAreYouRegisteringAs.values.toSeq)
+      Gen.oneOf(models.WhatAreYouRegisteringAs.values)
     }
 
   implicit val arbitraryRequestParameter: Arbitrary[RequestParameter] = Arbitrary {
@@ -173,16 +173,6 @@ trait ModelGenerators {
     for {
       subscriptionRequest <- arbitrary[ReadSubscriptionRequest]
     } yield DisplaySubscriptionForMDRRequest(subscriptionRequest)
-  }
-
-  implicit val arbitraryDisplaySubscriptionForCBCRequest: Arbitrary[DisplaySubscriptionForCBCRequest] = Arbitrary {
-    for {
-      subscriptionRequest <- arbitrary[ReadSubscriptionRequest]
-    } yield DisplaySubscriptionForCBCRequest(subscriptionRequest)
-  }
-
-  implicit lazy val arbitraryDisplaySubscriptionRequest: Arbitrary[DisplaySubscriptionRequest] = Arbitrary {
-    Gen.oneOf[DisplaySubscriptionRequest](arbitrary[DisplaySubscriptionForMDRRequest], arbitrary[DisplaySubscriptionForCBCRequest])
   }
 
   implicit lazy val arbitraryUniqueTaxpayerReference: Arbitrary[UniqueTaxpayerReference] = Arbitrary {

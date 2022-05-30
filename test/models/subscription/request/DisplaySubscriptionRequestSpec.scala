@@ -20,10 +20,10 @@ import base.SpecBase
 import play.api.libs.json.Json
 
 class DisplaySubscriptionRequestSpec extends SpecBase {
-  val params                  = Some(Seq(RequestParameter("name", "value")))
-  val requestDetail           = RequestDetail("id", "number")
-  val requestCommon           = SubscriptionRequestCommon("regime", "date", "ref", "MDTP", params, Some("uuid"))
-  val readSubscriptionRequest = ReadSubscriptionRequest(requestCommon, requestDetail)
+  val params: Option[Seq[RequestParameter]] = Some(Seq(RequestParameter("name", "value")))
+  val requestDetail: RequestDetail = RequestDetail("id", "number")
+  val requestCommon: SubscriptionRequestCommon = SubscriptionRequestCommon("regime", "date", "ref", "MDTP", params, Some("uuid"))
+  val readSubscriptionRequest: ReadSubscriptionRequest = ReadSubscriptionRequest(requestCommon, requestDetail)
 
   "DisplaySubscriptionRequest" - {
     "must write MDR request" in {
@@ -32,36 +32,6 @@ class DisplaySubscriptionRequestSpec extends SpecBase {
         """
           |{
           |  "displaySubscriptionForMDRRequest": {
-          |    "requestCommon": {
-          |      "regime": "regime",
-          |      "receiptDate": "date",
-          |      "acknowledgementReference": "ref",
-          |      "originatingSystem": "MDTP",
-          |      "requestParameters": [
-          |        {
-          |          "paramName": "name",
-          |          "paramValue": "value"
-          |        }
-          |      ],
-          |      "conversationID": "uuid"
-          |    },
-          |    "requestDetail": {
-          |      "IDType": "id",
-          |      "IDNumber": "number"
-          |    }
-          |  }
-          |}""".stripMargin
-      )
-
-      Json.toJson(displaySubscriptionRequest) mustBe expectedJson
-    }
-
-    "must write CBC request" in {
-      val displaySubscriptionRequest: DisplaySubscriptionRequest = DisplaySubscriptionForCBCRequest(readSubscriptionRequest)
-      val expectedJson = Json.parse(
-        """
-          | {
-          |  "displaySubscriptionForCBCRequest": {
           |    "requestCommon": {
           |      "regime": "regime",
           |      "receiptDate": "date",

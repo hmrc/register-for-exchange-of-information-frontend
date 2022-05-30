@@ -24,7 +24,7 @@ import models.enrolment.GroupIds
 import models.error.ApiError._
 import models.matching.{IndRegistrationInfo, SafeId}
 import models.{Address, Country, SubscriptionID, UserAnswers}
-import navigation.{ContactDetailsNavigator, MDRNavigator}
+import navigation.MDRNavigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach

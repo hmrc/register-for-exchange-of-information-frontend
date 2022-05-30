@@ -25,12 +25,12 @@ import helpers.WireMockServerHandler
 import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, NotFoundError, ServiceUnavailableError, UnableToCreateEMTPSubscriptionError}
-import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionForCBCRequest, DisplaySubscriptionForMDRRequest}
+import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionForMDRRequest}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, CONFLICT, NOT_FOUND, OK, SERVICE_UNAVAILABLE}
+import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -58,30 +58,6 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
           s"""
              |{
              | "displaySubscriptionForMDRResponse": {
-             |   "responseCommon": {
-             |     "status": "OK",
-             |     "processingDate": "2020-09-23T16:12:11Z"
-             |   },
-             |   "responseDetail": {
-             |      "subscriptionID": "subscriptionID"
-             |   }
-             | }
-             |}""".stripMargin
-
-        stubPostResponse("/read-subscription", OK, subscriptionResponse)
-
-        val result: Future[Option[SubscriptionID]] = connector.readSubscription(displayMDRRequest)
-        result.futureValue.value mustBe expectedResponse
-      }
-
-      "must return SubscriptionID for valid input request for CBC" in {
-        val displayMDRRequest = arbitrary[DisplaySubscriptionForCBCRequest].sample.value
-        val expectedResponse  = SubscriptionID("subscriptionID")
-
-        val subscriptionResponse: String =
-          s"""
-             |{
-             | "displaySubscriptionForCBCResponse": {
              |   "responseCommon": {
              |     "status": "OK",
              |     "processingDate": "2020-09-23T16:12:11Z"
