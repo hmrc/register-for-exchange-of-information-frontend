@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package navigation
+package models.subscription.response
 
-import models.{Mode, UserAnswers}
-import pages._
-import play.api.mvc.Call
+import models.SubscriptionID
+import play.api.libs.json.{Json, Reads}
 
-class CBCRFakeNavigator(desiredRoute: Call) extends ContactDetailsNavigator {
+import scala.language.implicitConversions
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
+case class DisplaySubscriptionForMDRResponse(displaySubscriptionForMDRResponse: SubscriptionIDResponse) {
+  def subscriptionID: SubscriptionID = SubscriptionID(displaySubscriptionForMDRResponse)
+}
+
+object DisplaySubscriptionForMDRResponse {
+  implicit lazy val reads: Reads[DisplaySubscriptionForMDRResponse] = Json.reads[DisplaySubscriptionForMDRResponse]
 }

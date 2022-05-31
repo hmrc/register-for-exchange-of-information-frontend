@@ -22,7 +22,7 @@ import models.SubscriptionID
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, NotFoundError, ServiceUnavailableError, UnableToCreateEMTPSubscriptionError}
 import models.subscription.request.{CreateSubscriptionForMDRRequest, DisplaySubscriptionRequest}
-import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionResponse}
+import models.subscription.response.{CreateSubscriptionForMDRResponse, DisplaySubscriptionForMDRResponse}
 import play.api.Logging
 import play.api.http.Status.{BAD_REQUEST, CONFLICT, NOT_FOUND, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -45,7 +45,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .map {
         case responseMessage if is2xx(responseMessage.status) =>
           responseMessage.json
-            .asOpt[DisplaySubscriptionResponse]
+            .asOpt[DisplaySubscriptionForMDRResponse]
             .map(_.subscriptionID)
         case errorStatus =>
           logger.warn(s"Status $errorStatus has been thrown when display subscription was called")

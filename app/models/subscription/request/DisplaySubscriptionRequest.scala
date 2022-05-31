@@ -26,17 +26,10 @@ object DisplaySubscriptionForMDRRequest {
   implicit lazy val writes: OWrites[DisplaySubscriptionForMDRRequest] = Json.writes[DisplaySubscriptionForMDRRequest]
 }
 
-case class DisplaySubscriptionForCBCRequest(displaySubscriptionForCBCRequest: ReadSubscriptionRequest) extends DisplaySubscriptionRequest
-
-object DisplaySubscriptionForCBCRequest {
-  implicit lazy val writes: OWrites[DisplaySubscriptionForCBCRequest] = Json.writes[DisplaySubscriptionForCBCRequest]
-}
-
 object DisplaySubscriptionRequest {
 
   implicit val writes: Writes[DisplaySubscriptionRequest] = Writes[DisplaySubscriptionRequest] {
     case i: DisplaySubscriptionForMDRRequest => Json.toJson(i)
-    case o: DisplaySubscriptionForCBCRequest => Json.toJson(o)
   }
 
   def convertTo(safeId: String): DisplaySubscriptionRequest =
