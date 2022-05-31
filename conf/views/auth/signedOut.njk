@@ -19,8 +19,10 @@
         <p class="govuk-body">
           {{ govukButton({
             text: messages("site.signIn"),
-            href: "{{ routes.IndexController.onPageLoad().url }}",
-            attributes: {id:"submit"}
+            href: loginUrl,
+            attributes: {
+                id: "submit"
+            }
           }) }}
         </p>
 
