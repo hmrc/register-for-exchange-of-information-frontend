@@ -17,6 +17,7 @@
 package models.register.request
 
 import models.Name
+import models.Regime.MDR
 import models.matching.RegistrationRequest
 import play.api.libs.json.{Format, Json}
 
@@ -30,7 +31,7 @@ object RegisterWithID {
   def apply(name: Name, dob: Option[LocalDate], identifierName: String, identifierValue: String): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
-        RequestCommon("MDR"),
+        RequestCommon(MDR.toString),
         RequestWithIDDetails(name, dob, identifierName, identifierValue)
       )
     )
@@ -38,7 +39,7 @@ object RegisterWithID {
   def apply(registrationRequest: RegistrationRequest): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
-        RequestCommon("MDR"),
+        RequestCommon(MDR.toString),
         RequestWithIDDetails(registrationRequest)
       )
     )

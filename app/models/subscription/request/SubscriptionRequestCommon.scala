@@ -16,6 +16,7 @@
 
 package models.subscription.request
 
+import models.Regime.MDR
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.ZonedDateTime
@@ -42,7 +43,7 @@ object SubscriptionRequestCommon {
     val acknowledgementReference = UUID.randomUUID().toString.replace("-", "")
 
     SubscriptionRequestCommon(
-      regime = "MDR",
+      regime = MDR.toString,
       receiptDate = ZonedDateTime.now().format(formatter),
       acknowledgementReference = acknowledgementReference,
       originatingSystem = mdtp,

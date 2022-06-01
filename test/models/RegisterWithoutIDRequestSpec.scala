@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import helpers.JsonFixtures.{registerWithoutIDJson, registerWithoutIDPayloadJson}
+import models.Regime.MDR
 import models.register.request._
 import models.register.request.details.{AddressRequest, Identification, Individual}
 import models.shared.{ContactDetails, Parameters}
@@ -49,7 +50,7 @@ class RegisterWithoutIDRequestSpec extends SpecBase {
 
   val registerWithoutIDPayload: RegisterWithoutID = RegisterWithoutID(
     RegisterWithoutIDRequest(
-      RequestCommon("2016-08-16T15:55:30Z", "MDR", "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", "MDR")))),
+      RequestCommon("2016-08-16T15:55:30Z", MDR.toString, "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", MDR.toString)))),
       RequestWithoutIDDetails(
         individual = Some(individual),
         organisation = None,
@@ -70,7 +71,7 @@ class RegisterWithoutIDRequestSpec extends SpecBase {
     }
 
     "response common must generate correct values to spec" in {
-      val requestCommon = RequestCommon("MDR")
+      val requestCommon = RequestCommon(MDR.toString)
 
       val ackRefLength = requestCommon.acknowledgementReference.length
       ackRefLength >= 1 && ackRefLength <= 32 mustBe true
