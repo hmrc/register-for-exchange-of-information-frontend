@@ -24,6 +24,7 @@ import helpers.JsonFixtures.{withIDIndividualResponse, withIDOrganisationRespons
 import helpers.RegisterHelper._
 import helpers.WireMockServerHandler
 import models.Name
+import models.Regime.MDR
 import models.error.ApiError
 import models.error.ApiError.{NotFoundError, ServiceUnavailableError}
 import models.matching.SafeId
@@ -51,7 +52,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
   val registrationUrl                       = "/register-for-exchange-of-information/registration"
 
   val requestCommon: RequestCommon =
-    RequestCommon("2016-08-16T15:55:30Z", "MDR", "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", "MDR"))))
+    RequestCommon("2016-08-16T15:55:30Z", MDR.toString, "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", MDR.toString))))
 
   val registrationWithIndividualIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(

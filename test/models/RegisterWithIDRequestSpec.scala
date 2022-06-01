@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import helpers.JsonFixtures.{registerWithIDJson, registerWithIDPayloadJson}
+import models.Regime.MDR
 import models.register.request.details.WithIDIndividual
 import models.register.request.{RegisterWithID, RegisterWithIDRequest, RequestCommon, RequestWithIDDetails}
 import models.shared.Parameters
@@ -29,7 +30,7 @@ class RegisterWithIDRequestSpec extends SpecBase {
 
   val registrationWithIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
-      RequestCommon("2016-08-16T15:55:30Z", "MDR", "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", "MDR")))),
+      RequestCommon("2016-08-16T15:55:30Z", MDR.toString, "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", MDR.toString)))),
       RequestWithIDDetails("NINO",
                            "0123456789",
                            requiresNameMatch = true,
@@ -49,7 +50,7 @@ class RegisterWithIDRequestSpec extends SpecBase {
     }
 
     "response common must generate correct values to spec" in {
-      val requestCommon = RequestCommon("MDR")
+      val requestCommon = RequestCommon(MDR.toString)
 
       val ackRefLength = requestCommon.acknowledgementReference.length
       ackRefLength >= 1 && ackRefLength <= 32 mustBe true

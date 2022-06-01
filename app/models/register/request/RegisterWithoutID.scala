@@ -16,6 +16,7 @@
 
 package models.register.request
 
+import models.Regime.MDR
 import models.register.request.details.{AddressRequest, Individual, NoIdOrganisation}
 import models.shared.ContactDetails
 import models.{Address, Name}
@@ -34,7 +35,7 @@ object RegisterWithoutID {
   def apply(name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
-        RequestCommon("MDR"),
+        RequestCommon(MDR.toString),
         RequestWithoutIDDetails(None, Option(Individual(name, dob)), AddressRequest(address), contactDetails, None)
       )
     )
@@ -42,7 +43,7 @@ object RegisterWithoutID {
   def apply(organisationName: String, address: Address, contactDetails: ContactDetails): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
-        RequestCommon("MDR"),
+        RequestCommon(MDR.toString),
         RequestWithoutIDDetails(Option(organisationName).map(NoIdOrganisation(_)), None, AddressRequest(address), contactDetails, None)
       )
     )

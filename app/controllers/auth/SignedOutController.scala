@@ -16,7 +16,9 @@
 
 package controllers.auth
 
+import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -26,6 +28,7 @@ import scala.concurrent.ExecutionContext
 
 class SignedOutController @Inject() (
   val controllerComponents: MessagesControllerComponents,
+  appConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -33,6 +36,9 @@ class SignedOutController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("auth/signedOut.njk").map(Ok(_))
+      val json = Json.obj(
+        "loginUrl" -> appConfig.loginContinueUrl
+      )
+      renderer.render("auth/signedOut.njk", json).map(Ok(_).withNewSession)
   }
 }

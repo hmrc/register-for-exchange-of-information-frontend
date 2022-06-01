@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.Regime.MDR
 import models.{AddressLookup, LookupAddressByPostcode}
 import play.api.Logging
 import play.api.http.Status._
@@ -38,7 +39,7 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     val lookupAddressByPostcode = LookupAddressByPostcode(postCode, None)
 
-    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> "MDR")) flatMap {
+    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> MDR.toString)) flatMap {
       case response if response.status equals OK =>
         Future.successful(
           sortAddresses(
