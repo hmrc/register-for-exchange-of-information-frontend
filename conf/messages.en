@@ -82,7 +82,7 @@ needContactDetails.p2 = We need these before you can send a country-by-country r
 
 contactName.title = Who can we contact if we have questions about your reports?
 contactName.heading = Who can we contact if we have questions about your reports?
-contactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
+contactName.hint = For example, '‘Tax team’' or '‘Ashley Smith’'.
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
 contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 contactName.error.length = Name must be 35 characters or less
@@ -147,7 +147,7 @@ secondContact.error.required = Select yes if there is someone else we can contac
 
 sndContactName.title = What is the name of the individual or team we should contact?
 sndContactName.heading = What is the name of the individual or team we should contact?
-sndContactName.hint = For example, ''Tax team'' or ''Ashley Smith''.
+sndContactName.hint = For example, '‘Tax team’' or '‘Ashley Smith’'.
 sndContactName.checkYourAnswersLabel = Second contact name
 sndContactName.checkYourAnswersLabel.hiddenText = second contact name
 sndContactName.error.required = Enter the name of the individual or team we should contact
