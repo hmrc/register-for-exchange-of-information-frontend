@@ -26,8 +26,8 @@ class IndividualContactEmailFormProviderSpec extends StringFieldBehaviours {
   ".email" - {
 
     val fieldName   = "email"
-    val requiredKey = "contactEmail.error.required"
-    val invalidKey  = "contactEmail.error.invalid"
+    val requiredKey = "contactEmail.error.required.individual"
+    val invalidKey  = "contactEmail.error.invalid.individual"
     val lengthKey   = "contactEmail.error.length"
     val maxLength   = 132
 
