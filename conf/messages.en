@@ -114,9 +114,11 @@ contactEmail.heading.individual = What is your email address?
 contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.checkYourAnswersLabel.hiddenText = email address
-contactEmail.error.required = Enter your email address
+contactEmail.error.required.business = Enter an email address
+contactEmail.error.required.individual = Enter your email address
 contactEmail.error.length = Email address must be 132 characters or less
-contactEmail.error.invalid = Enter your email address in the correct format, like name@example.com
+contactEmail.error.invalid.business = Enter an email address in the correct format, like name@example.com
+contactEmail.error.invalid.individual = Enter your email address in the correct format, like name@example.com
 
 isContactTelephone.title.business = Can we contact {0} by telephone?
 isContactTelephone.heading.business = Can we contact {0} by telephone?
