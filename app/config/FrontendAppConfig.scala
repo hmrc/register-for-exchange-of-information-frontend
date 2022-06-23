@@ -45,7 +45,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val signOutUrl: String       = configuration.get[String]("urls.signOut")
 
   private val exitSurveyBaseUrl: String = configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
-  val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/register-for-exchange-of-information"
+  val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/register-for-mdr"
 
   def languageMap: Map[String, Lang] = Map(
     "en" -> Lang("en")
