@@ -19,8 +19,6 @@ package models.subscription.response
 import models.SubscriptionID
 import play.api.libs.json.{Json, Reads}
 
-import scala.language.implicitConversions
-
 case class DisplaySubscriptionForMDRResponse(displaySubscriptionForMDRResponse: SubscriptionIDResponse) {
   def subscriptionID: SubscriptionID = SubscriptionID(displaySubscriptionForMDRResponse)
 }
