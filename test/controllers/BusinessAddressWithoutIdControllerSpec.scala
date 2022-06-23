@@ -36,8 +36,8 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
   lazy val submitRoute = routes.BusinessAddressWithoutIdController.onSubmit(NormalMode).url
 
   val formProvider        = new AddressWithoutIdFormProvider()
-  val form: Form[Address] = formProvider(Seq(Country("valid", "GB", "United Kingdom")))
-  val address: Address    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GB", "United Kingdom"))
+  val form: Form[Address] = formProvider(Seq(Country("valid", "GG", "United Kingdom")))
+  val address: Address    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GG", "Guernsey"))
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessAddressWithoutIdPage, address).success.value
 
@@ -91,7 +91,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
           "addressLine3" -> "value 3",
           "addressLine4" -> "value 4",
           "postCode"     -> "XX9 9XX",
-          "country"      -> "GB"
+          "country"      -> "GG"
         )
       )
       val expectedJson = Json.obj(
