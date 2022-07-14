@@ -136,6 +136,9 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         .set(SndContactEmailPage, "test@test.com")
         .success
         .value
+        .set(SecondContactPage, true)
+        .success
+        .value
         .set(SndContactNamePage, "Name Name")
         .success
         .value
@@ -147,7 +150,7 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         .value
 
       val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", Some("11222244"), None)
-      ContactInformation.convertToSecondary(userAnswers).value mustBe expectedValue
+      ContactInformation.convertToSecondary(userAnswers).value mustBe Some(expectedValue)
     }
 
     "must return SecondaryContact for the input 'Business with/without Id UserAnswers' when SndConHavePhonePage is false" in {
@@ -166,7 +169,7 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         .value
 
       val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None)
-      ContactInformation.convertToSecondary(userAnswers).value mustBe expectedValue
+      ContactInformation.convertToSecondary(userAnswers).value mustBe Some(expectedValue)
     }
 
     "must return None when SecondContactPage is true and SndConHavePhonePage is true and SndContactPhonePage is empty" in {
@@ -175,6 +178,9 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         .success
         .value
         .set(SndContactEmailPage, "test@test.com")
+        .success
+        .value
+        .set(SecondContactPage, true)
         .success
         .value
         .set(SndContactNamePage, "Name Name")
@@ -188,7 +194,7 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         .value
 
       val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", Some("07540000000"), None)
-      ContactInformation.convertToSecondary(userAnswers).value mustBe expectedValue
+      ContactInformation.convertToSecondary(userAnswers).value mustBe Some(expectedValue)
     }
   }
 }

@@ -17,7 +17,9 @@
 package models.subscription.request
 
 import models.UserAnswers
-import pages._
+import models.error.ApiError
+import models.error.ApiError.MandatoryInformationMissingError
+import pages.{SecondContactPage, SndConHavePhonePage, _}
 import play.api.libs.functional.syntax.unlift
 import play.api.libs.json._
 import utils.UserAnswersHelper
@@ -144,7 +146,9 @@ object ContactInformation extends UserAnswersHelper {
     }
   }
 
-  def convertToSecondary(userAnswers: UserAnswers): Option[ContactInformation] = {
+  def convertToSecondary(userAnswers: UserAnswers): Either[ApiError, Option[ContactInformation]] = {
+    val sndConHavePhonePage = userAnswers.get(SndConHavePhonePage)
+    val secondContactPage   = userAnswers.get(SecondContactPage)
 
     lazy val buildSecondContact =
       for {
@@ -152,11 +156,11 @@ object ContactInformation extends UserAnswersHelper {
         secondaryEmail <- userAnswers.get(SndContactEmailPage)
       } yield ContactInformation(contactInformation = orgDetails, email = secondaryEmail, phone = userAnswers.get(SndContactPhonePage), mobile = None)
 
-    userAnswers.get(SecondContactPage) match {
-      case Some(true) =>
-        buildSecondContact
-      case _ =>
-        None
+    (secondContactPage, sndConHavePhonePage) match {
+      case (Some(false), _)      => Right(None)
+      case (Some(true), Some(_)) => Right(buildSecondContact)
+      case (Some(true), None)    => Left(MandatoryInformationMissingError("Have Second Contact Phone not answered"))
+      case (_, _)                => Left(MandatoryInformationMissingError("Have Second Contact Information not answered"))
     }
   }
 }
