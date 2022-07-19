@@ -147,20 +147,24 @@ object ContactInformation extends UserAnswersHelper {
   }
 
   def convertToSecondary(userAnswers: UserAnswers): Either[ApiError, Option[ContactInformation]] = {
-    val sndConHavePhonePage = userAnswers.get(SndConHavePhonePage)
-    val secondContactPage   = userAnswers.get(SecondContactPage)
-
     lazy val buildSecondContact =
       for {
         orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
         secondaryEmail <- userAnswers.get(SndContactEmailPage)
       } yield ContactInformation(contactInformation = orgDetails, email = secondaryEmail, phone = userAnswers.get(SndContactPhonePage), mobile = None)
 
-    (secondContactPage, sndConHavePhonePage) match {
-      case (Some(false), _)      => Right(None)
-      case (Some(true), Some(_)) => Right(buildSecondContact)
-      case (Some(true), None)    => Left(MandatoryInformationMissingError("Have Second Contact Phone not answered"))
-      case (_, _)                => Left(MandatoryInformationMissingError("Have Second Contact Information not answered"))
+    if (isRegisteringAsBusiness(userAnswers)) {
+      val sndConHavePhonePage = userAnswers.get(SndConHavePhonePage)
+      val secondContactPage   = userAnswers.get(SecondContactPage)
+
+      (secondContactPage, sndConHavePhonePage) match {
+        case (Some(false), _)      => Right(None)
+        case (Some(true), Some(_)) => Right(buildSecondContact)
+        case (Some(true), None)    => Left(MandatoryInformationMissingError("Have Second Contact Phone not answered"))
+        case (_, _)                => Left(MandatoryInformationMissingError("Have Second Contact Information not answered"))
+      }
+    } else {
+      Right(None)
     }
   }
 }

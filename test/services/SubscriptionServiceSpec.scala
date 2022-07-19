@@ -86,9 +86,6 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
-        .set(SecondContactPage, false)
-        .success
-        .value
 
       val result = service.checkAndCreateSubscription(safeId, userAnswers)
       result.futureValue mustBe Right(SubscriptionID("id"))
