@@ -35,17 +35,24 @@ object CreateRequestDetail extends UserAnswersHelper {
   implicit val format: OFormat[CreateRequestDetail] = Json.format[CreateRequestDetail]
   private val idType: String                        = "SAFE"
 
-  def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] =
+  def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
     for {
       primaryContact <- ContactInformation.convertToPrimary(userAnswers)
-    } yield CreateRequestDetail(
-      IDType = idType,
-      IDNumber = safeId.value,
-      tradingName = userAnswers.get(WhatIsTradingNamePage),
-      isGBUser = isGBUser(userAnswers),
-      primaryContact = primaryContact,
-      secondaryContact = ContactInformation.convertToSecondary(userAnswers)
-    )
+    } yield ContactInformation.convertToSecondary(userAnswers) match {
+      case Right(value) =>
+        Some(
+          CreateRequestDetail(
+            IDType = idType,
+            IDNumber = safeId.value,
+            tradingName = userAnswers.get(WhatIsTradingNamePage),
+            isGBUser = isGBUser(userAnswers),
+            primaryContact = primaryContact,
+            secondaryContact = value
+          )
+        )
+      case _ => None
+    }
+  }.flatten
 
   private def isGBUser(userAnswers: UserAnswers): Boolean =
     if (userAnswers.get(BusinessAddressWithoutIdPage).exists(_.isOtherCountry) || userAnswers.get(IndividualAddressWithoutIdPage).exists(_.isOtherCountry)) {
