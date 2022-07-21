@@ -21,18 +21,18 @@
         }) }}
 
         <div class="govuk-body">
-          <p>{{ messages("registrationConfirmation.subscriptionID.text") }}</p>
+          <h2 class="govuk-heading-m govuk-!-padding-top-2">{{ messages("registrationConfirmation.heading") }}</h2>
 
-          <h2 class="govuk-heading-m">
-            {{ messages("registrationConfirmation.heading") }}
-          </h2>
+          <p>{{ messages("registrationConfirmation.p1") }}</p>
 
-          <p>{{ messages("registrationConfirmation.email") }}</p>
+          <p>{{ messages("registrationConfirmation.p2") }}</p>
+
           <p>
-            {{ messages("registrationConfirmation.submission.text") }}
-            <a href={{submissionUrl}} class="govuk-link">{{messages("registrationConfirmation.submission.link")}}</a>
-            {{ messages("registrationConfirmation.submission.text.MDR") }}
+            {{ messages("registrationConfirmation.p3") }}
+            <a href={{submissionUrl}} class="govuk-link">{{messages("registrationConfirmation.p3.link")}}</a>
+            {{ messages("registrationConfirmation.p3b") }}
           </p>
+
           <p>
             <a class='govuk-link' id='feedback-link' href='{{betaFeedbackSurvey}}' rel='noreferrer noopener' target='_blank'>
               {{ messages("registrationConfirmation.survey.link") }}
