@@ -600,7 +600,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
       }
 
     "must go from 'What is the main address of your business'(NON-UK) page to " +
-      "'Who can we contact?' page when valid address entered" in {
+      "'Your contact details' page when valid address entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -617,7 +617,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
             navigator
               .nextPage(BusinessAddressWithoutIdPage, CheckMode, updatedAnswers)
-              .mustBe(routes.ContactNameController.onPageLoad(CheckMode))
+              .mustBe(routes.YourContactDetailsController.onPageLoad(CheckMode))
         }
       }
 

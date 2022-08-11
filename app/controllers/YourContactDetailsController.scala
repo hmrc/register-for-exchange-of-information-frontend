@@ -17,8 +17,11 @@
 package controllers
 
 import controllers.actions._
+import models.Mode
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -37,8 +40,11 @@ class YourContactDetailsController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
-      renderer.render("yourContactDetails.njk").map(Ok(_))
+      val data = Json.obj(
+        "continue" -> routes.ContactNameController.onPageLoad(mode).url
+      )
+      renderer.render("yourContactDetails.njk", data).map(Ok(_))
   }
 }

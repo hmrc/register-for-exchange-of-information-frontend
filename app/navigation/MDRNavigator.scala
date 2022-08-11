@@ -43,7 +43,7 @@ class MDRNavigator @Inject() () extends Navigator {
     case DateOfBirthWithoutIdPage              => whatIsYourDateOfBirthRoutes(NormalMode)
     case DoYouLiveInTheUKPage                   => doYouLiveInTheUkRoutes(NormalMode)
     case AddressUKPage                          => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
-    case BusinessAddressWithoutIdPage           => _ => Some(routes.ContactNameController.onPageLoad(NormalMode))
+    case BusinessAddressWithoutIdPage           => _ => Some(routes.YourContactDetailsController.onPageLoad(NormalMode))
     case IndividualAddressWithoutIdPage         => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case WhatIsYourPostcodePage                 => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                      => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
@@ -121,7 +121,7 @@ class MDRNavigator @Inject() () extends Navigator {
 
     case BusinessAddressWithoutIdPage  => ua =>
       checkNextPageForValueThenRoute(
-        CheckMode, ua, ContactNamePage, routes.ContactNameController.onPageLoad(CheckMode)
+        CheckMode, ua, ContactNamePage, routes.YourContactDetailsController.onPageLoad(CheckMode)
       )
 
     case _  => _ => Some(Navigator.checkYourAnswers)
@@ -183,7 +183,7 @@ class MDRNavigator @Inject() () extends Navigator {
       case (Some(true), Some(Sole)) =>
         checkNextPageForValueThenRoute(mode, ua, IndividualContactEmailPage, routes.IndividualContactEmailController.onPageLoad(mode))
       case (Some(true), Some(_))    =>
-        checkNextPageForValueThenRoute(mode, ua, ContactNamePage, routes.ContactNameController.onPageLoad(mode))
+        checkNextPageForValueThenRoute(mode, ua, ContactNamePage, routes.YourContactDetailsController.onPageLoad(mode))
       case _                        => Some(routes.BusinessNotIdentifiedController.onPageLoad())
     }
 }

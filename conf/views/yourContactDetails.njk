@@ -1,9 +1,18 @@
 {% extends "includes/layout.njk" %}
 
+{% from "govuk/components/back-link/macro.njk"     import govukBackLink %}
 {% from "macros/title.njk"                         import title %}
+{% from "govuk/components/button/macro.njk"        import govukButton %}
 
 {% block pageTitle %}
   {{ title(messages("yourContactDetails.title")) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: messages("site.back"),
+    classes: "js-enabled"
+  }) }}
 {% endblock %}
 
 {% block mainContent %}
@@ -18,6 +27,14 @@
         <p class="govuk-body">{{ messages("yourContactDetails.p1") }}</p>
 
         <p class="govuk-body">{{ messages("yourContactDetails.p2") }}</p>
+
+        <div class="govuk-!-padding-top-4">
+          {{ govukButton({
+            text: messages("site.continue"),
+            href: continue,
+            attributes: {id:"submit"}
+          }) }}
+        </div>
 
       </div>
     </div>

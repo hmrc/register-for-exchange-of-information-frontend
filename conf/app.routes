@@ -19,7 +19,8 @@ GET         /problem/there-is-a-problem                  controllers.ThereIsAPro
 GET         /register/check-answers                      controllers.CheckYourAnswersController.onPageLoad()
 POST        /register/check-answers                      controllers.CheckYourAnswersController.onSubmit()
 
-GET        /register/your-contact-details                controllers.YourContactDetailsController.onPageLoad()
+GET        /register/your-contact-details                controllers.YourContactDetailsController.onPageLoad(mode: models.Mode = models.NormalMode)
+GET        /register/change-your-contact-details         controllers.YourContactDetailsController.onPageLoad(mode: models.Mode = models.CheckMode)
 
 GET        /register/contact-name                        controllers.ContactNameController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/contact-name                        controllers.ContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
