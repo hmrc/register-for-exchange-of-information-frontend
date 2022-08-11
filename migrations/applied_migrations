@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo ""
+echo "Applying migration YourContactDetails"
+
+echo "Adding routes to conf/app.routes"
+echo "" >> ../conf/app.routes
+echo "GET        /yourContactDetails                       controllers.YourContactDetailsController.onPageLoad()" >> ../conf/app.routes
+
+echo "Adding messages to conf.messages"
+echo "" >> ../conf/messages.en
+echo "yourContactDetails.title = yourContactDetails" >> ../conf/messages.en
+echo "yourContactDetails.heading = yourContactDetails" >> ../conf/messages.en
+
+echo "Migration YourContactDetails completed"

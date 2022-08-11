@@ -1,0 +1,25 @@
+{% extends "includes/layout.njk" %}
+
+{% from "macros/title.njk"                         import title %}
+
+{% block pageTitle %}
+  {{ title(messages("yourContactDetails.title")) }}
+{% endblock %}
+
+{% block mainContent %}
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">
+          {{ messages("yourContactDetails.heading") }}
+        </h1>
+
+        <p class="govuk-body">{{ messages("yourContactDetails.p1") }}</p>
+
+        <p class="govuk-body">{{ messages("yourContactDetails.p2") }}</p>
+
+      </div>
+    </div>
+
+{% endblock %}

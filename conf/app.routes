@@ -8,7 +8,7 @@ GET         /assets/*file                                controllers.Assets.vers
 
 GET         /refresh-session                             controllers.KeepAliveController.keepAlive()
 
-GET         /problem/signed-out                 controllers.SessionExpiredController.onPageLoad()
+GET         /problem/signed-out                          controllers.SessionExpiredController.onPageLoad()
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -16,8 +16,10 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /problem/there-is-a-problem                  controllers.ThereIsAProblemController.onPageLoad()
 
-GET         /register/check-answers                               controllers.CheckYourAnswersController.onPageLoad()
-POST        /register/check-answers                               controllers.CheckYourAnswersController.onSubmit()
+GET         /register/check-answers                      controllers.CheckYourAnswersController.onPageLoad()
+POST        /register/check-answers                      controllers.CheckYourAnswersController.onSubmit()
+
+GET        /register/your-contact-details                controllers.YourContactDetailsController.onPageLoad()
 
 GET        /register/contact-name                        controllers.ContactNameController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/contact-name                        controllers.ContactNameController.onSubmit(mode: models.Mode = models.NormalMode)
@@ -210,3 +212,4 @@ GET        /register/change-individual-phone                  controllers.Indivi
 POST       /register/change-individual-phone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /individual-not-allowed                       controllers.AffinityGroupProblemController.onPageLoad()
+
