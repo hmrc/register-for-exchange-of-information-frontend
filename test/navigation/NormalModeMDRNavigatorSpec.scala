@@ -213,7 +213,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
 
       "must go from 'What is the main address of your business'(NON-UK) page to " +
-        "'Who can we contact?' page when valid address entered" in {
+        "'Your contact details' page when valid address entered" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
@@ -227,7 +227,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
               navigator
                 .nextPage(BusinessAddressWithoutIdPage, NormalMode, updatedAnswers)
-                .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
+                .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
           }
         }
 
@@ -457,7 +457,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'Is this your business' page to 'Who can we contact?'' page when any business other than Sole Proprietor" in {
+      "must go from 'Is this your business' page to 'Your contact details?'' page when any business other than Sole Proprietor" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -471,7 +471,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
             navigator
               .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactNameController.onPageLoad(NormalMode))
+              .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
         }
       }
 
