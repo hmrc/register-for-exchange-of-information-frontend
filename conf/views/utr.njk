@@ -32,6 +32,8 @@
 
           {{ csrf() | safe }}
 
+
+            <p>{{ messages("utr.p") }}</p>
             {{ govukInput({
                 label: {
                   text: messages('utr.heading', taxType),
