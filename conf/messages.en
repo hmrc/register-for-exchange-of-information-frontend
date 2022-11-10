@@ -1,4 +1,4 @@
-service.name = register-for-exchange-of-information-frontend
+service.name = Report cross-border arrangements for MDR
 
 site.back = Back
 site.delete = Remove
@@ -15,7 +15,6 @@ site.govuk = GOV.UK
 site.saveAndContinue = Save and continue
 site.save = Save
 site.confirmAndSend= Confirm and send
-site.service_name = Report cross-border arrangements for MDR
 site.textarea.char_limit = (Limit is {0} characters)
 site.title.suffix = - GOV.UK
 site.homePageLink.text = Back to report cross-border arrangements

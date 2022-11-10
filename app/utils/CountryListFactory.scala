@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.Country
 import play.api.Environment
 import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
 
 import javax.inject.{Inject, Singleton}
 
@@ -27,6 +28,8 @@ import javax.inject.{Inject, Singleton}
 class CountryListFactory @Inject() (environment: Environment, appConfig: FrontendAppConfig) {
 
   def uk: Country = Country("valid", "GB", "United Kingdom")
+
+  val ukSelectItem = Seq(SelectItem(Some(uk.code), uk.description, selected = true))
 
   lazy val countryList: Option[Seq[Country]] = getCountryList
 
@@ -59,5 +62,19 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
         Json.obj("text" -> country.description, "value" -> country.code, "selected" -> containsCountry(country))
     }
     Json.obj("value" -> "", "text" -> "&nbsp") +: countryJsonList
+  }
+
+  def countrySelectList(value: Map[String, String], countries: Seq[Country]): Seq[SelectItem] = {
+    def containsCountry(country: Country): Boolean =
+      value.get("country") match {
+        case Some(countryCode) => countryCode == country.code
+        case _                 => false
+      }
+
+    val countryJsonList = countries.map {
+      country =>
+        SelectItem(Some(country.code), country.description, containsCountry(country))
+    }
+    SelectItem(None, "&nbsp") +: countryJsonList
   }
 }

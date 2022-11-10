@@ -28,6 +28,17 @@ lazy val root = (project in file("."))
     SilencerSettings(),
     ThisBuild / scalafmtOnCompile := true,
     RoutesKeys.routesImport += "models._",
+    TwirlKeys.templateImports ++= Seq(
+      "play.twirl.api.HtmlFormat",
+      "play.twirl.api.HtmlFormat._",
+      "uk.gov.hmrc.govukfrontend.views.html.components._",
+      "uk.gov.hmrc.hmrcfrontend.views.html.components._",
+      "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
+      "views.ViewUtils._",
+      "models.Mode",
+      "controllers.routes._",
+      "viewmodels.govuk.all._"
+    ),
     PlayKeys.playDefaultPort := 10015,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*repositories.*;" +
       ".*BuildInfo.*;.*javascript.*;.*Routes.*;.*GuiceInjector;" +

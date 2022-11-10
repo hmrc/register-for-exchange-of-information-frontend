@@ -17,6 +17,8 @@
 package base
 
 import controllers.routes
+import play.api.mvc.Call
+import play.api.test.Helpers.POST
 import play.api.test.{FakeRequest, Helpers}
 
 trait ControllerSpecBase extends SpecBase with ControllerMockFixtures {
