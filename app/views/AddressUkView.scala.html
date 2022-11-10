@@ -92,14 +92,7 @@
                 label = LabelViewModel(messages("addressUK.countryCode")),
                 items = countries
             )
-                    .withFormGroupClasses("govuk-input--width-20")
-                    .withAttribute("autocomplete" -> "country-name")
-                    .asAccessibleAutocomplete(Some(
-                AccessibleAutocomplete(
-                    defaultValue = Some("United Kingdom"),
-                    showAllValues = true,
-                    autoSelect = true)
-            ))
+                    .withFormGroupClasses("hide-field")
         )
 
         @govukButton(
