@@ -29,9 +29,9 @@
 )
 
 
-@(form: Form[_], countries: Seq[SelectItem], action: Call, pageHeading: String, pageTitle: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], countries: Seq[SelectItem], action: Call, key: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages(pageTitle))) {
+@layout(pageTitle = title(form, messages(s"addressWithoutId.$key.title"))) {
 
     @formHelper(action = action, 'autoComplete -> "off") {
 
@@ -39,7 +39,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-l">@messages(pageHeading)</h1>
+        <h1 class="govuk-heading-l">@messages(s"addressWithoutId.$key.heading")</h1>
 
         @govukInput(
             InputViewModel(

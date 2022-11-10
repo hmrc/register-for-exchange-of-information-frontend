@@ -10,7 +10,15 @@ $hmrc-assets-path: "/register-for-mdr/assets/lib/hmrc-frontend/hmrc/assets";
 @import "partials/overflow";
 @import "partials/timeout-dialog.scss";
 
-svg.autocomplete__dropdown-arrow-down {
+// Ensure the error styling is presented (powered by adding the govuk-input-error class in js)
+// This can't be done just by adding the class due to conflicting specificity
+// This should be added to play-frontend-hmrc eventually and then this can be removed
+.autocomplete__input.govuk-input--error {
+  border-color: #d4351c;
+}
+
+.autocomplete__dropdown-arrow-down {
+  z-index: 0;
   pointer-events: none;
 }
 

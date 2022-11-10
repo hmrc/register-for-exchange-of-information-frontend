@@ -65,8 +65,7 @@ class IndividualAddressWithoutIdController @Inject() (
               preparedForm,
               countryListFactory.countrySelectList(form.data, countries),
               routes.IndividualAddressWithoutIdController.onSubmit(mode),
-              "addressWithoutId.individual.heading",
-              "addressWithoutId.individual.title",
+              "individual",
               mode
             )
           )
@@ -91,8 +90,7 @@ class IndividualAddressWithoutIdController @Inject() (
                       formWithErrors,
                       countryListFactory.countrySelectList(form.data, countries),
                       routes.IndividualAddressWithoutIdController.onSubmit(mode),
-                      "addressWithoutId.individual.heading",
-                      "addressWithoutId.individual.title",
+                      "individual",
                       mode
                     )
                   )

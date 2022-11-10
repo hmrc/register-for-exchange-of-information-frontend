@@ -65,8 +65,7 @@ class BusinessAddressWithoutIdController @Inject() (
               preparedForm,
               countryListFactory.countrySelectList(form.data, countries),
               routes.BusinessAddressWithoutIdController.onSubmit(mode),
-              "addressWithoutId.business.heading",
-              "addressWithoutId.business.title",
+              "business",
               mode
             )
           )
@@ -91,8 +90,7 @@ class BusinessAddressWithoutIdController @Inject() (
                       formWithErrors,
                       countryListFactory.countrySelectList(form.data, countries),
                       routes.BusinessAddressWithoutIdController.onSubmit(mode),
-                      "addressWithoutId.business.heading",
-                      "addressWithoutId.business.title",
+                      "business",
                       mode
                     )
                   )

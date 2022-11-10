@@ -34,21 +34,21 @@ import scala.concurrent.Future
 
 class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
 
-  val testCountryList     = Seq(Country("valid", "GG", "Guernsey"))
-  val formProvider        = new AddressWithoutIdFormProvider()
-  val form: Form[Address] = formProvider(testCountryList)
-  val address: Address    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GG", "Guernsey"))
+  val testCountryList: Seq[Country] = Seq(Country("valid", "GG", "Guernsey"))
+  val formProvider                  = new AddressWithoutIdFormProvider()
+  val form: Form[Address]           = formProvider(testCountryList)
+  val address: Address              = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GG", "Guernsey"))
 
-  val mockAppConfig = mock[FrontendAppConfig]
+  val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val countryListFactory = new CountryListFactory(app.environment, mockAppConfig) {
+  val countryListFactory: CountryListFactory = new CountryListFactory(app.environment, mockAppConfig) {
     override lazy val countryList: Option[Seq[Country]] = Some(testCountryList)
   }
 
-  lazy val loadRoute   = routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.BusinessAddressWithoutIdController.onSubmit(NormalMode).url
+  lazy val loadRoute: String   = routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode).url
+  lazy val submitRoute: String = routes.BusinessAddressWithoutIdController.onSubmit(NormalMode).url
 
-  val userAnswers = UserAnswers(userAnswersId).set(BusinessAddressWithoutIdPage, address).success.value
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(BusinessAddressWithoutIdPage, address).success.value
 
   "BusinessAddressWithoutId Controller" - {
 
@@ -74,8 +74,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "addressWithoutId.business.heading",
-          "addressWithoutId.business.title",
+          "business",
           NormalMode
         ).toString
       }
@@ -103,8 +102,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form.fill(address),
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "addressWithoutId.business.heading",
-          "addressWithoutId.business.title",
+          "business",
           NormalMode
         ).toString
       }
@@ -166,8 +164,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
           boundForm,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "addressWithoutId.business.heading",
-          "addressWithoutId.business.title",
+          "business",
           NormalMode
         ).toString
       }
