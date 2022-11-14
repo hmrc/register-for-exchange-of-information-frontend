@@ -506,7 +506,7 @@ individualAlreadyRegistered.p2 = If you’re having problems accessing the servi
 
 affinityGroupProblem.title = Sorry, you’re unable to use this service
 affinityGroupProblem.heading = Sorry, you’re unable to use this service
-affinityGroupProblem.paragraph.1 = You’ve signed in as an Individual user. Individuals cannot register for this service.
+affinityGroupProblem.p1 = You’ve signed in as an Individual user. Individuals cannot register for this service.
 
 yourContactDetails.title = Setting up contact details for MDR
 yourContactDetails.heading = Setting up contact details for MDR
