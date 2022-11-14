@@ -65,11 +65,11 @@ class UTRController @Inject() (
     }
 
     val data = Json.obj(
-      "form"       -> form,
-      "taxType"    -> taxType,
-      "lostUTRUrl" -> appConfig.lostUTRUrl,
-      "action"     -> routes.UTRController.onSubmit(mode).url,
-      "hintText"   -> hintWithLostUtrLink(taxType)
+      "form"          -> form,
+      "taxType"       -> taxType,
+      "lostUTRUrl"    -> appConfig.lostUTRUrl,
+      "action"        -> routes.UTRController.onSubmit(mode).url,
+      "paragraphText" -> paragraphWithLostUtrLink
     )
     renderer.render("utr.njk", data)
   }
@@ -106,9 +106,9 @@ class UTRController @Inject() (
           )
     }
 
-  private def hintWithLostUtrLink(taxType: String)(implicit messages: Messages): Html =
+  private def paragraphWithLostUtrLink()(implicit messages: Messages): Html =
     Html(
-      s"${messages("utr.hint", taxType)} <span> <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
-        s"${messages("utr.hint.link")}</a>.</span>"
+      s"<p>${messages("utr.p1")} <span> <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
+        s"${messages("utr.p1.link")}</a></span></p>"
     )
 }
