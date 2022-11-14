@@ -350,7 +350,7 @@ selectAddress.title = What is your address?
 selectAddress.heading = What is your address?
 selectAddress.checkYourAnswersLabel = Your home address
 selectAddress.error.required = Select your address
-selectAddress.hint.part1 = Select from the list or
+selectAddress.hint.part1 = Select from the list or {0}
 selectAddress.hint.part2 = enter your address manually
 
 businessWithIDName.checkYourAnswersLabel = Your business
