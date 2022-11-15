@@ -18,46 +18,29 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
-import uk.gov.hmrc.nunjucks.NunjucksSupport
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.BusinessAlreadyRegisteredView
 
 class BusinessAlreadyRegisteredController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
-  frontendAppConfig: FrontendAppConfig,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+  view: BusinessAlreadyRegisteredView,
+  frontendAppConfig: FrontendAppConfig
+) extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoadWithID(): Action[AnyContent] = identify().async {
+  def onPageLoadWithoutId(withId: Boolean = false): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      val json = Json.obj(
-        "withID"       -> true,
-        "emailAddress" -> frontendAppConfig.emailEnquiries
-      )
-
-      renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
+      Ok(view(frontendAppConfig.emailEnquiries, withId))
   }
 
-  def onPageLoadWithoutID(): Action[AnyContent] = identify().async {
+  def onPageLoadWithId(withId: Boolean = true): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      val json = Json.obj(
-        "withID"       -> false,
-        "emailAddress" -> frontendAppConfig.emailEnquiries,
-        "loginGG"      -> frontendAppConfig.loginUrl
-      )
-
-      renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
+      Ok(view(frontendAppConfig.emailEnquiries, withId))
   }
-
 }
