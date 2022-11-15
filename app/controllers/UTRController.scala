@@ -65,10 +65,10 @@ class UTRController @Inject() (
     }
 
     val data = Json.obj(
-      "form"          -> form,
-      "taxType"       -> taxType,
-      "lostUTRUrl"    -> appConfig.lostUTRUrl,
-      "action"        -> routes.UTRController.onSubmit(mode).url
+      "form"       -> form,
+      "taxType"    -> taxType,
+      "lostUTRUrl" -> appConfig.lostUTRUrl,
+      "action"     -> routes.UTRController.onSubmit(mode).url
     )
     renderer.render("utr.njk", data)
   }
