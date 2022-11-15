@@ -23,9 +23,9 @@
         appConfig: FrontendAppConfig
 )
 
-@(emailLink: String, withId: Boolean)(implicit request: Request[_], messages: Messages)
+@(withId: Boolean)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("preRegistered.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("businessAlreadyRegistered.title")), showBackLink = false) {
 
     <h1 class="govuk-heading-l">@messages("businessAlreadyRegistered.heading")</h1>
     @if(withId) {
@@ -34,5 +34,5 @@
         <p class="govuk-body">@messages("businessAlreadyRegistered.withOutID.information")</p>
         <p class="govuk-body">@link(appConfig.loginUrl, "businessAlreadyRegistered.withOutID.GGLink", openInNewWindow = true)</p>
     }
-    <p class="govuk-body">@Html(messages("businessAlreadyRegistered.help" , link(s"mailto:$emailLink", "thereIsAProblem.emailAddress", openInNewWindow = true)))</p>
+    <p class="govuk-body">@Html(messages("businessAlreadyRegistered.help" , link(s"mailto:${appConfig.emailEnquiries}", "thereIsAProblem.emailAddress", openInNewWindow = true)))</p>
 }

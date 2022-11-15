@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
 
 import javax.inject.Inject
@@ -27,20 +26,19 @@ import views.html.BusinessAlreadyRegisteredView
 
 class BusinessAlreadyRegisteredController @Inject() (
   override val messagesApi: MessagesApi,
-  standardActionSets: StandardActionSets,
+  identifierAction: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view: BusinessAlreadyRegisteredView,
-  frontendAppConfig: FrontendAppConfig
+  view: BusinessAlreadyRegisteredView
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoadWithoutId(withId: Boolean = false): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+  def onPageLoadWithoutId(withId: Boolean = false): Action[AnyContent] = identifierAction() {
     implicit request =>
-      Ok(view(frontendAppConfig.emailEnquiries, withId))
+      Ok(view(withId))
   }
 
-  def onPageLoadWithId(withId: Boolean = true): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+  def onPageLoadWithId(withId: Boolean = true): Action[AnyContent] = identifierAction() {
     implicit request =>
-      Ok(view(frontendAppConfig.emailEnquiries, withId))
+      Ok(view(withId))
   }
 }
