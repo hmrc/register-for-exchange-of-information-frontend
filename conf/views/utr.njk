@@ -32,21 +32,24 @@
 
           {{ csrf() | safe }}
 
+            <h1 class="govuk-heading-l">{{ messages("utr.heading", taxType) }}</h1>
+            <p class="govuk-body">{{ messages("utr.p1") }}
+            <span> <a class='govuk-link text-overflow' href='{{lostUTRUrl}}' rel='noreferrer noopener'> {{ messages("utr.p1.link") }}</a>.</span></p>
+
             {{ govukInput({
                 label: {
                   text: messages('utr.heading', taxType),
-                  isPageHeading: true,
-                  classes: "govuk-label--l text-overflow"
+                  isPageHeading: false,
+                  classes: "govuk-label--l text-overflow govuk-visually-hidden"
                 },
                 classes: "govuk-input--width-10",
                 id: "value",
                 name: "value",
-                hint: {
-                  html: hintText
-                },
+                hint: { text: messages('utr.hint', taxType) },
                 value: form.value.value,
                 errorMessage: form.value.error
             }) }}
+
 
           {{ govukButton({
             text: messages("site.continue"),

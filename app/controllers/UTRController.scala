@@ -68,8 +68,7 @@ class UTRController @Inject() (
       "form"       -> form,
       "taxType"    -> taxType,
       "lostUTRUrl" -> appConfig.lostUTRUrl,
-      "action"     -> routes.UTRController.onSubmit(mode).url,
-      "hintText"   -> hintWithLostUtrLink(taxType)
+      "action"     -> routes.UTRController.onSubmit(mode).url
     )
     renderer.render("utr.njk", data)
   }
@@ -105,10 +104,4 @@ class UTRController @Inject() (
               } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
           )
     }
-
-  private def hintWithLostUtrLink(taxType: String)(implicit messages: Messages): Html =
-    Html(
-      s"${messages("utr.hint", taxType)} <span> <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
-        s"${messages("utr.hint.link")}</a>.</span>"
-    )
 }
