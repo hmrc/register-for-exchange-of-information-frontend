@@ -17,17 +17,10 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import config.FrontendAppConfig
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import views.html.BusinessAlreadyRegisteredView
-import views.html.helper.form
-
-import scala.concurrent.Future
 
 class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMockFixtures {
 
@@ -40,14 +33,14 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implicit val request = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url)
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[BusinessAlreadyRegisteredView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(withId = true)
+        contentAsString(result) mustEqual view(withId = true).toString
       }
     }
 
@@ -58,7 +51,7 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implicit val request = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url)
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url)
 
         val result = route(application, request).value
 
