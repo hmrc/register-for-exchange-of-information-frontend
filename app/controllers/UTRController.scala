@@ -20,19 +20,14 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.UTRFormProvider
 import models.BusinessType._
-import models.requests.DataRequest
-import models.{BusinessType, Mode, UniqueTaxpayerReference, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.MDRNavigator
 import pages.{BusinessTypePage, UTRPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc._
-import play.twirl.api
 import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels._
 import views.html.UTRView
 
 import javax.inject.Inject
