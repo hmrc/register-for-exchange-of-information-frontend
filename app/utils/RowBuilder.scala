@@ -18,8 +18,10 @@ package utils
 
 import models.{Address, UserAnswers}
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList.{Action, Key, Row, Value}
-import uk.gov.hmrc.viewmodels.{Content, Html, MessageInterpolators, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
+import uk.gov.hmrc.viewmodels.Html
+import viewmodels.govuk.summarylist._
 
 import java.time.format.DateTimeFormatter
 
@@ -31,47 +33,34 @@ trait RowBuilder {
 
   private[utils] def yesOrNo(answer: Boolean): Content =
     if (answer) {
-      msg"site.yes"
+      Text(messages("site.yes"))
     } else {
-      msg"site.no"
+      Text(messages("site.no"))
     }
-
-  private[utils] def messageWithPluralFormatter(msgKey: String*)(isPlural: Boolean, argIfPlural: String = "s", argIfSingular: String = ""): Text.Message =
-    MessageInterpolators(StringContext.apply(msgKey.head))
-      .msg()
-      .withArgs(((if (isPlural) argIfPlural else argIfSingular) +: msgKey.tail): _*)
 
   private[utils] def toRow(msgKey: String, value: Content, href: String, columnWidth: String = "govuk-!-width-one-half")(implicit
     messages: Messages
-  ): Row = {
-    val message = MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel")).msg()
+  ): SummaryListRow = {
+    val message = messages(s"$msgKey.checkYourAnswersLabel")
     val hiddenText = if (messages.isDefinedAt(s"$msgKey.checkYourAnswersLabel.hiddenText")) {
-      MessageInterpolators(StringContext.apply(s"$msgKey.checkYourAnswersLabel.hiddenText")).msg()
+      messages(s"$msgKey.checkYourAnswersLabel.hiddenText")
     } else {
       message
     }
     val camelCaseGroups = "(\\b[a-z]+|\\G(?!^))((?:[A-Z]|\\d+)[a-z]*)"
-    Row(
-      key = Key(message, classes = Seq(columnWidth)),
+    SummaryListRowViewModel(
+      key = Key(Text(message), classes = columnWidth),
       value = Value(value),
-      actions = List(
-        Action(
-          content = msg"site.edit",
-          href = href,
-          visuallyHiddenText = Some(hiddenText),
-          attributes = Map("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
-        )
+      actions = Seq(
+        ActionItemViewModel(content = Text(messages("site.edit")), href = href)
+          .withVisuallyHiddenText(messages(hiddenText))
+          .withAttribute("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
       )
     )
   }
 
-  private[utils] def formatMaxChars(text: String, maxVisibleChars: Int = 100) = {
-    val label = if (maxVisibleChars > 0 && text.length > maxVisibleChars) text.take(maxVisibleChars) + "..." else text
-    lit"$label"
-  }
-
-  private[utils] def formatAddress(answer: Address): Html =
-    Html(s"""
+  private[utils] def formatAddress(answer: Address): HtmlContent =
+    HtmlContent(s"""
         ${answer.addressLine1}<br>
         ${answer.addressLine2.fold("")(
       address => s"$address<br>"

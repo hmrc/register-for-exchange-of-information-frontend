@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package viewmodels
+@this()
 
-import play.api.i18n.Messages
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{__, OWrites}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+@(href: String, key: String, id: Option[String] = None, openInNewWindow: Boolean = false)(implicit messages: Messages)
 
-final case class Section(sectionName: String, rows: Seq[SummaryListRow])
-
-object Section {
-
-  implicit def sectionWrites(implicit messages: Messages): OWrites[Section] =
-    (
-      (__ \ "sectionName").write[String] and
-        (__ \ "rows").write[Seq[SummaryListRow]]
-    )(unlift(Section.unapply))
-
-}
+<a class="govuk-link" @if(id.isDefined){id="@id"} href="@href" @if(openInNewWindow) {target="_blank" rel="noopener noreferrer"}>@messages(key)</a>
