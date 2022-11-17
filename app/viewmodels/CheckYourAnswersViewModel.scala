@@ -19,7 +19,6 @@ package viewmodels
 import models.UserAnswers
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import uk.gov.hmrc.viewmodels.SummaryList
 import utils.{CheckYourAnswersHelper, CountryListFactory}
 
 object CheckYourAnswersViewModel {

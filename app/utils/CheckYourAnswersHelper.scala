@@ -23,8 +23,6 @@ import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import uk.gov.hmrc.viewmodels.Html
-import uk.gov.hmrc.viewmodels.SummaryList._
 
 class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
   val messages: Messages
@@ -188,7 +186,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     answer =>
       toRow(
         msgKey = "whatIsYourName",
-        value = Text("${answer.firstName} ${answer.lastName}"),
+        value = Text(s"${answer.firstName} ${answer.lastName}"),
         href = routes.WhatIsYourNameController.onPageLoad(CheckMode).url
       )
   }

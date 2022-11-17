@@ -20,7 +20,6 @@ import models.{Address, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow, Value}
-import uk.gov.hmrc.viewmodels.Html
 import viewmodels.govuk.summarylist._
 
 import java.time.format.DateTimeFormatter

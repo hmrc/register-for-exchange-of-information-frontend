@@ -22,24 +22,29 @@ import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
 import play.api.mvc.Results._
-import play.api.mvc.{RequestHeader, Result}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Logging, PlayException}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
+import views.html.ThereIsAProblemView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 // NOTE: There should be changes to bootstrap to make this easier, the API in bootstrap should allow a `Future[Html]` rather than just an `Html`
 @Singleton
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
   frontendAppConfig: FrontendAppConfig,
-  renderer: Renderer
+  renderer: Renderer,
+  thereIsAProblemView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends HttpErrorHandler
     with I18nSupport
     with Logging {
+
+  implicit private def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String = ""): Future[Result] = {
 
@@ -59,9 +64,7 @@ class ErrorHandler @Inject() (
           )
           .map(NotFound(_))
       case _ =>
-        renderer
-          .render("thereIsAProblem.njk", Json.obj("emailAddress" -> frontendAppConfig.emailEnquiries))
-          .map(InternalServerError(_))
+        Future.successful(InternalServerError(thereIsAProblemView()(request, messagesApi.preferred(rh))))
     }
   }
 
@@ -73,9 +76,7 @@ class ErrorHandler @Inject() (
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>
-        renderer
-          .render("thereIsAProblem.njk", Json.obj("emailAddress" -> frontendAppConfig.emailEnquiries))
-          .map(InternalServerError(_))
+        Future.successful(InternalServerError(thereIsAProblemView()(request, messagesApi.preferred(rh))))
     }
   }
 

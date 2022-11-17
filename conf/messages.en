@@ -67,7 +67,7 @@ index.guidance = Register for exchange of information.
 thereIsAProblem.title = Sorry, there is a problem with the service
 thereIsAProblem.heading = Sorry, there is a problem with the service
 thereIsAProblem.paragraph.1 = Try again later.
-thereIsAProblem.paragraph.2.a = If you need to contact someone about your MDR reporting, you can email
+thereIsAProblem.paragraph.2.a = If you need to contact someone about your MDR reporting, you can email {0}
 thereIsAProblem.emailAddress = enquiries.aeoi@hmrc.gov.uk
 
 signedOut.title = For your security, we signed you out
