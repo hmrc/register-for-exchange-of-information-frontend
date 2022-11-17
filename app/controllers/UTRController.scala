@@ -82,11 +82,5 @@ class UTRController @Inject() (
       case Some(LimitedCompany) | Some(UnincorporatedAssociation) => messages("utr.error.corporationTax")
       case _                                                      => messages("utr.error.selfAssessment")
     }
-  /*
-  private def hintWithLostUtrLink(taxType: String)(implicit messages: Messages): Html =
-    Html(
-      s"${messages("utr.hint", taxType)} <span> <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
-        s"${messages("utr.hint.link")}</a>.</span>"
-    )
-   */
+
 }
