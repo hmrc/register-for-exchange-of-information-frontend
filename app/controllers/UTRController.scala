@@ -84,8 +84,8 @@ class UTRController @Inject() (
 
   private def getTaxType(userAnswers: UserAnswers)(implicit messages: Messages): String =
     userAnswers.get(BusinessTypePage) match {
-      case Some(LimitedCompany) | Some(UnincorporatedAssociation) => messages("utr.corporationTax")
-      case _                                                      => messages("utr.selfAssessment")
+      case Some(LimitedCompany) | Some(UnincorporatedAssociation) => messages("utr.error.corporationTax")
+      case _                                                      => messages("utr.error.selfAssessment")
     }
   /*
   private def hintWithLostUtrLink(taxType: String)(implicit messages: Messages): Html =
