@@ -17,73 +17,49 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import config.FrontendAppConfig
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-
-import scala.concurrent.Future
+import views.html.BusinessAlreadyRegisteredView
 
 class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMockFixtures {
-
-  val frontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "BusinessAlreadyRegistered Controller" - {
 
     "return OK and the correct view for a GET with UTR" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithID().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(application, request).value
 
-      val expectedJson = Json.obj(
-        "withID"       -> true,
-        "emailAddress" -> frontendAppConfig.emailEnquiries
-      )
+        val view = application.injector.instanceOf[BusinessAlreadyRegisteredView]
 
-      templateCaptor.getValue mustEqual "businessAlreadyRegistered.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(withId = true).toString
+      }
     }
 
     "return OK and the correct view for a GET without UTR" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result     = route(app, request).value
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(application, request).value
 
-      val expectedJson = Json.obj(
-        "withID"       -> false,
-        "emailAddress" -> frontendAppConfig.emailEnquiries,
-        "loginGG"      -> frontendAppConfig.loginUrl
-      )
+        val view = application.injector.instanceOf[BusinessAlreadyRegisteredView]
 
-      templateCaptor.getValue mustEqual "businessAlreadyRegistered.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(withId = false).toString
+      }
     }
   }
 }

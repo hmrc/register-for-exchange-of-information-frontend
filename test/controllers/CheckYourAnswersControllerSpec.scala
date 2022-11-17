@@ -567,7 +567,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID().url
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url
       }
 
       "must redirect to 'Business already registered' page when there is EnrolmentExistsError in withId flow" in {
@@ -593,7 +593,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithID().url
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url
       }
 
       "must render 'thereIsAProblem' page when 'createSubscription' fails with UnableToCreateEMTPSubscriptionError" in {

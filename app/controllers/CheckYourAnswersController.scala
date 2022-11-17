@@ -102,9 +102,9 @@ class CheckYourAnswersController @Inject() (
           case EnrolmentExistsError(groupIds) =>
             logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID()))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithId()))
             } else {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID()))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId()))
             }
           case MandatoryInformationMissingError(_) =>
             logger.warn(s"CheckYourAnswersController: Mandatory information is missing")

@@ -192,8 +192,8 @@ GET        /register/business-not-identified                    controllers.Busi
 
 GET        /register/confirm-registration           controllers.RegistrationConfirmationController.onPageLoad()
 
-GET        /register/problem/organisation-with-utr-pre-registered                       controllers.BusinessAlreadyRegisteredController.onPageLoadWithID()
-GET        /register/problem/organisation-without-utr-pre-registered                    controllers.BusinessAlreadyRegisteredController.onPageLoadWithoutID()
+GET        /register/problem/organisation-with-utr-pre-registered                       controllers.BusinessAlreadyRegisteredController.onPageLoadWithId(withId: Boolean = true)
+GET        /register/problem/organisation-without-utr-pre-registered                    controllers.BusinessAlreadyRegisteredController.onPageLoadWithoutId(withId: Boolean = false)
 
 GET        /register/problem/individual-pre-registered                                  controllers.IndividualAlreadyRegisteredController.onPageLoad()
 

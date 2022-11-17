@@ -51,9 +51,9 @@ class ControllerHelper @Inject() (taxEnrolmentService: TaxEnrolmentService, rend
       case Left(EnrolmentExistsError(groupIds)) =>
         logger.info(s"ControllerHelper: EnrolmentExistsError for the the groupIds $groupIds")
         if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
-          Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID()))
+          Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithId()))
         } else {
-          Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID()))
+          Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId()))
         }
       case Left(MandatoryInformationMissingError(_)) =>
         logger.warn(s"ControllerHelper: Mandatory information is missing")

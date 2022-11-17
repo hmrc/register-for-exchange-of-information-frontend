@@ -497,7 +497,7 @@ businessAlreadyRegistered.heading = Your organisation is already registered to u
 businessAlreadyRegistered.withOutID.information = You can access the service using the Government Gateway account you used to register for MDR.
 businessAlreadyRegistered.withOutID.GGLink = Sign in to your Government Gateway account (opens in new tab)
 businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the ‘Manage account’ settings within their Business Tax Account.
-businessAlreadyRegistered.help = If you’re having problems accessing the service, you can email
+businessAlreadyRegistered.help = If you’re having problems accessing the service, you can email {0}
 
 individualAlreadyRegistered.title = You are already registered to use the MDR service
 individualAlreadyRegistered.heading = You are already registered to use the MDR service
