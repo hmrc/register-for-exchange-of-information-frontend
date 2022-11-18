@@ -17,23 +17,28 @@
 package controllers
 
 import base.ControllerSpecBase
+import forms.UTRFormProvider
+import models.BusinessType.LimitedCompany
 import models.{BusinessType, NormalMode, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessTypePage, UTRPage}
+import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import views.html.UTRView
 
 import scala.concurrent.Future
 
 class UTRControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.UTRController.onSubmit(NormalMode).url
-
-  private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
+  lazy val utrRoute      = routes.UTRController.onPageLoad(NormalMode).url
+  val formProvider       = new UTRFormProvider()
+  val form: Form[String] = formProvider("")
+  val caTaxType          = "Corporation Tax"
+  val saTaxType          = "Self Assessment"
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
 
@@ -41,27 +46,23 @@ class UTRControllerSpec extends ControllerSpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+        .set(BusinessTypePage, LimitedCompany)
+        .success
+        .value
 
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      val result = route(app, request).value
+      running(application) {
+        val request = FakeRequest(GET, utrRoute)
 
-      status(result) mustEqual OK
+        val result = route(application, request).value
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val view = application.injector.instanceOf[UTRView]
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "utr.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, caTaxType)(request, messages(application)).toString
+      }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
