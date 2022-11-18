@@ -26,7 +26,7 @@ import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Logging, PlayException}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
-import views.html.ThereIsAProblemView
+import views.html.{BadRequestView, ThereIsAProblemView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,8 @@ class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
   frontendAppConfig: FrontendAppConfig,
   renderer: Renderer,
-  thereIsAProblemView: ThereIsAProblemView
+  thereIsAProblemView: ThereIsAProblemView,
+  badRequestView: BadRequestView
 )(implicit ec: ExecutionContext)
     extends HttpErrorHandler
     with I18nSupport
@@ -52,9 +53,7 @@ class ErrorHandler @Inject() (
 
     statusCode match {
       case BAD_REQUEST =>
-        renderer
-          .render("badRequest.njk")
-          .map(BadRequest(_))
+        Future.successful(BadRequest(badRequestView()(request, messagesApi.preferred(rh))))
       case NOT_FOUND =>
         renderer
           .render("pageNotFound.njk",
