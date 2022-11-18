@@ -17,13 +17,10 @@
 package controllers
 
 import base.ControllerSpecBase
-import forms.UTRFormProvider
-import models.BusinessType.LimitedCompany
 import models.{BusinessType, NormalMode, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessTypePage, UTRPage}
-import play.api.data.Form
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,35 +31,27 @@ import scala.concurrent.Future
 
 class UTRControllerSpec extends ControllerSpecBase {
 
-  lazy val utrRoute      = routes.UTRController.onPageLoad(NormalMode).url
-  val formProvider       = new UTRFormProvider()
-  val form: Form[String] = formProvider("")
-  val caTaxType          = "Corporation Tax"
-  val saTaxType          = "Self Assessment"
+  lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.UTRController.onSubmit(NormalMode).url
+
+  private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
 
   "UTR Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when self assessment" in {
 
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(BusinessTypePage, LimitedCompany)
-        .success
-        .value
+      retrieveUserAnswersData(userAnswers)
+      val request        = FakeRequest(GET, loadRoute)
+      val view           = app.injector.instanceOf[UTRView]
+      val taxType        = "Self Assessment"
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val result = route(app, request).value
 
-      running(application) {
-        val request = FakeRequest(GET, utrRoute)
+      status(result) mustEqual OK
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[UTRView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, caTaxType)(request, messages(application)).toString
-      }
+      contentAsString(result) mustEqual view(form, NormalMode, taxType)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
