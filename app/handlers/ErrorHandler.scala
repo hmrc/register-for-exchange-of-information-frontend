@@ -16,66 +16,53 @@
 
 package handlers
 
-import config.FrontendAppConfig
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Logging, PlayException}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
-import views.html.{BadRequestView, ThereIsAProblemView}
+import views.html.{BadRequestView, PageNotFoundView, ThereIsAProblemView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
-// NOTE: There should be changes to bootstrap to make this easier, the API in bootstrap should allow a `Future[Html]` rather than just an `Html`
 @Singleton
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
-  frontendAppConfig: FrontendAppConfig,
-  renderer: Renderer,
   thereIsAProblemView: ThereIsAProblemView,
-  badRequestView: BadRequestView
+  badRequestView: BadRequestView,
+  pageNotFoundView: PageNotFoundView
 )(implicit ec: ExecutionContext)
     extends HttpErrorHandler
     with I18nSupport
     with Logging {
 
-  implicit private def rhToRequest(rh: RequestHeader): Request[_] = Request(rh, "")
-
   override def onClientError(request: RequestHeader, statusCode: Int, message: String = ""): Future[Result] = {
 
-    implicit val rh: RequestHeader = request
+    implicit val r: Request[_] = Request(request, "")
 
     statusCode match {
       case BAD_REQUEST =>
-        Future.successful(BadRequest(badRequestView()(request, messagesApi.preferred(rh))))
+        Future.successful(BadRequest(badRequestView()))
       case NOT_FOUND =>
-        renderer
-          .render("pageNotFound.njk",
-                  Json.obj(
-                    "emailAddress" -> frontendAppConfig.emailEnquiries
-                  )
-          )
-          .map(NotFound(_))
+        Future.successful(NotFound(pageNotFoundView()))
       case _ =>
-        Future.successful(InternalServerError(thereIsAProblemView()(request, messagesApi.preferred(rh))))
+        Future.successful(InternalServerError(thereIsAProblemView()))
     }
   }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
 
-    implicit val rh: RequestHeader = request
+    implicit val r: Request[_] = Request(request, "")
     logError(request, exception)
     exception match {
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>
-        Future.successful(InternalServerError(thereIsAProblemView()(request, messagesApi.preferred(rh))))
+        Future.successful(InternalServerError(thereIsAProblemView()))
     }
   }
 
