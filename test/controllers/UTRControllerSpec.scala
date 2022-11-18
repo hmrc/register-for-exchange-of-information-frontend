@@ -72,31 +72,19 @@ class UTRControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val userAnswers =
         UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value.set(UTRPage, UniqueTaxpayerReference("1234567890")).success.value
+
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val view = app.injector.instanceOf[UTRView]
+      val taxType = "Self Assessment"
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "1234567890"))
-
-      val expectedJson = Json.obj(
-        "form" -> filledForm,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "utr.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(form, NormalMode, taxType)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
