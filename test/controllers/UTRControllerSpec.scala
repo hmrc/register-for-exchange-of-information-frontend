@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class UTRControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode).url
+  lazy val loadRoute = routes.UTRController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.UTRController.onSubmit(NormalMode).url
 
   private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
@@ -43,9 +43,25 @@ class UTRControllerSpec extends ControllerSpecBase {
     "must return OK and the correct view for a GET when self assessment" in {
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val view           = app.injector.instanceOf[UTRView]
-      val taxType        = "Self Assessment"
+      val request = FakeRequest(GET, loadRoute)
+      val view = app.injector.instanceOf[UTRView]
+      val taxType = "Self Assessment"
+
+      val result = route(app, request).value
+
+      status(result) mustEqual OK
+
+      contentAsString(result) mustEqual view(form, NormalMode, taxType)(request, messages).toString
+    }
+
+    "must return OK and the correct view for a GET when corporation tax" in {
+
+      val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value
+
+      retrieveUserAnswersData(userAnswers)
+      val request = FakeRequest(GET, loadRoute)
+      val view = app.injector.instanceOf[UTRView]
+      val taxType = "Corporation Tax"
 
       val result = route(app, request).value
 
@@ -62,9 +78,9 @@ class UTRControllerSpec extends ControllerSpecBase {
       val userAnswers =
         UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value.set(UTRPage, UniqueTaxpayerReference("1234567890")).success.value
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
+      val request = FakeRequest(GET, loadRoute)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -75,7 +91,7 @@ class UTRControllerSpec extends ControllerSpecBase {
       val filledForm = form.bind(Map("value" -> "1234567890"))
 
       val expectedJson = Json.obj(
-        "form"   -> filledForm,
+        "form" -> filledForm,
         "action" -> submitRoute
       )
 
@@ -104,10 +120,10 @@ class UTRControllerSpec extends ControllerSpecBase {
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
 
       val result = route(app, request).value
 
@@ -116,7 +132,7 @@ class UTRControllerSpec extends ControllerSpecBase {
       verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val expectedJson = Json.obj(
-        "form"   -> boundForm,
+        "form" -> boundForm,
         "action" -> submitRoute
       )
 
@@ -140,4 +156,5 @@ class UTRControllerSpec extends ControllerSpecBase {
         .url
     }
   }
+
 }
