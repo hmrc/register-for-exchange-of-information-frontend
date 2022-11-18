@@ -37,6 +37,7 @@ class UTRControllerSpec extends ControllerSpecBase {
   private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
+  val taxType = "Self Assessment"
 
   "UTR Controller" - {
 
@@ -45,7 +46,6 @@ class UTRControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
       val view = app.injector.instanceOf[UTRView]
-      val taxType = "Self Assessment"
 
       val result = route(app, request).value
 
@@ -78,7 +78,6 @@ class UTRControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
       val view = app.injector.instanceOf[UTRView]
-      val taxType = "Self Assessment"
 
       val result = route(app, request).value
 
@@ -104,28 +103,14 @@ class UTRControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor = ArgumentCaptor.forClass(classOf[JsObject])
+      val view = app.injector.instanceOf[UTRView]
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form" -> boundForm,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "utr.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(form, NormalMode, taxType)(request, messages).toString
     }
 
     "must redirect to 'SomeInformationIsMissing' when data is missing" in {
