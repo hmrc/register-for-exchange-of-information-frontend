@@ -31,13 +31,13 @@ import scala.concurrent.Future
 
 class UTRControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute = routes.UTRController.onPageLoad(NormalMode).url
+  lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.UTRController.onSubmit(NormalMode).url
 
   private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
 
   val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
-  val taxType = "Self Assessment"
+  val taxType     = "Self Assessment"
 
   "UTR Controller" - {
 
@@ -45,7 +45,7 @@ class UTRControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
-      val view = app.injector.instanceOf[UTRView]
+      val view    = app.injector.instanceOf[UTRView]
 
       val result = route(app, request).value
 
@@ -60,7 +60,7 @@ class UTRControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
-      val view = app.injector.instanceOf[UTRView]
+      val view    = app.injector.instanceOf[UTRView]
       val taxType = "Corporation Tax"
 
       val result = route(app, request).value
@@ -73,17 +73,24 @@ class UTRControllerSpec extends ControllerSpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value.set(UTRPage, UniqueTaxpayerReference("1234567890")).success.value
+        UserAnswers(userAnswersId)
+          .set(BusinessTypePage, BusinessType.Sole)
+          .success
+          .value
+          .set(UTRPage, UniqueTaxpayerReference("1234567890"))
+          .success
+          .value
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, loadRoute)
-      val view = app.injector.instanceOf[UTRView]
+      val request   = FakeRequest(GET, loadRoute)
+      val view      = app.injector.instanceOf[UTRView]
+      val boundForm = form.bind(Map("value" -> "1234567890"))
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      contentAsString(result) mustEqual view(form, NormalMode, taxType)(request, messages).toString
+      contentAsString(result) mustEqual view(boundForm, NormalMode, taxType)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -105,7 +112,7 @@ class UTRControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val view = app.injector.instanceOf[UTRView]
+      val view    = app.injector.instanceOf[UTRView]
 
       val result = route(app, request).value
 
