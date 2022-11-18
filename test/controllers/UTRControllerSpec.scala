@@ -111,13 +111,14 @@ class UTRControllerSpec extends ControllerSpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val view    = app.injector.instanceOf[UTRView]
+      val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      val view      = app.injector.instanceOf[UTRView]
+      val boundForm = form.bind(Map("value" -> ""))
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual view(form, NormalMode, taxType)(request, messages).toString
+      contentAsString(result) mustEqual view(boundForm, NormalMode, taxType)(request, messages).toString
     }
 
     "must redirect to 'SomeInformationIsMissing' when data is missing" in {
