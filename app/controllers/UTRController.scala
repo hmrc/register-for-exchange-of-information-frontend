@@ -25,7 +25,6 @@ import navigation.MDRNavigator
 import pages.{BusinessTypePage, UTRPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.UTRView
@@ -41,13 +40,12 @@ class UTRController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: UTRFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer,
   view: UTRView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage) {
     implicit request =>
       val taxType = getTaxType(request.userAnswers)
       val form    = formProvider(taxType)
@@ -60,7 +58,7 @@ class UTRController @Inject() (
       Ok(view(preparedForm, mode, taxType))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
     implicit request =>
       val taxType = getTaxType(request.userAnswers)
       val form    = formProvider(taxType)
