@@ -30,6 +30,7 @@ import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc._
 import play.twirl.api.Html
 import renderer.Renderer
@@ -37,6 +38,7 @@ import repositories.SessionRepository
 import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +53,8 @@ class IsThisYourBusinessController @Inject() (
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
-  renderer: Renderer
+  renderer: Renderer,
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -97,16 +100,16 @@ class IsThisYourBusinessController @Inject() (
             case Left(NotFoundError) =>
               Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad()))
             case _ =>
-              renderer.renderThereIsAProblemPage()
+              Future.successful(InternalServerError(errorView()))
           }
         case _ =>
-          renderer.renderThereIsAProblemPage()
+          Future.successful(InternalServerError(errorView()))
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
-      val thereIsAProblem = renderer.renderThereIsAProblemPage()
+      val thereIsAProblem = Future.successful(InternalServerError(errorView()))
       form
         .bindFromRequest()
         .fold(

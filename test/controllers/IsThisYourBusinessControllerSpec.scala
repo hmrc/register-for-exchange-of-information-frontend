@@ -33,6 +33,7 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.viewmodels.Radios
+import views.html.ThereIsAProblemView
 
 import scala.concurrent.Future
 
@@ -184,21 +185,16 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(validUserAnswers)
       val request = FakeRequest(GET, loadRoute)
 
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
       status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+      contentAsString(result) mustEqual view()(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -266,38 +262,28 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Left(ServiceUnavailableError)))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, routes.IsThisYourBusinessController.onPageLoad(NormalMode).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val request = FakeRequest(GET, routes.IsThisYourBusinessController.onPageLoad(NormalMode).url)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
       status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+      contentAsString(result) mustEqual view()(request, messages).toString
     }
 
     "must return Internal Server Error when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
       status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+      contentAsString(result) mustEqual view()(request, messages).toString
     }
   }
 }

@@ -19,16 +19,16 @@ package viewmodels
 import play.api.i18n.Messages
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{__, OWrites}
-import uk.gov.hmrc.viewmodels.SummaryList.Row
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
-final case class Section(sectionName: String, rows: Seq[Row])
+final case class Section(sectionName: String, rows: Seq[SummaryListRow])
 
 object Section {
 
   implicit def sectionWrites(implicit messages: Messages): OWrites[Section] =
     (
       (__ \ "sectionName").write[String] and
-        (__ \ "rows").write[Seq[Row]]
+        (__ \ "rows").write[Seq[SummaryListRow]]
     )(unlift(Section.unapply))
 
 }

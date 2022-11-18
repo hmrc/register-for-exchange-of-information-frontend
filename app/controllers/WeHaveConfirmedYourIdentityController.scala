@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +46,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
-  val renderer: Renderer
+  val renderer: Renderer,
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -71,10 +73,10 @@ class WeHaveConfirmedYourIdentityController @Inject() (
                 case Left(NotFoundError) =>
                   Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
                 case _ =>
-                  renderer.renderThereIsAProblemPage()
+                  Future.successful(InternalServerError(errorView()))
               }
           case _ =>
-            renderer.renderThereIsAProblemPage()
+            Future.successful(InternalServerError(errorView()))
         }
     }
 

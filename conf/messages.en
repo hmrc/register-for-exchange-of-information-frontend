@@ -67,7 +67,7 @@ index.guidance = Register for exchange of information.
 thereIsAProblem.title = Sorry, there is a problem with the service
 thereIsAProblem.heading = Sorry, there is a problem with the service
 thereIsAProblem.paragraph.1 = Try again later.
-thereIsAProblem.paragraph.2.a = If you need to contact someone about your MDR reporting, you can email
+thereIsAProblem.paragraph.2.a = If you need to contact someone about your MDR reporting, you can email {0}
 thereIsAProblem.emailAddress = enquiries.aeoi@hmrc.gov.uk
 
 signedOut.title = For your security, we signed you out
@@ -488,7 +488,7 @@ pageNotFound.p1 = This may be because:
 pageNotFound.bullet1 = the link or button you selected is for a page that does not exist
 pageNotFound.bullet2 = you’ve typed or copied a web address for a page that does not exist
 pageNotFound.bullet3 = you’ve typed or copied a web address incorrectly
-pageNotFound.p2 = If the web address is correct or you selected a link or button, and you have queries, you can email
+pageNotFound.p2 = If the web address is correct or you selected a link or button, and you have queries, you can email {0}
 pageNotFound.email = enquiries.aeoi@hmrc.gov.uk
 pageNotFound.p3 = Check you have entered the correct details.
 
