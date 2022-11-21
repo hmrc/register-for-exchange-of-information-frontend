@@ -20,15 +20,13 @@ import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.StandardActionSets
 import models.error.ApiError
-import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
+import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError, ServiceUnavailableError}
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
 import models.requests.DataRequest
 import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import services.{AuditService, BusinessMatchingWithoutIdService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.{CountryListFactory, UserAnswersHelper}
 import viewmodels.{CheckYourAnswersViewModel, Section}
+import views.html.{CheckYourAnswersView, ThereIsAProblemView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +48,8 @@ class CheckYourAnswersController @Inject() (
   controllerHelper: ControllerHelper,
   registrationService: BusinessMatchingWithoutIdService,
   auditService: AuditService,
-  renderer: Renderer
+  view: CheckYourAnswersView,
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -57,21 +57,11 @@ class CheckYourAnswersController @Inject() (
     with Logging
     with UserAnswersHelper {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
       val viewModel: Seq[Section] =
         CheckYourAnswersViewModel.buildPages(request.userAnswers, countryFactory, isRegisteringAsBusiness(request.userAnswers))
-
-      renderer
-        .render(
-          "checkYourAnswers.njk",
-          Json
-            .obj(
-              "sections" -> viewModel,
-              "action"   -> routes.CheckYourAnswersController.onSubmit().url
-            )
-        )
-        .map(Ok(_))
+      Ok(view(viewModel))
   }
 
   private def getSafeIdFromRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
@@ -102,14 +92,21 @@ class CheckYourAnswersController @Inject() (
           case EnrolmentExistsError(groupIds) =>
             logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID()))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithId()))
             } else {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID()))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId()))
             }
           case MandatoryInformationMissingError(_) =>
             logger.warn(s"CheckYourAnswersController: Mandatory information is missing")
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad()))
-          case error => renderer.renderError(error)
+          case error =>
+            logger.warn(s"Error received from API: $error")
+            error match {
+              case ServiceUnavailableError =>
+                Future.successful(ServiceUnavailable(errorView()))
+              case _ =>
+                Future.successful(InternalServerError(errorView()))
+            }
         }
 
   }

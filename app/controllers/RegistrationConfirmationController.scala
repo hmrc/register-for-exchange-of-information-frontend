@@ -27,9 +27,10 @@ import renderer.Renderer
 import repositories.SessionRepository
 import services.EmailService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
@@ -38,7 +39,8 @@ class RegistrationConfirmationController @Inject() (
   sessionRepository: SessionRepository,
   emailService: EmailService,
   val controllerComponents: MessagesControllerComponents,
-  val renderer: Renderer
+  val renderer: Renderer,
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -62,7 +64,7 @@ class RegistrationConfirmationController @Inject() (
           }
         case None =>
           logger.warn("SubscriptionIDPage: Subscription Id is missing")
-          renderer.renderThereIsAProblemPage()
+          Future.successful(InternalServerError(errorView()))
       }
   }
 }

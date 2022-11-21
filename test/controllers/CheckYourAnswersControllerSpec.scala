@@ -25,14 +25,12 @@ import models.error.ApiError._
 import models.matching.{IndRegistrationInfo, SafeId}
 import models.{Address, Country, SubscriptionID, UserAnswers}
 import navigation.MDRNavigator
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages._
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,6 +38,7 @@ import repositories.SessionRepository
 import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
+import views.html.ThereIsAProblemView
 
 import scala.concurrent.Future
 
@@ -87,9 +86,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must return OK and the correct view for a GET - First Contact with phone" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
-
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
@@ -111,24 +107,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual OK
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(firstContactPhone) mustBe true
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                = jsonCaptor.getValue
-        val firstContactDetails = (json \ "sections" \ 1 \ "rows").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
       }
 
       "must return OK and the correct view for a GET - First Contact without phone" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -148,24 +133,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual OK
-
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                = jsonCaptor.getValue
-        val firstContactDetails = (json \ "sections" \ 1 \ "rows").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(firstContactPhone) mustBe false
       }
 
       "must return OK and the correct view for a GET - Without Second Contact" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -191,26 +164,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual OK
-
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                 = jsonCaptor.getValue
-        val firstContactDetails  = (json \ "firstContactList").toString
-        val secondContactDetails = (json \ "secondContactList").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
-        secondContactDetails.contains("Second contact name") mustBe !isSecondContact
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(secondContactName) mustBe false
       }
 
       "must return OK and the correct view for a GET - With Second Contact with phone" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = emptyUserAnswers
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -248,27 +207,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual OK
+        contentAsString(result).contains("Name Name") mustBe true
+        contentAsString(result).contains("test@test.com") mustBe true
+        contentAsString(result).contains(secondContactName) mustBe true
+        contentAsString(result).contains(secondContactEmail) mustBe true
+        contentAsString(result).contains(secondContactPhone) mustBe true
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                 = jsonCaptor.getValue
-        val firstContactDetails  = (json \ "sections" \ 1 \ "rows").toString
-        val secondContactDetails = (json \ "sections" \ 2 \ "rows").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        secondContactDetails.contains("Second contact name") mustBe true
-        secondContactDetails.contains("Second contact email address") mustBe true
-        secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
       }
 
       "must return OK and the correct view for a GET - With Second Contact without phone" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -303,23 +250,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual OK
+        contentAsString(result).contains(firstContactName)
+        contentAsString(result).contains(firstContactEmail)
+        contentAsString(result).mustNot(contain(secondContactName))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                 = jsonCaptor.getValue
-        val firstContactDetails  = (json \ "firstContactList").toString
-        val secondContactDetails = (json \ "secondContactList").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
-        secondContactDetails.contains("Second contact name") mustBe true
-        secondContactDetails.contains("Second contact email address") mustBe true
-        secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(firstContactPhone) mustBe true
+        contentAsString(result).contains(secondContactName) mustBe true
+        contentAsString(result).contains(secondContactEmail) mustBe true
+        contentAsString(result).contains(secondContactPhone) mustBe false
       }
     }
 
@@ -473,8 +413,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'JourneyRecovery' page when some information missing" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
         when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Left(MandatoryInformationMissingError())))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -567,7 +505,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID().url
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url
       }
 
       "must redirect to 'Business already registered' page when there is EnrolmentExistsError in withId flow" in {
@@ -593,13 +531,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithID().url
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url
       }
 
       "must render 'thereIsAProblem' page when 'createSubscription' fails with UnableToCreateEMTPSubscriptionError" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
         when(mockRegistrationService.registerWithoutId()(any(), any()))
@@ -623,13 +559,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val result = route(app, request).value
 
+        val view = app.injector.instanceOf[ThereIsAProblemView]
+
         status(result) mustEqual INTERNAL_SERVER_ERROR
-
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-        templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+        contentAsString(result) mustEqual view()(request, messages).toString
       }
 
       "must go to the Journey recovery controller and the correct view for a POST - if both individual and organisation are not present" in {
