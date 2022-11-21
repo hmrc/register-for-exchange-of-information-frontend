@@ -20,19 +20,14 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.UTRFormProvider
 import models.BusinessType._
-import models.requests.DataRequest
-import models.{BusinessType, Mode, UniqueTaxpayerReference}
+import models.{Mode, UserAnswers}
 import navigation.MDRNavigator
 import pages.{BusinessTypePage, UTRPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc._
-import play.twirl.api
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels._
+import views.html.UTRView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,63 +40,45 @@ class UTRController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: UTRFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: UTRView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
-  private val ct = "utr.error.ct"
-  private val sa = "utr.error.sa"
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
+    implicit request =>
+      val taxType = getTaxType(request.userAnswers)
+      val form    = formProvider(taxType)
 
-  private def readKey(key: String)(implicit messages: Messages) = messages(key)
+      val preparedForm = request.userAnswers.get(UTRPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
 
-  private def render(mode: Mode, form: Form[UniqueTaxpayerReference], businessType: BusinessType)(implicit
-    request: DataRequest[AnyContent]
-  ): Future[api.Html] = {
-    val taxType = businessType match {
-      case Partnership | Sole | LimitedPartnership => readKey(sa)
-      case _                                       => readKey(ct)
-    }
-
-    val data = Json.obj(
-      "form"       -> form,
-      "taxType"    -> taxType,
-      "lostUTRUrl" -> appConfig.lostUTRUrl,
-      "action"     -> routes.UTRController.onSubmit(mode).url
-    )
-    renderer.render("utr.njk", data)
+      Future.successful(Ok(view(preparedForm, mode, taxType)))
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
-      implicit request =>
-        val businessType = request.userAnswers.get(BusinessTypePage).get
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
+    implicit request =>
+      val taxType = getTaxType(request.userAnswers)
+      val form    = formProvider(taxType)
 
-        val form = formProvider(businessType match {
-          case Partnership | Sole | LimitedPartnership => readKey(sa)
-          case _                                       => readKey(ct)
-        })
-        render(mode, request.userAnswers.get(UTRPage).fold(form)(form.fill), businessType).map(Ok(_))
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, taxType))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
+        )
+  }
+
+  private def getTaxType(userAnswers: UserAnswers)(implicit messages: Messages): String =
+    userAnswers.get(BusinessTypePage) match {
+      case Some(LimitedCompany) | Some(UnincorporatedAssociation) => messages("utr.error.corporationTax")
+      case _                                                      => messages("utr.error.selfAssessment")
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
-      implicit request =>
-        val businessType = request.userAnswers.get(BusinessTypePage).get
-
-        formProvider(businessType match {
-          case Partnership | Sole | LimitedPartnership => readKey(sa)
-          case _                                       => readKey(ct)
-        })
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, formWithErrors, businessType).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UTRPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
-          )
-    }
 }
