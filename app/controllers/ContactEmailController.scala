@@ -18,18 +18,15 @@ package controllers
 
 import controllers.actions._
 import forms.ContactEmailFormProvider
-import models.requests.DataRequest
-import models.{CheckMode, Mode}
+import models.{CheckMode, Mode, UserAnswers}
 import navigation.ContactDetailsNavigator
 import pages.{ContactEmailPage, ContactNamePage}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.ContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +38,7 @@ class ContactEmailController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: ContactEmailFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: ContactEmailView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -49,24 +46,20 @@ class ContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def data(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
-    val name = request.userAnswers.get(ContactNamePage)
-    Json.obj(
-      "form"      -> request.userAnswers.get(ContactEmailPage).fold(form)(form.fill),
-      "name"      -> name,
-      "pageTitle" -> "contactEmail.title.business",
-      "heading"   -> "contactEmail.heading.business",
-      "action"    -> routes.ContactEmailController.onSubmit(mode).url
-    )
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
         if (mode == CheckMode) {
           request.userAnswers.remove(ContactEmailPage)
         }
-        renderer.render("contactEmail.njk", data(mode, form)).map(Ok(_))
+
+        val preparedForm = request.userAnswers.get(ContactEmailPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+
+        Ok(view(preparedForm, mode, getContactName(request.userAnswers)))
+
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -75,7 +68,7 @@ class ContactEmailController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => renderer.render("contactEmail.njk", data(mode, formWithErrors)).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getContactName(request.userAnswers)))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
@@ -83,4 +76,7 @@ class ContactEmailController @Inject() (
               } yield Redirect(navigator.nextPage(ContactEmailPage, mode, updatedAnswers))
           )
     }
+
+  private def getContactName(ua: UserAnswers)(implicit messages: Messages): String =
+    ua.get(ContactNamePage).getOrElse(messages("default.firstContact.name"))
 }
