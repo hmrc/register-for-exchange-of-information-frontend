@@ -17,77 +17,64 @@
 package controllers
 
 import base.ControllerSpecBase
+import forms.BusinessWithoutIDNameFormProvider
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.BusinessWithoutIDNamePage
-import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.BusinessWithoutIDNameView
 
 import scala.concurrent.Future
 
 class BusinessWithoutIDNameControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.BusinessWithoutIDNameController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.BusinessWithoutIDNameController.onSubmit(NormalMode).url
+  lazy val loadRoute: String   = routes.BusinessWithoutIDNameController.onPageLoad(NormalMode).url
+  lazy val submitRoute: String = routes.BusinessWithoutIDNameController.onSubmit(NormalMode).url
 
-  private def form = new forms.BusinessWithoutIDNameFormProvider().apply()
+  val formProvider = new BusinessWithoutIDNameFormProvider()
+  val form         = formProvider()
 
   "BusinessWithoutIDName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
+        implicit val request = FakeRequest(GET, loadRoute)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(application, request).value
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
+        val view = application.injector.instanceOf[BusinessWithoutIDNameView]
 
-      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode).toString
+      }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val userAnswers = UserAnswers(userAnswersId).set(BusinessWithoutIDNamePage, "answer").success.value
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder()
+        .build()
 
-      status(result) mustEqual OK
+      running(application) {
+        implicit val request = FakeRequest(GET, loadRoute)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val view = application.injector.instanceOf[BusinessWithoutIDNameView]
 
-      val filledForm = form.bind(Map("businessWithoutIDName" -> "answer"))
+        val result = route(application, request).value
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute
-      )
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode).toString
 
-      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -95,40 +82,43 @@ class BusinessWithoutIDNameControllerSpec extends ControllerSpecBase {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("businessWithoutIDName", "answer"))
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder()
+        .build()
 
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual onwardRoute.url
+      running(application) {
+        val request =
+          FakeRequest(POST, loadRoute)
+            .withFormUrlEncodedBody(("businessWithoutIDName", "answer"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder()
+        .build()
 
-      status(result) mustEqual BAD_REQUEST
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+          FakeRequest(POST, submitRoute)
+            .withFormUrlEncodedBody(("businessWithoutIDName", ""))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val boundForm = form.bind(Map("businessWithoutIDName" -> ""))
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> submitRoute
-      )
+        val view = application.injector.instanceOf[BusinessWithoutIDNameView]
 
-      templateCaptor.getValue mustEqual "businessWithoutIDName.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode).toString
+      }
     }
   }
 }
