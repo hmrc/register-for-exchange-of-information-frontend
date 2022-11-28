@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import utils.DateInput
+import views.html.{ContactNameView, DateOfBirthView}
 
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
@@ -57,46 +58,28 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, getRequest).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        implicit val request = FakeRequest(GET, loadRoute)
 
-      val viewModel = DateInput.localDate(form("value"))
+        val result = route(app, request).value
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute,
-        "date"   -> viewModel
-      )
+        val view = application.injector.instanceOf[DateOfBirthView]
 
-      templateCaptor.getValue mustEqual "dateOfBirth.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode).toString
+
+      }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourDateOfBirthPage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, getRequest).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
 
       val filledForm = form.bind(
         Map(
@@ -108,14 +91,19 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
       val viewModel = DateInput.localDate(filledForm("value"))
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute,
-        "date"   -> viewModel
-      )
+      val application = guiceApplicationBuilder().build()
 
-      templateCaptor.getValue mustEqual "dateOfBirth.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      running(application) {
+        implicit val request = FakeRequest(GET, loadRoute)
+
+        val result = route(app, request).value
+
+        val view = application.injector.instanceOf[DateOfBirthView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(LocalDate.now()), NormalMode).toString()
+      }
+
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -132,31 +120,21 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm      = form.bind(Map("value" -> "invalid value"))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual BAD_REQUEST
+      running(application) {
+        implicit val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+        val boundForm        = form.bind(Map("value" -> ""))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(app, request).value
 
-      val viewModel = DateInput.localDate(boundForm("value"))
+        val view = application.injector.instanceOf[DateOfBirthView]
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> submitRoute,
-        "date"   -> viewModel
-      )
-
-      templateCaptor.getValue mustEqual "dateOfBirth.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
+      }
     }
   }
 }
