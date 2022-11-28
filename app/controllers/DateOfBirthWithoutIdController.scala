@@ -32,6 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.DateInput
+import views.html.DateOfBirthView
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -44,41 +45,33 @@ class DateOfBirthWithoutIdController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: DateOfBirthFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: DateOfBirthView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
   val form = formProvider()
 
-  private def render(mode: Mode, form: Form[LocalDate])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.DateOfBirthWithoutIdController.onSubmit(mode).url,
-      "date"   -> DateInput.localDate(form("value"))
-    )
-    renderer.render("dateOfBirth.njk", data)
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(DateOfBirthWithoutIdPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        render(mode, request.userAnswers.get(DateOfBirthWithoutIdPage).fold(form)(form.fill)).map(Ok(_))
-    }
-
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthWithoutIdPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(DateOfBirthWithoutIdPage, mode, updatedAnswers))
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthWithoutIdPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(DateOfBirthWithoutIdPage, mode, updatedAnswers))
+        )
+  }
 }
