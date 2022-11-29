@@ -34,13 +34,20 @@
 
           {{ csrf() | safe }}
 
+         <h1 class="govuk-heading-l">
+          {{ messages("doYouHaveUniqueTaxPayerReference.title") }}
+         </h1>
+
+         <p class="govuk-body">
+           {{ messages("doYouHaveUniqueTaxPayerReference.p1") }}
+         </p>
+
           {{ govukRadios({
             classes: "govuk-radios__inline",
             name: 'value',
             fieldset: {
               legend: {
-                text: messages('doYouHaveUniqueTaxPayerReference.title'),
-                isPageHeading: true,
+                isPageHeading: false,
                 classes: "govuk-fieldset__legend--l text-overflow"
               }
             },
