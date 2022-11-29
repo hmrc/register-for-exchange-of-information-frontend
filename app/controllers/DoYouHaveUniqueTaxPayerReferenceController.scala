@@ -54,10 +54,9 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
 
   private def render(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
     val data = Json.obj(
-      "form"     -> form,
-      "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode).url,
-      "radios"   -> Radios.yesNo(form("value")),
-      "hintText" -> hintWithLostUtrLink
+      "form"   -> form,
+      "action" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode).url,
+      "radios" -> Radios.yesNo(form("value"))
     )
     renderer.render("doYouHaveUniqueTaxPayerReference.njk", data)
   }
@@ -83,9 +82,4 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
           )
     }
 
-  private def hintWithLostUtrLink()(implicit messages: Messages): Html =
-    Html(
-      s"${messages("doYouHaveUniqueTaxPayerReference.hint")}<span> <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
-        s"${messages("doYouHaveUniqueTaxPayerReference.hint.link")}</a>.</span>"
-    )
 }
