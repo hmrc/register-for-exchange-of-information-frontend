@@ -54,9 +54,10 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
 
   private def render(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
     val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode).url,
-      "radios" -> Radios.yesNo(form("value"))
+      "form"       -> form,
+      "action"     -> routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode).url,
+      "radios"     -> Radios.yesNo(form("value")),
+      "lostUTRUrl" -> appConfig.lostUTRUrl
     )
     renderer.render("doYouHaveUniqueTaxPayerReference.njk", data)
   }
