@@ -86,7 +86,7 @@ contactName.error.required = Enter the name of the individual or team we should 
 contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 contactName.error.length = Name must be 35 characters or less
 
-phaseBanner.1 = This is a new service â your
+phaseBanner.1 = This is a new service – your
 phaseBanner.2 = feedback
 phaseBanner.3 = will help us to improve it.
 
