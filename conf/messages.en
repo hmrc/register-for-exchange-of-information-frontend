@@ -40,7 +40,7 @@ date.day = Day
 date.month = Month
 date.year = Year
 
-timeout.title = Youâre about to be signed out
+timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
 timeout.signOut = Sign out
@@ -81,7 +81,7 @@ needContactDetails.p2 = We need these before you can send a country-by-country r
 
 contactName.title = What is the name of the individual or team we should contact?
 contactName.heading = What is the name of the individual or team we should contact?
-contactName.hint = For example, 'âTax teamâ' or 'âAshley Smithâ'.
+contactName.hint = For example, '‘Tax team’' or '‘Ashley Smith’'.
 contactName.error.required = Enter the name of the individual or team we should contact if we have any questions about your reports
 contactName.error.invalid = Name must only include letters a to z, apostrophes, grave accents, ampersands, hyphens, backslashes, carets and spaces
 contactName.error.length = Name must be 35 characters or less
@@ -148,7 +148,7 @@ secondContact.error.required = Select yes if there is someone else we can contac
 
 sndContactName.title = What is the name of the individual or team we should contact?
 sndContactName.heading = What is the name of the individual or team we should contact?
-sndContactName.hint = For example, 'âTax teamâ' or 'âAshley Smithâ'.
+sndContactName.hint = For example, '‘Tax team’' or '‘Ashley Smith’'.
 sndContactName.checkYourAnswersLabel = Second contact name
 sndContactName.checkYourAnswersLabel.hiddenText = second contact name
 sndContactName.error.required = Enter the name of the individual or team we should contact
@@ -379,7 +379,7 @@ utr.title = What is your {0} Unique Taxpayer Reference?
 utr.heading = What is your {0} Unique Taxpayer Reference?
 utr.p1 = You can {0}.
 utr.p1.link = find a lost UTR
-utr.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about {0}. It may be called âreferenceâ, âUTRâ or âofficial useâ.
+utr.hint = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about {0}. It may be called ‘reference’, ‘UTR’ or ‘official use’.
 utr.checkYourAnswersLabel = What is your Corporation Tax Unique Taxpayer Reference?
 utr.error.selfAssessment = Self Assessment
 utr.error.corporationTax = Corporation Tax
@@ -436,20 +436,20 @@ whatIsTradingName.error.businessName.invalid = Trading name must only include le
 whatIsTradingName.error.businessName.length = Trading name must be 80 characters or less
 
 #Assistant messages
-unauthorisedAssistant.title = Sorry, youâre unable to use this service
-unauthorisedAssistant.heading = Sorry, youâre unable to use this service
-unauthorisedAssistant.paragraph.1 = Youâve signed in as a standard user. Only people in your organisation with an administrator role can register for the service.
-unauthorisedAssistant.paragraph.2 = You need to find someone with an administratorâs credentials who can then sign in with their Government Gateway details.
+unauthorisedAssistant.title = Sorry, you’re unable to use this service
+unauthorisedAssistant.heading = Sorry, you’re unable to use this service
+unauthorisedAssistant.paragraph.1 = You’ve signed in as a standard user. Only people in your organisation with an administrator role can register for the service.
+unauthorisedAssistant.paragraph.2 = You need to find someone with an administrator’s credentials who can then sign in with their Government Gateway details.
 unauthorisedAssistant.paragraph.3 = Once registered, they can give you permission to use the service to submit MDR reports using your own Government Gateway credentials.
-unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change team membersâ access in the manage account section within your organisationâs
+unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change team members’ access in the manage account section within your organisation’s
 unauthorisedAssistant.paragraph.4b = business tax account (opens in new tab)
 
 #Agent messages
-unauthorisedAgent.title = Sorry, youâre unable to use this service
-unauthorisedAgent.heading = Sorry, youâre unable to use this service
-unauthorisedAgent.paragraph.1 = Youâve signed into the Government Gateway as an agent. You will be unable to use the MDR service with these details.
+unauthorisedAgent.title = Sorry, you’re unable to use this service
+unauthorisedAgent.heading = Sorry, you’re unable to use this service
+unauthorisedAgent.paragraph.1 = You’ve signed into the Government Gateway as an agent. You will be unable to use the MDR service with these details.
 unauthorisedAgent.paragraph.2.a = You can use the service by
-unauthorisedAgent.paragraph.2.b = signing in with your own or your organisationâs Government Gateway details
+unauthorisedAgent.paragraph.2.b = signing in with your own or your organisation’s Government Gateway details
 unauthorisedAgent.paragraph.3 = You cannot report cross-border arrangements for other organisations or individuals, they must do it themselves.
 
 
@@ -487,8 +487,8 @@ pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
 pageNotFound.p1 = This may be because:
 pageNotFound.bullet1 = the link or button you selected is for a page that does not exist
-pageNotFound.bullet2 = youâve typed or copied a web address for a page that does not exist
-pageNotFound.bullet3 = youâve typed or copied a web address incorrectly
+pageNotFound.bullet2 = you’ve typed or copied a web address for a page that does not exist
+pageNotFound.bullet3 = you’ve typed or copied a web address incorrectly
 pageNotFound.p2 = If the web address is correct or you selected a link or button, and you have queries, you can email {0}
 pageNotFound.email = enquiries.aeoi@hmrc.gov.uk
 pageNotFound.p3 = Check you have entered the correct details.
@@ -497,18 +497,18 @@ businessAlreadyRegistered.title = Your organisation is already registered to use
 businessAlreadyRegistered.heading = Your organisation is already registered to use the MDR service
 businessAlreadyRegistered.withOutID.information = You can access the service using the Government Gateway account you used to register for MDR.
 businessAlreadyRegistered.withOutID.GGLink = Sign in to your Government Gateway account (opens in new tab)
-businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the âManage accountâ settings within their Business Tax Account.
-businessAlreadyRegistered.help = If youâre having problems accessing the service, you can email {0}
+businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the ‘Manage account’ settings within their Business Tax Account.
+businessAlreadyRegistered.help = If you’re having problems accessing the service, you can email {0}
 
 individualAlreadyRegistered.title = You are already registered to use the MDR service
 individualAlreadyRegistered.heading = You are already registered to use the MDR service
 individualAlreadyRegistered.p1 = You can access the service using the same Government Gateway account that you used to register for MDR.
 individualAlreadyRegistered.link = Sign in to your Government Gateway account (opens in new tab)
-individualAlreadyRegistered.p2 = If youâre having problems accessing the service, you can email
+individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email
 
-affinityGroupProblem.title = Sorry, youâre unable to use this service
-affinityGroupProblem.heading = Sorry, youâre unable to use this service
-affinityGroupProblem.paragraph.1 = Youâve signed in as an Individual user. Individuals cannot register for this service.
+affinityGroupProblem.title = Sorry, you’re unable to use this service
+affinityGroupProblem.heading = Sorry, you’re unable to use this service
+affinityGroupProblem.paragraph.1 = You’ve signed in as an Individual user. Individuals cannot register for this service.
 
 yourContactDetails.title = Setting up contact details for MDR
 yourContactDetails.heading = Setting up contact details for MDR
