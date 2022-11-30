@@ -20,18 +20,14 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.DoYouHaveUniqueTaxPayerReferenceFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.DoYouHaveUniqueTaxPayerReferencePage
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
-import play.twirl.api
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
+import views.html.DoYouHaveUTRView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +40,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: DoYouHaveUniqueTaxPayerReferenceFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: DoYouHaveUTRView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -52,20 +48,15 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
-    val data = Json.obj(
-      "form"     -> form,
-      "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode).url,
-      "radios"   -> Radios.yesNo(form("value")),
-      "hintText" -> hintWithLostUtrLink
-    )
-    renderer.render("doYouHaveUniqueTaxPayerReference.njk", data)
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithInitializedData().async {
+    standardActionSets.identifiedUserWithInitializedData() {
       implicit request =>
-        render(mode, request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage).fold(form)(form.fill)).map(Ok(_))
+        val preparedForm = request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+
+        Ok(view(preparedForm, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -74,7 +65,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
@@ -82,10 +73,4 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
               } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, updatedAnswers))
           )
     }
-
-  private def hintWithLostUtrLink()(implicit messages: Messages): Html =
-    Html(
-      s"${messages("doYouHaveUniqueTaxPayerReference.hint")}<span> <a class='govuk-link text-overflow' href='${appConfig.lostUTRUrl}' rel='noreferrer noopener' target='_blank'>" +
-        s"${messages("doYouHaveUniqueTaxPayerReference.hint.link")}</a>.</span>"
-    )
 }
