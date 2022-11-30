@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{BusinessType, MDR, NormalMode, UserAnswers}
+import models.{BusinessType, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessNamePage, BusinessTypePage}
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class BusinessNameControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode).url
 
   val selectedBusinessTypeText = "llp"
   private def form             = new forms.BusinessNameFormProvider().apply(selectedBusinessTypeText)
@@ -79,7 +79,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.ThereIsAProblemController.onPageLoad(MDR).url
+      redirectLocation(result).value mustEqual routes.ThereIsAProblemController.onPageLoad().url
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -165,7 +165,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController
-        .onPageLoad(MDR)
+        .onPageLoad()
         .url
     }
 
@@ -184,7 +184,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.routes.ThereIsAProblemController
-        .onPageLoad(MDR)
+        .onPageLoad()
         .url
     }
   }

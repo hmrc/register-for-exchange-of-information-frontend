@@ -18,18 +18,15 @@ package controllers
 
 import controllers.actions._
 import forms.ContactPhoneFormProvider
-import models.requests.DataRequest
-import models.{Mode, Regime}
+import models.{Mode, UserAnswers}
 import navigation.ContactDetailsNavigator
 import pages.{ContactNamePage, ContactPhonePage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
+import views.html.ContactPhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +38,7 @@ class ContactPhoneController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: ContactPhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: ContactPhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -49,44 +46,32 @@ class ContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def data(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): JsObject = {
-
-    val name = request.userAnswers.get(ContactNamePage)
-    Json.obj(
-      "form"      -> form,
-      "regime"    -> regime.toUpperCase,
-      "name"      -> name,
-      "pageTitle" -> "contactPhone.title.business",
-      "heading"   -> "contactPhone.heading.business",
-      "hintText"  -> hintWithNoBreakSpaces(),
-      "action"    -> routes.ContactPhoneController.onSubmit(mode, regime).url
-    )
-  }
-
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
-        val formWithData = request.userAnswers.get(ContactPhonePage).fold(form)(form.fill)
-        renderer.render("contactPhone.njk", data(mode, regime, formWithData)).map(Ok(_))
+        val preparedForm = request.userAnswers.get(ContactPhonePage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+
+        Ok(view(preparedForm, getContactName(request.userAnswers), mode))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => renderer.render("contactPhone.njk", data(mode, regime, formWithErrors)).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, getContactName(request.userAnswers), mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactPhonePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(ContactPhonePage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(ContactPhonePage, mode, updatedAnswers))
           )
     }
 
-  private def hintWithNoBreakSpaces()(implicit messages: Messages): Html =
-    Html(
-      s"${messages("contactPhone.hint")}"
-    )
+  private def getContactName(ua: UserAnswers)(implicit messages: Messages): String =
+    ua.get(ContactNamePage).getOrElse(messages("default.firstContact.name"))
 }

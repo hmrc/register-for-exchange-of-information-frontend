@@ -19,8 +19,8 @@ package controllers
 import controllers.actions._
 import exceptions.SomeInformationIsMissingException
 import forms.SndContactPhoneFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
 import pages.{SndContactNamePage, SndContactPhonePage}
 import play.api.data.Form
@@ -51,39 +51,38 @@ class SndContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
+  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
     val data = Json.obj(
       "form"     -> form,
-      "regime"   -> regime.toUpperCase,
       "name"     -> request.userAnswers.get(SndContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
       "hintText" -> hintWithNoBreakSpaces(),
-      "action"   -> routes.SndContactPhoneController.onSubmit(mode, regime).url
+      "action"   -> routes.SndContactPhoneController.onSubmit(mode).url
     )
     renderer.render("sndContactPhone.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SndContactPhonePage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-        render(mode, regime, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
+        render(mode, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
+            formWithErrors => render(mode, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactPhonePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SndContactPhonePage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(SndContactPhonePage, mode, updatedAnswers))
           )
     }
 

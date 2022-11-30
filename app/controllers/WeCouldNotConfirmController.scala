@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions._
-import models.{NormalMode, Regime}
+import models.NormalMode
 import pages.PageLists
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -42,14 +42,13 @@ class WeCouldNotConfirmController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(key: String, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(key: String): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         val messages = implicitly[Messages]
         val data = Json.obj(
-          "regime"   -> regime.toUpperCase,
           "affinity" -> messages(s"weCouldNotConfirm.$key"),
-          "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode, regime).url
+          "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
         )
 
         (for {

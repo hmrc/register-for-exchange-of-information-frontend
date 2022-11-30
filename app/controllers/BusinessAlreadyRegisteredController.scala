@@ -16,51 +16,29 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
-import models.Regime
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
-import uk.gov.hmrc.nunjucks.NunjucksSupport
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.BusinessAlreadyRegisteredView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class BusinessAlreadyRegisteredController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
+  identifierAction: IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  frontendAppConfig: FrontendAppConfig,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+  view: BusinessAlreadyRegisteredView
+) extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoadWithID(regime: Regime): Action[AnyContent] = identify(regime).async {
+  def onPageLoadWithoutId(withId: Boolean = false): Action[AnyContent] = identifierAction() {
     implicit request =>
-      val json = Json.obj(
-        "regime"       -> regime.toUpperCase,
-        "withID"       -> true,
-        "emailAddress" -> frontendAppConfig.emailEnquiries
-      )
-
-      renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
+      Ok(view(withId))
   }
 
-  def onPageLoadWithoutID(regime: Regime): Action[AnyContent] = identify(regime).async {
+  def onPageLoadWithId(withId: Boolean = true): Action[AnyContent] = identifierAction() {
     implicit request =>
-      val json = Json.obj(
-        "regime"       -> regime.toUpperCase,
-        "withID"       -> false,
-        "emailAddress" -> frontendAppConfig.emailEnquiries,
-        "loginGG"      -> frontendAppConfig.loginUrl
-      )
-
-      renderer.render("businessAlreadyRegistered.njk", json).map(Ok(_))
+      Ok(view(withId))
   }
-
 }

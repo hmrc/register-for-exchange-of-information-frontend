@@ -46,26 +46,10 @@ class ErrorHandlerSpec extends SpecBase with ControllerMockFixtures {
     "handle onServerError" in {
       val fakeRequest = FakeRequest("GET", "/foo/mdr/test")
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val result =
         errorHandler.onServerError(fakeRequest, new IllegalArgumentException("the error"))
 
       status(result) mustBe INTERNAL_SERVER_ERROR
     }
-
-    "throw an exception for missing regime in the URL" in {
-      val fakeRequest = FakeRequest("GET", "/foo/test/data")
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      intercept[Exception] {
-        errorHandler.onServerError(fakeRequest, new IllegalArgumentException("the error"))
-      }
-
-    }
-
   }
 }

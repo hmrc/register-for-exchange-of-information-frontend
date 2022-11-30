@@ -218,4 +218,10 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     length    <- Gen.chooseNum(1, maxLength).suchThat(_ != givenLength)
     chars     <- listOfN(length, Gen.numChar)
   } yield chars.mkString
+
+  def validEmailAddressService: Gen[String] = {
+    val emailRegexWithQuantifier = """^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)$"""
+
+    RegexpGen.from(emailRegexWithQuantifier)
+  }
 }

@@ -16,7 +16,6 @@
 
 package models.subscription.request
 
-import models.{CBC, MDR, Regime}
 import play.api.libs.json._
 
 sealed trait DisplaySubscriptionRequest
@@ -27,26 +26,12 @@ object DisplaySubscriptionForMDRRequest {
   implicit lazy val writes: OWrites[DisplaySubscriptionForMDRRequest] = Json.writes[DisplaySubscriptionForMDRRequest]
 }
 
-case class DisplaySubscriptionForCBCRequest(displaySubscriptionForCBCRequest: ReadSubscriptionRequest) extends DisplaySubscriptionRequest
-
-object DisplaySubscriptionForCBCRequest {
-  implicit lazy val writes: OWrites[DisplaySubscriptionForCBCRequest] = Json.writes[DisplaySubscriptionForCBCRequest]
-}
-
 object DisplaySubscriptionRequest {
 
   implicit val writes: Writes[DisplaySubscriptionRequest] = Writes[DisplaySubscriptionRequest] {
     case i: DisplaySubscriptionForMDRRequest => Json.toJson(i)
-    case o: DisplaySubscriptionForCBCRequest => Json.toJson(o)
   }
 
-  def convertTo(regime: Regime, safeId: String): DisplaySubscriptionRequest =
-    regime match {
-      case MDR =>
-        DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
-      case CBC =>
-        DisplaySubscriptionForCBCRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(regime, safeId))
-      case regime =>
-        throw new RuntimeException(s"Not supporting the regime: $regime ")
-    }
+  def convertTo(safeId: String): DisplaySubscriptionRequest =
+    DisplaySubscriptionForMDRRequest(ReadSubscriptionRequest.createReadSubscriptionRequest(safeId))
 }

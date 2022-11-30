@@ -18,20 +18,16 @@ package controllers
 
 import controllers.actions._
 import forms.BusinessWithoutIDNameFormProvider
-import models.requests.DataRequest
-import models.{Mode, Regime}
+import models.Mode
 import navigation.MDRNavigator
 import pages.BusinessWithoutIDNamePage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.UserAnswersHelper
+import views.html.BusinessWithoutIDNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +39,7 @@ class BusinessWithoutIDNameController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: BusinessWithoutIDNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: BusinessWithoutIDNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -52,33 +48,28 @@ class BusinessWithoutIDNameController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "regime" -> regime.toUpperCase,
-      "action" -> routes.BusinessWithoutIDNameController.onSubmit(mode, regime).url
-    )
-    renderer.render("businessWithoutIDName.njk", data)
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(BusinessWithoutIDNamePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      Ok(view(preparedForm, mode))
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
-      implicit request =>
-        render(mode, regime, request.userAnswers.get(BusinessWithoutIDNamePage).fold(form)(form.fill)).map(Ok(_))
-    }
-
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessWithoutIDNamePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(BusinessWithoutIDNamePage, mode, updatedAnswers))
           )
     }
 }

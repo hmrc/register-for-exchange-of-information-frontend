@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.BusinessTypeFormProvider
 import models.requests.DataRequest
-import models.{BusinessType, Mode, Regime}
+import models.{BusinessType, Mode}
 import navigation.MDRNavigator
 import pages.BusinessTypePage
 import play.api.data.Form
@@ -50,34 +50,33 @@ class BusinessTypeController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[BusinessType])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[BusinessType])(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "regime" -> regime.toUpperCase,
-      "action" -> routes.BusinessTypeController.onSubmit(mode, regime).url,
+      "action" -> routes.BusinessTypeController.onSubmit(mode).url,
       "radios" -> BusinessType.radios(form)
     )
     renderer.render("businessType.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
-        render(mode, regime, request.userAnswers.get(BusinessTypePage).fold(form)(form.fill)).map(Ok(_))
+        render(mode, request.userAnswers.get(BusinessTypePage).fold(form)(form.fill)).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors).map(BadRequest(_)),
+            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessTypePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(BusinessTypePage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(BusinessTypePage, mode, updatedAnswers))
           )
     }
 }

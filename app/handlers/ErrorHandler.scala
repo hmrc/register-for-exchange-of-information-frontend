@@ -16,83 +16,53 @@
 
 package handlers
 
-import config.FrontendAppConfig
-import models.Regime
 import play.api.http.HttpErrorHandler
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.Results._
-import play.api.mvc.{RequestHeader, Result}
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.{Logging, PlayException}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
+import views.html.{BadRequestView, PageNotFoundView, ThereIsAProblemView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
-// NOTE: There should be changes to bootstrap to make this easier, the API in bootstrap should allow a `Future[Html]` rather than just an `Html`
 @Singleton
 class ErrorHandler @Inject() (
   val messagesApi: MessagesApi,
-  frontendAppConfig: FrontendAppConfig,
-  renderer: Renderer
+  thereIsAProblemView: ThereIsAProblemView,
+  badRequestView: BadRequestView,
+  pageNotFoundView: PageNotFoundView
 )(implicit ec: ExecutionContext)
     extends HttpErrorHandler
     with I18nSupport
     with Logging {
 
-  private def extractRegime(path: String): String = {
-    val regime = path.split("/")(2)
-    if (Regime.regimes.contains(Regime.toRegime(regime))) {
-      regime
-    } else {
-      throw new Exception(s"Encountered a regime $regime that not allowed in the system")
-    }
-  }
-
   override def onClientError(request: RequestHeader, statusCode: Int, message: String = ""): Future[Result] = {
 
-    implicit val rh: RequestHeader = request
-    val regime                     = extractRegime(rh.path)
+    implicit val r: Request[_] = Request(request, "")
 
     statusCode match {
       case BAD_REQUEST =>
-        renderer
-          .render("badRequest.njk",
-                  Json.obj(
-                    "regime" -> regime.toUpperCase
-                  )
-          )
-          .map(BadRequest(_))
+        Future.successful(BadRequest(badRequestView()))
       case NOT_FOUND =>
-        renderer
-          .render("pageNotFound.njk",
-                  Json.obj(
-                    "regime"       -> regime.toUpperCase,
-                    "emailAddress" -> frontendAppConfig.emailEnquiries
-                  )
-          )
-          .map(NotFound(_))
+        Future.successful(NotFound(pageNotFoundView()))
       case _ =>
-        renderer
-          .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
-          .map(InternalServerError(_))
+        Future.successful(InternalServerError(thereIsAProblemView()))
     }
   }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
 
-    implicit val rh: RequestHeader = request
-    val regime                     = extractRegime(rh.path)
+    implicit val r: Request[_] = Request(request, "")
     logError(request, exception)
     exception match {
       case ApplicationException(result, _) =>
         Future.successful(result)
       case _ =>
-        renderer
-          .render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> frontendAppConfig.emailEnquiries))
-          .map(InternalServerError(_))
+        Future.successful(InternalServerError(thereIsAProblemView()))
     }
   }
 

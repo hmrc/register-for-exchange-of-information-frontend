@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.MDR
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
@@ -36,7 +35,7 @@ class IndividualAlreadyRegisteredControllerSpec extends SpecBase with Controller
         .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad(MDR).url)
+      val request        = FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad().url)
       val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value

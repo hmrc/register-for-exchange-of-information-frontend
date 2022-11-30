@@ -3,7 +3,7 @@
 {% from "hmrc/components/report-technical-issue/macro.njk"     import hmrcReportTechnicalIssue %}
 {% from "hmrc/components/timeout-dialog/macro.njk"     import hmrcTimeoutDialog %}
 
-{%- set assetPath = "/assets/lib/govuk-frontend/govuk/assets" -%}
+{%- set assetPath = "/register-for-mdr/assets/lib/govuk-frontend/govuk/assets" -%}
 {%- set htmlLang = request.language -%}
 
 {% block head %}
@@ -12,20 +12,27 @@
   timeout: config.timeout,
   countdown: config.countdown,
   keepAliveUrl: routes.controllers.KeepAliveController.keepAlive().url,
-  signOutUrl: routes.controllers.auth.AuthController.signOut(regime | lower).url,
-  timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad(regime | lower).url
+  signOutUrl: routes.controllers.auth.AuthController.signOut().url,
+  timeoutUrl: routes.controllers.SessionExpiredController.onPageLoad().url
 }) }}
   {% include "includes/head.njk" %}
 {% endblock %}
 
 {% block header %}
+  {% macro phaseBanner() %}
+    {{ messages("phaseBanner.1") }} <a class="govuk-link" href="{{ config.betaFeedbackUnauthenticatedUrl }}">{{ messages("phaseBanner.2") }}</a> {{ messages("phaseBanner.3") }}
+  {% endmacro %}
+
+  {% set phaseBanner = {tag: {text: "beta"}, html: phaseBanner()} %}
+
   {{ hmrcHeader({
     homepageUrl: "https://www.gov.uk",
-    serviceName: messages("site.service_name_"+regime),
-    serviceUrl: routes.controllers.IndexController.onPageLoad(regime | lower).url,
+    serviceName: messages("service.name"),
+    serviceUrl: routes.controllers.IndexController.onPageLoad().url,
+    phaseBanner: phaseBanner,
     containerClasses: "govuk-width-container",
     assetsPath: "/assets",
-    signOutHref: routes.controllers.auth.AuthController.signOut(regime | lower).url
+    signOutHref: routes.controllers.auth.AuthController.signOut().url
   }) }}
 
 {% endblock %}

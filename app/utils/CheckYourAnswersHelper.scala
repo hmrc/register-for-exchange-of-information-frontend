@@ -18,17 +18,17 @@ package utils
 
 import controllers.routes
 import models.matching.OrgRegistrationInfo
-import models.{CheckMode, Regime, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList._
-import uk.gov.hmrc.viewmodels._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
-class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
+class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: Int = 100, countryListFactory: CountryListFactory)(implicit
   val messages: Messages
 ) extends RowBuilder {
 
-  def confirmBusiness: Option[Row] = {
+  def confirmBusiness: Option[SummaryListRow] = {
     val paragraphClass = """govuk-!-margin-0"""
     (userAnswers.get(pages.IsThisYourBusinessPage), userAnswers.get(RegistrationInfoPage)) match {
       case (Some(true), Some(registrationInfo: OrgRegistrationInfo)) =>
@@ -38,7 +38,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
           countryName <- countryListFactory.getDescriptionFromCode(address.countryCode)
         } yield toRow(
           msgKey = "businessWithIDName",
-          value = Html(s"""
+          value = HtmlContent(s"""
                   <p>$businessName</p>
                   <p class=$paragraphClass>${address.addressLine1}</p>
                   ${address.addressLine2.fold("")(
@@ -53,13 +53,13 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
                  <p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
                  ${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
                   """),
-          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
+          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
         )
       case _ => None
     }
   }
 
-  def whatIsTradingName: Option[Row] =
+  def whatIsTradingName: Option[SummaryListRow] =
     userAnswers.get(pages.BusinessWithoutIDNamePage) map {
       x =>
         val value = userAnswers.get(pages.WhatIsTradingNamePage) match {
@@ -69,297 +69,297 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
 
         toRow(
           msgKey = "whatIsTradingName",
-          value = lit"$value",
-          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode, regime).url
+          value = Text(s"$value"),
+          href = routes.BusinessHaveDifferentNameController.onPageLoad(CheckMode).url
         )
     }
 
-  def selectAddress: Option[Row] = userAnswers.get(SelectAddressPage) map {
+  def selectAddress: Option[SummaryListRow] = userAnswers.get(SelectAddressPage) map {
     answer =>
       toRow(
         msgKey = "selectAddress",
-        value = Html(s"${answer.replace(",", "<br>")}"),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        value = HtmlContent(s"${answer.replace(",", "<br>")}"),
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
-  def businessWithoutIDName: Option[Row] = userAnswers.get(pages.BusinessWithoutIDNamePage) map {
+  def businessWithoutIDName: Option[SummaryListRow] = userAnswers.get(pages.BusinessWithoutIDNamePage) map {
     answer =>
       toRow(
         msgKey = "businessWithoutIDName",
-        value = lit"$answer",
-        href = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$answer"),
+        href = routes.BusinessWithoutIDNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def whatIsYourPostcode: Option[Row] = userAnswers.get(pages.WhatIsYourPostcodePage) map {
+  def whatIsYourPostcode: Option[SummaryListRow] = userAnswers.get(pages.WhatIsYourPostcodePage) map {
     _ =>
       toRow(
         msgKey = "whatIsYourPostcode",
-        value = msg"site.edit",
-        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode, regime).url
+        value = Text(messages("site.edit")),
+        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode).url
       )
   }
 
-  def nonUkName: Option[Row] = userAnswers.get(pages.NonUkNamePage) map {
+  def nonUkName: Option[SummaryListRow] = userAnswers.get(pages.NonUkNamePage) map {
     answer =>
       toRow(
         msgKey = "nonUkName",
-        value = lit"${answer.givenName} ${answer.familyName}",
-        href = routes.NonUkNameController.onPageLoad(CheckMode, regime).url
+        value = Text(s"${answer.givenName} ${answer.familyName}"),
+        href = routes.NonUkNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def soleName: Option[Row] = userAnswers.get(pages.SoleNamePage) map {
+  def soleName: Option[SummaryListRow] = userAnswers.get(pages.SoleNamePage) map {
     _ =>
       toRow(
         msgKey = "soleName",
-        value = msg"site.edit",
-        href = routes.SoleNameController.onPageLoad(CheckMode, regime).url
+        value = Text(messages("site.edit")),
+        href = routes.SoleNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def addressUK: Option[Row] = userAnswers.get(pages.AddressUKPage) map {
+  def addressUK: Option[SummaryListRow] = userAnswers.get(pages.AddressUKPage) map {
     answer =>
       toRow(
         msgKey = "addressUK",
         value = formatAddress(answer),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
-  def individualAddressWithoutID: Option[Row] = userAnswers.get(pages.IndividualAddressWithoutIdPage) map {
+  def individualAddressWithoutID: Option[SummaryListRow] = userAnswers.get(pages.IndividualAddressWithoutIdPage) map {
     answer =>
       toRow(
         msgKey = "addressWithoutId.individual",
         value = formatAddress(answer),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
-  def businessAddressWithoutID: Option[Row] = userAnswers.get(pages.BusinessAddressWithoutIdPage) map {
+  def businessAddressWithoutID: Option[SummaryListRow] = userAnswers.get(pages.BusinessAddressWithoutIdPage) map {
     answer =>
       toRow(
         msgKey = "addressWithoutId.business",
         value = formatAddress(answer),
-        href = routes.BusinessAddressWithoutIdController.onPageLoad(CheckMode, regime).url
+        href = routes.BusinessAddressWithoutIdController.onPageLoad(CheckMode).url
       )
   }
 
-  def doYouLiveInTheUK(): Option[Row] = userAnswers.get(pages.DoYouLiveInTheUKPage) map {
+  def doYouLiveInTheUK(): Option[SummaryListRow] = userAnswers.get(pages.DoYouLiveInTheUKPage) map {
     answer =>
       toRow(
         msgKey = "doYouLiveInTheUK",
         value = yesOrNo(answer),
-        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouLiveInTheUKController.onPageLoad(CheckMode).url
       )
   }
 
-  def nonUkNameController: Option[Row] = userAnswers.get(pages.NonUkNamePage) map {
+  def nonUkNameController: Option[SummaryListRow] = userAnswers.get(pages.NonUkNamePage) map {
     _ =>
       toRow(
         msgKey = "nonUkNameController",
-        value = msg"site.edit",
-        href = routes.NonUkNameController.onPageLoad(CheckMode, regime).url
+        value = Text(messages("site.edit")),
+        href = routes.NonUkNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def whatIsYourDateOfBirth: Option[Row] = userAnswers.get(pages.WhatIsYourDateOfBirthPage) map {
+  def whatIsYourDateOfBirth: Option[SummaryListRow] = userAnswers.get(pages.WhatIsYourDateOfBirthPage) map {
     answer =>
       toRow(
         msgKey = "whatIsYourDateOfBirth",
-        value = lit"${answer.format(dateFormatter)}",
-        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode, regime).url
+        value = Text(s"${answer.format(dateFormatter)}"),
+        href = routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode).url
       )
   }
 
-  def dateOfBirthWithoutId: Option[Row] = userAnswers.get(pages.DateOfBirthWithoutIdPage) map {
+  def dateOfBirthWithoutId: Option[SummaryListRow] = userAnswers.get(pages.DateOfBirthWithoutIdPage) map {
     answer =>
       toRow(
         msgKey = "whatIsYourDateOfBirth",
-        value = lit"${answer.format(dateFormatter)}",
-        href = routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode, regime).url
+        value = Text(s"${answer.format(dateFormatter)}"),
+        href = routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode).url
       )
   }
 
-  def whatIsYourName: Option[Row] = userAnswers.get(pages.WhatIsYourNamePage) map {
+  def whatIsYourName: Option[SummaryListRow] = userAnswers.get(pages.WhatIsYourNamePage) map {
     answer =>
       toRow(
         msgKey = "whatIsYourName",
-        value = lit"${answer.firstName} ${answer.lastName}",
-        href = routes.WhatIsYourNameController.onPageLoad(CheckMode, regime).url
+        value = Text(s"${answer.firstName} ${answer.lastName}"),
+        href = routes.WhatIsYourNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def nino: Option[Row] = userAnswers.get(pages.WhatIsYourNationalInsuranceNumberPage) map {
+  def nino: Option[SummaryListRow] = userAnswers.get(pages.WhatIsYourNationalInsuranceNumberPage) map {
     answer =>
       toRow(
         msgKey = "whatIsYourNationalInsuranceNumber",
-        value = lit"$answer",
-        href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$answer"),
+        href = routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(CheckMode).url
       )
   }
 
-  def isThisYourBusiness: Option[Row] = userAnswers.get(pages.IsThisYourBusinessPage) map {
+  def isThisYourBusiness: Option[SummaryListRow] = userAnswers.get(pages.IsThisYourBusinessPage) map {
     _ =>
       toRow(
         msgKey = "isThisYourBusiness",
-        value = msg"site.edit",
-        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode, regime).url
+        value = Text(messages("site.edit")),
+        href = routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
       )
   }
 
-  def businessName: Option[Row] = userAnswers.get(pages.BusinessNamePage) map {
+  def businessName: Option[SummaryListRow] = userAnswers.get(pages.BusinessNamePage) map {
     answer =>
       toRow(
         msgKey = "businessName",
-        value = msg"site.edit",
-        href = routes.BusinessNameController.onPageLoad(CheckMode, regime).url
+        value = Text(messages("site.edit")),
+        href = routes.BusinessNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def uTR: Option[Row] = userAnswers.get(pages.UTRPage) map {
+  def uTR: Option[SummaryListRow] = userAnswers.get(pages.UTRPage) map {
     _ =>
       toRow(
         msgKey = "uTR",
-        value = msg"site.edit",
-        href = routes.UTRController.onPageLoad(CheckMode, regime).url
+        value = Text(messages("site.edit")),
+        href = routes.UTRController.onPageLoad(CheckMode).url
       )
   }
 
-  def businessType: Option[Row] = userAnswers.get(pages.BusinessTypePage) map {
+  def businessType: Option[SummaryListRow] = userAnswers.get(pages.BusinessTypePage) map {
     _ =>
       toRow(
         msgKey = "bussinessType",
-        value = msg"site.edit",
-        href = routes.BusinessTypeController.onPageLoad(CheckMode, regime).url
+        value = Text(messages("site.edit")),
+        href = routes.BusinessTypeController.onPageLoad(CheckMode).url
       )
   }
 
-  def doYouHaveUniqueTaxPayerReference: Option[Row] = userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage) map {
+  def doYouHaveUniqueTaxPayerReference: Option[SummaryListRow] = userAnswers.get(pages.DoYouHaveUniqueTaxPayerReferencePage) map {
     answer =>
       toRow(
         msgKey = "doYouHaveUniqueTaxPayerReference",
         value = yesOrNo(answer),
-        href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
       )
   }
 
-  def whatAreYouRegisteringAs: Option[Row] = userAnswers.get(pages.WhatAreYouRegisteringAsPage) map {
+  def whatAreYouRegisteringAs: Option[SummaryListRow] = userAnswers.get(pages.WhatAreYouRegisteringAsPage) map {
     answer =>
       toRow(
         msgKey = "whatAreYouRegisteringAs",
-        value = msg"whatAreYouRegisteringAs.$answer",
-        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode, regime).url
+        value = Text(messages(s"whatAreYouRegisteringAs.$answer")),
+        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode).url
       )
   }
 
-  def doYouHaveNIN: Option[Row] = userAnswers.get(pages.DoYouHaveNINPage) map {
+  def doYouHaveNIN: Option[SummaryListRow] = userAnswers.get(pages.DoYouHaveNINPage) map {
     answer =>
       toRow(
         msgKey = "doYouHaveNIN",
         value = yesOrNo(answer),
-        href = routes.DoYouHaveNINController.onPageLoad(CheckMode, regime).url
+        href = routes.DoYouHaveNINController.onPageLoad(CheckMode).url
       )
   }
 
-  def sndConHavePhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
+  def sndConHavePhone: Option[SummaryListRow] = userAnswers.get(pages.SndConHavePhonePage) map {
     answer =>
       toRow(
         msgKey = "sndConHavePhone",
         value = yesOrNo(answer),
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
+        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 
-  def sndContactPhone: Option[Row] = userAnswers.get(pages.SndConHavePhonePage) map {
+  def sndContactPhone: Option[SummaryListRow] = userAnswers.get(pages.SndConHavePhonePage) map {
     _ =>
       val value = userAnswers.get(SndContactPhonePage).getOrElse("None")
       toRow(
         msgKey = "sndContactPhone",
-        value = lit"$value",
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$value"),
+        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 
-  def sndContactEmail: Option[Row] = userAnswers.get(pages.SndContactEmailPage) map {
+  def sndContactEmail: Option[SummaryListRow] = userAnswers.get(pages.SndContactEmailPage) map {
     answer =>
       toRow(
         msgKey = "sndContactEmail",
-        value = lit"$answer",
-        href = routes.SndContactEmailController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$answer"),
+        href = routes.SndContactEmailController.onPageLoad(CheckMode).url
       )
   }
 
-  def sndContactName: Option[Row] = userAnswers.get(pages.SndContactNamePage) map {
+  def sndContactName: Option[SummaryListRow] = userAnswers.get(pages.SndContactNamePage) map {
     answer =>
       toRow(
         msgKey = "sndContactName",
-        value = lit"$answer",
-        href = routes.SndContactNameController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$answer"),
+        href = routes.SndContactNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def secondContact: Option[Row] = userAnswers.get(pages.SecondContactPage) map {
+  def secondContact: Option[SummaryListRow] = userAnswers.get(pages.SecondContactPage) map {
     answer =>
       toRow(
         msgKey = "secondContact",
         value = yesOrNo(answer),
-        href = routes.SecondContactController.onPageLoad(CheckMode, regime).url
+        href = routes.SecondContactController.onPageLoad(CheckMode).url
       )
   }
 
-  def contactPhone: Option[Row] = userAnswers.get(pages.ContactPhonePage) match {
+  def contactPhone: Option[SummaryListRow] = userAnswers.get(pages.ContactPhonePage) match {
     case Some(answer) => buildContactPhoneRow(answer)
     case None         => buildContactPhoneRow("None")
   }
 
-  private def buildContactPhoneRow(value: String): Option[Row] =
+  private def buildContactPhoneRow(value: String): Option[SummaryListRow] =
     Some(
       toRow(
         msgKey = "contactPhone",
-        value = lit"$value",
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$value"),
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
       )
     )
 
-  def isContactTelephone: Option[Row] = userAnswers.get(pages.IsContactTelephonePage) map {
+  def isContactTelephone: Option[SummaryListRow] = userAnswers.get(pages.IsContactTelephonePage) map {
     answer =>
       toRow(
         msgKey = "isContactTelephone",
         value = yesOrNo(answer),
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode, regime).url
+        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
       )
   }
 
-  def contactName: Option[Row] = userAnswers.get(pages.ContactNamePage) map {
+  def contactName: Option[SummaryListRow] = userAnswers.get(pages.ContactNamePage) map {
     answer =>
       toRow(
         msgKey = "contactName",
-        value = lit"$answer",
-        href = routes.ContactNameController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$answer"),
+        href = routes.ContactNameController.onPageLoad(CheckMode).url
       )
   }
 
-  def contactEmail: Option[Row] = userAnswers.get(pages.ContactEmailPage) map {
+  def contactEmail: Option[SummaryListRow] = userAnswers.get(pages.ContactEmailPage) map {
     answer =>
       toRow(
         msgKey = "contactEmail",
-        value = lit"$answer",
-        href = routes.ContactEmailController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$answer"),
+        href = routes.ContactEmailController.onPageLoad(CheckMode).url
       )
   }
 
-  def individualContactEmail: Option[Row] = userAnswers.get(pages.IndividualContactEmailPage) map {
+  def individualContactEmail: Option[SummaryListRow] = userAnswers.get(pages.IndividualContactEmailPage) map {
     answer =>
       toRow(
         msgKey = "contactEmail",
-        value = lit"$answer",
-        href = routes.IndividualContactEmailController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$answer"),
+        href = routes.IndividualContactEmailController.onPageLoad(CheckMode).url
       )
   }
 
-  def individualContactPhone: Option[Row] = {
+  def individualContactPhone: Option[SummaryListRow] = {
     val numberOrNot = userAnswers.get(pages.IndividualContactPhonePage) match {
       case Some(answer) => answer
       case _            => "None"
@@ -367,8 +367,8 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val regime: Regime, v
     Some(
       toRow(
         msgKey = "contactPhone",
-        value = lit"$numberOrNot",
-        href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode, regime).url
+        value = Text(s"$numberOrNot"),
+        href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode).url
       )
     )
   }

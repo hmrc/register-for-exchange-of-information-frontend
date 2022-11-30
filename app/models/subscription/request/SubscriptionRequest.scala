@@ -16,8 +16,8 @@
 
 package models.subscription.request
 
+import models.UserAnswers
 import models.matching.SafeId
-import models.{Regime, UserAnswers}
 import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, requestDetail: CreateRequestDetail)
@@ -25,9 +25,9 @@ case class SubscriptionRequest(requestCommon: SubscriptionRequestCommon, request
 object SubscriptionRequest {
   implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
 
-  def convertTo(regime: Regime, safeID: SafeId, userAnswers: UserAnswers): Option[SubscriptionRequest] =
+  def convertTo(safeID: SafeId, userAnswers: UserAnswers): Option[SubscriptionRequest] =
     CreateRequestDetail.convertTo(safeID, userAnswers) map {
       requestDetails =>
-        SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon(regime), requestDetails)
+        SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon(), requestDetails)
     }
 }

@@ -17,138 +17,152 @@
 package controllers
 
 import base.ControllerSpecBase
+import config.FrontendAppConfig
 import forms.AddressUKFormProvider
-import models.{Address, Country, MDR, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
+import models.{Address, Country, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.AddressUKPage
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
+import play.api.inject.bind
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
+import utils.CountryListFactory
+import views.html.AddressUkView
 
 import scala.concurrent.Future
 
 class AddressUKControllerSpec extends ControllerSpecBase {
-  lazy val loadRoute   = routes.AddressUKController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.AddressUKController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute: String   = routes.AddressUKController.onPageLoad(NormalMode).url
+  lazy val submitRoute: String = routes.AddressUKController.onSubmit(NormalMode).url
 
-  val formProvider        = new AddressUKFormProvider()
-  val form: Form[Address] = formProvider(Seq(Country("valid", "GB", "United Kingdom")))
-  val address: Address    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GB", "United Kingdom"))
+  val ukSelectItem                        = Seq(SelectItem(Some("GB"), "United Kingdom", selected = true))
+  val testCountryList: Seq[Country]       = Seq(Country("valid", "GB", "United Kingdom"))
+  val formProvider: AddressUKFormProvider = new AddressUKFormProvider()
+  val form: Form[Address]                 = formProvider(testCountryList)
+  val address: Address                    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GB", "United Kingdom"))
 
-  val userAnswers = UserAnswers(userAnswersId).set(AddressUKPage, address).success.value
+  val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  "AddressWithoutId Controller" - {
+  val countryListFactory: CountryListFactory = new CountryListFactory(app.environment, mockAppConfig) {
+    override lazy val countryList: Option[Seq[Country]] = Some(testCountryList)
+  }
+
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(AddressUKPage, address).success.value
+
+  "AddressUk Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder()
+        .overrides(
+          bind[CountryListFactory].to(countryListFactory)
+        )
+        .build()
 
-      status(result) mustEqual OK
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val view = application.injector.instanceOf[AddressUkView]
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
+        val result = route(application, request).value
 
-      templateCaptor.getValue mustEqual "addressUK.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          form,
+          ukSelectItem,
+          NormalMode
+        ).toString
+      }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(
-        Map(
-          "addressLine1" -> "value 1",
-          "addressLine2" -> "value 2",
-          "addressLine3" -> "value 3",
-          "addressLine4" -> "value 4",
-          "postCode"     -> "XX9 9XX",
-          "country"      -> "GB"
+      val application = guiceApplicationBuilder()
+        .overrides(
+          bind[CountryListFactory].to(countryListFactory)
         )
-      )
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute
-      )
+        .build()
 
-      templateCaptor.getValue mustEqual "addressUK.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+        val view = application.injector.instanceOf[AddressUkView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          form.fill(address),
+          ukSelectItem,
+          NormalMode
+        ).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(userAnswers)
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 1"),
-                                  ("addressLine2", "value 2"),
-                                  ("addressLine3", "value 3"),
-                                  ("addressLine4", "value 4"),
-                                  ("postCode", "XX9 9XX"),
-                                  ("country", "GB")
-          )
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder()
+        .overrides(
+          bind[CountryListFactory].to(countryListFactory)
+        )
+        .build()
 
-      status(result) mustEqual SEE_OTHER
+      running(application) {
+        val request =
+          FakeRequest(POST, loadRoute)
+            .withFormUrlEncodedBody(("addressLine1", "value 1"),
+                                    ("addressLine2", "value 2"),
+                                    ("addressLine3", "value 3"),
+                                    ("addressLine4", "value 4"),
+                                    ("postCode", "XX9 9XX"),
+                                    ("country", "GB")
+            )
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("field1", ""))
-      val boundForm      = form.bind(Map("field1" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder()
+        .overrides(
+          bind[CountryListFactory].to(countryListFactory)
+        )
+        .build()
 
-      status(result) mustEqual BAD_REQUEST
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+          FakeRequest(POST, loadRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> submitRoute
-      )
+        val view = application.injector.instanceOf[AddressUkView]
 
-      templateCaptor.getValue mustEqual "addressUK.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val result = route(application, request).value
 
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(
+          boundForm,
+          ukSelectItem,
+          NormalMode
+        ).toString
+      }
     }
   }
 }

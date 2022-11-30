@@ -18,7 +18,6 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
-import models.MDR
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -38,7 +37,7 @@ class KeepAliveControllerSpec extends SpecBase with ControllerMockFixtures with 
 
         retrieveUserAnswersData(emptyUserAnswers)
 
-        val request = FakeRequest(GET, routes.KeepAliveController.keepAlive(MDR).url)
+        val request = FakeRequest(GET, routes.KeepAliveController.keepAlive().url)
 
         val result = route(app, request).value
 
@@ -55,7 +54,7 @@ class KeepAliveControllerSpec extends SpecBase with ControllerMockFixtures with 
 
         retrieveNoData()
 
-        val request = FakeRequest(GET, routes.KeepAliveController.keepAlive(MDR).url)
+        val request = FakeRequest(GET, routes.KeepAliveController.keepAlive().url)
 
         val result = route(app, request).value
 

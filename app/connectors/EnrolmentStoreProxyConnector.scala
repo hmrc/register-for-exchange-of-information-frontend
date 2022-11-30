@@ -18,10 +18,10 @@ package connectors
 
 import cats.data.EitherT
 import config.FrontendAppConfig
+import models.SubscriptionID
 import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MalformedError}
-import models.{Regime, SubscriptionID}
 import play.api.Logging
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
@@ -33,11 +33,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
 
-  def enrolmentStatus(regime: Regime, subscriptionID: SubscriptionID)(implicit
+  def enrolmentStatus(subscriptionID: SubscriptionID)(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): EitherT[Future, ApiError, Unit] = {
-    val serviceEnrolmentPattern = s"HMRC-${regime.toUpperCase}-ORG~${regime.toUpperCase}ID~${subscriptionID.value}"
+    val serviceEnrolmentPattern = s"HMRC-MDR-ORG~MDRID~${subscriptionID.value}"
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     EitherT {
       http

@@ -16,8 +16,9 @@
 
 package controllers.auth
 
-import models.Regime
+import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -27,13 +28,17 @@ import scala.concurrent.ExecutionContext
 
 class SignedOutController @Inject() (
   val controllerComponents: MessagesControllerComponents,
+  appConfig: FrontendAppConfig,
   renderer: Renderer
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action.async {
     implicit request =>
-      renderer.render("auth/signedOut.njk", regime.toJson).map(Ok(_))
+      val json = Json.obj(
+        "loginUrl" -> appConfig.loginContinueUrl
+      )
+      renderer.render("auth/signedOut.njk", json).map(Ok(_).withNewSession)
   }
 }

@@ -37,8 +37,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(ContactNamePage, NormalMode, MDR, answers)
-              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode, MDR))
+              .nextPage(ContactNamePage, NormalMode, answers)
+              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode))
         }
       }
 
@@ -46,8 +46,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(ContactEmailPage, NormalMode, MDR, answers)
-              .mustBe(routes.IsContactTelephoneController.onPageLoad(NormalMode, MDR))
+              .nextPage(ContactEmailPage, NormalMode, answers)
+              .mustBe(routes.IsContactTelephoneController.onPageLoad(NormalMode))
         }
       }
 
@@ -61,8 +61,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.ContactPhoneController.onPageLoad(NormalMode, MDR))
+              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.ContactPhoneController.onPageLoad(NormalMode))
         }
       }
 
@@ -82,8 +82,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SecondContactController.onPageLoad(NormalMode, MDR))
+              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
         }
       }
 
@@ -104,8 +104,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                   .value
 
               navigator
-                .nextPage(IndividualHaveContactTelephonePage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                .nextPage(IndividualHaveContactTelephonePage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
@@ -126,8 +126,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                   .value
 
               navigator
-                .nextPage(IndividualHaveContactTelephonePage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                .nextPage(IndividualHaveContactTelephonePage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
@@ -144,8 +144,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(ContactPhonePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SecondContactController.onPageLoad(NormalMode, MDR))
+              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
         }
       }
 
@@ -163,8 +163,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                   .value
 
               navigator
-                .nextPage(IndividualContactPhonePage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                .nextPage(IndividualContactPhonePage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
@@ -181,8 +181,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(ContactPhonePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SecondContactController.onPageLoad(NormalMode, MDR))
+              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
         }
       }
 
@@ -200,8 +200,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                   .value
 
               navigator
-                .nextPage(IndividualContactPhonePage, NormalMode, MDR, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+                .nextPage(IndividualContactPhonePage, NormalMode, updatedAnswers)
+                .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
@@ -215,8 +215,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(SecondContactPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode, MDR))
+              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
+              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode))
         }
       }
 
@@ -230,8 +230,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(SecondContactPage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
@@ -239,8 +239,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(SndContactNamePage, NormalMode, MDR, answers)
-              .mustBe(routes.SndContactEmailController.onPageLoad(NormalMode, MDR))
+              .nextPage(SndContactNamePage, NormalMode, answers)
+              .mustBe(routes.SndContactEmailController.onPageLoad(NormalMode))
         }
       }
 
@@ -248,8 +248,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
-              .nextPage(SndContactEmailPage, NormalMode, MDR, answers)
-              .mustBe(routes.SndConHavePhoneController.onPageLoad(NormalMode, MDR))
+              .nextPage(SndContactEmailPage, NormalMode, answers)
+              .mustBe(routes.SndConHavePhoneController.onPageLoad(NormalMode))
         }
       }
 
@@ -263,8 +263,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(SndConHavePhonePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.SndContactPhoneController.onPageLoad(NormalMode, MDR))
+              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.SndContactPhoneController.onPageLoad(NormalMode))
         }
       }
 
@@ -278,8 +278,8 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(SndConHavePhonePage, NormalMode, MDR, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad(MDR))
+              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }

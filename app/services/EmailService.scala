@@ -22,7 +22,6 @@ import models.{SubscriptionID, UserAnswers}
 import pages._
 import play.api.Logging
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND}
-import uk.gov.hmrc.emailaddress.EmailAddress
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -114,5 +113,15 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
               .map(Some.apply)
         }
     } yield primaryResponse
+
+}
+
+object EmailAddress {
+  val validEmail = """^([a-zA-Z0-9.!#$%&’'*+/=?^_`{|}~-]+)@([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)$""".r
+
+  def isValid(email: String) = email match {
+    case validEmail(_, _) => true
+    case _                => false
+  }
 
 }

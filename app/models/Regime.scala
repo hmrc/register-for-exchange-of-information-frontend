@@ -16,41 +16,19 @@
 
 package models
 
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.PathBindable
-
 sealed trait Regime
 
-case object MDR extends WithName("mdr") with Regime
-case object CBC extends WithName("cbc") with Regime
+object Regime extends Enumerable.Implicits {
 
-object Regime {
-  case class UnknownRegimeException() extends Exception
-  val regimes: Seq[Regime] = Seq(MDR, CBC)
+  case object MDR extends WithName("MDR") with Regime
 
-  implicit def regimePathBindable(implicit stringBinder: PathBindable[String]): PathBindable[Regime] = new PathBindable[Regime] {
+  val values: Seq[Regime] = Seq(MDR)
 
-    override def bind(key: String, value: String): Either[String, Regime] =
-      stringBinder.bind(key, value) match {
-        case Right(MDR.toString) => Right(MDR)
-        case Right(CBC.toString) => Right(CBC)
-        case _                   => Left("Unknown Regime")
-      }
+  implicit val enumerable: Enumerable[Regime] =
+    Enumerable(
+      values.map(
+        v => v.toString -> v
+      ): _*
+    )
 
-    override def unbind(key: String, value: Regime): String = {
-      val regimeValue = regimes.find(_ == value).map(_.toString).getOrElse(throw UnknownRegimeException())
-      stringBinder.unbind(key, regimeValue)
-    }
-  }
-
-  def toRegime(string: String): Regime =
-    string.toLowerCase match {
-      case MDR.toString => MDR
-      case CBC.toString => CBC
-    }
-
-  implicit class RegimeExt(regime: Regime) {
-    def toUpperCase: String = regime.toString.toUpperCase
-    def toJson: JsObject    = Json.obj("regime" -> regime.toUpperCase)
-  }
 }

@@ -1,5 +1,5 @@
-$govuk-assets-path: "/register-for-exchange-of-information/assets/lib/govuk-frontend/govuk/assets/";
-$hmrc-assets-path: "/register-for-exchange-of-information/assets/lib/hmrc-frontend/hmrc/assets";
+$govuk-assets-path: "/register-for-mdr/assets/lib/govuk-frontend/govuk/assets/";
+$hmrc-assets-path: "/register-for-mdr/assets/lib/hmrc-frontend/hmrc/assets";
 
 @import "lib/govuk-frontend/govuk/all";
 @import "lib/hmrc-frontend/hmrc/components/header/header";
@@ -9,10 +9,6 @@ $hmrc-assets-path: "/register-for-exchange-of-information/assets/lib/hmrc-fronte
 @import "partials/spinner";
 @import "partials/overflow";
 @import "partials/timeout-dialog.scss";
-
-svg.autocomplete__dropdown-arrow-down {
-  pointer-events: none;
-}
 
 .hide-field {
   display: none;
@@ -24,4 +20,25 @@ svg.autocomplete__dropdown-arrow-down {
 
 body:not(.js-enabled) .js-enabled {
   display: none;
+}
+
+// Ensure the error styling is presented (powered by adding the govuk-input-error class in js)
+// This can't be done just by adding the class due to conflicting specificity
+// This should be added to play-frontend-hmrc eventually and then this can be removed
+.autocomplete__input.govuk-input--error {
+  border-color: #d4351c;
+}
+
+// Raise index of dropdown arrow on accessible autocomplete
+.autocomplete__dropdown-arrow-down {
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Constrain the input (and drop-down) so they site with the other address inputs
+// important to do this on the wrapper rather than the input itself otherwise the down-arrow will be floating by itself
+@media (min-width: 40.0625em){
+  .autocomplete__wrapper {
+    width: 62%!important;
+  }
 }

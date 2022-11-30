@@ -16,8 +16,9 @@
 
 package models.register.request
 
+import models.Name
+import models.Regime.MDR
 import models.matching.RegistrationRequest
-import models.{Name, Regime}
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
@@ -27,18 +28,18 @@ case class RegisterWithID(registerWithIDRequest: RegisterWithIDRequest)
 object RegisterWithID {
   implicit val format: Format[RegisterWithID] = Json.format[RegisterWithID]
 
-  def apply(regime: Regime, name: Name, dob: Option[LocalDate], identifierName: String, identifierValue: String): RegisterWithID =
+  def apply(name: Name, dob: Option[LocalDate], identifierName: String, identifierValue: String): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
-        RequestCommon(regime.toUpperCase),
+        RequestCommon(MDR.toString),
         RequestWithIDDetails(name, dob, identifierName, identifierValue)
       )
     )
 
-  def apply(regime: Regime, registrationRequest: RegistrationRequest): RegisterWithID =
+  def apply(registrationRequest: RegistrationRequest): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
-        RequestCommon(regime.toUpperCase),
+        RequestCommon(MDR.toString),
         RequestWithIDDetails(registrationRequest)
       )
     )

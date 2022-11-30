@@ -153,6 +153,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
+        .set(SecondContactPage, false)
+        .success
+        .value
 
       val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
@@ -247,6 +250,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(DoYouLiveInTheUKPage, true)
         .success
         .value
+        .set(SecondContactPage, false)
+        .success
+        .value
 
       val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
@@ -278,7 +284,9 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
-
+        .set(SecondContactPage, false)
+        .success
+        .value
       val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe false

@@ -18,17 +18,16 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import forms.SelectAddressFormProvider
-import models.{AddressLookup, MDR, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
+import models.{AddressLookup, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{AddressLookupPage, SelectAddressPage}
+import pages.AddressLookupPage
 import play.api.data.Form
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.Radios
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
+import views.html.SelectAddressView
 
 import scala.concurrent.Future
 
@@ -36,8 +35,7 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
 
   override def onwardRoute: Call = Call("GET", "/foo")
 
-  val manualAddressURL: String        = "/register-for-exchange-of-information/mdr/register/without-id/address-uk"
-  lazy val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(NormalMode, MDR).url
+  lazy val selectAddressRoute: String = routes.SelectAddressController.onPageLoad(NormalMode).url
 
   val formProvider       = new SelectAddressFormProvider()
   val form: Form[String] = formProvider()
@@ -47,83 +45,34 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
     AddressLookup(Some("2 Address line 1"), None, None, None, "Town", None, "ZZ1 1ZZ")
   )
 
-  val addressRadios: Seq[Radios.Radio] = Seq(
-    Radios.Radio(label = msg"1 Address line 1, Town, ZZ1 1ZZ", value = s"1 Address line 1, Town, ZZ1 1ZZ"),
-    Radios.Radio(label = msg"2 Address line 1, Town, ZZ1 1ZZ", value = s"2 Address line 1, Town, ZZ1 1ZZ")
+  val addressRadios: Seq[RadioItem] = Seq(
+    RadioItem(content = Text("1 Address line 1, Town, ZZ1 1ZZ"), value = Some("1 Address line 1, Town, ZZ1 1ZZ")),
+    RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ"), value = Some("2 Address line 1, Town, ZZ1 1ZZ"))
   )
+
+  val userAnswers = UserAnswers(userAnswersId)
+    .set(AddressLookupPage, addresses)
+    .success
+    .value
 
   "SelectAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val answers = UserAnswers(userAnswersId)
-        .set(AddressLookupPage, addresses)
-        .success
-        .value
-
-      retrieveUserAnswersData(answers)
-
-      val request        = FakeRequest(GET, selectAddressRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"             -> form,
-        "mode"             -> NormalMode,
-        "manualAddressUrl" -> manualAddressURL,
-        "radios"           -> Radios(field = form("value"), items = addressRadios)
-      )
-
-      templateCaptor.getValue mustEqual "selectAddress.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(SelectAddressPage, "1 Address line 1, Town, ZZ1 1ZZ")
-        .success
-        .value
-        .set(AddressLookupPage, addresses)
-        .success
-        .value
-
       retrieveUserAnswersData(userAnswers)
 
-      val request        = FakeRequest(GET, selectAddressRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val application = guiceApplicationBuilder().build()
 
-      val result = route(app, request).value
+      running(application) {
+        implicit val request = FakeRequest(GET, selectAddressRoute)
 
-      status(result) mustEqual OK
+        val result = route(application, request).value
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val view = application.injector.instanceOf[SelectAddressView]
 
-      val filledForm = form.bind(Map("value" -> addressRadios.head.value))
-
-      val expectedJson = Json.obj(
-        "form"             -> filledForm,
-        "mode"             -> NormalMode,
-        "manualAddressUrl" -> manualAddressURL,
-        "radios"           -> Radios(field = filledForm("value"), items = addressRadios)
-      )
-
-      templateCaptor.getValue mustEqual "selectAddress.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, addressRadios, NormalMode).toString
+      }
     }
 
     "must redirect to manual UK address page if there are no address matches" in {
@@ -134,62 +83,49 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
       val result  = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.AddressUKController.onPageLoad(NormalMode, MDR).url
+      redirectLocation(result).value mustEqual routes.AddressUKController.onPageLoad(NormalMode).url
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AddressLookupPage, addresses)
-        .success
-        .value
-
       retrieveUserAnswersData(userAnswers)
 
-      val request =
-        FakeRequest(POST, selectAddressRoute)
-          .withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual SEE_OTHER
+      running(application) {
+        val request =
+          FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", "1 Address line 1, Town, ZZ1 1ZZ"))
 
-      redirectLocation(result).value mustEqual onwardRoute.url
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers = UserAnswers(userAnswersId)
-        .set(AddressLookupPage, addresses)
-        .success
-        .value
-
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(POST, selectAddressRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual BAD_REQUEST
+      running(application) {
+        implicit val request =
+          FakeRequest(POST, selectAddressRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val boundForm = form.bind(Map("value" -> ""))
 
-      val expectedJson = Json.obj(
-        "form"             -> boundForm,
-        "mode"             -> NormalMode,
-        "manualAddressUrl" -> manualAddressURL,
-        "radios"           -> Radios(field = boundForm("value"), items = addressRadios)
-      )
+        val view = application.injector.instanceOf[SelectAddressView]
 
-      templateCaptor.getValue mustEqual "selectAddress.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, addressRadios, NormalMode).toString
+      }
     }
+
   }
 }

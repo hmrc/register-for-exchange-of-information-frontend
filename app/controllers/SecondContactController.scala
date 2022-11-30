@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.SecondContactFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
 import pages.{ContactNamePage, SecondContactPage}
 import play.api.data.Form
@@ -50,39 +50,38 @@ class SecondContactController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "regime" -> regime.toUpperCase,
-      "action" -> routes.SecondContactController.onSubmit(mode, regime).url,
+      "action" -> routes.SecondContactController.onSubmit(mode).url,
       "name"   -> name,
       "radios" -> Radios.yesNo(form("value"))
     )
     renderer.render("secondContact.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(ContactNamePage, regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(ContactNamePage).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SecondContactPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-        render(mode, regime, preparedForm, request.userAnswers.get(ContactNamePage).get).map(Ok(_))
+        render(mode, preparedForm, request.userAnswers.get(ContactNamePage).get).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(ContactNamePage, regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(ContactNamePage).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors, request.userAnswers.get(ContactNamePage).get).map(BadRequest(_)),
+            formWithErrors => render(mode, formWithErrors, request.userAnswers.get(ContactNamePage).get).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SecondContactPage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(SecondContactPage, mode, updatedAnswers))
           )
     }
 }

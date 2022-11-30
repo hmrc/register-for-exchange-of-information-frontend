@@ -23,16 +23,14 @@ import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
 import models.error.ApiError._
 import models.matching.{IndRegistrationInfo, SafeId}
-import models.{Address, Country, MDR, SubscriptionID, UserAnswers}
-import navigation.{ContactDetailsNavigator, MDRNavigator}
-import org.mockito.ArgumentCaptor
+import models.{Address, Country, SubscriptionID, UserAnswers}
+import navigation.MDRNavigator
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages._
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -40,6 +38,7 @@ import repositories.SessionRepository
 import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
+import views.html.ThereIsAProblemView
 
 import scala.concurrent.Future
 
@@ -47,8 +46,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
   final val mockRegistrationService: BusinessMatchingWithoutIdService = mock[BusinessMatchingWithoutIdService]
 
-  lazy val loadRoute   = routes.CheckYourAnswersController.onPageLoad(MDR).url
-  lazy val submitRoute = routes.CheckYourAnswersController.onSubmit(MDR).url
+  lazy val loadRoute   = routes.CheckYourAnswersController.onPageLoad().url
+  lazy val submitRoute = routes.CheckYourAnswersController.onSubmit().url
 
   // first contact
   val firstContactName    = "first-contact-name"
@@ -87,9 +86,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must return OK and the correct view for a GET - First Contact with phone" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
-
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
@@ -106,29 +102,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
         val result = route(app, request).value
 
         status(result) mustEqual OK
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(firstContactPhone) mustBe true
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                = jsonCaptor.getValue
-        val firstContactDetails = (json \ "sections" \ 1 \ "rows").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
       }
 
       "must return OK and the correct view for a GET - First Contact without phone" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -143,29 +128,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
         val result = route(app, request).value
 
         status(result) mustEqual OK
-
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                = jsonCaptor.getValue
-        val firstContactDetails = (json \ "sections" \ 1 \ "rows").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(firstContactPhone) mustBe false
       }
 
       "must return OK and the correct view for a GET - Without Second Contact" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -186,31 +159,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
         val result = route(app, request).value
 
         status(result) mustEqual OK
-
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                 = jsonCaptor.getValue
-        val firstContactDetails  = (json \ "firstContactList").toString
-        val secondContactDetails = (json \ "secondContactList").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
-        secondContactDetails.contains("Second contact name") mustBe !isSecondContact
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(secondContactName) mustBe false
       }
 
       "must return OK and the correct view for a GET - With Second Contact with phone" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = emptyUserAnswers
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -243,32 +202,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
         val result = route(app, request).value
 
         status(result) mustEqual OK
+        contentAsString(result).contains("Name Name") mustBe true
+        contentAsString(result).contains("test@test.com") mustBe true
+        contentAsString(result).contains(secondContactName) mustBe true
+        contentAsString(result).contains(secondContactEmail) mustBe true
+        contentAsString(result).contains(secondContactPhone) mustBe true
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                 = jsonCaptor.getValue
-        val firstContactDetails  = (json \ "sections" \ 1 \ "rows").toString
-        val secondContactDetails = (json \ "sections" \ 2 \ "rows").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        secondContactDetails.contains("Second contact name") mustBe true
-        secondContactDetails.contains("Second contact email address") mustBe true
-        secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
       }
 
       "must return OK and the correct view for a GET - With Second Contact without phone" in {
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -298,28 +245,21 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         retrieveUserAnswersData(userAnswers)
 
-        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad(MDR).url)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
         val result = route(app, request).value
 
         status(result) mustEqual OK
+        contentAsString(result).contains(firstContactName)
+        contentAsString(result).contains(firstContactEmail)
+        contentAsString(result).mustNot(contain(secondContactName))
 
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-        val json                 = jsonCaptor.getValue
-        val firstContactDetails  = (json \ "firstContactList").toString
-        val secondContactDetails = (json \ "secondContactList").toString
-
-        templateCaptor.getValue mustEqual "checkYourAnswers.njk"
-        firstContactDetails.contains("Contact name") mustBe true
-        firstContactDetails.contains("Email address") mustBe true
-        firstContactDetails.contains("Telephone number") mustBe isFirstContactPhone
-        secondContactDetails.contains("Second contact name") mustBe true
-        secondContactDetails.contains("Second contact email address") mustBe true
-        secondContactDetails.contains("Second contact telephone number") mustBe isSecondContactPhone
+        contentAsString(result).contains(firstContactName) mustBe true
+        contentAsString(result).contains(firstContactEmail) mustBe true
+        contentAsString(result).contains(firstContactPhone) mustBe true
+        contentAsString(result).contains(secondContactName) mustBe true
+        contentAsString(result).contains(secondContactEmail) mustBe true
+        contentAsString(result).contains(secondContactPhone) mustBe false
       }
     }
 
@@ -327,11 +267,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'confirmation' page for 'Individual with Id' journey" in {
 
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -354,16 +294,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad().url
       }
 
       "must redirect to 'confirmation' page for 'Business with Id' journey" in {
 
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -380,19 +320,19 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad().url
       }
 
       "must redirect to 'Technical difficulty' page for 'Business with Id' journey when tax enrolment fails" in {
 
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID("id"))))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID("id"))))
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
@@ -409,11 +349,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'confirmation' page for 'Individual without Id' journey" in {
 
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -436,16 +376,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad().url
       }
 
       "must redirect to 'confirmation' page for 'Business without Id' journey" in {
 
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(NO_CONTENT)))
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -468,14 +408,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad().url
       }
 
       "must redirect to 'JourneyRecovery' page when some information missing" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Left(MandatoryInformationMissingError())))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -487,7 +425,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.SomeInformationIsMissingController.onPageLoad(MDR).url
+        redirectLocation(result).value mustEqual routes.SomeInformationIsMissingController.onPageLoad().url
       }
 
       "must redirect to 'Individual already registered' page when there is EnrolmentExistsError and Affinity Group is Individual" in {
@@ -502,7 +440,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
               bind[DataRetrievalAction].toInstance(mockDataRetrievalAction),
               bind[NunjucksRenderer].toInstance(mockRenderer),
               bind[SessionRepository].toInstance(mockSessionRepository),
-              bind[ContactDetailsNavigator].toInstance(cbcrFakeNavigator),
               bind[MDRNavigator].toInstance(mdrFakeNavigator),
               bind[AddressLookupConnector].toInstance(mockAddressLookupConnector),
               bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers) {
@@ -511,12 +448,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
             )
             .build()
 
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
 
         val userAnswers = UserAnswers("Id")
@@ -537,17 +474,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.IndividualAlreadyRegisteredController.onPageLoad(MDR).url
+        redirectLocation(result).value mustBe routes.IndividualAlreadyRegisteredController.onPageLoad().url
       }
 
       "must redirect to 'Business already registered' page when there is EnrolmentExistsError" in {
 
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
 
         val userAnswers = UserAnswers("Id")
@@ -568,15 +505,15 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(MDR).url
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url
       }
 
       "must redirect to 'Business already registered' page when there is EnrolmentExistsError in withId flow" in {
 
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any(), any())(any(), any()))
+        when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
 
         val userAnswers = UserAnswers("Id")
@@ -594,16 +531,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithID(MDR).url
+        redirectLocation(result).value mustBe routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url
       }
 
       "must render 'thereIsAProblem' page when 'createSubscription' fails with UnableToCreateEMTPSubscriptionError" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -624,34 +559,30 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val result = route(app, request).value
 
+        val view = app.injector.instanceOf[ThereIsAProblemView]
+
         status(result) mustEqual INTERNAL_SERVER_ERROR
-
-        val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-        val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-        verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-        templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+        contentAsString(result) mustEqual view()(request, messages).toString
       }
 
       "must go to the Journey recovery controller and the correct view for a POST - if both individual and organisation are not present" in {
 
         when(mockRenderer.render(any(), any())(any()))
           .thenReturn(Future.successful(Html("")))
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any(), any())(any(), any()))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockRegistrationService.registerWithoutId(any())(any(), any()))
-          .thenReturn(Future.successful(Left(MandatoryInformationMissingError())))
+        when(mockRegistrationService.registerWithoutId()(any(), any())).thenReturn(Future.successful(Left(MandatoryInformationMissingError())))
 
         retrieveUserAnswersData(emptyUserAnswers)
-        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(MDR).url)
+        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)
 
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad(MDR).url
+        redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
       }
     }
   }

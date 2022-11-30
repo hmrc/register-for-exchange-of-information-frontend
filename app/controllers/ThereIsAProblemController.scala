@@ -16,33 +16,21 @@
 
 package controllers
 
-import config.FrontendAppConfig
-import models.Regime
-import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class ThereIsAProblemController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  frontendAppConfig: FrontendAppConfig,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport
-    with Logging {
+  view: ThereIsAProblemView
+) extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = Action.async {
+  def onPageLoad(): Action[AnyContent] = Action {
     implicit request =>
-      val json = Json.obj(
-        "regime"       -> regime.toUpperCase,
-        "emailAddress" -> frontendAppConfig.emailEnquiries
-      )
-      renderer.render("thereIsAProblem.njk", json).map(Ok(_))
+      Ok(view())
   }
 }

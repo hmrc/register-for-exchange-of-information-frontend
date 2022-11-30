@@ -17,15 +17,9 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.MDR
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-
-import scala.concurrent.Future
+import views.html.ThereIsAProblemView
 
 class ThereIsAProblemControllerSpec extends SpecBase with ControllerMockFixtures {
 
@@ -33,26 +27,15 @@ class ThereIsAProblemControllerSpec extends SpecBase with ControllerMockFixtures
 
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad(MDR).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad().url)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "emailAddress" -> "enquiries.aeoi@hmrc.gov.uk"
-      )
-
-      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view()(request, messages).toString
     }
   }
 }

@@ -19,17 +19,14 @@ package controllers
 import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.StandardActionSets
-import models.Regime
 import models.error.ApiError
-import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
+import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError, ServiceUnavailableError}
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
 import models.requests.DataRequest
 import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import services.{AuditService, BusinessMatchingWithoutIdService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,6 +34,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.{CountryListFactory, UserAnswersHelper}
 import viewmodels.{CheckYourAnswersViewModel, Section}
+import views.html.{CheckYourAnswersView, ThereIsAProblemView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +48,8 @@ class CheckYourAnswersController @Inject() (
   controllerHelper: ControllerHelper,
   registrationService: BusinessMatchingWithoutIdService,
   auditService: AuditService,
-  renderer: Renderer
+  view: CheckYourAnswersView,
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -58,25 +57,14 @@ class CheckYourAnswersController @Inject() (
     with Logging
     with UserAnswersHelper {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
       val viewModel: Seq[Section] =
-        CheckYourAnswersViewModel.buildPages(request.userAnswers, regime, countryFactory, isRegisteringAsBusiness(request.userAnswers))
-
-      renderer
-        .render(
-          "checkYourAnswers.njk",
-          Json
-            .obj(
-              "regime"   -> regime.toUpperCase,
-              "sections" -> viewModel,
-              "action"   -> routes.CheckYourAnswersController.onSubmit(regime).url
-            )
-        )
-        .map(Ok(_))
+        CheckYourAnswersViewModel.buildPages(request.userAnswers, countryFactory, isRegisteringAsBusiness(request.userAnswers))
+      Ok(view(viewModel))
   }
 
-  private def getSafeIdFromRegistration(regime: Regime)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  private def getSafeIdFromRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     request.userAnswers.get(RegistrationInfoPage) match {
       case Some(registration) =>
         val safeId = registration match {
@@ -87,31 +75,38 @@ class CheckYourAnswersController @Inject() (
         }
         Future.successful(Right(safeId))
       case _ =>
-        registrationService.registerWithoutId(regime)
+        registrationService.registerWithoutId()
     }
 
-  def onSubmit(regime: Regime): Action[AnyContent] = standardActionSets.identifiedUserWithData(regime).async {
+  def onSubmit(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
       (for {
-        safeId         <- EitherT(getSafeIdFromRegistration(regime))
-        subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(regime, safeId, request.userAnswers))
-        result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID, regime))
+        safeId         <- EitherT(getSafeIdFromRegistration())
+        subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(safeId, request.userAnswers))
+        result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID))
       } yield result)
         .valueOrF {
           case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>
             logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
-            Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad(regime)))
+            Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad()))
           case EnrolmentExistsError(groupIds) =>
             logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
             if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithID(regime)))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithId()))
             } else {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutID(regime)))
+              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId()))
             }
           case MandatoryInformationMissingError(_) =>
             logger.warn(s"CheckYourAnswersController: Mandatory information is missing")
-            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad(regime)))
-          case error => renderer.renderError(error, regime)
+            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad()))
+          case error =>
+            logger.warn(s"Error received from API: $error")
+            error match {
+              case ServiceUnavailableError =>
+                Future.successful(ServiceUnavailable(errorView()))
+              case _ =>
+                Future.successful(InternalServerError(errorView()))
+            }
         }
 
   }

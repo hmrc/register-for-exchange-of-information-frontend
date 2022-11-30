@@ -18,7 +18,6 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.Regime
 import pages.SubscriptionIDPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,9 +27,10 @@ import renderer.Renderer
 import repositories.SessionRepository
 import services.EmailService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RegistrationConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
@@ -39,13 +39,14 @@ class RegistrationConfirmationController @Inject() (
   sessionRepository: SessionRepository,
   emailService: EmailService,
   val controllerComponents: MessagesControllerComponents,
-  val renderer: Renderer
+  val renderer: Renderer,
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(regime: Regime): Action[AnyContent] = standardActionSets.identifiedWithoutEnrolmentCheck(regime).async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedWithoutEnrolmentCheck().async {
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
@@ -54,7 +55,6 @@ class RegistrationConfirmationController @Inject() (
               sessionRepository.clear(request.userId) flatMap {
                 _ =>
                   val json = Json.obj(
-                    "regime"             -> regime.toUpperCase,
                     "subscriptionID"     -> id.value,
                     "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
                     "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
@@ -64,7 +64,7 @@ class RegistrationConfirmationController @Inject() (
           }
         case None =>
           logger.warn("SubscriptionIDPage: Subscription Id is missing")
-          renderer.renderThereIsAProblemPage(regime)
+          Future.successful(InternalServerError(errorView()))
       }
   }
 }

@@ -18,18 +18,14 @@ package renderer
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import models.Regime
-import models.error.ApiError
-import models.error.ApiError.ServiceUnavailableError
 import play.api.Logging
 import play.api.libs.json.{JsObject, Json, OWrites}
-import play.api.mvc.Results.{InternalServerError, ServiceUnavailable}
-import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.mvc.RequestHeader
 import play.twirl.api.Html
 import uk.gov.hmrc.hmrcfrontend.config.TrackingConsentConfig
 import uk.gov.hmrc.nunjucks.NunjucksRenderer
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: TrackingConsentConfig, renderer: NunjucksRenderer) extends Logging {
@@ -58,26 +54,5 @@ class Renderer @Inject() (appConfig: FrontendAppConfig, trackingConfig: Tracking
       "serviceIdentifier"              -> appConfig.contactFormServiceIdentifier,
       "contactHost"                    -> appConfig.contactHost
     )
-
-  def renderError(error: ApiError, regime: Regime)(implicit request: RequestHeader, ec: ExecutionContext): Future[Result] = {
-    val thereIsAProblemView = render(
-      "thereIsAProblem.njk",
-      Json.obj(
-        "regime"       -> regime.toUpperCase,
-        "emailAddress" -> appConfig.emailEnquiries
-      )
-    )
-    logger.warn(s"Error received from API: $error")
-    error match {
-      case ServiceUnavailableError =>
-        thereIsAProblemView.map(ServiceUnavailable(_))
-      case _ =>
-        thereIsAProblemView.map(InternalServerError(_))
-    }
-  }
-
-  def renderThereIsAProblemPage(regime: Regime)(implicit request: Request[_], ec: ExecutionContext): Future[Result] =
-    render("thereIsAProblem.njk", Json.obj("regime" -> regime.toUpperCase, "emailAddress" -> appConfig.emailEnquiries))
-      .map(InternalServerError(_))
 
 }

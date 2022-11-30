@@ -18,8 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.SndConHavePhoneFormProvider
+import models.Mode
 import models.requests.DataRequest
-import models.{Mode, Regime}
 import navigation.ContactDetailsNavigator
 import pages.{SndConHavePhonePage, SndContactNamePage}
 import play.api.data.Form
@@ -50,39 +50,38 @@ class SndConHavePhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, regime: Regime, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
+  private def render(mode: Mode, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
     val data = Json.obj(
       "form"   -> form,
-      "regime" -> regime.toUpperCase,
       "name"   -> name,
-      "action" -> routes.SndConHavePhoneController.onSubmit(mode, regime).url,
+      "action" -> routes.SndConHavePhoneController.onSubmit(mode).url,
       "radios" -> Radios.yesNo(form("value"))
     )
     renderer.render("sndConHavePhone.njk", data)
   }
 
-  def onPageLoad(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
       implicit request =>
         val preparedForm = request.userAnswers.get(SndConHavePhonePage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-        render(mode, regime, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
+        render(mode, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
     }
 
-  def onSubmit(mode: Mode, regime: Regime): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage, regime).async {
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, regime, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
+            formWithErrors => render(mode, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndConHavePhonePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SndConHavePhonePage, mode, regime, updatedAnswers))
+              } yield Redirect(navigator.nextPage(SndConHavePhonePage, mode, updatedAnswers))
           )
     }
 }

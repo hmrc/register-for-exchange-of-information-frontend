@@ -46,7 +46,7 @@ Run the following command to start services locally:
       enrolmentKey = "N/A"  
       identifier = "N/A"  
       identifier value = "N/A"
-      redirect url = "/register-for-exchange-of-information/mdr"
+      redirect url = "/register-for-mdr"
 
 #### *Acceptance test repo*:  
 [register-for-exchange-of-information-ui-tests](https://github.com/hmrc/register-for-exchange-of-information-ui-tests)

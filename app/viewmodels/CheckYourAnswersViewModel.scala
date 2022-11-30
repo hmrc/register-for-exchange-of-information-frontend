@@ -16,18 +16,18 @@
 
 package viewmodels
 
-import models.{Regime, UserAnswers}
+import models.UserAnswers
 import play.api.i18n.Messages
-import uk.gov.hmrc.viewmodels.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.{CheckYourAnswersHelper, CountryListFactory}
 
 object CheckYourAnswersViewModel {
 
-  def buildPages(userAnswers: UserAnswers, regime: Regime, countryFactory: CountryListFactory, isBusiness: Boolean)(implicit
+  def buildPages(userAnswers: UserAnswers, countryFactory: CountryListFactory, isBusiness: Boolean)(implicit
     messages: Messages
   ): Seq[Section] = {
 
-    val helper            = new CheckYourAnswersHelper(userAnswers, regime, countryListFactory = countryFactory)
+    val helper            = new CheckYourAnswersHelper(userAnswers, countryListFactory = countryFactory)
     val (contact, header) = if (isBusiness) ("firstContact", "businessDetails") else ("contactDetails", "individualDetails")
 
     val regDetails     = messages(s"checkYourAnswers.$header.h2")
@@ -40,7 +40,7 @@ object CheckYourAnswersViewModel {
     ) ++: secContact
   }
 
-  private def buildDetails(userAnswers: UserAnswers, helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryList.Row] =
+  private def buildDetails(userAnswers: UserAnswers, helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryListRow] =
     if (userAnswers.get(pages.BusinessTypePage).isDefined) {
       Seq(
         helper.confirmBusiness
@@ -63,7 +63,7 @@ object CheckYourAnswersViewModel {
       ).flatten
     }
 
-  private def buildSecondContact(helper: CheckYourAnswersHelper): Seq[SummaryList.Row] =
+  private def buildSecondContact(helper: CheckYourAnswersHelper): Seq[SummaryListRow] =
     Seq(
       helper.secondContact,
       helper.sndContactName,
@@ -71,7 +71,7 @@ object CheckYourAnswersViewModel {
       helper.sndContactPhone
     ).flatten
 
-  private def buildFirstContact(helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryList.Row] =
+  private def buildFirstContact(helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryListRow] =
     if (isBusiness) {
       Seq(helper.contactName, helper.contactEmail, helper.contactPhone).flatten
     } else {

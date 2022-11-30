@@ -17,13 +17,14 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.{MDR, SubscriptionID, UserAnswers}
+import models.{SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.SubscriptionIDPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import views.html.ThereIsAProblemView
 
 import scala.concurrent.Future
 
@@ -42,7 +43,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
         .value
 
       retrieveUserAnswersData(userAnswers)
-      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
+      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad().url)
       val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
@@ -55,20 +56,16 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
     }
 
     "render 'Technical Difficulties' page when Subscription Id is missing" in {
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad(MDR).url)
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val request = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad().url)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
       status(result) mustEqual INTERNAL_SERVER_ERROR
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "thereIsAProblem.njk"
+      contentAsString(result) mustEqual view()(request, messages).toString
     }
   }
 }

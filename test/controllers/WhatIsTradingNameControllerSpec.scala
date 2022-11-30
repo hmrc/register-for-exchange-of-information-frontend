@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{MDR, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsTradingNamePage
@@ -30,8 +30,8 @@ import scala.concurrent.Future
 
 class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.WhatIsTradingNameController.onPageLoad(NormalMode, MDR).url
-  lazy val submitRoute = routes.WhatIsTradingNameController.onSubmit(NormalMode, MDR).url
+  lazy val loadRoute   = routes.WhatIsTradingNameController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.WhatIsTradingNameController.onSubmit(NormalMode).url
 
   private def form = new forms.WhatIsTradingNameFormProvider().apply()
 

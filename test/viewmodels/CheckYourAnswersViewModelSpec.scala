@@ -18,7 +18,7 @@ package viewmodels
 
 import base.SpecBase
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.{Address, Country, MDR, Name, NonUkName, Regime}
+import models.{Address, Country, Name, NonUkName}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pages._
 import play.api.i18n.{Messages, MessagesApi}
@@ -33,7 +33,6 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
-  override val regime: Regime                          = MDR
   val countryListFactory: CountryListFactory           = app.injector.instanceOf[CountryListFactory]
 
   "CheckYourAnswersViewModel" - {
@@ -68,7 +67,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, regime, countryListFactory, isBusiness = true)
+      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = true)
 
       result.size mustBe 3
       result.head.rows.size mustBe 1
@@ -106,7 +105,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, regime, countryListFactory, isBusiness = true)
+      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = true)
 
       result.size mustBe 3
       result.head.rows.size mustBe 3
@@ -140,7 +139,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, regime, countryListFactory, isBusiness = false)
+      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = false)
 
       result.size mustBe 2
 
@@ -183,7 +182,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, regime, countryListFactory, isBusiness = false)
+      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = false)
 
       result.size mustBe 2
 

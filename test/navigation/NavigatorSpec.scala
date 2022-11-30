@@ -18,7 +18,7 @@ package navigation
 
 import base.SpecBase
 import generators.Generators
-import models.{CheckMode, MDR, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.QuestionPage
 import play.api.libs.json.JsPath
@@ -32,7 +32,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
     "must check the next page for a value before routing" - {
 
       val goto: Call = Call("GET", "/next-page")
-      val cya: Call  = Navigator.checkYourAnswers(MDR)
+      val cya: Call  = Navigator.checkYourAnswers
 
       case object NextPage extends QuestionPage[String] {
         override def path: JsPath = JsPath \ toString
@@ -44,7 +44,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           val userAnswers = UserAnswers(userAnswersId)
 
-          navigator.checkNextPageForValueThenRoute(NormalMode, MDR, userAnswers, NextPage, goto) mustBe Some(goto)
+          navigator.checkNextPageForValueThenRoute(NormalMode, userAnswers, NextPage, goto) mustBe Some(goto)
         }
       }
 
@@ -54,7 +54,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
           val userAnswers = UserAnswers(userAnswersId)
 
-          navigator.checkNextPageForValueThenRoute(CheckMode, MDR, userAnswers, NextPage, goto) mustBe Some(goto)
+          navigator.checkNextPageForValueThenRoute(CheckMode, userAnswers, NextPage, goto) mustBe Some(goto)
         }
       }
 
@@ -65,7 +65,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
           .success
           .value
 
-        navigator.checkNextPageForValueThenRoute(CheckMode, MDR, userAnswers, NextPage, goto) mustBe Some(cya)
+        navigator.checkNextPageForValueThenRoute(CheckMode, userAnswers, NextPage, goto) mustBe Some(cya)
       }
     }
   }

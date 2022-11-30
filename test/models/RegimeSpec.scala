@@ -16,52 +16,46 @@
 
 package models
 
-import org.scalatest.EitherValues
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
+import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import play.api.mvc.PathBindable
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import play.api.libs.json.{JsError, JsString, Json}
 
-class RegimeSpec extends AnyFreeSpec with Matchers with EitherValues {
+class RegimeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   "Regime" - {
-    val pathBindable = implicitly[PathBindable[Regime]]
 
-    "bind to `mdr` from path" in {
-      val result =
-        pathBindable.bind("key", "mdr").value
+    "must deserialize valid values" in {
 
-      result mustEqual MDR
+      val gen = Gen.oneOf(Regime.values)
+
+      forAll(gen) {
+        regime =>
+          JsString(regime.toString).validate[Regime].asOpt.value mustEqual regime
+      }
     }
 
-    "fail to bind anything else from path" in {
+    "must fail to deserialize invalid values" in {
 
-      val result =
-        pathBindable.bind("key", "foobar").left.value
+      val gen = arbitrary[String] suchThat (!Regime.values.map(_.toString).contains(_))
 
-      result mustEqual "Unknown Regime"
+      forAll(gen) {
+        invalidValue =>
+          JsString(invalidValue).validate[Regime] mustEqual JsError("error.invalid")
+      }
     }
 
-    "unbind from `mdr` to path" in {
+    "must serialize" in {
 
-      val result =
-        pathBindable.unbind("key", MDR)
+      val gen = Gen.oneOf(Regime.values)
 
-      result mustEqual "mdr"
-    }
-
-    "bind to `cbc` from path" in {
-      val result =
-        pathBindable.bind("key", "cbc").value
-
-      result mustEqual CBC
-    }
-
-    "unbind from `cbc` to path" in {
-
-      val result =
-        pathBindable.unbind("key", CBC)
-
-      result mustEqual "cbc"
+      forAll(gen) {
+        regime =>
+          Json.toJson(regime) mustEqual JsString(regime.toString)
+      }
     }
   }
 }
