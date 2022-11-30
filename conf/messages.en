@@ -505,10 +505,6 @@ individualAlreadyRegistered.p1 = You can access the service using the same Gover
 individualAlreadyRegistered.link = Sign in to your Government Gateway account (opens in new tab)
 individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email
 
-affinityGroupProblem.title = Sorry, you’re unable to use this service
-affinityGroupProblem.heading = Sorry, you’re unable to use this service
-affinityGroupProblem.paragraph.1 = You’ve signed in as an Individual user. Individuals cannot register for this service.
-
 yourContactDetails.title = Setting up contact details for MDR
 yourContactDetails.heading = Setting up contact details for MDR
 yourContactDetails.p1 = Provide the name and contact details for one or two people or teams within your organisation who could answer questions about your reports.
