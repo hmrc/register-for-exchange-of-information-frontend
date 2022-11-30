@@ -21,7 +21,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import matchers.JsonMatchers
 import models.requests.IdentifierRequest
-import models.{CBC, MDR}
 import org.mockito.ArgumentMatchers.any
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
