@@ -19,17 +19,12 @@ package controllers
 import controllers.actions._
 import forms.DoYouLiveInTheUKFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.DoYouLiveInTheUKPage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import views.html.DoYouLiveInTheUKView
 
 import javax.inject.Inject
@@ -53,25 +48,24 @@ class DoYouLiveInTheUKController @Inject() (
     standardActionSets.identifiedUserWithInitializedData() {
       implicit request =>
         val preparedForm = request.userAnswers.get(DoYouLiveInTheUKPage) match {
-          case None => form
+          case None        => form
           case Some(value) => form.fill(value)
         }
 
         Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouLiveInTheUKPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(DoYouLiveInTheUKPage, mode, updatedAnswers))
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouLiveInTheUKPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(DoYouLiveInTheUKPage, mode, updatedAnswers))
+        )
+  }
 }
