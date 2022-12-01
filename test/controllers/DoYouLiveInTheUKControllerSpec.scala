@@ -36,8 +36,6 @@ class DoYouLiveInTheUKControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.DoYouLiveInTheUKController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.DoYouLiveInTheUKController.onSubmit(NormalMode).url
 
-
-
   private def form = new forms.DoYouLiveInTheUKFormProvider().apply()
 
   "DoYouLiveInTheUK Controller" - {
@@ -60,10 +58,9 @@ class DoYouLiveInTheUKControllerSpec extends ControllerSpecBase {
       val userAnswers = UserAnswers(userAnswersId).set(DoYouLiveInTheUKPage, true).success.value
       retrieveUserAnswersData(userAnswers)
 
-      val request        = FakeRequest(GET, loadRoute)
-      val view = app.injector.instanceOf[DoYouLiveInTheUKView]
+      val request    = FakeRequest(GET, loadRoute)
+      val view       = app.injector.instanceOf[DoYouLiveInTheUKView]
       val filledForm = form.bind(Map("value" -> "true"))
-
 
       val result = route(app, request).value
       status(result) mustEqual OK

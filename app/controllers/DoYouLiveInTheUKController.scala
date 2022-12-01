@@ -45,7 +45,7 @@ class DoYouLiveInTheUKController @Inject() (
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithInitializedData() {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
         val preparedForm = request.userAnswers.get(DoYouLiveInTheUKPage) match {
           case None        => form
