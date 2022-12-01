@@ -504,7 +504,7 @@ individualAlreadyRegistered.title = You are already registered to use the MDR se
 individualAlreadyRegistered.heading = You are already registered to use the MDR service
 individualAlreadyRegistered.p1 = You can access the service using the same Government Gateway account that you used to register for MDR.
 individualAlreadyRegistered.link = Sign in to your Government Gateway account (opens in new tab)
-individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email
+individualAlreadyRegistered.p2 = If you’re having problems accessing the service, you can email {0}
 
 yourContactDetails.title = Setting up contact details for MDR
 yourContactDetails.heading = Setting up contact details for MDR
