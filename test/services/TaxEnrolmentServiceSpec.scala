@@ -60,7 +60,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
-      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(())))
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -97,7 +97,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Left(UnableToCreateEnrolmentError))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
-      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(Unit)))
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(())))
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
