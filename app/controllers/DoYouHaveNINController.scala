@@ -32,6 +32,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import views.html.DoYouHaveNINView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +44,7 @@ class DoYouHaveNINController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: DoYouHaveNINFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: DoYouHaveNINView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -52,19 +53,14 @@ class DoYouHaveNINController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.DoYouHaveNINController.onSubmit(mode).url,
-      "radios" -> Radios.yesNo(form("value"))
-    )
-    renderer.render("doYouHaveNIN.njk", data)
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
-        render(mode, request.userAnswers.get(DoYouHaveNINPage).fold(form)(form.fill)).map(Ok(_))
+        val preparedForm = request.userAnswers.get(DoYouHaveNINPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+        Ok(view(preparedForm, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -73,7 +69,7 @@ class DoYouHaveNINController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveNINPage, value))
