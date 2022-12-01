@@ -36,16 +36,19 @@ class DoYouLiveInTheUKControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.DoYouLiveInTheUKController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.DoYouLiveInTheUKController.onSubmit(NormalMode).url
 
+
+
   private def form = new forms.DoYouLiveInTheUKFormProvider().apply()
 
   "DoYouLiveInTheUK Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, loadRoute)
       val view    = app.injector.instanceOf[DoYouLiveInTheUKView]
 
-      val result  = route(app, request).value
+      val result = route(app, request).value
 
       status(result) mustEqual OK
 
@@ -53,9 +56,6 @@ class DoYouLiveInTheUKControllerSpec extends ControllerSpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId).set(DoYouLiveInTheUKPage, true).success.value
       retrieveUserAnswersData(userAnswers)
