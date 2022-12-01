@@ -59,26 +59,16 @@ class DoYouLiveInTheUKControllerSpec extends ControllerSpecBase {
 
       val userAnswers = UserAnswers(userAnswersId).set(DoYouLiveInTheUKPage, true).success.value
       retrieveUserAnswersData(userAnswers)
+
       val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
+      val view = app.injector.instanceOf[DoYouLiveInTheUKView]
       val filledForm = form.bind(Map("value" -> "true"))
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(filledForm("value"))
-      )
 
-      templateCaptor.getValue mustEqual "doYouLiveInTheUK.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      val result = route(app, request).value
+      status(result) mustEqual OK
+
+      contentAsString(result) mustEqual view(filledForm, NormalMode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
