@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.IndividualContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +43,7 @@ class IndividualContactEmailController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: IndividualContactEmailFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: IndividualContactEmailView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -50,18 +51,15 @@ class IndividualContactEmailController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.IndividualContactEmailController.onSubmit(mode).url
-    )
-    renderer.render("individualContactEmail.njk", data)
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
-        render(mode, request.userAnswers.get(IndividualContactEmailPage).fold(form)(form.fill)).map(Ok(_))
+        val preparedForm = request.userAnswers.get(IndividualContactEmailPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+
+        Ok(view(preparedForm, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
@@ -69,7 +67,7 @@ class IndividualContactEmailController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualContactEmailPage, value))
