@@ -18,26 +18,23 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.IndividualContactEmailPage
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import views.html.IndividualContactEmailView
 
 import scala.concurrent.Future
 
 class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.IndividualContactEmailController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.IndividualContactEmailController.onSubmit(NormalMode).url
+  lazy val loadRoute: String   = routes.IndividualContactEmailController.onPageLoad(NormalMode).url
+  lazy val submitRoute: String = routes.IndividualContactEmailController.onSubmit(NormalMode).url
 
   private def form = new forms.IndividualContactEmailFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId)
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(IndividualContactEmailPage, "email@email.com")
     .success
     .value
@@ -69,7 +66,6 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
         val result = route(app, request).value
@@ -81,8 +77,8 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
             "email" -> "email@email.com"
           )
         )
-        status(result) mustEqual OK
 
+        status(result) mustEqual OK
         contentAsString(result) mustEqual view(filledForm, NormalMode).toString()
       }
 
@@ -100,7 +96,6 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
