@@ -18,76 +18,67 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.IndividualContactPhonePage
-import play.api.libs.json.{JsObject, Json}
+import play.api.data.Form
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.IndividualContactPhoneView
 
 import scala.concurrent.Future
 
 class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.IndividualContactPhoneController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.IndividualContactPhoneController.onSubmit(NormalMode).url
+  lazy val loadRoute: String   = routes.IndividualContactPhoneController.onPageLoad(NormalMode).url
+  lazy val submitRoute: String = routes.IndividualContactPhoneController.onSubmit(NormalMode).url
 
-  private def form = new forms.IndividualContactPhoneFormProvider().apply()
+  private def form: Form[String] = new forms.IndividualContactPhoneFormProvider().apply()
 
   "IndividualContactPhone Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(app, request).value
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
+        val view = application.injector.instanceOf[IndividualContactPhoneView]
 
-      templateCaptor.getValue mustEqual "individualContactPhone.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode).toString()
+
+      }
+
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val userAnswers = UserAnswers(userAnswersId).set(IndividualContactPhonePage, "07500000000").success.value
+
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      val filledForm = form.bind(Map("value" -> "07500000000"))
+        val result = route(app, request).value
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute
-      )
+        status(result) mustEqual OK
 
-      templateCaptor.getValue mustEqual "individualContactPhone.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val view = application.injector.instanceOf[IndividualContactPhoneView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill("07500000000"), NormalMode).toString()
+
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -107,28 +98,23 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual BAD_REQUEST
+      running(application) {
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+        val boundForm                                                 = form.bind(Map("value" -> ""))
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> submitRoute
-      )
+        val result = route(app, request).value
 
-      templateCaptor.getValue mustEqual "individualContactPhone.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val view = application.injector.instanceOf[IndividualContactPhoneView]
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
+      }
+
     }
   }
 }
