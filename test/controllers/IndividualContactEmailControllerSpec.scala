@@ -45,42 +45,34 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = guiceApplicationBuilder().build()
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      running(application) {
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+      val result = route(app, request).value
 
-        val result = route(app, request).value
+      val view = app.injector.instanceOf[IndividualContactEmailView]
 
-        val view = application.injector.instanceOf[IndividualContactEmailView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode).toString
-      }
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(form, NormalMode).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       retrieveUserAnswersData(userAnswers)
 
-      val application = guiceApplicationBuilder().build()
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      running(application) {
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+      val result = route(app, request).value
 
-        val result = route(app, request).value
+      val view = app.injector.instanceOf[IndividualContactEmailView]
 
-        val view = application.injector.instanceOf[IndividualContactEmailView]
-
-        val filledForm = form.bind(
-          Map(
-            "email" -> "email@email.com"
-          )
+      val filledForm = form.bind(
+        Map(
+          "email" -> "email@email.com"
         )
+      )
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(filledForm, NormalMode).toString()
-      }
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(filledForm, NormalMode).toString()
 
     }
 
@@ -103,19 +95,15 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = guiceApplicationBuilder().build()
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm                                                 = form.bind(Map("value" -> "invalid value"))
 
-      running(application) {
-        implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm                                                 = form.bind(Map("value" -> "invalid value"))
+      val result = route(app, request).value
 
-        val result = route(app, request).value
+      val view = app.injector.instanceOf[IndividualContactEmailView]
 
-        val view = application.injector.instanceOf[IndividualContactEmailView]
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
-      }
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
 
     }
   }
