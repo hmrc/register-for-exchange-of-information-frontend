@@ -41,19 +41,14 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = guiceApplicationBuilder().build()
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      running(application) {
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+      val result = route(app, request).value
 
-        val result = route(app, request).value
+      val view = app.injector.instanceOf[IndividualContactPhoneView]
 
-        val view = application.injector.instanceOf[IndividualContactPhoneView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode).toString()
-
-      }
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(form, NormalMode).toString()
 
     }
 
@@ -63,22 +58,17 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(userAnswers)
 
-      val application = guiceApplicationBuilder().build()
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      running(application) {
+      val result = route(app, request).value
 
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+      status(result) mustEqual OK
 
-        val result = route(app, request).value
+      val view = app.injector.instanceOf[IndividualContactPhoneView]
 
-        status(result) mustEqual OK
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(form.fill("07500000000"), NormalMode).toString()
 
-        val view = application.injector.instanceOf[IndividualContactPhoneView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("07500000000"), NormalMode).toString()
-
-      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -100,20 +90,15 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      val application = guiceApplicationBuilder().build()
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm                                                 = form.bind(Map("value" -> ""))
 
-      running(application) {
+      val result = route(app, request).value
 
-        implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-        val boundForm                                                 = form.bind(Map("value" -> ""))
+      val view = app.injector.instanceOf[IndividualContactPhoneView]
 
-        val result = route(app, request).value
-
-        val view = application.injector.instanceOf[IndividualContactPhoneView]
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
-      }
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
 
     }
   }
