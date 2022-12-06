@@ -17,13 +17,10 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-
-import scala.concurrent.Future
+import views.html.IndividualAlreadyRegisteredView
 
 class IndividualAlreadyRegisteredControllerSpec extends SpecBase with ControllerMockFixtures {
 
@@ -31,20 +28,22 @@ class IndividualAlreadyRegisteredControllerSpec extends SpecBase with Controller
 
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad().url)
 
-      templateCaptor.getValue mustEqual "individualAlreadyRegistered.njk"
+        val result = route(app, request).value
+
+        val view = application.injector.instanceOf[IndividualAlreadyRegisteredView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view().toString
+
+      }
     }
   }
 }
