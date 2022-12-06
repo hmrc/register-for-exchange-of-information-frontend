@@ -21,7 +21,6 @@ import forms.IsThisYourBusinessFormProvider
 import models.error.ApiError.NotFoundError
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
-import models.register.response.details.AddressResponse
 import models.requests.DataRequest
 import models.{BusinessType, Mode}
 import navigation.MDRNavigator
@@ -29,16 +28,12 @@ import pages._
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.Results.InternalServerError
 import play.api.mvc._
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
-import views.html.ThereIsAProblemView
+import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.{IsThisYourBusinessView, ThereIsAProblemView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +48,7 @@ class IsThisYourBusinessController @Inject() (
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
-  renderer: Renderer,
+  view: IsThisYourBusinessView,
   errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -70,24 +65,12 @@ class IsThisYourBusinessController @Inject() (
     subscriptionService.getDisplaySubscriptionId(registrationInfo.safeId) flatMap {
       case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(registrationInfo.safeId, subscriptionId)
       case _ =>
-        val name     = registrationInfo.name
-        val address  = registrationInfo.address
-        val withForm = request.userAnswers.get(IsThisYourBusinessPage).fold(form)(form.fill)
-        render(mode, withForm, name, address).map(Ok(_))
+        val preparedForm = request.userAnswers.get(IsThisYourBusinessPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(view(preparedForm, registrationInfo, mode)))
     }
-
-  private def render(mode: Mode, form: Form[Boolean], name: String, address: AddressResponse)(implicit
-    request: DataRequest[AnyContent]
-  ): Future[Html] = {
-    val data = Json.obj(
-      "form"    -> form,
-      "name"    -> name,
-      "address" -> address.asList,
-      "action"  -> routes.IsThisYourBusinessController.onSubmit(mode).url,
-      "radios"  -> Radios.yesNo(form("value"))
-    )
-    renderer.render("isThisYourBusiness.njk", data)
-  }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
@@ -114,11 +97,13 @@ class IsThisYourBusinessController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors =>
-            request.userAnswers.get(RegistrationInfoPage).fold(thereIsAProblem) {
-              case OrgRegistrationInfo(_, name, address) =>
-                render(mode, formWithErrors, name, address).map(BadRequest(_))
-              case _ => thereIsAProblem
-            },
+            request.userAnswers
+              .get(RegistrationInfoPage)
+              .fold(thereIsAProblem) {
+                case registrationInfo: OrgRegistrationInfo =>
+                  Future.successful(BadRequest(view(formWithErrors, registrationInfo, mode)))
+                case _ => thereIsAProblem
+              },
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
