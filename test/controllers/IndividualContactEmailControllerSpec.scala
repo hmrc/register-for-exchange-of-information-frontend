@@ -18,24 +18,23 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.IndividualContactEmailPage
-import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.IndividualContactEmailView
 
 import scala.concurrent.Future
 
 class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.IndividualContactEmailController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.IndividualContactEmailController.onSubmit(NormalMode).url
+  lazy val loadRoute: String   = routes.IndividualContactEmailController.onPageLoad(NormalMode).url
+  lazy val submitRoute: String = routes.IndividualContactEmailController.onSubmit(NormalMode).url
 
   private def form = new forms.IndividualContactEmailFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId)
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(IndividualContactEmailPage, "email@email.com")
     .success
     .value
@@ -44,44 +43,27 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[IndividualContactEmailView]
+
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "individualContactEmail.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(form, NormalMode).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
       val result = route(app, request).value
 
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val view = app.injector.instanceOf[IndividualContactEmailView]
 
       val filledForm = form.bind(
         Map(
@@ -89,13 +71,9 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
         )
       )
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute
-      )
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(filledForm, NormalMode).toString()
 
-      templateCaptor.getValue mustEqual "individualContactEmail.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -110,34 +88,23 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm      = form.bind(Map("value" -> "invalid value"))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm                                                 = form.bind(Map("value" -> "invalid value"))
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[IndividualContactEmailView]
+
       status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> loadRoute
-      )
-
-      templateCaptor.getValue mustEqual "individualContactEmail.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
     }
   }
 }
