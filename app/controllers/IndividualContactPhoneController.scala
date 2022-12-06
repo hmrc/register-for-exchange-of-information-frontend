@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
+import views.html.IndividualContactPhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +43,7 @@ class IndividualContactPhoneController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: IndividualContactPhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: IndividualContactPhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -50,17 +51,14 @@ class IndividualContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.IndividualContactPhoneController.onSubmit(mode).url
-    )
-    renderer.render("individualContactPhone.njk", data)
-  }
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      render(mode, request.userAnswers.get(IndividualContactPhonePage).fold(form)(form.fill)).map(Ok(_))
+      val preparedForm = request.userAnswers.get(IndividualContactPhonePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
@@ -68,7 +66,7 @@ class IndividualContactPhoneController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(IndividualContactPhonePage, value))
