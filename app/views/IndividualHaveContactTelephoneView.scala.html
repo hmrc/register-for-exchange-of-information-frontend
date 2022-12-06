@@ -14,36 +14,30 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    link: components.Link,
-    appConfig: FrontendAppConfig
+    govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("doYouHaveUniqueTaxPayerReference.title"))) {
+@layout(pageTitle = title(form, messages("isContactTelephone.title.individual"))) {
 
-    @formHelper(action = routes.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.IndividualHaveContactTelephoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-l">@messages("doYouHaveUniqueTaxPayerReference.heading")</h1>
-        <p class="govuk-body">@Html(messages("doYouHaveUniqueTaxPayerReference.p1" , link(appConfig.lostUTRUrl, "doYouHaveUniqueTaxPayerReference.p1.link")))</p>
-
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("doYouHaveUniqueTaxPayerReference.heading")).withCssClass("govuk-visually-hidden")
-            ).withHint(HintViewModel(Text(messages("doYouHaveUniqueTaxPayerReference.hint"))))
+                legend = LegendViewModel(messages("isContactTelephone.heading.individual")).asPageHeading()
+            )
+                    .withHint(HintViewModel(Text(messages("isContactTelephone.hint"))))
         )
 
         @govukButton(
