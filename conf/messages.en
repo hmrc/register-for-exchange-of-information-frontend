@@ -79,6 +79,9 @@ needContactDetails.heading = We need your contact details
 needContactDetails.p1 = We have made changes to this service and need to collect the contact details of one or two people or teams. We will contact them if we have any questions about the reports you send.
 needContactDetails.p2 = We need these before you can send a country-by-country report.
 
+default.firstContact.name = your first contact
+default.secondContact.name = your second contact
+
 contactName.title = What is the name of the individual or team we should contact?
 contactName.heading = What is the name of the individual or team we should contact?
 contactName.hint = For example, '‘Tax team’' or '‘Ashley Smith’'.

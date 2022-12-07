@@ -30,7 +30,8 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
-import utils.UserAnswersHelper
+import utils.{ContactHelper, UserAnswersHelper}
+import views.html.IsContactTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,46 +43,36 @@ class IsContactTelephoneController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: IsContactTelephoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: IsContactTelephoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
+    with ContactHelper
     with UserAnswersHelper {
 
   private val form = formProvider()
 
-  private def data(mode: Mode, form: Form[Boolean])(implicit request: DataRequest[AnyContent]): JsObject = {
-    val name       = request.userAnswers.get(ContactNamePage)
-    val filledForm = request.userAnswers.get(IsContactTelephonePage).fold(form)(form.fill)
-    Json.obj(
-      "form"      -> filledForm,
-      "name"      -> name,
-      "pageTitle" -> s"isContactTelephone.title.business",
-      "heading"   -> s"isContactTelephone.heading.business",
-      "action"    -> routes.IsContactTelephoneController.onSubmit(mode).url,
-      "radios"    -> Radios.yesNo(filledForm("value"))
-    )
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(IsContactTelephonePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      Ok(view(preparedForm, getFirstContactName(request.userAnswers), mode))
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        renderer.render("isContactTelephone.njk", data(mode, form)).map(Ok(_))
-    }
-
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => renderer.render("isContactTelephone.njk", data(mode, formWithErrors)).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, updatedAnswers))
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, updatedAnswers))
+        )
+  }
 }
