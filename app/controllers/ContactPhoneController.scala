@@ -26,6 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
+import utils.ContactHelper
 import views.html.ContactPhoneView
 
 import javax.inject.Inject
@@ -42,7 +43,7 @@ class ContactPhoneController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with ContactHelper {
 
   private val form = formProvider()
 
@@ -54,7 +55,7 @@ class ContactPhoneController @Inject() (
           case Some(value) => form.fill(value)
         }
 
-        Ok(view(preparedForm, getContactName(request.userAnswers), mode))
+        Ok(view(preparedForm, getFirstContactName(request.userAnswers), mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -63,7 +64,7 @@ class ContactPhoneController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, getContactName(request.userAnswers), mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactPhonePage, value))
@@ -72,6 +73,4 @@ class ContactPhoneController @Inject() (
           )
     }
 
-  private def getContactName(ua: UserAnswers)(implicit messages: Messages): String =
-    ua.get(ContactNamePage).getOrElse(messages("default.firstContact.name"))
 }
