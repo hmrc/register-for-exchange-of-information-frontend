@@ -22,18 +22,16 @@ import models.error.ApiError.{BadRequestError, ServiceUnavailableError}
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
 import models.{CheckMode, Name, NormalMode, SubscriptionID, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
-import uk.gov.hmrc.viewmodels.Radios
-import views.html.ThereIsAProblemView
+import views.html.{IsThisYourBusinessView, ThereIsAProblemView}
 
 import scala.concurrent.Future
 
@@ -90,28 +88,15 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[IsThisYourBusinessView]
+
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(form("value"))
-      )
-
-      templateCaptor.getValue mustEqual "isThisYourBusiness.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
     }
 
     "must return OK and the correct view for a GET for BusinessType as SoleTrader" in {
@@ -120,9 +105,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       val updatedUserAnswers: UserAnswers = UserAnswers(userAnswersId)
         .set(BusinessTypePage, Sole)
@@ -136,24 +118,14 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .value
 
       retrieveUserAnswersData(updatedUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      val result = route(app, request).value
+      val result: Future[Result] = route(app, request).value
+
+      val view = app.injector.instanceOf[IsThisYourBusinessView]
 
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(form("value"))
-      )
-
-      templateCaptor.getValue mustEqual "isThisYourBusiness.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
     }
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
@@ -164,8 +136,6 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(validUserAnswers)
       val request = FakeRequest(GET, loadRoute)
@@ -204,46 +174,26 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val userAnswers: UserAnswers = validUserAnswers
         .set(IsThisYourBusinessPage, true)
         .success
         .value
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
+      val view       = app.injector.instanceOf[IsThisYourBusinessView]
       val filledForm = form.bind(Map("value" -> "true"))
+      contentAsString(result) mustEqual view(filledForm, registrationInfo, NormalMode).toString
 
-      val expectedJson = Json.obj(
-        "form"    -> filledForm,
-        "name"    -> "name",
-        "address" -> List("line1"),
-        "action"  -> loadRoute,
-        "radios"  -> Radios.yesNo(filledForm("value"))
-      )
-
-      templateCaptor.getValue mustEqual "isThisYourBusiness.njk"
-
-      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
@@ -257,7 +207,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       redirectLocation(result).value mustEqual onwardRoute.url
     }
 
-    "return return Internal Server Error for a GET when an error other than NotFoundError eturned" in {
+    "return return Internal Server Error for a GET when an error other than NotFoundError returned" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Left(ServiceUnavailableError)))
