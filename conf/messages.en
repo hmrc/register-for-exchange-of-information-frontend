@@ -481,9 +481,8 @@ registrationConfirmation.panel = Registration successful
 registrationConfirmation.panel.html = Your MDR ID
 registrationConfirmation.p1 = We will send you an email to confirm you have registered.
 registrationConfirmation.p2 = You will need to provide the MDR ID shown above in every file you send to HMRC. You may make a note of your MDR ID, however, it will be included in the confirmation email we will send you.
-registrationConfirmation.p3 = You can now
+registrationConfirmation.p3 = You can now {0} for Mandatory Disclosure Rules (MDR).
 registrationConfirmation.p3.link = report cross-border arrangements
-registrationConfirmation.p3b = for Mandatory Disclosure Rules (MDR).
 registrationConfirmation.survey.link = What did you think of this service? (opens in a new tab)
 
 pageNotFound.title = Page not found

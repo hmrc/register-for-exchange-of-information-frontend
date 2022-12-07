@@ -21,13 +21,11 @@ import controllers.actions._
 import pages.SubscriptionIDPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import services.EmailService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ThereIsAProblemView
+import views.html.{RegistrationConfirmationView, ThereIsAProblemView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +37,7 @@ class RegistrationConfirmationController @Inject() (
   sessionRepository: SessionRepository,
   emailService: EmailService,
   val controllerComponents: MessagesControllerComponents,
-  val renderer: Renderer,
+  view: RegistrationConfirmationView,
   errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -52,14 +50,9 @@ class RegistrationConfirmationController @Inject() (
         case Some(id) =>
           emailService.sendAnLogEmail(request.userAnswers, id) flatMap {
             _ =>
-              sessionRepository.clear(request.userId) flatMap {
+              sessionRepository.clear(request.userId) map {
                 _ =>
-                  val json = Json.obj(
-                    "subscriptionID"     -> id.value,
-                    "submissionUrl"      -> appConfig.mandatoryDisclosureRulesFrontendUrl,
-                    "betaFeedbackSurvey" -> appConfig.betaFeedbackUrl
-                  )
-                  renderer.render("registrationConfirmation.njk", json).map(Ok(_))
+                  Ok(view(id.value))
               }
           }
         case None =>
