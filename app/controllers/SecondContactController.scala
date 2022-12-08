@@ -19,18 +19,14 @@ package controllers
 import controllers.actions._
 import forms.SecondContactFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.ContactDetailsNavigator
-import pages.{ContactNamePage, SecondContactPage}
-import play.api.data.Form
+import pages.SecondContactPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.ContactHelper
+import views.html.SecondContactView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,41 +38,31 @@ class SecondContactController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: SecondContactFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: SecondContactView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with ContactHelper {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.SecondContactController.onSubmit(mode).url,
-      "name"   -> name,
-      "radios" -> Radios.yesNo(form("value"))
-    )
-    renderer.render("secondContact.njk", data)
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(ContactNamePage).async {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
         val preparedForm = request.userAnswers.get(SecondContactPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-        render(mode, preparedForm, request.userAnswers.get(ContactNamePage).get).map(Ok(_))
+        Ok(view(preparedForm, mode, getFirstContactName(request.userAnswers)))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(ContactNamePage).async {
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors, request.userAnswers.get(ContactNamePage).get).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFirstContactName(request.userAnswers)))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondContactPage, value))
