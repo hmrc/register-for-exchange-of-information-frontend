@@ -26,6 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
 import uk.gov.hmrc.viewmodels.Radios
+import views.html.SecondContactView
 
 import scala.concurrent.Future
 
@@ -36,122 +37,73 @@ class SecondContactControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.SecondContactFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
+  val contactName              = "Contact name"
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(ContactNamePage, contactName).success.value
 
   "SecondContact Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, loadRoute)
+
+      val view = app.injector.instanceOf[SecondContactView]
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(form("value"))
-      )
-
-      templateCaptor.getValue mustEqual "secondContact.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers2 = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value.set(SecondContactPage, true).success.value
-      retrieveUserAnswersData(userAnswers2)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> "true"))
-
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(filledForm("value"))
-      )
-
-      templateCaptor.getValue mustEqual "secondContact.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      retrieveUserAnswersData(userAnswers)
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "true"))
-
-      val result = route(app, request).value
-
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
-    }
-
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> loadRoute,
-        "radios" -> Radios.yesNo(boundForm("value"))
-      )
-
-      templateCaptor.getValue mustEqual "secondContact.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(form, NormalMode, contactName)(request, messages).toString
     }
   }
 
-  "must redirect to 'SomeInformationIsMissing' when data is missing" in {
+  "must populate the view correctly on a GET when the question has previously been answered" in {
 
-    when(mockRenderer.render(any(), any())(any()))
-      .thenReturn(Future.successful(Html("")))
+    val userAnswers2 = userAnswers.set(SecondContactPage, true).success.value
 
-    retrieveUserAnswersData(emptyUserAnswers)
-    val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+    retrieveUserAnswersData(userAnswers2)
+
+    val request = FakeRequest(GET, loadRoute)
+
+    val view = app.injector.instanceOf[SecondContactView]
+
+    val result = route(app, request).value
+
+    status(result) mustEqual OK
+
+    val filledForm = form.bind(Map("value" -> "true"))
+
+    contentAsString(result) mustEqual view(filledForm, NormalMode, contactName)(request, messages).toString
+  }
+
+  "must redirect to the next page when valid data is submitted" in {
+
+    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+    retrieveUserAnswersData(userAnswers)
+    val request =
+      FakeRequest(POST, submitRoute)
+        .withFormUrlEncodedBody(("value", "true"))
 
     val result = route(app, request).value
 
     status(result) mustEqual SEE_OTHER
-    redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController
-      .onPageLoad()
-      .url
+
+    redirectLocation(result).value mustEqual onwardRoute.url
+  }
+
+  "must return a Bad Request and errors when invalid data is submitted" in {
+
+    retrieveUserAnswersData(userAnswers)
+    val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+    val boundForm = form.bind(Map("value" -> ""))
+
+    val view = app.injector.instanceOf[SecondContactView]
+
+    val result = route(app, request).value
+
+    status(result) mustEqual BAD_REQUEST
+
+    contentAsString(result) mustEqual view(boundForm, NormalMode, contactName)(request, messages).toString
   }
 }
