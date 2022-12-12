@@ -18,13 +18,11 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.{SubscriptionID, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.SubscriptionIDPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import views.html.ThereIsAProblemView
+import views.html.{RegistrationConfirmationView, ThereIsAProblemView}
 
 import scala.concurrent.Future
 
@@ -34,8 +32,6 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
 
     "return OK and the correct view for a GET" in {
       when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(SubscriptionIDPage, SubscriptionID("SID"))
@@ -43,16 +39,14 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
         .value
 
       retrieveUserAnswersData(userAnswers)
-      val request                                = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad().url)
-      val templateCaptor: ArgumentCaptor[String] = ArgumentCaptor.forClass(classOf[String])
+      val request = FakeRequest(GET, controllers.routes.RegistrationConfirmationController.onPageLoad().url)
+
+      val view = app.injector.instanceOf[RegistrationConfirmationView]
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "registrationConfirmation.njk"
+      contentAsString(result) mustEqual view("SID")(request, messages).toString
     }
 
     "render 'Technical Difficulties' page when Subscription Id is missing" in {
