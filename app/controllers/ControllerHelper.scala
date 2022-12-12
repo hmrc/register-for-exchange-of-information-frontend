@@ -32,15 +32,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ControllerHelper @Inject() (
   val controllerComponents: MessagesControllerComponents,
   taxEnrolmentService: TaxEnrolmentService,
   errorView: ThereIsAProblemView,
   sessionRepository: SessionRepository
-) extends FrontendBaseController
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
