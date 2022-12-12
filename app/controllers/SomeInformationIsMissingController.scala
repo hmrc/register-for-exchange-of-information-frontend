@@ -17,11 +17,11 @@
 package controllers
 
 import controllers.actions._
+import models.NormalMode
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.{SomeInformationIsMissingView}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -30,17 +30,15 @@ class SomeInformationIsMissingController @Inject() (
   override val messagesApi: MessagesApi,
   standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: SomeInformationIsMissingView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
-        val data = Json.obj(
-          "continue" -> routes.IndexController.onPageLoad().url
-        )
-        renderer.render("someInformationIsMissing.njk", data).map(Ok(_))
+        val continueUrl = routes.IndexController.onPageLoad().url
+        Ok(view(continueUrl))
     }
 }

@@ -17,40 +17,33 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import play.api.libs.json.{JsObject, Json}
+import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-
-import scala.concurrent.Future
+import views.html.SomeInformationIsMissingView
 
 class SomeInformationIsMissingSpec extends SpecBase with ControllerMockFixtures {
 
-  "Controller Helper" - {
+  "SomeInformationIsMissing Controller" - {
 
-    "return OK and the correct view for a GET" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    "must return OK and the correct view for a GET" in {
 
       retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.SomeInformationIsMissingController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
+        val request = FakeRequest(GET, routes.SomeInformationIsMissingController.onPageLoad().url)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(application, request).value
 
-      val expectedJson = Json.obj("continue" -> routes.IndexController.onPageLoad().url)
+        val view = application.injector.instanceOf[SomeInformationIsMissingView]
 
-      templateCaptor.getValue mustEqual "someInformationIsMissing.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val continueUrl: String = routes.IndexController.onPageLoad().url
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual view(continueUrl)(request, messages).toString
+      }
     }
   }
 }
