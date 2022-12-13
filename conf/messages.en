@@ -105,6 +105,7 @@ footer.links.welsh = Rhestr o Wasanaethau Cymraeg
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out
 sessionExpired.guidance = Your answers have not been saved.
+sessionExpired.link = {0}
 
 contactName.checkYourAnswersLabel = Contact name
 contactName.checkYourAnswersLabel.hiddenText = contact name
