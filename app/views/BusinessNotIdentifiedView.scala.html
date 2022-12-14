@@ -28,6 +28,20 @@
 @layout(pageTitle = titleNoForm(messages("businessNotIdentified.title")), showBackLink = true) {
 
     <h1 class="govuk-heading-l">@messages("businessNotIdentified.heading")</h1>
+    <h1 class="govuk-body">@messages("businessNotIdentified.p1")</h1>
 
-    <p class="govuk-body">@Html(messages("businessAlreadyRegistered.help" , link(s"mailto:${appConfig.emailEnquiries}", "thereIsAProblem.emailAddress", openInNewWindow = true)))</p>
+    <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading1")</h2>
+    <p class="govuk-body">@Html(messages("businessNotIdentified.p2" , link(appConfig.lostUTRUrl, "businessNotIdentified.p2.link")))</p>
+
+    <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading2")</h2>
+    <p class="govuk-body">@messages("businessNotIdentified.p3")</p>
+    <ul class="govuk-list govuk-list--bullet" style="padding-left:20px;list-style-type:disc">
+        <li>@messages("businessNotIdentified.bullet1")</li>
+        <li>@messages("businessNotIdentified.bullet2")</li>
+        <li>@messages("businessNotIdentified.bullet3")</li>
+    </ul>
+    <p class="govuk-body">@messages("businessNotIdentified.p4", link(appConfig.contactHost, "businessNotIdentified.p4.link"))</p>
+
+    <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading3")</h2>
+    <p class="govuk-body">@Html(messages("businessAlreadyRegistered.p5" , link(s"mailto:${appConfig.emailEnquiries}", "businessAlreadyRegistered.p5.link", openInNewWindow = true)))</p>
 }
