@@ -16,80 +16,52 @@
 
 package controllers
 
-import base.ControllerSpecBase
+import base.{ControllerMockFixtures, SpecBase}
 import models.{BusinessType, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.BusinessTypePage
-import play.api.libs.json.{JsObject, Json}
+import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.{BusinessTypeView, DoYouHaveUTRView}
 
 import scala.concurrent.Future
 
-class BusinessTypeControllerSpec extends ControllerSpecBase {
+class BusinessTypeControllerSpec extends SpecBase with ControllerMockFixtures {
 
   lazy val loadRoute   = routes.BusinessTypeController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.BusinessTypeController.onSubmit(NormalMode).url
 
   private def form = new forms.BusinessTypeFormProvider().apply()
 
-  "BussinessType Controller" - {
+  "BusinessType Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, loadRoute)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[BusinessTypeView]
+
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> loadRoute,
-        "radios" -> BusinessType.radios(form)
-      )
-
-      templateCaptor.getValue mustEqual "businessType.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(form, NormalMode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.values.head).success.value
+      val userAnswers =
+        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.values.last).success.value
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request = FakeRequest(GET, loadRoute)
 
+      val filledForm = form.bind(Map("value" -> BusinessType.values.last.toString))
+
+      val view   = app.injector.instanceOf[BusinessTypeView]
       val result = route(app, request).value
 
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val filledForm = form.bind(Map("value" -> BusinessType.values.head.toString))
-
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> loadRoute,
-        "radios" -> BusinessType.radios(filledForm)
-      )
-
-      templateCaptor.getValue mustEqual "businessType.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(filledForm, NormalMode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -110,29 +82,16 @@ class BusinessTypeControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm      = form.bind(Map("value" -> "invalid value"))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm = form.bind(Map("value" -> ""))
+      val view      = app.injector.instanceOf[BusinessTypeView]
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> loadRoute,
-        "radios" -> BusinessType.radios(boundForm)
-      )
-
-      templateCaptor.getValue mustEqual "businessType.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages).toString
     }
   }
 }

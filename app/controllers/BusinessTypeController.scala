@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.BusinessTypeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,28 +43,22 @@ class BusinessTypeController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: BusinessTypeFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: BusinessTypeView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[BusinessType])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.BusinessTypeController.onSubmit(mode).url,
-      "radios" -> BusinessType.radios(form)
-    )
-    renderer.render("businessType.njk", data)
-  }
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(BusinessTypePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        render(mode, request.userAnswers.get(BusinessTypePage).fold(form)(form.fill)).map(Ok(_))
-    }
+      Ok(view(preparedForm, mode))
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData().async {
@@ -71,7 +66,7 @@ class BusinessTypeController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessTypePage, value))

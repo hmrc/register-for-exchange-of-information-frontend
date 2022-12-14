@@ -17,6 +17,9 @@
 package models
 
 import play.api.data.Form
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.viewmodels._
 
 sealed trait BusinessType {
@@ -25,17 +28,17 @@ sealed trait BusinessType {
 
 object BusinessType extends Enumerable.Implicits {
 
-  case object Sole extends WithName("sole") with BusinessType { val code = "0000" }
-  case object Partnership extends WithName("partnership") with BusinessType { val code = "0001" }
-  case object LimitedPartnership extends WithName("limitedPartnership") with BusinessType { val code = "0002" }
+  case object LimitedPartnership extends WithName("limitedPartnership") with BusinessType { val code = "0000" }
+  case object Sole extends WithName("sole") with BusinessType { val code = "0001" }
+  case object Partnership extends WithName("partnership") with BusinessType { val code = "0002" }
   case object LimitedCompany extends WithName("limited") with BusinessType { val code = "0003" }
   case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with BusinessType { val code = "0004" }
 
   val values: Seq[BusinessType] = Seq(
+    LimitedCompany,
     Sole,
     Partnership,
     LimitedPartnership,
-    LimitedCompany,
     UnincorporatedAssociation
   )
 
@@ -51,6 +54,15 @@ object BusinessType extends Enumerable.Implicits {
     )
 
     Radios(field, items)
+  }
+
+  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
+    case (value, index) =>
+      RadioItem(
+        content = Text(messages(s"businessType.${value.toString}")),
+        value = Some(value.toString),
+        id = Some(s"value_$index")
+      )
   }
 
   implicit val enumerable: Enumerable[BusinessType] =
