@@ -23,7 +23,10 @@ import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.Application
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
 trait SpecBase
@@ -43,5 +46,7 @@ trait SpecBase
   implicit val hc: HeaderCarrier   = HeaderCarrier()
   val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("UTR")
   val safeId: SafeId               = SafeId("SAFEID")
+
+  def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
 }
