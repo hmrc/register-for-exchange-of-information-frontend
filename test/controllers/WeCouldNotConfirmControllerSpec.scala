@@ -17,11 +17,10 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.WeCouldNotConfirmView
 
 import scala.concurrent.Future
 
@@ -31,20 +30,19 @@ class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtur
 
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad("identity").url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      implicit val request = FakeRequest(GET, routes.WeCouldNotConfirmController.onPageLoad("identity").url)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[WeCouldNotConfirmView]
       status(result) mustEqual OK
+      val continueUrl: String = routes.IndexController.onPageLoad().url
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+      contentAsString(result) mustEqual view(continueUrl, "identity").toString
 
-      templateCaptor.getValue mustEqual "weCouldNotConfirm.njk"
     }
   }
 }

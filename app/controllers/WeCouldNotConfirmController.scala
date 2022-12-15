@@ -17,26 +17,25 @@
 package controllers
 
 import controllers.actions._
-import models.NormalMode
+import models.requests.DataRequest
 import pages.PageLists
 import play.api.Logging
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.WeCouldNotConfirmView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
-import scala.util.Try
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 
 class WeCouldNotConfirmController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: WeCouldNotConfirmView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -45,16 +44,21 @@ class WeCouldNotConfirmController @Inject() (
   def onPageLoad(key: String): Action[AnyContent] =
     standardActionSets.identifiedUserWithData().async {
       implicit request =>
-        val messages = implicitly[Messages]
-        val data = Json.obj(
-          "affinity" -> messages(s"weCouldNotConfirm.$key"),
-          "action"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
-        )
+        val continueUrl = routes.IndexController.onPageLoad().url
 
-        (for {
-          cleaned <- (PageLists.individualWithIDPages ++ PageLists.businessWithIDPages).foldLeft(Try(request.userAnswers))(PageLists.removePage)
-        } yield sessionRepository.set(cleaned))
+        cleanPages match {
+          case Success(cleaned) =>
+            cleaned map (
+              _ => Ok(view(continueUrl, key))
+            )
+          case _ =>
+            logger.warn("WeCouldNotConfirmController: Could not clean pages")
+            throw new Exception("WeCouldNotConfirmController: Cannot clean UserAnswers pages")
+        }
 
-        renderer.render("weCouldNotConfirm.njk", data).map(Ok(_))
     }
+
+  private def cleanPages()(implicit request: DataRequest[AnyContent]): Try[Future[Boolean]] = for {
+    cleaned <- (PageLists.individualWithIDPages ++ PageLists.businessWithIDPages).foldLeft(Try(request.userAnswers))(PageLists.removePage)
+  } yield sessionRepository.set(cleaned)
 }
