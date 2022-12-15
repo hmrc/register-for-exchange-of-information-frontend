@@ -39,6 +39,7 @@
                 field = form("value"),
                 legend = LegendViewModel(messages("sndConHavePhone.heading", contactName)).asPageHeading()
             )
+            .withHint(HintViewModel(Text(messages("sndConHavePhone.hint"))))
         )
 
         @govukButton(
