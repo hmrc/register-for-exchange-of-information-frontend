@@ -42,9 +42,12 @@
     </ul>
     <p class="govuk-body">@messages("businessNotIdentified.p4") @link(contactLink, "businessNotIdentified.p4.link", openInNewWindow = true).</p>
 
-
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading3")</h2>
-    <p class="govuk-body">@Html(messages("businessNotIdentified.p5" , link(s"mailto:${appConfig.emailEnquiries}", "businessNotIdentified.p5.link", openInNewWindow = true)))</p>
+
+    <p class="bottom-margin govuk-body">@messages("businessNotIdentified.p5")
+        <a href="mailto:@appConfig.emailEnquiries" class="govuk-link">@messages("businessNotIdentified.p5.link")</a>
+        @messages("businessNotIdentified.p5b")
+    </p>
 
     @govukButton(
         ButtonViewModel(messages("businessNotIdentified.button")).withAttribute("id" -> "submit").asLink(startUrl)
