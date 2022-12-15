@@ -31,7 +31,7 @@
     <h1 class="govuk-body">@messages("businessNotIdentified.p1")</h1>
 
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading1")</h2>
-    <p class="govuk-body">@Html(messages("businessNotIdentified.p2" , link(appConfig.lostUTRUrl, "businessNotIdentified.p2.link")))</p>
+    <p class="govuk-body">@messages("businessNotIdentified.p2") @link(appConfig.lostUTRUrl, "businessNotIdentified.p2.link").</p>
 
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading2")</h2>
     <p class="govuk-body">@messages("businessNotIdentified.p3")</p>
