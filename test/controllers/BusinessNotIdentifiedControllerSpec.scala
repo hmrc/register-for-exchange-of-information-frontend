@@ -35,6 +35,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
 
     lazy val corporationTaxEnquiriesLink: String = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/corporation-tax-enquiries"
     lazy val selfAssessmentEnquiriesLink: String = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
+    val startUrl = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
 
     "return OK and the correct view for a GET when a Limited Company" in {
 
