@@ -44,7 +44,7 @@
 
 
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading3")</h2>
-    <p class="govuk-body">@Html(messages("businessAlreadyRegistered.p5" , link(s"mailto:${appConfig.emailEnquiries}", "businessAlreadyRegistered.p5.link", openInNewWindow = true)))</p>
+    <p class="govuk-body">@Html(messages("businessNotIdentified.p5" , link(s"mailto:${appConfig.emailEnquiries}", "businessNotIdentified.p5.link", openInNewWindow = true)))</p>
 
     @govukButton(
         ButtonViewModel(messages("businessNotIdentified.button")).withAttribute("id" -> "submit").asLink(startUrl)
