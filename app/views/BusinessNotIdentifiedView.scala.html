@@ -40,7 +40,8 @@
         <li>@messages("businessNotIdentified.bullet2")</li>
         <li>@messages("businessNotIdentified.bullet3")</li>
     </ul>
-    <p class="govuk-body">@messages("businessNotIdentified.p4", link(appConfig.contactHost, "businessNotIdentified.p4.link"))</p>
+    <p class="govuk-body">@messages("businessNotIdentified.p4") @link(contactUrl, "businessNotIdentified.p4.link", openInNewWindow = true).</p>
+
 
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading3")</h2>
     <p class="govuk-body">@Html(messages("businessAlreadyRegistered.p5" , link(s"mailto:${appConfig.emailEnquiries}", "businessAlreadyRegistered.p5.link", openInNewWindow = true)))</p>
