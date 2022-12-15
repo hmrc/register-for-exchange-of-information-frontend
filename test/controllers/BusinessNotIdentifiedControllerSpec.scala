@@ -51,37 +51,25 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
 
       }
     }
-    /*
+
     "return OK and the correct view for a GET when a Sole Trader" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      val userAnswers = emptyUserAnswers.set(BusinessTypePage, Sole).success.value
-
+      val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, LimitedPartnership).success.value
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      val application = guiceApplicationBuilder().build()
 
-      val result = route(app, request).value
+      running(application) {
+        val request = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
 
-      status(result) mustEqual OK
+        val result = route(application, request).value
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val view = application.injector.instanceOf[BusinessNotIdentifiedView]
 
-      val expectedJson = Json.obj(
-        "contactUrl" -> selfAssessmentEnquiriesLink,
-        "lostUtrUrl" -> "https://www.gov.uk/find-lost-utr-number",
-        "startUrl"   -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
-      )
+        status(result) mustEqual OK
 
-      templateCaptor.getValue mustEqual "businessNotIdentified.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        contentAsString(result) mustEqual view(selfAssessmentEnquiriesLink, startUrl)(request, messages(application)).toString
 
     }
   }
-
-     */
   }
 }
