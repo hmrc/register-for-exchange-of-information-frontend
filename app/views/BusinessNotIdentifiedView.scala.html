@@ -23,7 +23,7 @@
         appConfig: FrontendAppConfig
 )
 
-@(withId: Boolean)(implicit request: Request[_], messages: Messages)
+@(contactLink: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("businessNotIdentified.title")), showBackLink = true) {
 
