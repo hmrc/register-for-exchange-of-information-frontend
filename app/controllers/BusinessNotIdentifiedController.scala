@@ -43,12 +43,13 @@ class BusinessNotIdentifiedController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
+      val startUrl = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
 
       val contactLink: String = request.userAnswers.get(BusinessTypePage) match {
         case Some(LimitedCompany) | Some(UnincorporatedAssociation) => appConfig.corporationTaxEnquiriesLink
         case _                                                      => appConfig.selfAssessmentEnquiriesLink
       }
 
-      Ok(view(contactLink))
+      Ok(view(contactLink, startUrl))
   }
 }
