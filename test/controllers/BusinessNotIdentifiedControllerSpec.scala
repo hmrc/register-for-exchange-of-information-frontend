@@ -46,8 +46,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
         val view = application.injector.instanceOf[BusinessNotIdentifiedView]
 
         status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view(corporationTaxEnquiriesLink, startUrl)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(corporationTaxEnquiriesLink, routes.IndexController.onPageLoad.url)(request, messages(application)).toString
 
       }
     }
@@ -67,9 +66,10 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(selfAssessmentEnquiriesLink, startUrl)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(selfAssessmentEnquiriesLink, routes.IndexController.onPageLoad.url)(request, messages(application)).toString
 
+      }
     }
-  }
+
   }
 }
