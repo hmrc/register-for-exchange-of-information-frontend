@@ -26,6 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.BusinessNotIdentifiedView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -35,24 +36,20 @@ class BusinessNotIdentifiedController @Inject() (
   standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
   appConfig: FrontendAppConfig,
-  renderer: Renderer
+  view: BusinessNotIdentifiedView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
+      val startUrl = routes.IndexController.onPageLoad.url
+
       val contactLink: String = request.userAnswers.get(BusinessTypePage) match {
         case Some(LimitedCompany) | Some(UnincorporatedAssociation) => appConfig.corporationTaxEnquiriesLink
         case _                                                      => appConfig.selfAssessmentEnquiriesLink
       }
 
-      val data = Json.obj(
-        "emailAddress" -> appConfig.emailEnquiries,
-        "contactUrl"   -> contactLink,
-        "lostUtrUrl"   -> appConfig.lostUTRUrl,
-        "startUrl"     -> routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
-      )
-      renderer.render("businessNotIdentified.njk", data).map(Ok(_))
+      Ok(view(contactLink, startUrl))
   }
 }
