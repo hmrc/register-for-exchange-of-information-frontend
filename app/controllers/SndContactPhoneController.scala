@@ -17,21 +17,17 @@
 package controllers
 
 import controllers.actions._
-import exceptions.SomeInformationIsMissingException
 import forms.SndContactPhoneFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.ContactDetailsNavigator
 import pages.{SndContactNamePage, SndContactPhonePage}
-import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.json.Json
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels._
+import utils.ContactHelper
+import views.html.SndContactPhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,32 +39,23 @@ class SndContactPhoneController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: SndContactPhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: SndContactPhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with NunjucksSupport
+    with ContactHelper {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[api.Html] = {
-    val data = Json.obj(
-      "form"     -> form,
-      "name"     -> request.userAnswers.get(SndContactNamePage).getOrElse(throw new SomeInformationIsMissingException("Missing contact name")),
-      "hintText" -> hintWithNoBreakSpaces(),
-      "action"   -> routes.SndContactPhoneController.onSubmit(mode).url
-    )
-    renderer.render("sndContactPhone.njk", data)
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
         val preparedForm = request.userAnswers.get(SndContactPhonePage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-        render(mode, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
+        Ok(view(preparedForm, getSecondContactName(request.userAnswers), mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -77,7 +64,7 @@ class SndContactPhoneController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactPhonePage, value))
@@ -85,9 +72,4 @@ class SndContactPhoneController @Inject() (
               } yield Redirect(navigator.nextPage(SndContactPhonePage, mode, updatedAnswers))
           )
     }
-
-  private def hintWithNoBreakSpaces()(implicit messages: Messages): Html =
-    Html(
-      s"${messages("sndContactPhone.hint")}"
-    )
 }
