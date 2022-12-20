@@ -26,7 +26,7 @@
 
 @(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("sndContactPhone.title.business"))) {
+@layout(pageTitle = title(form, messages("sndContactPhone.title"))) {
 
     @formHelper(action = routes.SndContactPhoneController.onSubmit(mode)) {
 
@@ -37,7 +37,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("sndContactPhone.heading.business", contactName)).asPageHeading()
+                label = LabelViewModel(messages("sndContactPhone.heading", contactName)).asPageHeading()
             )
                     .withHint(HintViewModel(HtmlContent(Html(messages("sndContactPhone.hint")))))
             .withWidth(Fixed20)
