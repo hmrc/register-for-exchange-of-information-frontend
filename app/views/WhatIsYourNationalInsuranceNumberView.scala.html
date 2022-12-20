@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("whatIsYourNationalInsuranceNumber.title"))) {
 
-    @formHelper(action = routes.WhatIsTradingNameController.onSubmit(mode)) {
+    @formHelper(action = routes.WhatIsYourNationalInsuranceNumberController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
