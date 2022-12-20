@@ -64,7 +64,7 @@ class SndContactPhoneController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, getSecondContactName(request.userAnswers), mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactPhonePage, value))
