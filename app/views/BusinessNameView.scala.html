@@ -26,7 +26,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("businessName.title"))) {
+@layout(pageTitle = title(form, messages("businessName.title.llp"))) {
 
     @formHelper(action = routes.BusinessNameController.onSubmit(mode)) {
 
@@ -37,11 +37,11 @@
         @govukInput(
             InputViewModel(
                 field = form("businessName"),
-                label = LabelViewModel(messages("businessName.heading")).asPageHeading()
+                label = LabelViewModel(messages("businessName.heading.llp")).asPageHeading()
             )
             .withId("businessName")
             .withWidth(ThreeQuarters)
-            .withHint(HintViewModel(Text(messages("businessName.hint"))))
+            .withHint(HintViewModel(Text(messages("businessName.hint.llp"))))
         )
 
 

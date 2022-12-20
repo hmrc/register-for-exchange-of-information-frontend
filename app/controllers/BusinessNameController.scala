@@ -62,8 +62,7 @@ class BusinessNameController @Inject() (
               case Some(value) => form.fill(value.toString)
             }
             Ok(view(preparedForm, mode))
-          case None =>
-            Redirect(routes.ThereIsAProblemController.onPageLoad())
+          case _ => Redirect(routes.ThereIsAProblemController.onPageLoad())
         }
     }
 
@@ -82,7 +81,6 @@ class BusinessNameController @Inject() (
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
               )
-
           case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
 
