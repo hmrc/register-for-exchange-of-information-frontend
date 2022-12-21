@@ -18,19 +18,14 @@ package controllers
 
 import controllers.actions._
 import forms.WhatAreYouRegisteringAsFormProvider
-import models.requests.DataRequest
-import models.{Mode, WhatAreYouRegisteringAs}
+import models.Mode
 import navigation.MDRNavigator
 import pages.WhatAreYouRegisteringAsPage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc._
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.WhatAreYouRegisteringAsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,28 +37,21 @@ class WhatAreYouRegisteringAsController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: WhatAreYouRegisteringAsFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view : WhatAreYouRegisteringAsView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[WhatAreYouRegisteringAs])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.WhatAreYouRegisteringAsController.onSubmit(mode).url,
-      "radios" -> WhatAreYouRegisteringAs.radios(form)
-    )
-    renderer.render("whatAreYouRegisteringAs.njk", data)
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(WhatAreYouRegisteringAsPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
   }
-
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        render(mode, request.userAnswers.get(WhatAreYouRegisteringAsPage).fold(form)(form.fill)).map(Ok(_))
-    }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData().async {
@@ -71,11 +59,11 @@ class WhatAreYouRegisteringAsController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
+                _ <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, updatedAnswers))
           )
     }
