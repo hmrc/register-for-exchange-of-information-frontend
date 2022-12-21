@@ -24,7 +24,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("businessType.title"))) {
+@layout(pageTitle = title(form, messages("whatAreYouRegisteringAs.title"))) {
 
      @formHelper(action = routes.WhatAreYouRegisteringAsController.onSubmit(mode), 'autoComplete -> "off") {
 
