@@ -60,7 +60,7 @@ class WhatAreYouRegisteringAsControllerSpec extends ControllerSpecBase {
 
       val filledForm = form.bind(Map("value" -> WhatAreYouRegisteringAs.values.last.toString))
 
-      val view = app.injector.instanceOf[WhatAreYouRegisteringAsView]
+      val view   = app.injector.instanceOf[WhatAreYouRegisteringAsView]
       val result = route(app, request).value
 
       status(result) mustEqual OK
@@ -86,9 +86,9 @@ class WhatAreYouRegisteringAsControllerSpec extends ControllerSpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
-      val view = app.injector.instanceOf[WhatAreYouRegisteringAsView]
+      val view      = app.injector.instanceOf[WhatAreYouRegisteringAsView]
 
       val result = route(app, request).value
 

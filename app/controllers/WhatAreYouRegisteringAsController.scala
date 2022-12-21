@@ -37,7 +37,7 @@ class WhatAreYouRegisteringAsController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: WhatAreYouRegisteringAsFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view : WhatAreYouRegisteringAsView
+  view: WhatAreYouRegisteringAsView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -47,7 +47,7 @@ class WhatAreYouRegisteringAsController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
       val preparedForm = request.userAnswers.get(WhatAreYouRegisteringAsPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
       Ok(view(preparedForm, mode))
@@ -63,7 +63,7 @@ class WhatAreYouRegisteringAsController @Inject() (
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, updatedAnswers))
           )
     }
