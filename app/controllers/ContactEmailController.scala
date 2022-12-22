@@ -68,12 +68,12 @@ class ContactEmailController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getSecondContactName(request.userAnswers)))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFirstContactName(request.userAnswers)))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactEmailPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SndContactEmailPage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(ContactEmailPage, mode, updatedAnswers))
           )
     }
 
