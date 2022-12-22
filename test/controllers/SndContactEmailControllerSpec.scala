@@ -92,12 +92,11 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
       }
     }
 
-    /*
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      retrieveUserAnswersData(userAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", "some@email.com"))
@@ -110,30 +109,23 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual BAD_REQUEST
+      running(application) {
+        implicit val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+        val boundForm        = form.bind(Map("value" -> ""))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(app, request).value
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> submitRoute
-      )
+        val view = application.injector.instanceOf[sndContactEmailView]
 
-      templateCaptor.getValue mustEqual "sndContactEmail.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "Name").toString()
+      }
     }
-
+    /*
     "must redirect to 'SomeInformationIsMissing' when data is missing" in {
 
       when(mockRenderer.render(any(), any())(any()))
