@@ -67,36 +67,32 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
         contentAsString(result) mustEqual view(form, NormalMode, contactName).toString
       }
     }
-    /*
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val userAnswers2 =
+        userAnswers
+          .set(SndContactEmailPage, "some@email.com")
+          .success
+          .value
 
-      val userAnswers2 = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value.set(SndContactEmailPage, "some@email.com").success.value
       retrieveUserAnswersData(userAnswers2)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
+        implicit val request = FakeRequest(GET, loadRoute)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        val result = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> "some@email.com"))
+        val view = application.injector.instanceOf[sndContactEmailView]
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "name"   -> "Name",
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "sndContactEmail.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill("some@email.com"), NormalMode, "Name").toString()
+      }
     }
 
+    /*
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
