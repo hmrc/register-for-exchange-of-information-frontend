@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.ContactEmailFormProvider
 import models.{CheckMode, Mode}
 import navigation.ContactDetailsNavigator
-import pages.ContactEmailPage
+import pages.{ContactEmailPage, SndContactEmailPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -68,12 +68,12 @@ class ContactEmailController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFirstContactName(request.userAnswers)))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getSecondContactName(request.userAnswers)))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactEmailPage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(ContactEmailPage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(SndContactEmailPage, mode, updatedAnswers))
           )
     }
 
