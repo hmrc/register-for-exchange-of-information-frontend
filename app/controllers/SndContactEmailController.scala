@@ -19,19 +19,13 @@ package controllers
 import controllers.actions._
 import forms.SndContactEmailFormProvider
 import models.{CheckMode, Mode}
-import models.requests.DataRequest
 import navigation.ContactDetailsNavigator
-import pages.{SndContactEmailPage, SndContactNamePage}
-import play.api.data.Form
+import pages.SndContactEmailPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import utils.ContactHelper
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.ContactHelper
 import views.html.sndContactEmailView
 
 import javax.inject.Inject
