@@ -19,13 +19,11 @@ package controllers
 import base.ControllerSpecBase
 import forms.SoleNameFormProvider
 import models.{Name, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.SoleNamePage
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.SoleNameView
 
 import scala.concurrent.Future
 
@@ -45,101 +43,63 @@ class SoleNameControllerSpec extends ControllerSpecBase {
     "lastName"  -> lastName
   )
 
-  "WhatIsYourName Controller" - {
+  "must return OK and the correct view for a GET" in {
 
-    "must return OK and the correct view for a GET" in {
+    retrieveUserAnswersData(emptyUserAnswers)
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    implicit val request = FakeRequest(GET, loadRoute)
+    val result           = route(app, request).value
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+    val view = app.injector.instanceOf[SoleNameView]
+    status(result) mustEqual OK
 
-      val result = route(app, request).value
+    contentAsString(result) mustEqual view(form, NormalMode).toString
 
-      status(result) mustEqual OK
+  }
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+  "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
+    val userAnswers = UserAnswers(userAnswersId).set(SoleNamePage, validAnswer).success.value
+    retrieveUserAnswersData(userAnswers)
+    implicit val request = FakeRequest(GET, loadRoute)
 
-      templateCaptor.getValue mustEqual "soleName.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
+    val view = app.injector.instanceOf[SoleNameView]
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    val result     = route(app, request).value
+    val filledForm = form.bind(validData)
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    status(result) mustEqual OK
+    contentAsString(result) mustEqual view(filledForm, NormalMode).toString
+  }
 
-      val userAnswers = UserAnswers(userAnswersId).set(SoleNamePage, validAnswer).success.value
-      retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+  "must redirect to the next page when valid data is submitted" in {
 
-      val result = route(app, request).value
+    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      status(result) mustEqual OK
+    retrieveUserAnswersData(emptyUserAnswers)
+    val request =
+      FakeRequest(POST, submitRoute)
+        .withFormUrlEncodedBody(("firstName", firstName), ("lastName", lastName))
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+    val result = route(app, request).value
 
-      val filledForm = form.bind(validData)
+    status(result) mustEqual SEE_OTHER
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute
-      )
+    redirectLocation(result).value mustEqual onwardRoute.url
+  }
 
-      templateCaptor.getValue mustEqual "soleName.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
+  "must return a Bad Request and errors when invalid data is submitted" in {
 
-    "must redirect to the next page when valid data is submitted" in {
+    retrieveUserAnswersData(emptyUserAnswers)
+    val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+    val boundForm = form.bind(Map("value" -> "invalid value"))
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+    val view = app.injector.instanceOf[SoleNameView]
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("firstName", firstName), ("lastName", lastName))
+    val result = route(app, request).value
 
-      val result = route(app, request).value
+    status(result) mustEqual BAD_REQUEST
 
-      status(result) mustEqual SEE_OTHER
-
-      redirectLocation(result).value mustEqual onwardRoute.url
-    }
-
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm      = form.bind(Map("value" -> "invalid value"))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
-
-      val result = route(app, request).value
-
-      status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> loadRoute
-      )
-
-      templateCaptor.getValue mustEqual "soleName.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-    }
+    contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages).toString
   }
 }
