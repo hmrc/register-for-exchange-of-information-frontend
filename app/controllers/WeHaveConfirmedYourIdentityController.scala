@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.Mode
+import models.{Mode, NormalMode}
 import models.error.ApiError.NotFoundError
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
@@ -65,10 +65,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
                   subscriptionService.getDisplaySubscriptionId(info.safeId) flatMap {
                     case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId)
                     case _ =>
-                      val json = Json.obj(
-                        "action" -> navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
-                      )
-                      renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+                      "action" -> navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
+                      Future.successful(Redirect(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode)))
                   }
                 case Left(NotFoundError) =>
                   Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
