@@ -21,7 +21,7 @@ import forms.WhatIsTradingNameFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.MDRNavigator
-import pages.WhatIsTradingNamePage
+import pages.{ContactNamePage, SoleNamePage, WhatIsTradingNamePage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -42,25 +42,20 @@ class WhatIsTradingNameController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: WhatIsTradingNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: WhatIsTradingNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport{
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.WhatIsTradingNameController.onSubmit(mode).url
-    )
-    renderer.render("whatIsTradingName.njk", data)
-  }
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      render(mode, request.userAnswers.get(WhatIsTradingNamePage).fold(form)(form.fill)).map(Ok(_))
+      val preparedForm = request.userAnswers.get(WhatIsTradingNamePage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm ,  mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
@@ -68,11 +63,11 @@ class WhatIsTradingNameController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTradingNamePage, value))
-              _              <- sessionRepository.set(updatedAnswers)
+              _ <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(WhatIsTradingNamePage, mode, updatedAnswers))
         )
   }
