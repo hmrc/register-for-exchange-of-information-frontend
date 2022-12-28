@@ -46,17 +46,17 @@ class WhatIsTradingNameController @Inject() (
   view: WhatIsTradingNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport{
+    with I18nSupport {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
       val preparedForm = request.userAnswers.get(WhatIsTradingNamePage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm ,  mode))
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
@@ -68,7 +68,7 @@ class WhatIsTradingNameController @Inject() (
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsTradingNamePage, value))
-              _ <- sessionRepository.set(updatedAnswers)
+              _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(WhatIsTradingNamePage, mode, updatedAnswers))
         )
   }

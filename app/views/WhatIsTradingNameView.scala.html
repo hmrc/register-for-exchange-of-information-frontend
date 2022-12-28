@@ -26,7 +26,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("WhatIsTradingName.title"))) {
+@layout(pageTitle = title(form, messages("whatIsTradingName.title"))) {
 
     @formHelper(action = routes.WhatIsTradingNameController.onSubmit(mode)) {
 
@@ -37,9 +37,9 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("WhatIsTradingName.heading")).asPageHeading()
+                label = LabelViewModel(messages("whatIsTradingName.heading")).asPageHeading()
             )
-            .withWidth(ThreeQuarter)
+            .withWidth(ThreeQuarters)
         )
 
         @govukButton(
