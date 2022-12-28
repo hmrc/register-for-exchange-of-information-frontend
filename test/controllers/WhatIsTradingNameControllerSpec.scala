@@ -84,7 +84,6 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustEqual view(filledForm, NormalMode).toString
     }
 
-
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -105,7 +104,7 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
       implicit val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm = form.bind(Map("value" -> "invalid value"))
+      val boundForm        = form.bind(Map("value" -> "invalid value"))
 
       val view = app.injector.instanceOf[WhatIsTradingNameView]
 
