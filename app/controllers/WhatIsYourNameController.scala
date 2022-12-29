@@ -18,19 +18,13 @@ package controllers
 
 import controllers.actions._
 import forms.WhatIsYourNameFormProvider
-import models.requests.DataRequest
-import models.{Mode, Name}
+import models.Mode
 import navigation.MDRNavigator
 import pages.WhatIsYourNamePage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import views.html.WhatIsYourNameView
 
 import javax.inject.Inject
@@ -46,18 +40,19 @@ class WhatIsYourNameController @Inject() (
   view: WhatIsYourNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport{
+    with I18nSupport {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
       val preparedForm = request.userAnswers.get(WhatIsYourNamePage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
       Ok(view(preparedForm, mode))
   }
+
   def onSubmit(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData().async {
       implicit request =>
@@ -68,7 +63,7 @@ class WhatIsYourNameController @Inject() (
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
-                _ <- sessionRepository.set(updatedAnswers)
+                _              <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, updatedAnswers))
           )
     }

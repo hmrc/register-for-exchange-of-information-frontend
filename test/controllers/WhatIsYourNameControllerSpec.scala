@@ -18,13 +18,10 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{Name, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourNamePage
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import views.html.WhatIsYourNameView
 
 import scala.concurrent.Future
@@ -47,13 +44,12 @@ class WhatIsYourNameControllerSpec extends ControllerSpecBase {
 
   "WhatIsYourName Controller" - {
 
-
     "must return OK and the correct view for a GET" in {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
       implicit val request = FakeRequest(GET, loadRoute)
-      val result = route(app, request).value
+      val result           = route(app, request).value
 
       val view = app.injector.instanceOf[WhatIsYourNameView]
       status(result) mustEqual OK
@@ -96,7 +92,7 @@ class WhatIsYourNameControllerSpec extends ControllerSpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm = form.bind(Map("value" -> "invalid value"))
 
       val view = app.injector.instanceOf[WhatIsYourNameView]
