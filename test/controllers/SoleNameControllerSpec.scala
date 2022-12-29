@@ -42,64 +42,66 @@ class SoleNameControllerSpec extends ControllerSpecBase {
     "firstName" -> firstName,
     "lastName"  -> lastName
   )
+  "SoleName Controller" - {
 
-  "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET" in {
 
-    retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
 
-    implicit val request = FakeRequest(GET, loadRoute)
-    val result           = route(app, request).value
+      implicit val request = FakeRequest(GET, loadRoute)
+      val result           = route(app, request).value
 
-    val view = app.injector.instanceOf[SoleNameView]
-    status(result) mustEqual OK
+      val view = app.injector.instanceOf[SoleNameView]
+      status(result) mustEqual OK
 
-    contentAsString(result) mustEqual view(form, NormalMode).toString
+      contentAsString(result) mustEqual view(form, NormalMode).toString
 
-  }
+    }
 
-  "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered" in {
 
-    val userAnswers = UserAnswers(userAnswersId).set(SoleNamePage, validAnswer).success.value
-    retrieveUserAnswersData(userAnswers)
-    implicit val request = FakeRequest(GET, loadRoute)
+      val userAnswers = UserAnswers(userAnswersId).set(SoleNamePage, validAnswer).success.value
+      retrieveUserAnswersData(userAnswers)
+      implicit val request = FakeRequest(GET, loadRoute)
 
-    val view = app.injector.instanceOf[SoleNameView]
+      val view = app.injector.instanceOf[SoleNameView]
 
-    val result     = route(app, request).value
-    val filledForm = form.bind(validData)
+      val result     = route(app, request).value
+      val filledForm = form.bind(validData)
 
-    status(result) mustEqual OK
-    contentAsString(result) mustEqual view(filledForm, NormalMode).toString
-  }
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(filledForm, NormalMode).toString
+    }
 
-  "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted" in {
 
-    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-    retrieveUserAnswersData(emptyUserAnswers)
-    val request =
-      FakeRequest(POST, submitRoute)
-        .withFormUrlEncodedBody(("firstName", firstName), ("lastName", lastName))
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request =
+        FakeRequest(POST, submitRoute)
+          .withFormUrlEncodedBody(("firstName", firstName), ("lastName", lastName))
 
-    val result = route(app, request).value
+      val result = route(app, request).value
 
-    status(result) mustEqual SEE_OTHER
+      status(result) mustEqual SEE_OTHER
 
-    redirectLocation(result).value mustEqual onwardRoute.url
-  }
+      redirectLocation(result).value mustEqual onwardRoute.url
+    }
 
-  "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request and errors when invalid data is submitted" in {
 
-    retrieveUserAnswersData(emptyUserAnswers)
-    val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-    val boundForm = form.bind(Map("value" -> "invalid value"))
+      retrieveUserAnswersData(emptyUserAnswers)
+      val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm = form.bind(Map("value" -> "invalid value"))
 
-    val view = app.injector.instanceOf[SoleNameView]
+      val view = app.injector.instanceOf[SoleNameView]
 
-    val result = route(app, request).value
+      val result = route(app, request).value
 
-    status(result) mustEqual BAD_REQUEST
+      status(result) mustEqual BAD_REQUEST
 
-    contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages).toString
+      contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages).toString
+    }
   }
 }
