@@ -31,6 +31,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.WhatIsYourNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,39 +43,32 @@ class WhatIsYourNameController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: WhatIsYourNameFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: WhatIsYourNameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport{
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Name])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.WhatIsYourNameController.onSubmit(mode).url
-    )
-    renderer.render("whatIsYourName.njk", data)
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(WhatIsYourNamePage) match {
+        case None => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
   }
-
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        render(mode, request.userAnswers.get(WhatIsYourNamePage).fold(form)(form.fill)).map(Ok(_))
-    }
-
   def onSubmit(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNamePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
+                _ <- sessionRepository.set(updatedAnswers)
               } yield Redirect(navigator.nextPage(WhatIsYourNamePage, mode, updatedAnswers))
           )
     }
