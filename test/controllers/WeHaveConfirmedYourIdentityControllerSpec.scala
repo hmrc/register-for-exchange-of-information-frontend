@@ -27,10 +27,11 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.domain.Nino
 import views.html.ThereIsAProblemView
+import views.html.helper.form
+import views.html.WeHaveConfirmedYourIdentityView
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -85,15 +86,12 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       retrieveUserAnswersData(validUserAnswers)
       val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "weHaveConfirmedYourIdentity.njk"
+      contentAsString(result) mustEqual view(form, NormalMode).toString
     }
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
