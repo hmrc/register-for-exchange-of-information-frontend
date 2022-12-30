@@ -18,14 +18,11 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{AddressLookup, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{WhatIsTradingNamePage, WhatIsYourPostcodePage}
-import play.api.libs.json.{JsObject, Json}
+import pages.WhatIsYourPostcodePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import views.html.{WhatIsTradingNameView, WhatIsYourPostCodeView}
+import views.html.WhatIsYourPostCodeView
 
 import scala.concurrent.Future
 
