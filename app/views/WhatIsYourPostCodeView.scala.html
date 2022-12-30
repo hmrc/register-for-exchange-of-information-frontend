@@ -21,14 +21,15 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    link: components.Link,
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("whatIsYourNationalInsuranceNumber.title"))) {
+@layout(pageTitle = title(form, messages("whatIsYourPostcode.title"))) {
 
-    @formHelper(action = routes.WhatIsYourNationalInsuranceNumberController.onSubmit(mode)) {
+    @formHelper(action = routes.WhatIsYourPostcodeController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -36,15 +37,16 @@
 
         @govukInput(
             InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("whatIsYourNationalInsuranceNumber.heading")).asPageHeading()
+                field = form("postCode"),
+                label = LabelViewModel(messages("whatIsYourPostcode.heading")).asPageHeading()
             )
             .withWidth(Fixed10)
-            .withHint(HintViewModel(Text(messages("whatIsYourNationalInsuranceNumber.hint"))))
+            .withAutocomplete("postal-code")
+            .withHint(HintViewModel(Text(messages("whatIsYourPostcode.hint"))))
         )
 
-        @govukButton(
-            ButtonViewModel(messages("whatIsYourPostcode.button")).withAttribute("id", "submit")
-        )
+     <p class="govuk-body">@link(routes.AddressUKController.onPageLoad(mode).url, "whatIsYourPostcode.manualLink" , id = Some("manualAddressLink"), openInNewWindow = true)</p>
+
+     <div class="govuk-!-padding-top-4">@govukButton(ButtonViewModel(messages("whatIsYourPostcode.button")).withAttribute("id", "submit"))</div>
     }
 }

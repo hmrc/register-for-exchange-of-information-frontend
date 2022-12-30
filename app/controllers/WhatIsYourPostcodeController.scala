@@ -22,7 +22,7 @@ import forms.WhatIsYourPostcodeFormProvider
 import models.Mode
 import models.requests.DataRequest
 import navigation.MDRNavigator
-import pages.{AddressLookupPage, WhatIsYourPostcodePage}
+import pages.{AddressLookupPage, WhatIsYourDateOfBirthPage, WhatIsYourPostcodePage}
 import play.api.data.{Form, FormError}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Json
@@ -32,6 +32,7 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.WhatIsYourPostCodeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,28 +45,30 @@ class WhatIsYourPostcodeController @Inject() (
   formProvider: WhatIsYourPostcodeFormProvider,
   val controllerComponents: MessagesControllerComponents,
   addressLookupConnector: AddressLookupConnector,
-  renderer: Renderer
+  view: WhatIsYourPostCodeView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"             -> form,
-      "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode).url,
-      "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode).url
-    )
-    renderer.render("whatIsYourPostcode.njk", data)
-  }
+//  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
+//    val data = Json.obj(
+//      "form"             -> form,
+//      "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode).url,
+//      "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode).url
+//    )
+//    renderer.render("whatIsYourPostcode.njk", data)
+//  }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        render(mode, request.userAnswers.get(WhatIsYourPostcodePage).fold(form)(form.fill)).map(Ok(_))
-    }
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(WhatIsYourPostcodePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Ok(view(preparedForm, mode))
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData().async {
@@ -74,12 +77,12 @@ class WhatIsYourPostcodeController @Inject() (
 
         formReturned
           .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             postCode =>
               addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
                 case Nil =>
                   val formError = formReturned.withError(FormError("postCode", List("whatIsYourPostcode.error.notFound")))
-                  render(mode, formError).map(BadRequest(_))
+                  Future.successful(BadRequest(view(formError, mode)))
 
                 case addresses =>
                   for {
