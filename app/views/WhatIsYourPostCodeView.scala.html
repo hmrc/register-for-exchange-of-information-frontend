@@ -47,6 +47,9 @@
 
      <p class="govuk-body">@link(routes.AddressUKController.onPageLoad(mode).url, "whatIsYourPostcode.manualLink" , id = Some("manualAddressLink"))</p>
 
-     <div class="govuk-!-padding-top-4">@govukButton(ButtonViewModel(messages("whatIsYourPostcode.button")).withAttribute("id", "submit"))</div>
+     @govukButton(
+      ButtonViewModel(messages("whatIsYourPostcode.button"))
+      .withAttribute("id", "submit")
+     )
     }
 }
