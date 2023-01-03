@@ -20,18 +20,13 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import forms.WhatIsYourPostcodeFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.MDRNavigator
-import pages.{AddressLookupPage, WhatIsYourDateOfBirthPage, WhatIsYourPostcodePage}
-import play.api.data.{Form, FormError}
+import pages.{AddressLookupPage, WhatIsYourPostcodePage}
+import play.api.data.FormError
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import views.html.WhatIsYourPostCodeView
 
 import javax.inject.Inject
@@ -51,15 +46,6 @@ class WhatIsYourPostcodeController @Inject() (
     with I18nSupport {
 
   private val form = formProvider()
-
-//  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-//    val data = Json.obj(
-//      "form"             -> form,
-//      "manualAddressUrl" -> routes.AddressUKController.onPageLoad(mode).url,
-//      "action"           -> routes.WhatIsYourPostcodeController.onSubmit(mode).url
-//    )
-//    renderer.render("whatIsYourPostcode.njk", data)
-//  }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
