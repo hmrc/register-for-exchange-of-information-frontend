@@ -29,7 +29,9 @@
 
     <p class="govuk-body">@messages("yourContactDetails.p2")</p>
 
-    @govukButton(
-        ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit").asLink(continue)
-    )
+    <div class="govuk-!-padding-top-4">
+        @govukButton(
+            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit").asLink(continue)
+        )
+    </div>
 }
