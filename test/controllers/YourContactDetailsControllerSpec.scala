@@ -16,37 +16,37 @@
 
 package controllers
 
-import base.{ControllerMockFixtures, SpecBase}
+import base.{ControllerMockFixtures, ControllerSpecBase, SpecBase}
 import models.NormalMode
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-
-import scala.concurrent.Future
+import views.html.YourContactDetailsView
 
 class YourContactDetailsControllerSpec extends SpecBase with ControllerMockFixtures {
 
+  lazy val loadRoute   = routes.YourContactDetailsController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.YourContactDetailsController.onPageLoad(NormalMode).url
+
   "YourContactDetails Controller" - {
 
-    "return OK and the correct view for a GET" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+    "must return OK and the correct view for a GET" in {
 
       retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.YourContactDetailsController.onPageLoad(NormalMode).url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
+        val request = FakeRequest(GET, routes.YourContactDetailsController.onPageLoad(NormalMode).url)
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
+        val result = route(application, request).value
 
-      templateCaptor.getValue mustEqual "yourContactDetails.njk"
+        val view = application.injector.instanceOf[YourContactDetailsView]
+
+        val continueUrl = routes.ContactNameController.onPageLoad(NormalMode).url
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(continueUrl)(request, messages(application)).toString
+      }
     }
   }
 }
