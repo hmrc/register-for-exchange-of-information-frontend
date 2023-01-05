@@ -1,5 +1,5 @@
 @*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@
 
         @govukInput(
             InputViewModel(
-                field = form("businessName"),
+                field = form("value"),
                 label = LabelViewModel(messages("businessName.heading.llp")).asPageHeading()
             )
-            .withId("businessName")
+            .withId("value")
             .withWidth(ThreeQuarters)
             .withHint(HintViewModel(Text(messages("businessName.hint.llp"))))
         )
