@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       val result  = route(app, request).value
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(form, NormalMode)(request, messages).toString()
+      contentAsString(result) mustEqual view(onwardRoute.url, NormalMode)(request, messages).toString()
 
     }
 
@@ -99,8 +99,6 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)

@@ -18,16 +18,14 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{Mode, NormalMode}
+import models.Mode
 import models.error.ApiError.NotFoundError
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
