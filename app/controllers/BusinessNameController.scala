@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BusinessNameView
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -52,7 +51,7 @@ class BusinessNameController @Inject() (
     }
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData() {
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
       implicit request =>
         selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
           case Some(businessTypeText) =>
@@ -61,13 +60,13 @@ class BusinessNameController @Inject() (
               case None        => form
               case Some(value) => form.fill(value)
             }
-            Ok(view(preparedForm, mode))
-          case _ => Redirect(routes.ThereIsAProblemController.onPageLoad())
+            Future.successful(Ok(view(preparedForm, mode)))
+          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
+    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
       implicit request =>
         selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
           case Some(businessTypeText) =>
@@ -81,7 +80,7 @@ class BusinessNameController @Inject() (
                     _              <- sessionRepository.set(updatedAnswers)
                   } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
               )
-          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
+          case None => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
 
     }
