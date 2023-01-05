@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,8 +65,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
                   subscriptionService.getDisplaySubscriptionId(info.safeId) flatMap {
                     case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId)
                     case _ =>
-                      "action" -> navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
-                      Future.successful(Redirect(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode)))
+                      val action = navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
+                      Future.successful(Ok(view(action, mode)))
                   }
                 case Left(NotFoundError) =>
                   Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))

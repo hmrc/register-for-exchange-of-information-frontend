@@ -21,16 +21,16 @@ import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailable
 import models.matching.IndRegistrationInfo
 import models.{Name, NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, contains}
 import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.domain.Nino
 import views.html.ThereIsAProblemView
-import views.html.helper.form
 import views.html.WeHaveConfirmedYourIdentityView
 
 import java.time.LocalDate
@@ -80,18 +80,16 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
-      val request        = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode).url)
-
-      val result = route(app, request).value
+      val request = FakeRequest(GET, routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode).url)
+      val view    = app.injector.instanceOf[WeHaveConfirmedYourIdentityView]
+      val result  = route(app, request).value
 
       status(result) mustEqual OK
+      contentAsString(result) mustEqual view(form, NormalMode)(request, messages).toString()
 
-      contentAsString(result) mustEqual view(form, NormalMode).toString
     }
 
     "must redirect to 'confirmation' page when there is an existing subscription" in {
