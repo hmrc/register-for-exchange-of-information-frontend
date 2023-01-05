@@ -57,9 +57,9 @@ class BusinessNameController @Inject() (
         selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
           case Some(businessTypeText) =>
             val form = formProvider(businessTypeText)
-            val preparedForm = request.userAnswers.get(BusinessTypePage) match {
+            val preparedForm = selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
               case None        => form
-              case Some(value) => form.fill(value.toString)
+              case Some(value) => form.fill(value)
             }
             Ok(view(preparedForm, mode))
           case _ => Redirect(routes.ThereIsAProblemController.onPageLoad())
