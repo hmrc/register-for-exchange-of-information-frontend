@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
 @import viewmodels.InputWidth._
 
 @this(
@@ -24,12 +25,11 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode , businessTypeText: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("businessName.title.llp"))) {
+@layout(pageTitle = title(form, messages("businessName.title" , businessTypeText))) {
 
     @formHelper(action = routes.BusinessNameController.onSubmit(mode)) {
-
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
@@ -37,11 +37,11 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("businessName.heading.llp")).asPageHeading()
+                label = LabelViewModel(messages(s"businessName.heading.$businessTypeText")).asPageHeading()
             )
             .withId("value")
             .withWidth(ThreeQuarters)
-            .withHint(HintViewModel(Text(messages("businessName.hint.llp"))))
+            .withHint(HintViewModel(Text(messages(s"businessName.hint.$businessTypeText"))))
         )
 
 

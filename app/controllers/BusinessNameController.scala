@@ -58,9 +58,9 @@ class BusinessNameController @Inject() (
             val form = formProvider(businessTypeText)
             val preparedForm = request.userAnswers.get(BusinessNamePage) match {
               case None        => form
-              case Some(value) => form.fill(value.toString)
+              case Some(value) => form.fill(value)
             }
-            Future.successful(Ok(view(preparedForm, mode)))
+            Future.successful(Ok(view(preparedForm, mode, businessTypeText)))
           case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
         }
     }
@@ -73,7 +73,7 @@ class BusinessNameController @Inject() (
             formProvider(businessTypeText)
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessTypeText))),
                 value =>
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))

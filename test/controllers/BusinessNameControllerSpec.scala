@@ -53,7 +53,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[BusinessNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "llp").toString
       }
     }
 
@@ -102,7 +102,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
         val result     = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(filledForm, NormalMode).toString
+        contentAsString(result) mustEqual view(filledForm, NormalMode, "llp").toString
 
       }
     }
@@ -121,7 +121,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages).toString()
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "llp")(request, messages).toString()
       }
     }
 
