@@ -19,19 +19,14 @@ package controllers
 import controllers.actions._
 import forms.WhatIsYourNationalInsuranceNumberFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages.WhatIsYourNationalInsuranceNumberPage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.WhatIsYourNationalInsuranceNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,46 +38,34 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: WhatIsYourNationalInsuranceNumberFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: WhatIsYourNationalInsuranceNumberView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String])(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "action" -> routes.WhatIsYourNationalInsuranceNumberController.onSubmit(mode).url
-    )
-    renderer.render("whatIsYourNationalInsuranceNumber.njk", data)
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage) match {
+        case None       => form
+        case Some(nino) => form.fill(nino.nino)
+      }
+
+      Ok(view(preparedForm, mode))
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        render(mode,
-               request.userAnswers
-                 .get(WhatIsYourNationalInsuranceNumberPage)
-                 .fold(form)(
-                   nino => form.fill(nino.nino)
-                 )
-        ).map(Ok(_))
-    }
-
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, formWithErrors).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, updatedAnswers))
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, updatedAnswers))
+        )
+  }
 }

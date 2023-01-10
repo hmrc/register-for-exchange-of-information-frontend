@@ -18,13 +18,12 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{SndContactNamePage, SndContactPhonePage}
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import views.html.SndContactPhoneView
 
 import scala.concurrent.Future
 
@@ -32,65 +31,48 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
 
   lazy val loadRoute   = routes.SndContactPhoneController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.SndContactPhoneController.onSubmit(NormalMode).url
+  val contactName      = "SecondContactName"
+  val userAnswers      = UserAnswers(userAnswersId).set(SndContactNamePage, contactName).success.value
 
   private def form = new forms.SndContactPhoneFormProvider().apply()
-
-  val userAnswers = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value
 
   "SndContactPhone Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      implicit val request = FakeRequest(GET, loadRoute)
+      val result           = route(app, request).value
 
+      val view = app.injector.instanceOf[SndContactPhoneView]
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      contentAsString(result) mustEqual view(form, contactName, NormalMode).toString
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "sndContactPhone.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      val userAnswers2 = UserAnswers(userAnswersId)
+        .set(SndContactNamePage, contactName)
+        .success
+        .value
+        .set(SndContactPhonePage, "01234 5678")
+        .success
+        .value
 
-      val userAnswers2 = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value.set(SndContactPhonePage, "01234 5678").success.value
       retrieveUserAnswersData(userAnswers2)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+
+      implicit val request = FakeRequest(GET, loadRoute)
 
       val result = route(app, request).value
+      val view   = app.injector.instanceOf[SndContactPhoneView]
 
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      contentAsString(result) mustEqual view(form.fill("01234 5678"), contactName, NormalMode).toString
 
-      val filledForm = form.bind(Map("value" -> "01234 5678"))
-
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "name"   -> "Name",
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "sndContactPhone.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -110,28 +92,17 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
-      val boundForm      = form.bind(Map("value" -> ""))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      implicit val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      val boundForm        = form.bind(Map("value" -> ""))
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+      val view = app.injector.instanceOf[SndContactPhoneView]
 
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "sndContactPhone.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(boundForm, contactName, NormalMode).toString()
     }
 
     "must redirect to 'SomeInformationIsMissing' when data is missing" in {

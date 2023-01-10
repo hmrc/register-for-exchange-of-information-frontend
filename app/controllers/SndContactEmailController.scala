@@ -18,19 +18,15 @@ package controllers
 
 import controllers.actions._
 import forms.SndContactEmailFormProvider
-import models.Mode
-import models.requests.DataRequest
+import models.{CheckMode, Mode}
 import navigation.ContactDetailsNavigator
-import pages.{SndContactEmailPage, SndContactNamePage}
-import play.api.data.Form
+import pages.SndContactEmailPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import utils.ContactHelper
+import views.html.sndContactEmailView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,41 +37,38 @@ class SndContactEmailController @Inject() (
   navigator: ContactDetailsNavigator,
   standardActionSets: StandardActionSets,
   formProvider: SndContactEmailFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: sndContactEmailView,
+  val controllerComponents: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with ContactHelper {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[String], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "name"   -> name,
-      "action" -> routes.SndContactEmailController.onSubmit(mode).url
-    )
-    renderer.render("sndContactEmail.njk", data)
-  }
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
+        if (mode == CheckMode) {
+          request.userAnswers.remove(SndContactEmailPage)
+        }
+
         val preparedForm = request.userAnswers.get(SndContactEmailPage) match {
           case None        => form
           case Some(value) => form.fill(value)
         }
-        render(mode, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
+
+        Ok(view(preparedForm, mode, getSecondContactName(request.userAnswers)))
+
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => render(mode, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getSecondContactName(request.userAnswers)))),
             value =>
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactEmailPage, value))

@@ -17,13 +17,9 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-
-import scala.concurrent.Future
+import views.html.UnauthorisedAssistantView
 
 class UnauthorisedAssistantControllerSpec extends SpecBase with ControllerMockFixtures {
 
@@ -31,21 +27,16 @@ class UnauthorisedAssistantControllerSpec extends SpecBase with ControllerMockFi
 
     "return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      retrieveUserAnswersData(emptyUserAnswers)
-      retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, routes.UnauthorisedAssistantController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      implicit val request = FakeRequest(GET, routes.UnauthorisedAssistantController.onPageLoad().url)
 
       val result = route(app, request).value
 
+      val view = app.injector.instanceOf[UnauthorisedAssistantView]
       status(result) mustEqual OK
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "unauthorisedAssistant.njk"
+      contentAsString(result) mustEqual view().toString
     }
   }
 }

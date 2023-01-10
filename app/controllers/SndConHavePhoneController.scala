@@ -31,6 +31,8 @@ import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
+import utils.ContactHelper
+import views.html.SndConHavePhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,46 +44,35 @@ class SndConHavePhoneController @Inject() (
   standardActionSets: StandardActionSets,
   formProvider: SndConHavePhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
+  view: SndConHavePhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport {
+    with ContactHelper {
 
   private val form = formProvider()
 
-  private def render(mode: Mode, form: Form[Boolean], name: String)(implicit request: DataRequest[AnyContent]): Future[Html] = {
-    val data = Json.obj(
-      "form"   -> form,
-      "name"   -> name,
-      "action" -> routes.SndConHavePhoneController.onSubmit(mode).url,
-      "radios" -> Radios.yesNo(form("value"))
-    )
-    renderer.render("sndConHavePhone.njk", data)
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(SndConHavePhonePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+
+      Ok(view(preparedForm, getSecondContactName(request.userAnswers), mode))
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
-      implicit request =>
-        val preparedForm = request.userAnswers.get(SndConHavePhonePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-        render(mode, preparedForm, request.userAnswers.get(SndContactNamePage).get).map(Ok(_))
-    }
-
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => render(mode, formWithErrors, request.userAnswers.get(SndContactNamePage).get).map(BadRequest(_)),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SndConHavePhonePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SndConHavePhonePage, mode, updatedAnswers))
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, getSecondContactName(request.userAnswers), mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SndConHavePhonePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(SndConHavePhonePage, mode, updatedAnswers))
+        )
+  }
 }

@@ -17,6 +17,9 @@
 package models
 
 import play.api.data.Form
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 import uk.gov.hmrc.viewmodels._
 
 sealed trait WhatAreYouRegisteringAs
@@ -40,6 +43,15 @@ object WhatAreYouRegisteringAs extends Enumerable.Implicits {
     )
 
     Radios(field, items)
+  }
+
+  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
+    case (value, index) =>
+      RadioItem(
+        content = Text(messages(s"whatAreYouRegisteringAs.${value.toString}")),
+        value = Some(value.toString),
+        id = if (index == 0) Some(s"value") else Some(s"value_$index")
+      )
   }
 
   implicit val enumerable: Enumerable[WhatAreYouRegisteringAs] =
