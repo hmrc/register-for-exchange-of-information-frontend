@@ -25,13 +25,11 @@ import models.requests.DataRequest
 import navigation.MDRNavigator
 import pages._
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ThereIsAProblemView
+import views.html.{ThereIsAProblemView, WeHaveConfirmedYourIdentityView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +44,7 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
-  val renderer: Renderer,
+  view: WeHaveConfirmedYourIdentityView,
   errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
@@ -65,10 +63,8 @@ class WeHaveConfirmedYourIdentityController @Inject() (
                   subscriptionService.getDisplaySubscriptionId(info.safeId) flatMap {
                     case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId)
                     case _ =>
-                      val json = Json.obj(
-                        "action" -> navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
-                      )
-                      renderer.render("weHaveConfirmedYourIdentity.njk", json).map(Ok(_))
+                      val action = navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
+                      Future.successful(Ok(view(action, mode)))
                   }
                 case Left(NotFoundError) =>
                   Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))

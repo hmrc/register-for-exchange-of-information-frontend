@@ -18,13 +18,11 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{AddressLookup, NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourPostcodePage
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
+import views.html.WhatIsYourPostCodeView
 
 import scala.concurrent.Future
 
@@ -39,57 +37,37 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
 
-      val result = route(app, request).value
+      val application = guiceApplicationBuilder().build()
 
-      status(result) mustEqual OK
+      running(application) {
 
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
+        implicit val request = FakeRequest(GET, loadRoute)
 
-      val expectedJson = Json.obj(
-        "form"   -> form,
-        "action" -> submitRoute
-      )
+        val result = route(app, request).value
 
-      templateCaptor.getValue mustEqual "whatIsYourPostcode.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+        val view = application.injector.instanceOf[WhatIsYourPostCodeView]
 
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode).toString
+
+      }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourPostcodePage, "ZZ1 1ZZ").success.value
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, loadRoute)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      implicit val request = FakeRequest(GET, loadRoute)
 
-      val result = route(app, request).value
+      val view = app.injector.instanceOf[WhatIsYourPostCodeView]
 
-      status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
+      val result     = route(app, request).value
       val filledForm = form.bind(Map("postCode" -> "ZZ1 1ZZ"))
 
-      val expectedJson = Json.obj(
-        "form"   -> filledForm,
-        "action" -> submitRoute
-      )
-
-      templateCaptor.getValue mustEqual "whatIsYourPostcode.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
-
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(filledForm, NormalMode).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -119,28 +97,16 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
-      val request        = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
-      val boundForm      = form.bind(Map("value" -> "invalid value"))
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
-      val jsonCaptor     = ArgumentCaptor.forClass(classOf[JsObject])
+      implicit val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      val boundForm        = form.bind(Map("value" -> "invalid value"))
+
+      val view = app.injector.instanceOf[WhatIsYourPostCodeView]
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), jsonCaptor.capture())(any())
-
-      val expectedJson = Json.obj(
-        "form"   -> boundForm,
-        "action" -> loadRoute
-      )
-
-      templateCaptor.getValue mustEqual "whatIsYourPostcode.njk"
-      jsonCaptor.getValue must containJson(expectedJson)
+      contentAsString(result) mustEqual view(boundForm, NormalMode).toString
 
     }
   }

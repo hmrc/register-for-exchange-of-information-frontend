@@ -18,14 +18,11 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import pages.{SndContactNamePage, WhatIsTradingNamePage}
-import play.api.libs.json.{JsObject, Json}
+import pages.WhatIsTradingNamePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import views.html.{SndContactNameView, WhatIsTradingNameView}
+import views.html.WhatIsTradingNameView
 
 import scala.concurrent.Future
 

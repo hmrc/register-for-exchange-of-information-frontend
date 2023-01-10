@@ -18,33 +18,24 @@ package controllers
 
 import controllers.actions._
 import models.Mode
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.YourContactDetailsView
 
 import javax.inject.Inject
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
-import scala.concurrent.ExecutionContext
 
 class YourContactDetailsController @Inject() (
   override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
   standardActionSets: StandardActionSets,
-  requireData: DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  renderer: Renderer
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+  view: YourContactDetailsView
+) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      val data = Json.obj(
-        "continue" -> routes.ContactNameController.onPageLoad(mode).url
-      )
-      renderer.render("yourContactDetails.njk", data).map(Ok(_))
+      val continueUrl = routes.ContactNameController.onPageLoad(mode).url
+      Ok(view(continueUrl))
   }
 }
