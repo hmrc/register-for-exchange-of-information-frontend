@@ -127,7 +127,7 @@ isContactTelephone.title.business = Can we contact {0} by telephone?
 isContactTelephone.heading.business = Can we contact {0} by telephone?
 isContactTelephone.title.individual = Can we contact you by telephone?
 isContactTelephone.heading.individual = Can we contact you by telephone?
-isContactTelephone.hint = We will use this to keep in touch and if we have any questions about your reports.
+isContactTelephone.hint = We will call if we have any questions about your reports.
 isContactTelephone.error.required.individual = Select yes if we can contact you by telephone
 isContactTelephone.error.required.business = Select yes if they can be contacted by telephone
 
@@ -170,7 +170,7 @@ sndContactEmail.error.invalid = Enter an email address in the correct format, li
 
 sndConHavePhone.title = Can we contact {0} by telephone?
 sndConHavePhone.heading = Can we contact {0} by telephone?
-sndConHavePhone.hint = We will use this to keep in touch and if we have any questions about your reports.
+sndConHavePhone.hint = We will call if we have any questions about your reports.
 sndConHavePhone.error.required = Select yes if they can be contacted by telephone
 
 sndContactPhone.title = What is their telephone number
