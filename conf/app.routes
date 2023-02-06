@@ -188,6 +188,8 @@ GET        /problem/no-agent-service-available           controllers.Unauthorise
 
 GET        /problem/sign-in-problem                      controllers.UnauthorisedAssistantController.onPageLoad()
 
+GET        /problem/information-sent                     controllers.InformationSentController.onPageLoad()
+
 GET        /register/business-not-identified                    controllers.BusinessNotIdentifiedController.onPageLoad()
 
 GET        /register/confirm-registration           controllers.RegistrationConfirmationController.onPageLoad()
@@ -211,4 +213,3 @@ GET        /register/individual-phone                        controllers.Individ
 POST       /register/individual-phone                        controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-individual-phone                  controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-individual-phone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)
-

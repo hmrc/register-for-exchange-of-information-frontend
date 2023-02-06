@@ -50,7 +50,7 @@ class RegistrationConfirmationController @Inject() (
         case Some(id) =>
           emailService.sendAnLogEmail(request.userAnswers, id) flatMap {
             _ =>
-              sessionRepository.clear(request.userId) map {
+              sessionRepository.reset(request.userId) map {
                 _ =>
                   Ok(view(id.value))
               }
