@@ -29,7 +29,7 @@ class CheckForSubmissionActionImpl @Inject() (implicit val executionContext: Exe
 
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     if (request.userAnswers.data == Json.obj()) {
-      Future.successful(Left(Redirect(routes.InformationSentController.onPageLoad))) //this will be the route for the new controller
+      Future.successful(Left(Redirect(routes.InformationSentController.onPageLoad())))
     } else {
       Future.successful(Right(request))
     }
