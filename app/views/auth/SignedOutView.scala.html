@@ -33,7 +33,7 @@
 
     <h1 class="govuk-heading-l">@messages("signedOut.heading")</h1>
 
-    <p class="govuk-body">{{ messages("signedOut.guidance") }}</p>
+    <p class="govuk-body">@messages("signedOut.guidance")</p>
 
     @govukButton(
         ButtonViewModel(messages("site.signIn")).withAttribute("id" -> "submit")

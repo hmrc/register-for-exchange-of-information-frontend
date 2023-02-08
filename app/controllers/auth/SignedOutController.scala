@@ -31,6 +31,6 @@ class SignedOutController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = Action {
     implicit request =>
-      Ok(view()).withNewSession
+      Ok(view())
   }
 }
