@@ -26,8 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.ApplicationException
 import views.html.{BadRequestView, PageNotFoundView, ThereIsAProblemView}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
+import scala.concurrent.Future
 
 @Singleton
 class ErrorHandler @Inject() (
@@ -35,8 +34,7 @@ class ErrorHandler @Inject() (
   thereIsAProblemView: ThereIsAProblemView,
   badRequestView: BadRequestView,
   pageNotFoundView: PageNotFoundView
-)(implicit ec: ExecutionContext)
-    extends HttpErrorHandler
+) extends HttpErrorHandler
     with I18nSupport
     with Logging {
 

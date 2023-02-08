@@ -16,21 +16,18 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SessionExpiredView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SessionExpiredController @Inject() (
-  config: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   view: SessionExpiredView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+) extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = Action.async {

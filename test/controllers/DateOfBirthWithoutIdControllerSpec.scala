@@ -23,7 +23,6 @@ import pages.DateOfBirthWithoutIdPage
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.DateInput
 import views.html.DateOfBirthView
 
 import java.time.{LocalDate, ZoneOffset}
@@ -81,8 +80,6 @@ class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
           "value.year"  -> validAnswer.getYear.toString
         )
       )
-
-      val viewModel = DateInput.localDate(filledForm("value"))
 
       val application = guiceApplicationBuilder().build()
 

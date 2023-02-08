@@ -14,20 +14,30 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+
 @this(
-        layout: templates.Layout,
-        govukButton: GovukButton
+    layout: templates.Layout,
+    govukButton: GovukButton,
+    appConfig: FrontendAppConfig
 )
 
+@()(implicit request: Request[_], messages: Messages)
 
-@(action: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@layout(
+    pageTitle    = titleNoForm(messages("signedOut.title")),
+    showBackLink = false,
+    timeout      = false,
+    showSignOut  = false
+) {
 
-@layout(pageTitle = titleNoForm(messages("weHaveConfirmedYourIdentity.title"))) {
+    <h1 class="govuk-heading-l">@messages("signedOut.heading")</h1>
 
-    <h1 class="govuk-heading-l">@messages("weHaveConfirmedYourIdentity.heading")</h1>
+    <p class="govuk-body">{{ messages("signedOut.guidance") }}</p>
 
     @govukButton(
-        ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit").asLink(action)
+        ButtonViewModel(messages("site.signIn")).withAttribute("id" -> "submit")
+                .asLink(appConfig.loginContinueUrl)
     )
 
 }

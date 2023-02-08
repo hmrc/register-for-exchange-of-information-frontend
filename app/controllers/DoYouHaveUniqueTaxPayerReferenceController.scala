@@ -26,7 +26,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels._
 import views.html.DoYouHaveUTRView
 
 import javax.inject.Inject
@@ -43,8 +42,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   view: DoYouHaveUTRView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
   private val form = formProvider()
 

@@ -32,7 +32,6 @@ import play.api.mvc._
 import repositories.SessionRepository
 import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import views.html.{IsThisYourBusinessView, ThereIsAProblemView}
 
 import javax.inject.Inject
@@ -53,7 +52,6 @@ class IsThisYourBusinessController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
     with Logging {
 
   private val form = formProvider()

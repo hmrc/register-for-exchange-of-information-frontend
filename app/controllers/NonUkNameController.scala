@@ -18,19 +18,13 @@ package controllers
 
 import controllers.actions._
 import forms.NonUkNameFormProvider
-import models.requests.DataRequest
-import models.{Mode, NonUkName}
+import models.Mode
 import navigation.MDRNavigator
 import pages.NonUkNamePage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import views.html.NonUkNameView
 
 import javax.inject.Inject

@@ -22,12 +22,11 @@ import matchers.JsonMatchers
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import java.net.URLEncoder
 import scala.concurrent.Future
 
-class AuthControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class AuthControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
   "signOut" - {
 

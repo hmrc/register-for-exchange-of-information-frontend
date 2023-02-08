@@ -19,17 +19,12 @@ package controllers
 import controllers.actions._
 import forms.IsContactTelephoneFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.ContactDetailsNavigator
-import pages.{ContactNamePage, IsContactTelephonePage}
-import play.api.data.Form
+import pages.IsContactTelephonePage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.{NunjucksSupport, Radios}
 import utils.{ContactHelper, UserAnswersHelper}
 import views.html.IsContactTelephoneView
 

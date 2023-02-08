@@ -20,10 +20,9 @@ import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import views.html.SessionExpiredView
 
-class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class SessionExpiredControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
   "Session expired Controller" - {
 

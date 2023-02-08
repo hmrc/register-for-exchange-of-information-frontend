@@ -31,7 +31,6 @@ import services.{AuditService, BusinessMatchingWithoutIdService, SubscriptionSer
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.{CountryListFactory, UserAnswersHelper}
 import viewmodels.{CheckYourAnswersViewModel, Section}
 import views.html.{CheckYourAnswersView, ThereIsAProblemView}
@@ -53,7 +52,6 @@ class CheckYourAnswersController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
     with Logging
     with UserAnswersHelper {
 

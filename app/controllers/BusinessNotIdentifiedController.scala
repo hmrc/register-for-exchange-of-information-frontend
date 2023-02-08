@@ -19,17 +19,13 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import models.BusinessType.{LimitedCompany, UnincorporatedAssociation}
-import models.NormalMode
 import pages.BusinessTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import renderer.Renderer
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BusinessNotIdentifiedView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class BusinessNotIdentifiedController @Inject() (
   override val messagesApi: MessagesApi,
@@ -37,8 +33,7 @@ class BusinessNotIdentifiedController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   appConfig: FrontendAppConfig,
   view: BusinessNotIdentifiedView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
+) extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {

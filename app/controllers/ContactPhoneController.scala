@@ -18,14 +18,13 @@ package controllers
 
 import controllers.actions._
 import forms.ContactPhoneFormProvider
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation.ContactDetailsNavigator
-import pages.{ContactNamePage, ContactPhonePage}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import pages.ContactPhonePage
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels._
 import utils.ContactHelper
 import views.html.ContactPhoneView
 

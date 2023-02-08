@@ -19,18 +19,12 @@ package controllers
 import controllers.actions._
 import forms.WhatIsTradingNameFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.MDRNavigator
-import pages.{ContactNamePage, SoleNamePage, WhatIsTradingNamePage}
-import play.api.data.Form
+import pages.WhatIsTradingNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import views.html.WhatIsTradingNameView
 
 import javax.inject.Inject
