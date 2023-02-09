@@ -19,22 +19,14 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-import scala.concurrent.Future
-
-class IndexControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class IndexControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
   "Index Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
 
       retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)

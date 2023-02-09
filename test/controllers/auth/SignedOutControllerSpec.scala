@@ -19,37 +19,27 @@ package controllers.auth
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import models.UserAnswers
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.NunjucksSupport
+import views.html.auth.SignedOutView
 
-import scala.concurrent.Future
-
-class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
   "SignedOut Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val userAnswers = UserAnswers(userAnswersId)
 
       retrieveUserAnswersData(userAnswers)
-      val request        = FakeRequest(GET, controllers.auth.routes.SignedOutController.onPageLoad().url)
-      val templateCaptor = ArgumentCaptor.forClass(classOf[String])
+      val request = FakeRequest(GET, controllers.auth.routes.SignedOutController.onPageLoad().url)
+
+      val view = app.injector.instanceOf[SignedOutView]
 
       val result = route(app, request).value
 
       status(result) mustEqual OK
-
-      verify(mockRenderer, times(1)).render(templateCaptor.capture(), any())(any())
-
-      templateCaptor.getValue mustEqual "auth/signedOut.njk"
+      contentAsString(result) mustEqual view()(request, messages).toString
     }
   }
 }

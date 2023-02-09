@@ -123,9 +123,6 @@ class UTRControllerSpec extends ControllerSpecBase {
 
     "must redirect to 'SomeInformationIsMissing' when data is missing" in {
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
 

@@ -21,11 +21,10 @@ import matchers.JsonMatchers
 import org.mockito.ArgumentMatchers.any
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
 import scala.concurrent.Future
 
-class KeepAliveControllerSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class KeepAliveControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
   "keepAlive" - {
 

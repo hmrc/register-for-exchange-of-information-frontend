@@ -34,9 +34,6 @@ class ErrorHandlerSpec extends SpecBase with ControllerMockFixtures {
     "handle onClientError" in {
       val fakeRequest = FakeRequest("GET", "/foo/mdr/test")
 
-      when(mockRenderer.render(any(), any())(any()))
-        .thenReturn(Future.successful(Html("")))
-
       val result =
         errorHandler.onClientError(fakeRequest, BAD_REQUEST, "The message")
 

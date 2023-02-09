@@ -26,7 +26,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.CountryListFactory
 import views.html.AddressWithoutIdView
 
@@ -45,7 +44,6 @@ class IndividualAddressWithoutIdController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
-    with NunjucksSupport
     with Logging {
 
   val countriesList: Option[Seq[Country]] = countryListFactory.countryListWithoutGB

@@ -43,6 +43,6 @@
 
   <p class="govuk-body">@messages("weCouldNotConfirm.guidance")</p>
 
-  <div class="govuk-!-padding-top-4">@govukButton(ButtonViewModel(messages("weCouldNotConfirm.button")).withAttribute("id", "submit").asLink(continueUrl))</div>
+  <div class="govuk-!-padding-top-4">@govukButton(ButtonViewModel(messages("weCouldNotConfirm.button")).withAttribute("id" -> "submit").asLink(continueUrl))</div>
 
 }

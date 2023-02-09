@@ -26,7 +26,6 @@ import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import utils.DateInput
 import views.html.{ContactNameView, DateOfBirthView}
 
 import java.time.{LocalDate, ZoneOffset}
@@ -88,8 +87,6 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
           "value.year"  -> validAnswer.getYear.toString
         )
       )
-
-      val viewModel = DateInput.localDate(filledForm("value"))
 
       val application = guiceApplicationBuilder().build()
 

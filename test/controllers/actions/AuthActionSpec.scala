@@ -32,13 +32,12 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 import utils.RetrievalOps._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends SpecBase with ControllerMockFixtures with NunjucksSupport with JsonMatchers {
+class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
   type AuthAction = ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 

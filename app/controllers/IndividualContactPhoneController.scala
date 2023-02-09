@@ -19,18 +19,12 @@ package controllers
 import controllers.actions._
 import forms.IndividualContactPhoneFormProvider
 import models.Mode
-import models.requests.DataRequest
 import navigation.ContactDetailsNavigator
 import pages.IndividualContactPhonePage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.Html
-import renderer.Renderer
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import uk.gov.hmrc.viewmodels._
 import views.html.IndividualContactPhoneView
 
 import javax.inject.Inject
@@ -46,8 +40,7 @@ class IndividualContactPhoneController @Inject() (
   view: IndividualContactPhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport
-    with NunjucksSupport {
+    with I18nSupport {
 
   private val form = formProvider()
 

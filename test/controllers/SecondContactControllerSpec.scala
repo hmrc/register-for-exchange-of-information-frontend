@@ -25,7 +25,6 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.viewmodels.Radios
 import views.html.SecondContactView
 
 import scala.concurrent.Future

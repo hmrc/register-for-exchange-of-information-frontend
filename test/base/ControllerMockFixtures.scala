@@ -32,14 +32,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Call, PlayBodyParsers}
 import play.api.test.FakeRequest
 import repositories.SessionRepository
-import uk.gov.hmrc.nunjucks.NunjucksRenderer
-import uk.gov.hmrc.viewmodels.NunjucksSupport
 
-trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with NunjucksSupport with JsonMatchers {
+trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with JsonMatchers {
   self: SpecBase =>
 
   def onwardRoute: Call                                              = Call("GET", "/foo")
-  final val mockRenderer: NunjucksRenderer                           = mock[NunjucksRenderer]
   final val mockDataRetrievalAction: DataRetrievalAction             = mock[DataRetrievalAction]
   final val mockSessionRepository: SessionRepository                 = mock[SessionRepository]
   final val mockAddressLookupConnector                               = mock[AddressLookupConnector]
@@ -52,7 +49,6 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
 
   override def beforeEach: Unit = {
     Mockito.reset(
-      mockRenderer,
       mockSessionRepository,
       mockDataRetrievalAction
     )
@@ -78,7 +74,6 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(mockDataRetrievalAction),
-        bind[NunjucksRenderer].toInstance(mockRenderer),
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[MDRNavigator].toInstance(mdrFakeNavigator),
         bind[ContactDetailsNavigator].toInstance(contactDetailsFakeNavigator),

@@ -20,7 +20,7 @@ import controllers.actions._
 import forms.ContactEmailFormProvider
 import models.{CheckMode, Mode}
 import navigation.ContactDetailsNavigator
-import pages.{ContactEmailPage, SndContactEmailPage}
+import pages.ContactEmailPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository

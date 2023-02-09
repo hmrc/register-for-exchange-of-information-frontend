@@ -37,7 +37,6 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.nunjucks.NunjucksRenderer
 import views.html.ThereIsAProblemView
 
 import scala.concurrent.Future
@@ -325,8 +324,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must redirect to 'Technical difficulty' page for 'Business with Id' journey when tax enrolment fails" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
         when(mockRegistrationService.registerWithoutId()(any(), any()))
           .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
@@ -438,7 +435,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
               bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentsService),
               bind[DataRequiredAction].to[DataRequiredActionImpl],
               bind[DataRetrievalAction].toInstance(mockDataRetrievalAction),
-              bind[NunjucksRenderer].toInstance(mockRenderer),
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[MDRNavigator].toInstance(mdrFakeNavigator),
               bind[AddressLookupConnector].toInstance(mockAddressLookupConnector),
@@ -567,8 +563,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       "must go to the Journey recovery controller and the correct view for a POST - if both individual and organisation are not present" in {
 
-        when(mockRenderer.render(any(), any())(any()))
-          .thenReturn(Future.successful(Html("")))
         when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
         when(mockSessionRepository.set(any()))

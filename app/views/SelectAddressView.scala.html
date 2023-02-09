@@ -15,7 +15,6 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.viewmodels.Radios
 
 @this(
     layout: templates.Layout,
@@ -53,7 +52,7 @@
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
+            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
         )
     }
 }
