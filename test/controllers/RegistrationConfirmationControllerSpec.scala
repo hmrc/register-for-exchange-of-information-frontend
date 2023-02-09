@@ -31,7 +31,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
   "RegistrationConfirmation Controller" - {
 
     "return OK and the correct view for a GET" in {
-      when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.reset(any())).thenReturn(Future.successful(true))
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(SubscriptionIDPage, SubscriptionID("SID"))

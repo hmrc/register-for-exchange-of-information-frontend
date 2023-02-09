@@ -18,7 +18,7 @@ package controllers
 
 import cats.data.EitherT
 import cats.implicits._
-import controllers.actions.StandardActionSets
+import controllers.actions.{CheckForSubmissionAction, StandardActionSets}
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError, ServiceUnavailableError}
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
@@ -46,6 +46,7 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   countryFactory: CountryListFactory,
   controllerHelper: ControllerHelper,
+  checkForSubmission: CheckForSubmissionAction,
   registrationService: BusinessMatchingWithoutIdService,
   auditService: AuditService,
   view: CheckYourAnswersView,
@@ -57,7 +58,7 @@ class CheckYourAnswersController @Inject() (
     with Logging
     with UserAnswersHelper {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+  def onPageLoad(): Action[AnyContent] = (standardActionSets.identifiedUserWithData() andThen checkForSubmission) {
     implicit request =>
       val viewModel: Seq[Section] =
         CheckYourAnswersViewModel.buildPages(request.userAnswers, countryFactory, isRegisteringAsBusiness(request.userAnswers))
