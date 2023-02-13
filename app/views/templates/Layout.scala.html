@@ -16,19 +16,21 @@
 
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcAccessibleAutocompleteCss, HmrcAccessibleAutocompleteJavascript, HmrcStandardPage}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import views.html.helper.CSPNonce
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteCss
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteJavascript
 
 @this(
     appConfig: FrontendAppConfig,
-    hmrcLayout: HmrcLayout,
+    hmrcStandardPage: HmrcStandardPage,
     hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     betaBanner: StandardBetaBanner,
     autocompleteCss: HmrcAccessibleAutocompleteCss,
     autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
 )
+
+
 
 @(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
@@ -61,13 +63,21 @@
     </div>
 }
 
-@hmrcLayout(
-    pageTitle = Some(pageTitle),
-    additionalHeadBlock = if(timeout) Some(timeOutDialog) else None,
-    serviceUrl = Some(routes.IndexController.onPageLoad.url),
-    signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
-    phaseBanner = Some(betaBanner(appConfig.feedbackUrl)),
-    nonce = CSPNonce.get,
-    additionalScriptsBlock = Some(additionalScripts),
-    backLink = if(showBackLink) Some(BackLinkViewModel(href = "#").withCssClass("js-enabled govuk-!-display-none-print")) else None
+@hmrcStandardPage(
+    HmrcStandardPageParams(
+        serviceURLs = ServiceURLs(
+            serviceUrl = Some(routes.IndexController.onPageLoad.url),
+            signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
+        ),
+        banners = Banners(
+            phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
+        ),
+        pageTitle = Some(pageTitle),
+        cspNonce = CSPNonce.get,
+        templateOverrides = TemplateOverrides(
+            additionalHeadBlock = if(timeout) Some(timeOutDialog) else None,
+            additionalScriptsBlock = Some(additionalScripts)
+        ),
+        backLink = if(showBackLink) Some(BackLinkViewModel(href = "#").withCssClass("js-enabled govuk-!-display-none-print")) else None
+    )
 )(content)
