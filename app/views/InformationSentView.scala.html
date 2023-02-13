@@ -14,8 +14,11 @@
  * limitations under the License.
  *@
 
+@import config.FrontendAppConfig
+
 @this(
         layout: templates.Layout,
+        appConfig: FrontendAppConfig,
         link: components.Link
 )
 
@@ -27,5 +30,5 @@
 
     <p class="govuk-body">@messages("informationSent.p1")</p>
 
-    <p class="govuk-body govuk-!-padding-top-5">@link(routes.IndexController.onPageLoad.url, "site.homePageLink.text")</p>
+    <p class="govuk-body govuk-!-padding-top-5">@link(appConfig.mandatoryDisclosureRulesFrontendUrl, "site.homePageLink.text")</p>
 }
