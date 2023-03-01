@@ -24,8 +24,9 @@ import pages.{BusinessTypePage, WhatAreYouRegisteringAsPage}
 trait UserAnswersHelper {
 
   def isRegisteringAsBusiness(ua: UserAnswers): Boolean =
-    ua.get(WhatAreYouRegisteringAsPage).orElse(ua.get(BusinessTypePage)) match {
-      case Some(RegistrationTypeIndividual) | Some(Sole) => false
-      case _                                             => true
+    ua.get(WhatAreYouRegisteringAsPage) match {
+      case Some(RegistrationTypeIndividual)             => false
+      case _ if ua.get(BusinessTypePage).contains(Sole) => false
+      case _                                            => true
     }
 }
