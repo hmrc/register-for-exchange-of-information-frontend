@@ -38,7 +38,7 @@ class BusinessNotIdentifiedController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      val startUrl = routes.IndexController.onPageLoad.url
+      val startUrl = routes.IndexController.onPageLoad().url
 
       val contactLink: String = request.userAnswers.get(BusinessTypePage) match {
         case Some(LimitedCompany) | Some(UnincorporatedAssociation) => appConfig.corporationTaxEnquiriesLink

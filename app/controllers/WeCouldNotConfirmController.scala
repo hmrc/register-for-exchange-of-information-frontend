@@ -58,7 +58,7 @@ class WeCouldNotConfirmController @Inject() (
 
     }
 
-  private def cleanPages()(implicit request: DataRequest[AnyContent]): Try[Future[Boolean]] = for {
+  private def cleanPages(implicit request: DataRequest[AnyContent]): Try[Future[Boolean]] = for {
     cleaned <- (PageLists.individualWithIDPages ++ PageLists.businessWithIDPages).foldLeft(Try(request.userAnswers))(PageLists.removePage)
   } yield sessionRepository.set(cleaned)
 }
