@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers.any
 import pages.{SndContactNamePage, SndContactPhonePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import views.html.SndContactPhoneView
 
 import scala.concurrent.Future

@@ -49,7 +49,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       .overrides(bind[TaxEnrolmentsConnector].toInstance(mockTaxEnrolmentsConnector))
       .overrides(bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector))
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockTaxEnrolmentsConnector, mockEnrolmentStoreProxyConnector)
     super.beforeEach
   }

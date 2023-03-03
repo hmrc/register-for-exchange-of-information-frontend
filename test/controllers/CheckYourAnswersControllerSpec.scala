@@ -33,7 +33,6 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import repositories.SessionRepository
 import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -72,7 +71,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentsService)
       )
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockSubscriptionService, mockRegistrationService, mockTaxEnrolmentsService)
     super.beforeEach
   }

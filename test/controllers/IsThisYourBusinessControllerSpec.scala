@@ -29,7 +29,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import views.html.{IsThisYourBusinessView, ThereIsAProblemView}
 
@@ -74,7 +73,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
       )
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockMatchingService, mockSubscriptionService, mockTaxEnrolmentService)
     super.beforeEach
   }

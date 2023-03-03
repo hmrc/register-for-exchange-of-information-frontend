@@ -49,7 +49,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
   val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockSubscriptionConnector, mockAuditService)
     super.beforeEach()
   }

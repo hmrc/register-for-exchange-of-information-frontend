@@ -23,7 +23,6 @@ import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-import java.net.URLEncoder
 import scala.concurrent.Future
 
 class AuthControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {

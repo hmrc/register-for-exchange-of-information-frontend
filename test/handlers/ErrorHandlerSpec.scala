@@ -17,13 +17,9 @@
 package handlers
 
 import base.{ControllerMockFixtures, SpecBase}
-import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import play.twirl.api.Html
-
-import scala.concurrent.Future
 
 class ErrorHandlerSpec extends SpecBase with ControllerMockFixtures {
 

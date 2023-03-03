@@ -19,10 +19,10 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import models.{BusinessType, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage}
+import pages.BusinessTypePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.{BusinessTypeView, DoYouHaveUTRView}
+import views.html.BusinessTypeView
 
 import scala.concurrent.Future
 

@@ -49,7 +49,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
       bind[RegistrationConnector].toInstance(mockRegistrationConnector)
     )
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     Mockito.reset(
       mockRegistrationConnector
     )

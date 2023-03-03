@@ -16,7 +16,7 @@
 
 package controllers
 
-import base.{ControllerMockFixtures, ControllerSpecBase, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
