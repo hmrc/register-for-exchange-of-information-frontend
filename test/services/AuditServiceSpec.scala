@@ -40,7 +40,7 @@ class AuditServiceSpec extends SpecBase with MockServiceApp with BeforeAndAfterE
       bind[AuditConnector].toInstance(mockAuditConnector)
     )
 
-  override def beforeEach: Unit =
+  override def beforeEach(): Unit =
     reset(mockAuditConnector)
 
   val auditService: AuditService = app.injector.instanceOf[AuditService]

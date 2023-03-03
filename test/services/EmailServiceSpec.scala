@@ -36,7 +36,7 @@ import scala.concurrent.Future
 
 class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyChecks {
 
-  override def beforeEach: Unit =
+  override def beforeEach(): Unit =
     reset(
       mockEmailConnector
     )

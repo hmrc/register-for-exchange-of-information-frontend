@@ -77,14 +77,6 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourDateOfBirthPage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
 
-      val filledForm = form.bind(
-        Map(
-          "value.day"   -> validAnswer.getDayOfMonth.toString,
-          "value.month" -> validAnswer.getMonthValue.toString,
-          "value.year"  -> validAnswer.getYear.toString
-        )
-      )
-
       val application = guiceApplicationBuilder().build()
 
       running(application) {
