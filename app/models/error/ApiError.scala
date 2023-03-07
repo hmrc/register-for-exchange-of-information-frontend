@@ -16,21 +16,15 @@
 
 package models.error
 
-import cats.data.EitherT
 import models.enrolment.GroupIds
-import models.matching.RegistrationInfo
 import play.api.http.Status
 import play.api.http.Status.SERVICE_UNAVAILABLE
 import uk.gov.hmrc.http.HttpReads
 import uk.gov.hmrc.http.HttpReads.{is4xx, is5xx}
 
-import scala.concurrent.Future
-
 sealed trait ApiError
 
 object ApiError {
-
-  type RegistrationResponseType = EitherT[Future, ApiError, RegistrationInfo]
 
   implicit def readEitherOf[A: HttpReads]: HttpReads[Either[ApiError, A]] =
     HttpReads.ask.flatMap {
@@ -52,11 +46,6 @@ object ApiError {
       case _                       => Status.INTERNAL_SERVER_ERROR
     }
 
-  def toError(errorDetail: ErrorDetail): ApiError = errorDetail match {
-    case ErrorDetail(_, _, "404", _, _, _) => NotFoundError
-    case _                                 => ServiceUnavailableError
-  }
-
   case object BadRequestError extends ApiError
 
   case object NotFoundError extends ApiError
@@ -73,9 +62,6 @@ object ApiError {
 
   case object UnableToCreateEnrolmentError extends ApiError
 
-  case object SubscriptionCreationError extends ApiError
-
-  case object RegistrationDataNotModified extends ApiError
   // Enrolment Specific
   case class EnrolmentExistsError(groupIds: GroupIds) extends ApiError
 

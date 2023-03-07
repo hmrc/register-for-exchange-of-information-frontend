@@ -20,18 +20,15 @@ import base.{ControllerMockFixtures, SpecBase}
 import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.matching.IndRegistrationInfo
 import models.{Name, NormalMode, SubscriptionID, UserAnswers}
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, contains}
+import org.mockito.ArgumentMatchers.any
 import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.domain.Nino
-import views.html.ThereIsAProblemView
-import views.html.WeHaveConfirmedYourIdentityView
+import views.html.{ThereIsAProblemView, WeHaveConfirmedYourIdentityView}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -64,7 +61,7 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
         bind[TaxEnrolmentService].toInstance(mockTaxEnrolmentService)
       )
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockMatchingService, mockSubscriptionService, mockTaxEnrolmentService)
     super.beforeEach
   }

@@ -18,15 +18,12 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourDateOfBirthPage
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
-import views.html.{ContactNameView, DateOfBirthView}
+import views.html.DateOfBirthView
 
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
@@ -79,14 +76,6 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
       val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourDateOfBirthPage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
-
-      val filledForm = form.bind(
-        Map(
-          "value.day"   -> validAnswer.getDayOfMonth.toString,
-          "value.month" -> validAnswer.getMonthValue.toString,
-          "value.year"  -> validAnswer.getYear.toString
-        )
-      )
 
       val application = guiceApplicationBuilder().build()
 

@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.SomeInformationIsMissingView

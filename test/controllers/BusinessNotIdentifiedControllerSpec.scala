@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.BusinessType.{LimitedCompany, LimitedPartnership}
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
 import pages.BusinessTypePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -30,7 +30,6 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
 
     lazy val corporationTaxEnquiriesLink: String = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/corporation-tax-enquiries"
     lazy val selfAssessmentEnquiriesLink: String = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
-    val startUrl                                 = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
 
     "return OK and the correct view for a GET with link for corporation tax enquiries" in {
 

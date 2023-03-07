@@ -52,7 +52,6 @@ lazy val root = (project in file("."))
     scalacOptions ++= Seq(
       "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
       "-Wconf:src=.+.\\scala\\.html/.+:s",
-      "-Wconf:src=.+/test/.+:s",
       "-Wconf:cat=deprecation&msg=\\.*()\\.*:s",
       "-Wconf:cat=unused-imports&site=<empty>:s",
       "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",

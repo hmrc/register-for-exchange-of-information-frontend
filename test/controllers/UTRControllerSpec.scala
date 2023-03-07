@@ -18,13 +18,10 @@ package controllers
 
 import base.ControllerSpecBase
 import models.{BusinessType, NormalMode, UniqueTaxpayerReference, UserAnswers}
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import pages.{BusinessTypePage, UTRPage}
-import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.Html
 import views.html.UTRView
 
 import scala.concurrent.Future
