@@ -48,10 +48,10 @@ class RegistrationConfirmationController @Inject() (
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
-              sessionRepository.reset(request.userId) map {
-                _ =>
-                  Ok(view(id.value))
-              }
+          sessionRepository.reset(request.userId) map {
+            _ =>
+              Ok(view(id.value))
+          }
         case None =>
           logger.warn("SubscriptionIDPage: Subscription Id is missing")
           Future.successful(InternalServerError(errorView()))
