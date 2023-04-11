@@ -23,7 +23,6 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.EmailService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{RegistrationConfirmationView, ThereIsAProblemView}
 
@@ -35,7 +34,6 @@ class RegistrationConfirmationController @Inject() (
   val appConfig: FrontendAppConfig,
   standardActionSets: StandardActionSets,
   sessionRepository: SessionRepository,
-  emailService: EmailService,
   val controllerComponents: MessagesControllerComponents,
   view: RegistrationConfirmationView,
   errorView: ThereIsAProblemView
@@ -48,13 +46,10 @@ class RegistrationConfirmationController @Inject() (
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
-          emailService.sendAnLogEmail(request.userAnswers, id) flatMap {
-            _ =>
               sessionRepository.reset(request.userId) map {
                 _ =>
                   Ok(view(id.value))
               }
-          }
         case None =>
           logger.warn("SubscriptionIDPage: Subscription Id is missing")
           Future.successful(InternalServerError(errorView()))
