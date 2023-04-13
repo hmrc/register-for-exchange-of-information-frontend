@@ -68,7 +68,8 @@ thereIsAProblem.title = Sorry, there is a problem with the service
 thereIsAProblem.heading = Sorry, there is a problem with the service
 thereIsAProblem.paragraph.1 = Try again later.
 thereIsAProblem.paragraph.2.a = If you need to contact someone about your MDR reporting, you can email {0}
-thereIsAProblem.emailAddress = enquiries.aeoi@hmrc.gov.uk
+
+enquiries.emailAddress = aeoi.enquiries@hmrc.gov.uk
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
@@ -472,7 +473,7 @@ businessNotIdentified.p4 = If we still cannot identify your business, or you do 
 businessNotIdentified.p4.link = contact HMRC (opens in new tab)
 businessNotIdentified.subheading3 = Email HMRC if you still need help
 businessNotIdentified.p5 = You can email
-businessNotIdentified.p5.link = enquiries.aeoi@hmrc.gov.uk
+
 businessNotIdentified.p5b = if we still cannot find your business.
 businessNotIdentified.button = Try again
 
@@ -493,7 +494,6 @@ pageNotFound.bullet1 = the link or button you selected is for a page that does n
 pageNotFound.bullet2 = you’ve typed or copied a web address for a page that does not exist
 pageNotFound.bullet3 = you’ve typed or copied a web address incorrectly
 pageNotFound.p2 = If the web address is correct or you selected a link or button, and you have queries, you can email {0}
-pageNotFound.email = enquiries.aeoi@hmrc.gov.uk
 pageNotFound.p3 = Check you have entered the correct details.
 
 businessAlreadyRegistered.title = Your organisation is already registered to use the MDR service
