@@ -48,12 +48,9 @@ class RegistrationConfirmationController @Inject() (
     implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
-          emailService.sendAnLogEmail(request.userAnswers, id) flatMap {
+          sessionRepository.reset(request.userId) map {
             _ =>
-              sessionRepository.reset(request.userId) map {
-                _ =>
-                  Ok(view(id.value))
-              }
+              Ok(view(id.value))
           }
         case None =>
           logger.warn("SubscriptionIDPage: Subscription Id is missing")
