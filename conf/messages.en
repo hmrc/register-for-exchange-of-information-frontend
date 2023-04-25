@@ -124,7 +124,7 @@ contactEmail.error.length = Email address must be 132 characters or less
 contactEmail.error.invalid.business = Enter an email address in the correct format, like name@example.com
 contactEmail.error.invalid.individual = Enter your email address in the correct format, like name@example.com
 
-isContactTelephone.title.business = Can we contact {0} by telephone?
+isContactTelephone.title.business = Can we contact them by telephone?
 isContactTelephone.heading.business = Can we contact {0} by telephone?
 isContactTelephone.title.individual = Can we contact you by telephone?
 isContactTelephone.heading.individual = Can we contact you by telephone?
