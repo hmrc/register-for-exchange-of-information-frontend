@@ -489,12 +489,9 @@ registrationConfirmation.survey.link = What did you think of this service? (open
 
 pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
-pageNotFound.p1 = This may be because:
-pageNotFound.bullet1 = the link or button you selected is for a page that does not exist
-pageNotFound.bullet2 = you’ve typed or copied a web address for a page that does not exist
-pageNotFound.bullet3 = you’ve typed or copied a web address incorrectly
-pageNotFound.p2 = If the web address is correct or you selected a link or button, and you have queries, you can email {0}
-pageNotFound.p3 = Check you have entered the correct details.
+pageNotFound.p1 = If you typed the web address, check it is correct.
+pageNotFound.p2 = If you pasted the web address, check you copied the entire address.
+pageNotFound.p3 = If the web address is correct or you selected a link or button, and you have queries, you can email {0}
 
 businessAlreadyRegistered.title = Your organisation is already registered to use the MDR service
 businessAlreadyRegistered.heading = Your organisation is already registered to use the MDR service
