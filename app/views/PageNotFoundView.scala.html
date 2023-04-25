@@ -31,13 +31,8 @@
 
     <p class="govuk-body">@messages("pageNotFound.p1")</p>
 
-    <ul class="govuk-list govuk-list--bullet" style="padding-left:20px;list-style-type:disc">
-        <li>@messages("pageNotFound.bullet1")</li>
-        <li>@messages("pageNotFound.bullet2")</li>
-        <li>@messages("pageNotFound.bullet3")</li>
-    </ul>
+    <p class="govuk-body">@messages("pageNotFound.p2")</p>
 
-    <p class="govuk-body">@Html(messages("pageNotFound.p2" , link(s"mailto:${appConfig.emailEnquiries}", "enquiries.emailAddress", openInNewWindow = true)))</p>
+    <p class="govuk-body">@Html(messages("pageNotFound.p3" , link(s"mailto:${appConfig.emailEnquiries}", "enquiries.emailAddress", openInNewWindow = true)))</p>
 
-    <p class="govuk-body">@messages("pageNotFound.p3")</p>
 }

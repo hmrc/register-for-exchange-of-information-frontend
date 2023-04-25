@@ -491,7 +491,7 @@ pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
 pageNotFound.p1 = If you typed the web address, check it is correct.
 pageNotFound.p2 = If you pasted the web address, check you copied the entire address.
-pageNotFound.p3 = If the web address is correct or you selected a link or button, and you have queries, you can email {0}
+pageNotFound.p3 = You can email {0} if you have any questions about this service.
 
 businessAlreadyRegistered.title = Your organisation is already registered to use the MDR service
 businessAlreadyRegistered.heading = Your organisation is already registered to use the MDR service
