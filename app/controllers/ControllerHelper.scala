@@ -40,7 +40,6 @@ class ControllerHelper @Inject() (
   errorView: ThereIsAProblemView,
   sessionRepository: SessionRepository,
   emailService: EmailService
-
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
