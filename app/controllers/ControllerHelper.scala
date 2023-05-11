@@ -38,8 +38,8 @@ class ControllerHelper @Inject() (
   val controllerComponents: MessagesControllerComponents,
   taxEnrolmentService: TaxEnrolmentService,
   errorView: ThereIsAProblemView,
-  emailService: EmailService,
-  sessionRepository: SessionRepository
+  sessionRepository: SessionRepository,
+  emailService: EmailService
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
