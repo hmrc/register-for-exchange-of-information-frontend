@@ -51,8 +51,15 @@ trait RowBuilder {
       key = Key(Text(message), classes = columnWidth),
       value = Value(value),
       actions = Seq(
-        ActionItemViewModel(content = Text(messages("site.edit")), href = href)
-          .withVisuallyHiddenText(messages(hiddenText))
+        ActionItemViewModel(
+          content = HtmlContent(
+            s"""
+            |<span aria-hidden="true">${messages("site.edit")}</span>
+            |<span class="govuk-visually-hidden">${messages(hiddenText)}</span>
+            |""".stripMargin
+          ),
+          href = href
+        )
           .withAttribute("id" -> msgKey.replaceAll(camelCaseGroups, "$1-$2").toLowerCase)
       )
     )

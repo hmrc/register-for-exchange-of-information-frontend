@@ -18,7 +18,7 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.{BusinessType, Name, NonUkName, UserAnswers}
 import org.scalatest.EitherValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
