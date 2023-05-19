@@ -28,7 +28,7 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{AuditService, BusinessMatchingWithoutIdService, SubscriptionService}
-import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CountryListFactory, UserAnswersHelper}
@@ -85,7 +85,7 @@ class CheckYourAnswersController @Inject() (
         result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID))
       } yield result)
         .valueOrF {
-          case EnrolmentExistsError(groupIds) if request.affinityGroup == AffinityGroup.Individual =>
+          case EnrolmentExistsError(groupIds) if request.affinityGroup == Individual =>
             logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
             Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad()))
           case EnrolmentExistsError(groupIds) =>
