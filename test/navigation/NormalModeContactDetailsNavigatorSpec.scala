@@ -51,6 +51,24 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
         }
       }
 
+      "must go from second Contact Phone page to CheckYourAnswers page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(SndContactPhonePage, NormalMode, answers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        }
+      }
+
+      "must go from Individual Contact Email page to IndividualHaveContactTelephone page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(IndividualContactEmailPage, NormalMode, answers)
+              .mustBe(routes.IndividualHaveContactTelephoneController.onPageLoad(NormalMode))
+        }
+      }
+
       "must go from IsContactTelephone page to Contact Phone page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>

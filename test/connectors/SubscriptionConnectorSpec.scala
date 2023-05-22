@@ -165,6 +165,33 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
         result.value.futureValue mustBe Left(UnableToCreateEMTPSubscriptionError)
       }
 
+      "must return NotFoundError for not found response" in {
+        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
+
+        stubPostResponse("/create-subscription", NOT_FOUND, "")
+
+        val result: EitherT[Future, ApiError, SubscriptionID] = connector.createSubscription(subMDRRequest)
+        result.value.futureValue mustBe Left(NotFoundError)
+      }
+
+      "must return BadRequestError for bad request response" in {
+        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
+
+        stubPostResponse("/create-subscription", BAD_REQUEST, "")
+
+        val result: EitherT[Future, ApiError, SubscriptionID] = connector.createSubscription(subMDRRequest)
+        result.value.futureValue mustBe Left(BadRequestError)
+      }
+
+      "must return ServiceUnavailableError for service unavailable response" in {
+        val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
+
+        stubPostResponse("/create-subscription", SERVICE_UNAVAILABLE, "")
+
+        val result: EitherT[Future, ApiError, SubscriptionID] = connector.createSubscription(subMDRRequest)
+        result.value.futureValue mustBe Left(ServiceUnavailableError)
+      }
+
       "must return DuplicateSubmissionError when tried to submit the same request" in {
         val subMDRRequest = arbitrary[CreateSubscriptionForMDRRequest].sample.value
 
