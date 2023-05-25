@@ -178,6 +178,22 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
           }
         }
 
+      "must go from DateOfBirthWithoutId page to 'Do you live in the UK' page when valid DOB is entered" in {
+
+        val updatedAnswers =
+          emptyUserAnswers
+            .set(DoYouHaveNINPage, false)
+            .success
+            .value
+            .set(DateOfBirthWithoutIdPage, LocalDate.now())
+            .success
+            .value
+
+        navigator
+          .nextPage(DateOfBirthWithoutIdPage, NormalMode, updatedAnswers)
+          .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode))
+      }
+
       "must go from 'Do You Live in the UK?' page to 'What is your home address (Non UK)' page when NO is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -339,6 +355,15 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
+      "must go from 'What is the trading name of your business' page to 'What is the main address of your business' page" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(WhatIsTradingNamePage, NormalMode, answers)
+              .mustBe(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode))
+        }
+      }
+
       "must go from 'Does your business trade under a different name' page to 'What is the main address of your business' page when no is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
@@ -436,6 +461,32 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
             navigator
               .nextPage(SoleNamePage, NormalMode, updatedAnswers)
               .mustBe(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from BusinessName page to 'Is this your business?' page" in {
+        val businessName: String = "Business Name"
+
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessNamePage, businessName)
+                .success
+                .value
+
+            navigator
+              .nextPage(BusinessNamePage, NormalMode, updatedAnswers)
+              .mustBe(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from RegistrationInfo page to ' What is the email address for [contact name]'" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            navigator
+              .nextPage(RegistrationInfoPage, NormalMode, answers)
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
         }
       }
 

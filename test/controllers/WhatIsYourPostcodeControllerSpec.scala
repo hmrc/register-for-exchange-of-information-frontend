@@ -109,5 +109,23 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
       contentAsString(result) mustEqual view(boundForm, NormalMode).toString
 
     }
+
+    "must return a Bad Request and errors when postcode is submitted but address lookup does not find a match" in {
+
+      when(mockAddressLookupConnector.addressLookupByPostcode(any())(any(), any()))
+        .thenReturn(Future.successful(Seq.empty[AddressLookup]))
+
+      retrieveUserAnswersData(emptyUserAnswers)
+      implicit val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("postCode", "AA1 1AA"))
+      val boundForm        = form.bind(Map("postCode" -> "AA1 1AA")).withError("postCode", "whatIsYourPostcode.error.notFound")
+
+      val view = app.injector.instanceOf[WhatIsYourPostCodeView]
+
+      val result = route(app, request).value
+
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual view(boundForm, NormalMode).toString
+
+    }
   }
 }
