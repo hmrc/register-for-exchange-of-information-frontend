@@ -21,6 +21,7 @@ import controllers.routes
 import generators.Generators
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
+import models.matching.{IndRegistrationInfo, SafeId}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -575,6 +576,58 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
             .nextPage(DoYouLiveInTheUKPage, CheckMode, updatedAnswers)
             .mustBe(routes.IndividualAddressWithoutIdController.onPageLoad(CheckMode))
       }
+    }
+
+    "must go from RegistrationInfo page to 'What is your email address' page when valid Registration info is entered" in {
+
+      val updatedAnswers =
+        emptyUserAnswers
+          .set(RegistrationInfoPage, IndRegistrationInfo(SafeId("safe")))
+          .success
+          .value
+
+      navigator
+        .nextPage(RegistrationInfoPage, CheckMode, updatedAnswers)
+        .mustBe(routes.IndividualContactEmailController.onPageLoad(CheckMode))
+    }
+
+    "must go from SoleName page to IsThisYourBusiness page when sole trader name is entered" in {
+
+      val updatedAnswers =
+        emptyUserAnswers
+          .set(SoleNamePage, Name("first", "last"))
+          .success
+          .value
+
+      navigator
+        .nextPage(SoleNamePage, CheckMode, updatedAnswers)
+        .mustBe(routes.IsThisYourBusinessController.onPageLoad(CheckMode))
+    }
+
+    "must go from BusinessName page to IsThisYourBusiness page when valid business name is entered" in {
+
+      val updatedAnswers =
+        emptyUserAnswers
+          .set(BusinessNamePage, "name")
+          .success
+          .value
+
+      navigator
+        .nextPage(BusinessNamePage, CheckMode, updatedAnswers)
+        .mustBe(routes.IsThisYourBusinessController.onPageLoad(CheckMode))
+    }
+
+    "must go from ContactName page to ContactEmail page when valid contact name is entered" in {
+
+      val updatedAnswers =
+        emptyUserAnswers
+          .set(ContactNamePage, "name")
+          .success
+          .value
+
+      navigator
+        .nextPage(ContactNamePage, CheckMode, updatedAnswers)
+        .mustBe(routes.ContactEmailController.onPageLoad(CheckMode))
     }
 
     "must go from 'What is your home address?'(NON-UK) page to " +

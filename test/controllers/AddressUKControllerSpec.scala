@@ -49,6 +49,10 @@ class AddressUKControllerSpec extends ControllerSpecBase {
     override lazy val countryList: Option[Seq[Country]] = Some(testCountryList)
   }
 
+  val emptyCountryListFactory: CountryListFactory = new CountryListFactory(app.environment, mockAppConfig) {
+    override lazy val countryList: Option[Seq[Country]] = None
+  }
+
   val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(AddressUKPage, address).success.value
 
   "AddressUk Controller" - {
@@ -105,6 +109,26 @@ class AddressUKControllerSpec extends ControllerSpecBase {
       }
     }
 
+    "must redirect to ThereIsAProblem page when countriesList can not be retrieved for a GET" in {
+
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      val application = guiceApplicationBuilder()
+        .overrides(
+          bind[CountryListFactory].to(emptyCountryListFactory)
+        )
+        .build()
+
+      running(application) {
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ThereIsAProblemController.onPageLoad().url)
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -132,6 +156,33 @@ class AddressUKControllerSpec extends ControllerSpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to ThereIsAProblem page when countriesList can not be retrieved when data is submitted" in {
+
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      val application = guiceApplicationBuilder()
+        .overrides(
+          bind[CountryListFactory].to(emptyCountryListFactory)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, loadRoute)
+          .withFormUrlEncodedBody(("addressLine1", "value 1"),
+                                  ("addressLine2", "value 2"),
+                                  ("addressLine3", "value 3"),
+                                  ("addressLine4", "value 4"),
+                                  ("postCode", "XX9 9XX"),
+                                  ("country", "GB")
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ThereIsAProblemController.onPageLoad().url)
       }
     }
 

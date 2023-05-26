@@ -75,6 +75,21 @@ class CountryListFactorySpec extends SpecBase {
       factory.countryList mustBe None
     }
 
+    "return the description when given the country code" in {
+      val conf: FrontendAppConfig = mock[FrontendAppConfig]
+      val env                     = mock[Environment]
+
+      val countries = Json.arr(Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Somewhere"))
+
+      when(conf.countryCodeJson).thenReturn("countries.json")
+
+      val is = new ByteArrayInputStream(countries.toString.getBytes)
+      when(env.resourceAsStream(any())).thenReturn(Some(is))
+
+      val factory = sut(env, conf)
+
+      factory.getDescriptionFromCode("XX") mustBe Some("Somewhere")
+    }
   }
 
   def sut(env: Environment = mock[Environment], config: FrontendAppConfig = mock[FrontendAppConfig]) =

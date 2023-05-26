@@ -36,6 +36,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{BusinessMatchingWithoutIdService, SubscriptionService, TaxEnrolmentService}
 import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.ThereIsAProblemView
 
 import scala.concurrent.Future
@@ -259,6 +260,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         contentAsString(result).contains(secondContactEmail) mustBe true
         contentAsString(result).contains(secondContactPhone) mustBe false
       }
+
     }
 
     "onSubmit" - {
@@ -438,7 +440,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
               bind[MDRNavigator].toInstance(mdrFakeNavigator),
               bind[AddressLookupConnector].toInstance(mockAddressLookupConnector),
               bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers) {
-                override val affinityGroup: AffinityGroup = AffinityGroup.Individual
+                override val affinityGroup: AffinityGroup = Individual
               })
             )
             .build()
@@ -557,6 +559,37 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         val view = app.injector.instanceOf[ThereIsAProblemView]
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
+        contentAsString(result) mustEqual view()(request, messages).toString
+      }
+
+      "must render 'thereIsAProblem' page when 'createSubscription' fails with ServiceUnavailableError" in {
+
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(ServiceUnavailableError)))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
+          .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val userAnswers = UserAnswers("Id")
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .success
+          .value
+          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+          .success
+          .value
+          .set(DoYouHaveNINPage, true)
+          .success
+          .value
+
+        retrieveUserAnswersData(userAnswers)
+
+        val request = FakeRequest(POST, submitRoute)
+
+        val result = route(app, request).value
+
+        val view = app.injector.instanceOf[ThereIsAProblemView]
+
+        status(result) mustEqual SERVICE_UNAVAILABLE
         contentAsString(result) mustEqual view()(request, messages).toString
       }
 

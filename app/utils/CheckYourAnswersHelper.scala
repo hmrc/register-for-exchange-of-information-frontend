@@ -39,20 +39,20 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         } yield toRow(
           msgKey = "businessWithIDName",
           value = HtmlContent(s"""
-                  <p>$businessName</p>
-                  <p class=$paragraphClass>${address.addressLine1}</p>
-                  ${address.addressLine2.fold("")(
+                        |<p>$businessName</p>
+                        |<p class=$paragraphClass>${address.addressLine1}</p>
+                        |${address.addressLine2.fold("")(
             address => s"<p class=$paragraphClass>$address</p>"
           )}
-                  ${address.addressLine3.fold("")(
+                        |${address.addressLine3.fold("")(
             address => s"<p class=$paragraphClass>$address</p>"
           )}
-                  ${address.addressLine4.fold("")(
+                        |${address.addressLine4.fold("")(
             address => s"<p class=$paragraphClass>$address</p>"
           )}
-                 <p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
-                 ${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
-                  """),
+                        |<p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
+                        |${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
+                        |""".stripMargin),
           href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
         )
       case _ => None

@@ -22,11 +22,16 @@ import helpers.RegisterHelper._
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching.SafeId
-import models.{Address, Country, Name}
+import models.requests.DataRequest
+import models.{Address, Country, Name, NonUkName}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.{Mockito, MockitoSugar}
+import pages._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.AnyContent
+import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -51,13 +56,73 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
     super.beforeEach()
   }
 
-  val name: Name = Name("First", "Last")
+  val nonUkName: NonUkName = NonUkName("First", "Last")
+  val name: Name           = nonUkName.toName
 
   val dob: LocalDate = LocalDate.now
 
   val address: Address = Address("line 1", Some("line 2"), "line 3", Some("line 4"), Some(""), Country.GB)
 
   "BusinessMatchingWithoutIdService" - {
+
+    "registerWithoutId" - {
+
+      "must return a safeId when individual information can be matched" in {
+        val response: Future[Either[ApiError, SafeId]] = Future.successful(Right(SafeId("XE0000123456789")))
+
+        when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
+
+        val userAnswers = emptyUserAnswers
+          .set(DoYouHaveNINPage, false)
+          .success
+          .value
+          .set(NonUkNamePage, nonUkName)
+          .success
+          .value
+          .set(DateOfBirthWithoutIdPage, dob)
+          .success
+          .value
+          .set(IndividualContactPhonePage, "1111111")
+          .success
+          .value
+          .set(IndividualContactEmailPage, "test@test.org")
+          .success
+          .value
+          .set(IndividualAddressWithoutIdPage, address)
+          .success
+          .value
+
+        val request: DataRequest[AnyContent]         = DataRequest(FakeRequest(), "userId", Individual, userAnswers)
+        val result: Future[Either[ApiError, SafeId]] = service.registerWithoutId()(request, hc)
+
+        result.futureValue mustBe Right(SafeId("XE0000123456789"))
+      }
+
+      "must return a safeId when business information can be matched" in {
+        val response: Future[Either[ApiError, SafeId]] = Future.successful(Right(SafeId("XE0000123456789")))
+
+        when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
+
+        val userAnswers = emptyUserAnswers
+          .set(BusinessWithoutIDNamePage, "name")
+          .success
+          .value
+          .set(ContactPhonePage, "1111111")
+          .success
+          .value
+          .set(ContactEmailPage, "test@test.org")
+          .success
+          .value
+          .set(BusinessAddressWithoutIdPage, address)
+          .success
+          .value
+
+        val request: DataRequest[AnyContent]         = DataRequest(FakeRequest(), "userId", Organisation, userAnswers)
+        val result: Future[Either[ApiError, SafeId]] = service.registerWithoutId()(request, hc)
+
+        result.futureValue mustBe Right(SafeId("XE0000123456789"))
+      }
+    }
 
     "sendIndividualRegistration" - {
 

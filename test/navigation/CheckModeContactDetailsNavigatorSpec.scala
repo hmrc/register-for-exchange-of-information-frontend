@@ -125,6 +125,20 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
           }
         }
 
+      "must go from IndividualContactEmail page to IndividualHaveContactTelephone page when that page has not been previously completed " in {
+        navigator
+          .nextPage(IndividualContactEmailPage, CheckMode, emptyUserAnswers)
+          .mustBe(routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode))
+
+      }
+
+      "must go from Contact Phone page to Second Contact page when second contact page has not been previously completed " in {
+        navigator
+          .nextPage(ContactPhonePage, CheckMode, emptyUserAnswers)
+          .mustBe(routes.SecondContactController.onPageLoad(CheckMode))
+
+      }
+
       "must go from IsContactTelephone page to Contact Phone page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
