@@ -212,3 +212,8 @@ GET        /register/individual-phone                        controllers.Individ
 POST       /register/individual-phone                        controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-individual-phone                  controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-individual-phone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /reporterType                        controllers.ReporterTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /reporterType                        controllers.ReporterTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /changeReporterType                  controllers.ReporterTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /changeReporterType                  controllers.ReporterTypeController.onSubmit(mode: Mode = CheckMode)
