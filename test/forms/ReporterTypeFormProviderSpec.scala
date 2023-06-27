@@ -16,11 +16,11 @@
 
 package forms
 
-import forms.behaviours.CheckboxFieldBehaviours
-import models.ReporterType
+import models.{ReporterType}
 import play.api.data.FormError
+import forms.behaviours.OptionFieldBehaviours
 
-class ReporterTypeFormProviderSpec extends CheckboxFieldBehaviours {
+class ReporterTypeFormProviderSpec extends OptionFieldBehaviours {
 
   val form = new ReporterTypeFormProvider()()
 
@@ -29,17 +29,17 @@ class ReporterTypeFormProviderSpec extends CheckboxFieldBehaviours {
     val fieldName   = "value"
     val requiredKey = "reporterType.error.required"
 
-    behave like checkboxField[ReporterType](
+    behave like optionsField[ReporterType](
       form,
       fieldName,
       validValues = ReporterType.values,
-      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+      invalidError = FormError(fieldName, "error.invalid")
     )
 
-    behave like mandatoryCheckboxField(
+    behave like mandatoryField(
       form,
       fieldName,
-      requiredKey
+      requiredError = FormError(fieldName, requiredKey)
     )
   }
 }

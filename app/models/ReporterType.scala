@@ -20,7 +20,9 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait ReporterType
+sealed trait ReporterType {
+  val code: String
+}
 
 object ReporterType extends Enumerable.Implicits {
 
