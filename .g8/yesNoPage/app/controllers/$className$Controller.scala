@@ -22,13 +22,14 @@ class $className;format="cap"$Controller @Inject()(
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: $className$FormProvider,
+                                         standardActionSets: StandardActionSets,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: $className$View
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData() andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
 
       val preparedForm = request.userAnswers.get($className$Page) match {
@@ -39,7 +40,7 @@ class $className;format="cap"$Controller @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData() andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
 
       form.bindFromRequest().fold(
