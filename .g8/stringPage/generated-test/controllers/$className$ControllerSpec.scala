@@ -27,7 +27,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implict val request = FakeRequest(GET, loadRoute)
+        implicit val request = FakeRequest(GET, loadRoute)
 
         val result = route(app, request).value
 
@@ -48,7 +48,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implict val request = FakeRequest(GET, loadRoute)
+        implicit val request = FakeRequest(GET, loadRoute)
 
         val view = application.injector.instanceOf[$className$View]
 
@@ -83,7 +83,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implict val request =
+        implicit val request =
           FakeRequest(POST, submitRoute)
             .withFormUrlEncodedBody(("value", ""))
 
