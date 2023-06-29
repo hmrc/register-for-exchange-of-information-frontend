@@ -3,6 +3,7 @@ package controllers
 import base.ControllerSpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, $className$, UserAnswers}
+import org.mockito.ArgumentMatchers.any
 import pages.$className$Page
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
