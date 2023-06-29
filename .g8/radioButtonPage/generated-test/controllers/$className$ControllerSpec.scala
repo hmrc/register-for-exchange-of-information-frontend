@@ -71,7 +71,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      import val request =
+      val request =
           FakeRequest(POST, submitRoute)
             .withFormUrlEncodedBody(("value", $className$.values.head.toString))
 
