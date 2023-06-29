@@ -50,7 +50,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, loadRoute)
+        implicit val request = FakeRequest(GET, loadRoute)
 
         val view = application.injector.instanceOf[$className$View]
 
