@@ -46,14 +46,12 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implicit request = getRequest()
-
-        val result = route(application, request).value
+        val result = route(application, getRequest()).value
 
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(getRequest()).toString
       }
     }
 
@@ -67,14 +65,13 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
 
       running(application) {
-        implicit request = getRequest()
 
         val view = application.injector.instanceOf[$className$View]
 
-        val result = route(app, request).value
+        val result = route(app, getRequest()).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(getRequest()).toString
       }
     }
 
@@ -82,10 +79,10 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-        val result = route(application, postRequest).value
+      val result = route(application, postRequest).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -101,7 +98,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, submitRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-       val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[$className$View]
 
