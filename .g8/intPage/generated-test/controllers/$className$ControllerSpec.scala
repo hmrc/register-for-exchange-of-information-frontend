@@ -1,6 +1,6 @@
 package controllers
 
-import baseControllerSpecBase
+import base.ControllerSpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
