@@ -1,6 +1,6 @@
 package controllers
 
-import base.SpecBase
+import base.ControllerSpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -12,7 +12,7 @@ import views.html.$className$View
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends SpecBase with MockitoSugar {
+class $className$ControllerSpec extends ControllerSpecBase {
 
 
   lazy val loadRoute = routes.$className$Controller.onPageLoad(NormalMode).url
