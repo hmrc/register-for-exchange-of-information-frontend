@@ -56,7 +56,7 @@ awk '/trait ModelGenerators/ {\
     print "      for {";\
     print "        $field1Name$ <- arbitrary[String]";\
     print "        $field2Name$ <- arbitrary[String]";\
-    print "      } yield $className$($field1Name$, $field2Name$)";\
+    print "      } yield models.$className$($field1Name$, $field2Name$)";\
     print "    }";\
     next }1' ../test/generators/ModelGenerators.scala > tmp && mv tmp ../test/generators/ModelGenerators.scala
 
