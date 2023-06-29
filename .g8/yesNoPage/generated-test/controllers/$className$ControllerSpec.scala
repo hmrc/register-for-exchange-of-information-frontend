@@ -30,7 +30,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implicit val request = FakeRequest(GET, $className;format="decap"$Route)
+        implicit val request = FakeRequest(GET, loadRoute)
 
         val result = route(app, request).value
 
