@@ -3,7 +3,6 @@ package controllers
 import base.ControllerSpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import pages.$className$Page
 import play.api.test.FakeRequest
