@@ -3,16 +3,10 @@ package controllers
 import base.ControllerSpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 import pages.$className$Page
-import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import views.html.$className$View
 
 import scala.concurrent.Future
@@ -38,7 +32,7 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
+
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
