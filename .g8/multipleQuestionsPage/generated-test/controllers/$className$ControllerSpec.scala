@@ -72,7 +72,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
 
-      retrieveUserAnswersData(emptyUserAnswers)
+      retrieveUserAnswersData(userAnswers)
 
         val request =
           FakeRequest(POST, submitRoute)

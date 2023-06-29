@@ -82,6 +82,10 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
+      val userAnswers = UserAnswers(userAnswersId).set($className$Page, validAnswer).success.value
+
+      retrieveUserAnswersData(userAnswers)
+
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val result = route(app, postRequest).value

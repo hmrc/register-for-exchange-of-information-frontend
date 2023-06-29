@@ -66,6 +66,9 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
+      val userAnswers = UserAnswers(userAnswersId).set(YesNoPageNamePage, true).success.value
+
+      retrieveUserAnswersData(userAnswers)
 
         val request =
           FakeRequest(POST,submitRoute)
