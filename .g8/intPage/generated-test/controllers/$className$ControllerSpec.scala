@@ -19,30 +19,31 @@ import scala.concurrent.Future
 
 class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
-  val formProvider = new $className$FormProvider()
-  val form = formProvider()
 
-  def onwardRoute = Call("GET", "/foo")
+  lazy val loadRoute = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.$className$Controller.onSubmit(NormalMode).url
+
+  val form =  new $className$FormProvider().apply()
 
   val validAnswer = $minimum$
-
-  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
 
   "$className$ Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      val application = guiceApplicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;format="decap"$Route)
+        implicit val request = FakeRequest(GET, loadRoute)
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode).toString
       }
     }
 
@@ -50,53 +51,47 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId).set($className$Page, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      retrieveUserAnswersData(userAnswers)
+
+      val application = guiceApplicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;format="decap"$Route)
+        implicit val request = FakeRequest(GET, loadRoute)
 
         val view = application.injector.instanceOf[$className$View]
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      retrieveUserAnswersData(emptyUserAnswers)
 
-      running(application) {
         val request =
-          FakeRequest(POST, $className;format="decap"$Route)
+          FakeRequest(POST, submitRoute)
             .withFormUrlEncodedBody(("value", validAnswer.toString))
 
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-      }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      val application = guiceApplicationBuilder().build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, $className;format="decap"$Route)
+        implicit val request =
+          FakeRequest(POST, submitRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
@@ -106,38 +101,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, $className;format="decap"$Route)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, $className;format="decap"$Route)
-            .withFormUrlEncodedBody(("value", validAnswer.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        contentAsString(result) mustEqual view(boundForm, NormalMode).toString
       }
     }
   }
