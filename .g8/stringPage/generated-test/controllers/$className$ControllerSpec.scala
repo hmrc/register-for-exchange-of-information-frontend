@@ -11,7 +11,7 @@ import views.html.$className$View
 
 import scala.concurrent.Future
 
-class $className$ControllerSpec extends base.ControllerSpecBase {
+class $className$ControllerSpec extends ControllerSpecBase {
 
   lazy val loadRoute = routes.$className$Controller.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.$className$Controller.onSubmit(NormalMode).url
@@ -27,7 +27,7 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, loadRoute)
+        implict val request = FakeRequest(GET, loadRoute)
 
         val result = route(app, request).value
 
@@ -48,7 +48,7 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, loadRoute)
+        implict val request = FakeRequest(GET, loadRoute)
 
         val view = application.injector.instanceOf[$className$View]
 
@@ -83,7 +83,7 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        val request =
+        implict val request =
           FakeRequest(POST, submitRoute)
             .withFormUrlEncodedBody(("value", ""))
 
