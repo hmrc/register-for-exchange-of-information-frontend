@@ -31,7 +31,7 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
         val view = app.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(app)).toString
 
     }
 
@@ -48,7 +48,7 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+      contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(app)).toString
 
     }
 
@@ -80,12 +80,12 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
 
       val boundForm = form.bind(Map("value" -> ""))
 
-      val view = application.injector.instanceOf[$className$View]
+      val view = app.injector.instanceOf[$className$View]
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(app)).toString
 
     }
   }
