@@ -24,14 +24,18 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
+      val application = guiceApplicationBuilder().build()
+
+      running(application) {
         val request = FakeRequest(GET, loadRoute)
 
         val result = route(app, request).value
 
-        val view = app.injector.instanceOf[$className$View]
+        val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode).toString
+      }
 
     }
 
@@ -41,15 +45,18 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
 
       retrieveUserAnswersData(userAnswers)
 
-      val request = FakeRequest(GET, loadRoute)
+      val application = guiceApplicationBuilder().build()
 
-      val view = app.injector.instanceOf[$className$View]
+      running(application) {
+        val request = FakeRequest(GET, loadRoute)
 
-      val result = route(app, request).value
+        val view = application.injector.instanceOf[$className$View]
 
-      status(result) mustEqual OK
-      contentAsString(result) mustEqual view(form.fill("answer"), NormalMode).toString
+        val result = route(app, request).value
 
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode).toString
+      }
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -73,20 +80,22 @@ class $className$ControllerSpec extends base.ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
+      val application = guiceApplicationBuilder().build()
 
-      val request =
-        FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", ""))
+      running(application) {
+        val request =
+          FakeRequest(POST, submitRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
-      val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = form.bind(Map("value" -> ""))
 
-      val view = app.injector.instanceOf[$className$View]
+        val view = application.injector.instanceOf[$className$View]
 
-      val result = route(app, request).value
+        val result = route(app, request).value
 
-      status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual view(boundForm, NormalMode).toString
-
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode).toString
+      }
     }
   }
 }
