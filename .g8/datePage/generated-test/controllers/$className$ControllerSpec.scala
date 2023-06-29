@@ -46,12 +46,15 @@ class $className$ControllerSpec extends ControllerSpecBase {
       val application = guiceApplicationBuilder().build()
 
       running(application) {
+
+        implicit val request = getRequest()
+
         val result = route(application, getRequest()).value
 
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(getRequest()).toString
+        contentAsString(result) mustEqual view(form, NormalMode).toString
       }
     }
 
@@ -66,6 +69,8 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       running(application) {
 
+        implicit val request = getRequest()
+
         val view = application.injector.instanceOf[$className$View]
 
         val result = route(app, getRequest()).value
@@ -79,7 +84,7 @@ class $className$ControllerSpec extends ControllerSpecBase {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val result = route(application, postRequest).value
+      val result = route(app, postRequest).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
