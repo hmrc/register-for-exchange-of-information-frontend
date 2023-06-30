@@ -7,6 +7,9 @@ import views.html.$className$View
 
 class $className$ControllerSpec extends ControllerSpecBase {
 
+  val loadRoute: String = ???
+  val submitRoute: String = ???
+
   "$className$ Controller" - {
 
     "must return OK and the correct view for a GET" in {
