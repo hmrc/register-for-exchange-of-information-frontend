@@ -33,15 +33,15 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
+       <h1 class="govuk-heading-l">@messages(messages(s"sndContactEmail.heading", contactName))</h1>
+       <p class="govuk-body">@messages("sndContactEmail.p1")</p>
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("sndContactEmail.heading", contactName)).asPageHeading()
+                label = LabelViewModel(messages("sndContactEmail.heading", contactName)).asPageHeading().withCssClass("govuk-visually-hidden")
             )
             .withWidth(Full)
-            .withHint(HintViewModel(Text(messages("sndContactEmail.hint"))))
-            .withId("value")
+
         )
 
         @govukButton(

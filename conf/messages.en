@@ -162,7 +162,7 @@ sndContactName.error.length = The name must be 35 characters or less
 
 sndContactEmail.title = What is the email address for the second contact? - Report cross-border arrangements for MDR - GOV.UK
 sndContactEmail.heading = What is the email address for {0}?
-sndContactEmail.hint = We will use this to send confirmation of your reports and if we have any questions about them.
+sndContactEmail.p1 = We will use this to send confirmation of your reports and if we have any questions about them.
 sndContactEmail.checkYourAnswersLabel = Second contact email address
 sndContactEmail.checkYourAnswersLabel.hiddenText = Change second contact email address
 sndContactEmail.error.required = Enter an email address for the second contact
