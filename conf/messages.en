@@ -111,17 +111,17 @@ sessionExpired.link = {0}
 contactName.checkYourAnswersLabel = Contact name
 contactName.checkYourAnswersLabel.hiddenText = Change contact name
 
-contactEmail.title.business = What is their email address?
+contactEmail.title.business = What is the email address for the first contact? - Report cross-border arrangements for MDR - GOV.UK
 contactEmail.heading.business = What is the email address for {0}?
 contactEmail.title.individual = What is your email address?
 contactEmail.heading.individual = What is your email address?
-contactEmail.hint = We will use this to send confirmation of your reports or if we have any questions about them.
+contactEmail.p1 = We will use this to send confirmation of your reports or if we have any questions about them.
 contactEmail.checkYourAnswersLabel = Email address
 contactEmail.checkYourAnswersLabel.hiddenText = Change email address
-contactEmail.error.required.business = Enter an email address
+contactEmail.error.required.business = Enter an email address for the first contact
 contactEmail.error.required.individual = Enter your email address
-contactEmail.error.length = Email address must be 132 characters or less
-contactEmail.error.invalid.business = Enter an email address in the correct format, like name@example.com
+contactEmail.error.length = The email address must be 132 characters or less
+contactEmail.error.invalid.business = Enter an email address in the right format, like yourname@example.com
 contactEmail.error.invalid.individual = Enter your email address in the correct format, like name@example.com
 
 isContactTelephone.title.business = Can we contact them by telephone?
@@ -160,14 +160,14 @@ sndContactName.error.required = Enter a name for the second contact
 sndContactName.error.invalid = The name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 sndContactName.error.length = The name must be 35 characters or less
 
-sndContactEmail.title = What is their email address?
+sndContactEmail.title = What is the email address for the second contact? - Report cross-border arrangements for MDR - GOV.UK
 sndContactEmail.heading = What is the email address for {0}?
 sndContactEmail.hint = We will use this to send confirmation of your reports and if we have any questions about them.
 sndContactEmail.checkYourAnswersLabel = Second contact email address
 sndContactEmail.checkYourAnswersLabel.hiddenText = Change second contact email address
-sndContactEmail.error.required = Enter an email address
-sndContactEmail.error.length = Email address must be 132 characters or less
-sndContactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
+sndContactEmail.error.required = Enter an email address for the second contact
+sndContactEmail.error.length = The email address must be 132 characters or less
+sndContactEmail.error.invalid = Enter an email address in the right format, like yourname@example.com
 
 sndConHavePhone.title = Can we contact them by telephone?
 sndConHavePhone.heading = Can we contact {0} by telephone?
