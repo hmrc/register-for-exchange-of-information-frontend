@@ -33,13 +33,13 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
+       <h1 class="govuk-heading-l">@messages(messages(s"sndConHavePhone.heading", contactName))</h1>
+       <p class="govuk-body">@messages("sndConHavePhone.p1")</p>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("sndConHavePhone.heading", contactName)).asPageHeading()
+                legend = LegendViewModel(messages("sndConHavePhone.heading", contactName)).asPageHeading().withCssClass("govuk-visually-hidden")
             )
-            .withHint(HintViewModel(Text(messages("sndConHavePhone.hint"))))
         )
 
         @govukButton(

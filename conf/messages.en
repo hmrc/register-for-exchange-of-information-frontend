@@ -124,11 +124,11 @@ contactEmail.error.length = Email address must be 132 characters or less
 contactEmail.error.invalid.business = Enter an email address in the correct format, like name@example.com
 contactEmail.error.invalid.individual = Enter your email address in the correct format, like name@example.com
 
-isContactTelephone.title.business = Can we contact them by telephone?
+isContactTelephone.title.business = Can we contact your first contact by telephone?
 isContactTelephone.heading.business = Can we contact {0} by telephone?
 isContactTelephone.title.individual = Can we contact you by telephone?
 isContactTelephone.heading.individual = Can we contact you by telephone?
-isContactTelephone.hint = We will call if we have any questions about your reports.
+isContactTelephone.p1 = We will call if we have any questions about your reports.
 isContactTelephone.error.required.individual = Select yes if we can contact you by telephone
 isContactTelephone.error.required.business = Select yes if they can be contacted by telephone
 
@@ -169,9 +169,9 @@ sndContactEmail.error.required = Enter an email address
 sndContactEmail.error.length = Email address must be 132 characters or less
 sndContactEmail.error.invalid = Enter an email address in the correct format, like name@example.com
 
-sndConHavePhone.title = Can we contact them by telephone?
+sndConHavePhone.title = Can we contact your second contact by telephone?
 sndConHavePhone.heading = Can we contact {0} by telephone?
-sndConHavePhone.hint = We will call if we have any questions about your reports.
+sndConHavePhone.p1 = We will call if we have any questions about your reports.
 sndConHavePhone.error.required = Select yes if they can be contacted by telephone
 
 sndContactPhone.title = What is their telephone number
