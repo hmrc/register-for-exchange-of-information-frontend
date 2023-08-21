@@ -146,7 +146,7 @@ contactPhone.error.length = Telephone number must be 24 characters or less
 
 secondContact.title = Is there someone else we can contact?
 secondContact.heading = Is there someone else we can contact if {0} is not available?
-secondContact.hint = This can be a team mailbox or another contact.
+secondContact.p1 = This can be a team mailbox or another contact.
 secondContact.checkYourAnswersLabel = Do you have a second contact?
 secondContact.checkYourAnswersLabel.hiddenText = Change if you have a second contact
 secondContact.error.required = Select yes if there is someone else we can contact
