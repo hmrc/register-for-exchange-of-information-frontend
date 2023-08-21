@@ -39,7 +39,8 @@
 
         @govukRadios(
             RadiosViewModel.yesNo(
-                 field = form("value")
+                 field = form("value"),
+                 legend = LegendViewModel(messages("secondContact.heading", contactName))
             )
         )
 
