@@ -144,9 +144,9 @@ contactPhone.error.required = Enter a telephone number
 contactPhone.error.invalid = Enter a telephone number in the correct format
 contactPhone.error.length = Telephone number must be 24 characters or less
 
-secondContact.title = Is there someone else we can contact?
+secondContact.title = Is there someone else we can contact if your first contact is not available?
 secondContact.heading = Is there someone else we can contact if {0} is not available?
-secondContact.hint = This can be a team mailbox or another contact.
+secondContact.p1 = This can be a team mailbox or another contact.
 secondContact.checkYourAnswersLabel = Do you have a second contact?
 secondContact.checkYourAnswersLabel.hiddenText = Change if you have a second contact
 secondContact.error.required = Select yes if there is someone else we can contact
