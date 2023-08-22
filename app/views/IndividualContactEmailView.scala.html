@@ -34,18 +34,21 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
+        <h1 class="govuk-heading-l">@messages("contactEmail.heading.individual")</h1>
+        <p class="govuk-body">@messages("contactEmail.p1")</p>
+
         @govukInput(
-            InputViewModel(
-                field = form("email"),
-                label = LabelViewModel(messages("contactEmail.heading.individual")).asPageHeading()
-            )
-            .asEmail()
-            .withWidth(Full)
-            .withHint(HintViewModel(Text(messages("contactEmail.hint"))))
-            .withId("email")
+        InputViewModel(
+        field = form("email"),
+        label = LabelViewModel(messages("contactEmail.heading.individual")).withCssClass("govuk-visually-hidden")
+        )
+        .asEmail()
+        .withWidth(Full)
+        .withId("email")
         )
 
-        @govukButton(
+
+@govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
         )
     }
