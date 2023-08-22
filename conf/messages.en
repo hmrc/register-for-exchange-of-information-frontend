@@ -122,7 +122,7 @@ contactEmail.error.required.business = Enter an email address for the first cont
 contactEmail.error.required.individual = Enter your email address
 contactEmail.error.length = The email address must be 132 characters or less
 contactEmail.error.invalid.business = Enter an email address in the right format, like yourname@example.com
-contactEmail.error.invalid.individual = Enter your email address in the correct format, like name@example.com
+contactEmail.error.invalid.individual = Enter an email address in the right format, like yourname@example.com
 
 isContactTelephone.title.business = Can we contact your first contact by telephone?
 isContactTelephone.heading.business = Can we contact {0} by telephone?
