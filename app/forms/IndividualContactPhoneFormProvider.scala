@@ -29,6 +29,12 @@ class IndividualContactPhoneFormProvider @Inject() extends Mappings with RegexCo
   def apply(): Form[String] =
     Form(
       "value" ->
-        validatedText("contactPhone.error.required", "contactPhone.error.invalid", "contactPhone.error.length", digitsAndWhiteSpaceOnly, maxLength)
+        validatedText(
+          "individualContactPhone.error.required",
+          "individualContactPhone.error.invalid",
+          "individualContactPhone.error.length",
+          digitsAndWhiteSpaceOnly,
+          maxLength
+        )
     )
 }
