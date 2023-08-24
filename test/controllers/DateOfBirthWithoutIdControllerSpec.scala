@@ -23,7 +23,7 @@ import pages.DateOfBirthWithoutIdPage
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.DateOfBirthView
+import views.html.DateOfBirthWithoutIdView
 
 import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
@@ -47,7 +47,7 @@ class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
         "value.year"  -> validAnswer.getYear.toString
       )
 
-  "WhatIsYourDateOfBirth Controller" - {
+  "DateOfBirthWithoutId Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -61,7 +61,7 @@ class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
 
         val result = route(app, request).value
 
-        val view = application.injector.instanceOf[DateOfBirthView]
+        val view = application.injector.instanceOf[DateOfBirthWithoutIdView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode).toString
@@ -80,7 +80,7 @@ class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
 
         val result = route(app, request).value
 
-        val view = application.injector.instanceOf[DateOfBirthView]
+        val view = application.injector.instanceOf[DateOfBirthWithoutIdView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(LocalDate.now()), NormalMode).toString()
@@ -112,7 +112,7 @@ class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
 
         val result = route(app, request).value
 
-        val view = application.injector.instanceOf[DateOfBirthView]
+        val view = application.injector.instanceOf[DateOfBirthWithoutIdView]
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode).toString()
