@@ -46,6 +46,7 @@ object PageLists {
   val individualWithOutIDPages = List(
     DoYouHaveNINPage,
     NonUkNamePage,
+    DateOfBirthWithoutIdPage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
     BusinessAddressWithoutIdPage,

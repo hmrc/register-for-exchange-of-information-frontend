@@ -253,12 +253,19 @@ whatIsYourDateOfBirth.heading = What is your date of birth?
 whatIsYourDateOfBirth.hint = For example, 31 3 1980.
 whatIsYourDateOfBirth.checkYourAnswersLabel = Your date of birth
 whatIsYourDateOfBirth.checkYourAnswersLabel.hiddenText = Change your date of birth
-whatIsYourDateOfBirth.error.required.all = Enter your date of birth
-whatIsYourDateOfBirth.error.required.two = Date of birth must include {0} and {1}
-whatIsYourDateOfBirth.error.required = Your date of birth must include {0}
-whatIsYourDateOfBirth.error.invalid = Enter a valid date of birth
-whatIsYourDateOfBirth.error.pastDate = Date of birth must be after 1909
-individualDateOfBirth.error.futureDate = Date of birth must be before {0}
+
+dateOfBirthWithoutId.title = What is your date of birth?
+dateOfBirthWithoutId.heading = What is your date of birth?
+dateOfBirthWithoutId.hint = For example, 31 3 1980.
+dateOfBirthWithoutId.checkYourAnswersLabel = Your date of birth
+dateOfBirthWithoutId.checkYourAnswersLabel.hiddenText = Change your date of birth
+
+dateOfBirth.error.required.all = Enter your date of birth
+dateOfBirth.error.required.two = Date of birth must include {0} and {1}
+dateOfBirth.error.required = Your date of birth must include {0}
+dateOfBirth.error.invalid = Enter a valid date of birth
+dateOfBirth.error.pastDate = Date of birth must be after 1909
+dateOfBirth.error.futureDate = Date of birth must be before {0}
 
 someInformationIsMissing.title = Some information is missing
 someInformationIsMissing.heading = Some information is missing

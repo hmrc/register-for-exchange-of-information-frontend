@@ -176,7 +176,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
   def dateOfBirthWithoutId: Option[SummaryListRow] = userAnswers.get(pages.DateOfBirthWithoutIdPage) map {
     answer =>
       toRow(
-        msgKey = "whatIsYourDateOfBirth",
+        msgKey = "dateOfBirthWithoutId",
         value = Text(s"${answer.format(dateFormatter)}"),
         href = routes.DateOfBirthWithoutIdController.onPageLoad(CheckMode).url
       )
