@@ -366,7 +366,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     }
     Some(
       toRow(
-        msgKey = "contactPhone",
+        msgKey = "individualContactPhone",
         value = Text(s"$numberOrNot"),
         href = routes.IndividualHaveContactTelephoneController.onPageLoad(CheckMode).url
       )
