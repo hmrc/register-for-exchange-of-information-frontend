@@ -334,10 +334,10 @@ nonUkName.familyName = Family name
 nonUkName.checkYourAnswersLabel = Your name
 nonUkName.checkYourAnswersLabel.hiddenText = Change your name
 nonUkName.error.givenName.required = Enter your given name
-nonUkName.error.givenName.invalid = The given name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+nonUkName.error.givenName.invalid = The given name must only include letters a to z, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 nonUkName.error.givenName.length = The given name must be 35 characters or less
 nonUkName.error.familyName.required = Enter your family name
-nonUkName.error.familyName.invalid = The family name must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
+nonUkName.error.familyName.invalid = The family name must only include letters a to z, ampersands (&), apostrophes, backslashes, carets (^), grave accents (`), hyphens and spaces
 nonUkName.error.familyName.length = The family name must be 35 characters or less
 
 whatIsYourPostcode.title = What is your postcode?
