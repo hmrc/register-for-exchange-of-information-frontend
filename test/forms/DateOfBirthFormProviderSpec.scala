@@ -34,7 +34,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
 
     behave like dateField(form, "value", validData)
 
-    behave like mandatoryDateField(form, "value.day", "whatIsYourDateOfBirth.error.required.all")
+    behave like mandatoryDateField(form, "value.day", "dateOfBirth.error.required.all")
 
     "must return a FormError when month is missing" in {
       val key  = "value"
@@ -49,7 +49,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
       val result = form.bind(data)
 
       result.errors.size mustBe 1
-      result.errors.head.message mustBe "whatIsYourDateOfBirth.error.required"
+      result.errors.head.message mustBe "dateOfBirth.error.required"
       result.errors.head.args mustBe Seq("month")
     }
 
@@ -66,7 +66,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
       val result = form.bind(data)
 
       result.errors.size mustBe 1
-      result.errors.head.message mustBe "whatIsYourDateOfBirth.error.invalid"
+      result.errors.head.message mustBe "dateOfBirth.error.invalid"
       result.errors.head.args mustBe Seq("month")
     }
 
@@ -82,7 +82,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
       val result: Form[LocalDate] = form.bind(data)
 
       result.errors.size mustBe 1
-      result.errors.head.message mustBe "individualDateOfBirth.error.futureDate"
+      result.errors.head.message mustBe "dateOfBirth.error.futureDate"
     }
 
     "must not allow a date earlier than 01/01/1909" in {
@@ -97,7 +97,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
       val result: Form[LocalDate] = form.bind(data)
 
       result.errors.size mustBe 1
-      result.errors.head.message mustBe "whatIsYourDateOfBirth.error.pastDate"
+      result.errors.head.message mustBe "dateOfBirth.error.pastDate"
     }
 
   }
