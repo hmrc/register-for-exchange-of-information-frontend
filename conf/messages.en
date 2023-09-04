@@ -228,9 +228,9 @@ whatAreYouRegisteringAs.error.required = Select business or individual
 doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
 doYouHaveNIN.hint = You can find your National Insurance number on your payslip, P60 or letters about tax, pensions and benefits.
-doYouHaveNIN.checkYourAnswersLabel =  Do you have a National Insurance number?
+doYouHaveNIN.checkYourAnswersLabel = Do you have a National Insurance number?
 doYouHaveNIN.checkYourAnswersLabel.hiddenText = Change if you have a National Insurance number
-doYouHaveNIN.error.required = Select yes if you have National Insurance number
+doYouHaveNIN.error.required = Select yes if you have a National Insurance number
 
 whatIsYourNationalInsuranceNumber.title = What is your National Insurance number?
 whatIsYourNationalInsuranceNumber.heading = What is your National Insurance number?
