@@ -16,17 +16,15 @@
 
 package utils
 
-import models.BusinessType.Sole
+import models.ReporterType.{Individual, Sole}
 import models.UserAnswers
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
-import pages.{BusinessTypePage, WhatAreYouRegisteringAsPage}
+import pages.ReporterTypePage
 
 trait UserAnswersHelper {
 
   def isRegisteringAsBusiness(ua: UserAnswers): Boolean =
-    ua.get(WhatAreYouRegisteringAsPage) match {
-      case Some(RegistrationTypeIndividual)             => false
-      case _ if ua.get(BusinessTypePage).contains(Sole) => false
-      case _                                            => true
+    ua.get(ReporterTypePage) match {
+      case Some(Individual) | Some(Sole) => false
+      case _                             => true
     }
 }
