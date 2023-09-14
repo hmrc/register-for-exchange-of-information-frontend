@@ -529,6 +529,20 @@ informationSent.title = Information sent
 informationSent.heading = Information sent
 informationSent.p1 = We will contact you if we have any questions about the details you have provided.
 
+reporterType.title = What will you report as?
+reporterType.heading = What will you report as?
+reporterType.option1 = Option 1
+reporterType.option2 = Option 2
+reporterType.checkYourAnswersLabel = What will you report as?
+reporterType.error.required = Select what you will report as
+reporterType.limited = Limited company
+reporterType.sole = Sole trader
+reporterType.partnership = Partnership
+reporterType.limitedPartnership = Limited partnership or limited liability partnership
+reporterType.unincorporatedAssociation = Unincorporated association or trust
+reporterType.hint = Select one option.
+
+
 registeredAddressInUK.title = Is your registered address in the UK?
 registeredAddressInUK.heading = Is your registered address in the UK?
 registeredAddressInUK.checkYourAnswersLabel = TODO when CYA changes are implemented
