@@ -47,7 +47,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithInitializedData() {
+    standardActionSets.identifiedUserWithData() {
       implicit request =>
         val preparedForm = request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {
           case None        => form
@@ -58,7 +58,7 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithInitializedData().async {
+    standardActionSets.identifiedUserWithData().async {
       implicit request =>
         form
           .bindFromRequest()

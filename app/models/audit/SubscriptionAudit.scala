@@ -17,8 +17,8 @@
 package models.audit
 
 import models.subscription.request.{ContactInformation, CreateRequestDetail}
-import models.{BusinessType, UserAnswers}
-import pages.{BusinessTypePage, IsThisYourBusinessPage, UTRPage, WhatIsYourNationalInsuranceNumberPage}
+import models.{ReporterType, UserAnswers}
+import pages.{IsThisYourBusinessPage, ReporterTypePage, UTRPage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionAudit(
@@ -38,9 +38,9 @@ object SubscriptionAudit {
 
   def apply(userAnswers: UserAnswers, requestDetail: CreateRequestDetail, auditResponse: AuditResponse): SubscriptionAudit = {
     val (utr, saUtr) = {
-      userAnswers.get(BusinessTypePage) match {
-        case Some(BusinessType.Sole) => (None, userAnswers.get(UTRPage))
-        case Some(x: BusinessType)   => (userAnswers.get(UTRPage), None)
+      userAnswers.get(ReporterTypePage) match {
+        case Some(ReporterType.Sole) => (None, userAnswers.get(UTRPage))
+        case Some(x: ReporterType)   => (userAnswers.get(UTRPage), None)
         case None                    => (None, None)
       }
     }

@@ -24,7 +24,6 @@ import scala.util.Try
 case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
 
   private val businessPages = List(
-    BusinessTypePage,
     UTRPage,
     BusinessNamePage,
     SoleNamePage,
@@ -44,7 +43,6 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
   )
 
   private val individualPages = List(
-    WhatAreYouRegisteringAsPage,
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,
     WhatIsYourDateOfBirthPage,

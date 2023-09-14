@@ -46,12 +46,17 @@ object ReporterType extends Enumerable.Implicits {
     val code = "0004"
   }
 
+  case object Individual extends WithName("individual") with ReporterType {
+    val code = "N/A"
+  }
+
   val values: Seq[ReporterType] = Seq(
     LimitedCompany,
-    Sole,
     Partnership,
     LimitedPartnership,
-    UnincorporatedAssociation
+    UnincorporatedAssociation,
+    Sole,
+    Individual
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {

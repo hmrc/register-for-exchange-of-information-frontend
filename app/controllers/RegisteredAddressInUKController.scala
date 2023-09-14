@@ -18,10 +18,8 @@ package controllers
 
 import controllers.actions._
 import forms.RegisteredAddressInUKFormProvider
-
-import javax.inject.Inject
 import models.Mode
-import navigation.ContactDetailsNavigator
+import navigation.MDRNavigator
 import pages.RegisteredAddressInUKPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,12 +27,13 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegisteredAddressInUKView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RegisteredAddressInUKController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: ContactDetailsNavigator,
+  navigator: MDRNavigator,
   standardActionSets: StandardActionSets,
   formProvider: RegisteredAddressInUKFormProvider,
   val controllerComponents: MessagesControllerComponents,

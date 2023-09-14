@@ -19,10 +19,10 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.UTRFormProvider
-import models.BusinessType._
+import models.ReporterType._
 import models.{Mode, UserAnswers}
 import navigation.MDRNavigator
-import pages.{BusinessTypePage, UTRPage}
+import pages.{ReporterTypePage, UTRPage}
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
 import repositories.SessionRepository
@@ -45,7 +45,7 @@ class UTRController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
     implicit request =>
       val taxType = getTaxType(request.userAnswers)
       val form    = formProvider(taxType)
@@ -58,7 +58,7 @@ class UTRController @Inject() (
       Future.successful(Ok(view(preparedForm, mode, taxType)))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
     implicit request =>
       val taxType = getTaxType(request.userAnswers)
       val form    = formProvider(taxType)
@@ -76,7 +76,7 @@ class UTRController @Inject() (
   }
 
   private def getTaxType(userAnswers: UserAnswers)(implicit messages: Messages): String =
-    userAnswers.get(BusinessTypePage) match {
+    userAnswers.get(ReporterTypePage) match {
       case Some(LimitedCompany) | Some(UnincorporatedAssociation) => messages("utr.error.corporationTax")
       case _                                                      => messages("utr.error.selfAssessment")
     }

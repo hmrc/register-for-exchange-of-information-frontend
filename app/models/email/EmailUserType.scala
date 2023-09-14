@@ -16,20 +16,18 @@
 
 package models.email
 
-import models.BusinessType.Sole
+import models.ReporterType._
 import models.UserAnswers
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
-import pages.{BusinessTypePage, WhatAreYouRegisteringAsPage}
+import pages.ReporterTypePage
 
 import javax.inject.Inject
 
 class EmailUserType @Inject() ()() {
 
   def getUserTypeFromUa(userAnswers: UserAnswers): UserType =
-    (userAnswers.get(WhatAreYouRegisteringAsPage), userAnswers.get(BusinessTypePage)) match {
-      case (Some(registerType), None) => if (registerType == RegistrationTypeBusiness) Organisation else Individual
-      case (None, Some(Sole))         => SoleTrader
-      case (None, Some(_))            => Organisation
-      case _                          => throw new RuntimeException("Cannot determine whether the registration should be Organisation or Individual")
+    userAnswers.get(ReporterTypePage) match {
+      case Some(Sole) | Some(Individual) => SoleTrader
+      case None                          => throw new RuntimeException("Cannot determine whether the registration should be Organisation or Individual")
+      case _                             => Organisation
     }
 }

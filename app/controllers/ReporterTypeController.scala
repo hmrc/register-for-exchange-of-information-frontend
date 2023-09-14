@@ -19,7 +19,7 @@ package controllers
 import controllers.actions._
 import forms.ReporterTypeFormProvider
 import models.Mode
-import navigation.{MDRNavigator, Navigator}
+import navigation.MDRNavigator
 import pages.ReporterTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,7 +44,7 @@ class ReporterTypeController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithInitializedData() {
     implicit request =>
       val preparedForm = request.userAnswers.get(ReporterTypePage) match {
         case None        => form
@@ -55,7 +55,7 @@ class ReporterTypeController @Inject() (
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
+    standardActionSets.identifiedUserWithInitializedData().async {
       implicit request =>
         form
           .bindFromRequest()

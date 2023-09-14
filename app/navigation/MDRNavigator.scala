@@ -17,7 +17,8 @@
 package navigation
 
 import controllers.routes
-import models.BusinessType.Sole
+import models.ReporterType.Sole
+import models.ReporterType.Individual
 import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import pages._
@@ -30,42 +31,45 @@ import javax.inject.{Inject, Singleton}
 class MDRNavigator @Inject() () extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Option[Call] = {
+    case ReporterTypePage                       => whatAreYouReportingAs(NormalMode)
+    case RegisteredAddressInUKPage              => isRegisteredAddressInUk(NormalMode)
+    case UTRPage                                => isSoleProprietor(NormalMode)
+    case BusinessNamePage                       => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+    case SoleNamePage                           => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+    case IsThisYourBusinessPage                 => isThisYourBusiness(NormalMode)
+
     case DoYouHaveUniqueTaxPayerReferencePage   => doYouHaveUniqueTaxPayerReference(NormalMode)
-    case WhatAreYouRegisteringAsPage            => whatAreYouRegisteringAs(NormalMode)
+    case BusinessWithoutIDNamePage              => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode))
+    case BusinessHaveDifferentNamePage          => businessHaveDifferentNameRoutes(NormalMode)
+    case WhatIsTradingNamePage                  => _ => Some(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode))
+    case BusinessAddressWithoutIdPage           => _ => Some(routes.YourContactDetailsController.onPageLoad(NormalMode))
+
     case DoYouHaveNINPage                       => doYouHaveNINORoutes(NormalMode)
     case WhatIsYourNationalInsuranceNumberPage  => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
     case WhatIsYourNamePage                     => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
     case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
-    case BusinessWithoutIDNamePage              => _ => Some(routes.BusinessHaveDifferentNameController.onPageLoad(NormalMode))
-    case BusinessHaveDifferentNamePage          => businessHaveDifferentNameRoutes(NormalMode)
-    case WhatIsTradingNamePage                  => _ => Some(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode))
+
     case NonUkNamePage                          => _ => Some(routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode))
     case DateOfBirthWithoutIdPage              => whatIsYourDateOfBirthRoutes(NormalMode)
     case DoYouLiveInTheUKPage                   => doYouLiveInTheUkRoutes(NormalMode)
-    case AddressUKPage                          => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
-    case BusinessAddressWithoutIdPage           => _ => Some(routes.YourContactDetailsController.onPageLoad(NormalMode))
-    case IndividualAddressWithoutIdPage         => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case WhatIsYourPostcodePage                 => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                      => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
-    case BusinessTypePage                       => _ => Some(routes.UTRController.onPageLoad(NormalMode))
-    case UTRPage                               => isSoleProprietor(NormalMode)
-    case SoleNamePage                           => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
-    case BusinessNamePage                       => _ => Some(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
-    case IsThisYourBusinessPage                => isThisYourBusiness(NormalMode)
+    case AddressUKPage                          => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
+    case IndividualAddressWithoutIdPage         => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case RegistrationInfoPage                   => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case _                                     => _ => None
+    //    case BusinessTypePage                       => _ => Some(routes.UTRController.onPageLoad(NormalMode))
+    //    case WhatAreYouRegisteringAsPage            => whatAreYouRegisteringAs(NormalMode)
   }
 
   override val checkRouteMap: Page => UserAnswers => Option[Call] = {
     case DoYouHaveUniqueTaxPayerReferencePage  => doYouHaveUniqueTaxPayerReference(CheckMode)
-    case WhatAreYouRegisteringAsPage           => whatAreYouRegisteringAs(CheckMode)
     case BusinessHaveDifferentNamePage         => businessHaveDifferentNameRoutes(CheckMode)
     case DoYouHaveNINPage                      => doYouHaveNINORoutes(CheckMode)
     case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
     case DateOfBirthWithoutIdPage             => whatIsYourDateOfBirthRoutes(CheckMode)
     case DoYouLiveInTheUKPage                  => doYouLiveInTheUkRoutes(CheckMode)
     case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
-    case BusinessTypePage                      => _ => Some(routes.UTRController.onPageLoad(CheckMode))
     case UTRPage                              => isSoleProprietor(CheckMode)
     case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
     case WhatIsYourNationalInsuranceNumberPage  => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode))
@@ -127,18 +131,22 @@ class MDRNavigator @Inject() () extends Navigator {
     case _  => _ => Some(Navigator.checkYourAnswers)
   }
 
-  private def doYouHaveUniqueTaxPayerReference(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(DoYouHaveUniqueTaxPayerReferencePage) map {
-      case true => routes.BusinessTypeController.onPageLoad(mode)
-      case false => routes.WhatAreYouRegisteringAsController.onPageLoad(mode)
+  private def whatAreYouReportingAs(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(ReporterTypePage) map {
+      case Individual => routes.DoYouHaveNINController.onPageLoad(mode)
+      case _ => routes.RegisteredAddressInUKController.onPageLoad(mode)
     }
 
-  private def whatAreYouRegisteringAs(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(WhatAreYouRegisteringAsPage) map {
-      case RegistrationTypeBusiness =>
-        checkNextPageForValueThenRoute(mode, ua, BusinessWithoutIDNamePage, routes.BusinessWithoutIDNameController.onPageLoad(mode)).get
-      case RegistrationTypeIndividual =>
-        checkNextPageForValueThenRoute(mode, ua, DoYouHaveNINPage, routes.DoYouHaveNINController.onPageLoad(mode)).get
+  private def isRegisteredAddressInUk(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(RegisteredAddressInUKPage) map {
+      case true => routes.UTRController.onPageLoad(mode)
+      case false => routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode)
+    }
+  private def doYouHaveUniqueTaxPayerReference(mode: Mode)(ua: UserAnswers): Option[Call] =
+    (ua.get(DoYouHaveUniqueTaxPayerReferencePage), ua.get(ReporterTypePage)) match {
+      case (Some(true), _) => Some(routes.UTRController.onPageLoad(mode))
+      case (Some(false), Some(Sole)) => Some(routes.DoYouHaveNINController.onPageLoad(mode))
+      case (Some(false), Some(_)) => Some(routes.BusinessWithoutIDNameController.onPageLoad(mode))
     }
 
   private def businessHaveDifferentNameRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
@@ -173,13 +181,13 @@ class MDRNavigator @Inject() () extends Navigator {
     }
 
   private def isSoleProprietor(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(BusinessTypePage) map {
-      case BusinessType.Sole => routes.SoleNameController.onPageLoad(mode)
-      case _                 => routes.BusinessNameController.onPageLoad(mode)
+    ua.get(ReporterTypePage) map {
+      case Sole => routes.SoleNameController.onPageLoad(mode)
+      case _    => routes.BusinessNameController.onPageLoad(mode)
     }
 
   private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(IsThisYourBusinessPage), ua.get(BusinessTypePage)) match {
+    (ua.get(IsThisYourBusinessPage), ua.get(ReporterTypePage)) match {
       case (Some(true), Some(Sole)) =>
         checkNextPageForValueThenRoute(mode, ua, IndividualContactEmailPage, routes.IndividualContactEmailController.onPageLoad(mode))
       case (Some(true), Some(_))    =>
