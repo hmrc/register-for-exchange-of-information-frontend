@@ -51,7 +51,7 @@ class ReporterTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(BusinessType.values)
+      val gen = Gen.oneOf(ReporterType.values)
 
       forAll(gen) {
         reporterType =>

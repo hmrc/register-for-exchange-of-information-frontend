@@ -17,9 +17,7 @@
 package navigation
 
 import controllers.routes
-import models.ReporterType.Sole
-import models.ReporterType.Individual
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.ReporterType.{Individual, Sole}
 import models._
 import pages._
 import play.api.mvc.Call
@@ -58,8 +56,6 @@ class MDRNavigator @Inject() () extends Navigator {
     case IndividualAddressWithoutIdPage         => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case RegistrationInfoPage                   => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case _                                     => _ => None
-    //    case BusinessTypePage                       => _ => Some(routes.UTRController.onPageLoad(NormalMode))
-    //    case WhatAreYouRegisteringAsPage            => whatAreYouRegisteringAs(NormalMode)
   }
 
   override val checkRouteMap: Page => UserAnswers => Option[Call] = {

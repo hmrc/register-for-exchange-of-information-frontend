@@ -21,7 +21,7 @@ import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
-import models.BusinessType.LimitedCompany
+import models.ReporterType.LimitedCompany
 import models.Name
 import models.error.ApiError
 import models.error.ApiError.NotFoundError

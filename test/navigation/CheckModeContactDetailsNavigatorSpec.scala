@@ -19,7 +19,7 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import models.{BusinessType, CheckMode, NormalMode, UserAnswers, WhatAreYouRegisteringAs}
+import models.{CheckMode, NormalMode, ReporterType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -163,7 +163,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                   .success
                   .value
-                  .set(BusinessTypePage, BusinessType.LimitedPartnership)
+                  .set(ReporterTypePage, ReporterType.LimitedPartnership)
                   .success
                   .value
                   .set(IsContactTelephonePage, false)
@@ -188,7 +188,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                   .success
                   .value
-                  .set(BusinessTypePage, BusinessType.LimitedPartnership)
+                  .set(ReporterTypePage, ReporterType.LimitedPartnership)
                   .success
                   .value
                   .set(IsContactTelephonePage, false)
@@ -210,10 +210,10 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
             answers =>
               val updatedAnswers =
                 answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                  .set(ReporterTypePage, ReporterType.Individual)
                   .success
                   .value
-                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                   .success
                   .value
                   .set(IndividualHaveContactTelephonePage, false)
@@ -235,7 +235,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                   .success
                   .value
-                  .set(BusinessTypePage, BusinessType.Sole)
+                  .set(ReporterTypePage, ReporterType.Sole)
                   .success
                   .value
                   .set(IndividualHaveContactTelephonePage, false)
@@ -254,10 +254,13 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
             answers =>
               val updatedAnswers =
                 answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                  .set(ReporterTypePage, ReporterType.LimitedCompany)
                   .success
                   .value
-                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
+                  .set(RegisteredAddressInUKPage, false)
+                  .success
+                  .value
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
                   .success
                   .value
                   .set(IsContactTelephonePage, false)

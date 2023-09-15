@@ -20,10 +20,9 @@ import base.{MockServiceApp, SpecBase}
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.SubscriptionConnector
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
-import models.{Address, Country, NonUkName, SubscriptionID, UserAnswers}
+import models.{Address, Country, NonUkName, ReporterType, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -65,10 +64,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)
@@ -104,10 +100,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
 
       val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)

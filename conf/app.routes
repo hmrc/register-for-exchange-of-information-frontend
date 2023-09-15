@@ -74,11 +74,6 @@ POST       /register/have-utr                            controllers.DoYouHaveUn
 GET        /register/change-have-utr                     controllers.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-have-utr                     controllers.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/registration-type                   controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/registration-type                   controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.CheckMode)
-
 GET        /register/could-not-confirm/:key              controllers.WeCouldNotConfirmController.onPageLoad(key: String)
 
 GET        /register/have-ni-number                      controllers.DoYouHaveNINController.onPageLoad(mode: models.Mode = models.NormalMode)
@@ -148,11 +143,6 @@ GET        /register/without-id/business-name            controllers.BusinessWit
 POST       /register/without-id/business-name            controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode)
-
-GET        /register/business-type                      controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/business-type                      controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-bussiness-type              controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-bussiness-type              controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/utr                                controllers.UTRController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/utr                                controllers.UTRController.onSubmit(mode: models.Mode = models.NormalMode)

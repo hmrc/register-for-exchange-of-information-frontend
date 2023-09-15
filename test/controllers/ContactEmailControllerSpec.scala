@@ -17,10 +17,9 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{ContactEmailPage, ContactNamePage, WhatAreYouRegisteringAsPage}
+import pages.{ContactEmailPage, ContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.ContactEmailView
@@ -38,9 +37,6 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
   val userAnswers = UserAnswers(userAnswersId)
     .set(ContactNamePage, contactName)
-    .success
-    .value
-    .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
     .success
     .value
 

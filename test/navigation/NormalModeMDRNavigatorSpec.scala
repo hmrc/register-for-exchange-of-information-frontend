@@ -19,8 +19,7 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import models.BusinessType.{LimitedCompany, Sole}
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.ReporterType.{LimitedCompany, Sole}
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -29,42 +28,12 @@ import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 
-class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val navigator: MDRNavigator = new MDRNavigator
 
   "Navigator" - {
 
     "in Normal mode" - {
-
-      "must go from 'Do You Have Unique Tax Payer Reference?' page to 'What Are You Registering As?' page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                .success
-                .value
-
-            navigator
-              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'What Are You Registering As' page to 'Do You Have NINO?' page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode))
-        }
-      }
 
       "must go from 'Do You Have NINO?' page to 'What Is Your Name?' page if NO is selected" in {
         forAll(arbitrary[UserAnswers]) {
@@ -215,9 +184,6 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
             answers =>
               val updatedAnswers =
                 answers
-                  .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-                  .success
-                  .value
                   .set(IndividualAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                   .success
                   .value
@@ -234,9 +200,6 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
             answers =>
               val updatedAnswers =
                 answers
-                  .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-                  .success
-                  .value
                   .set(BusinessAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                   .success
                   .value
@@ -307,29 +270,11 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'What are you registering as' page to 'What is the name of your business' page when business is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(NormalMode))
-        }
-      }
-
       "must go from 'What is the name of your business' page to 'Does your business trade under a different name' page when a valid business name is entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-                .success
-                .value
                 .set(BusinessWithoutIDNamePage, "a business")
                 .success
                 .value
@@ -390,7 +335,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
             navigator
               .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessTypeController.onPageLoad(NormalMode))
+              .mustBe(routes.ReporterTypeController.onPageLoad(NormalMode))
         }
       }
 
@@ -399,12 +344,12 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
           answers =>
             val updatedAnswers =
               answers
-                .set(BusinessTypePage, BusinessType.Sole)
+                .set(ReporterTypePage, ReporterType.Sole)
                 .success
                 .value
 
             navigator
-              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
+              .nextPage(ReporterTypePage, NormalMode, updatedAnswers)
               .mustBe(routes.UTRController.onPageLoad(NormalMode))
         }
       }
@@ -417,7 +362,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
                 .set(UTRPage, UniqueTaxpayerReference("0123456789"))
                 .success
                 .value
-                .set(BusinessTypePage, BusinessType.Sole)
+                .set(ReporterTypePage, ReporterType.Sole)
                 .success
                 .value
 
@@ -435,7 +380,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
                 .set(UTRPage, UniqueTaxpayerReference("0123456789"))
                 .success
                 .value
-                .set(BusinessTypePage, BusinessType.LimitedCompany)
+                .set(ReporterTypePage, ReporterType.LimitedCompany)
                 .success
                 .value
 
@@ -495,7 +440,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
           answers =>
             val updatedAnswers =
               answers
-                .set(BusinessTypePage, Sole)
+                .set(ReporterTypePage, Sole)
                 .success
                 .value
                 .set(IsThisYourBusinessPage, true)
@@ -513,7 +458,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
           answers =>
             val updatedAnswers =
               answers
-                .set(BusinessTypePage, LimitedCompany)
+                .set(ReporterTypePage, LimitedCompany)
                 .success
                 .value
                 .set(IsThisYourBusinessPage, true)
@@ -531,7 +476,7 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
           answers =>
             val updatedAnswers =
               answers
-                .set(BusinessTypePage, LimitedCompany)
+                .set(ReporterTypePage, LimitedCompany)
                 .success
                 .value
                 .set(IsThisYourBusinessPage, false)

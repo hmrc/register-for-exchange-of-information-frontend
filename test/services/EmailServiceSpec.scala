@@ -19,9 +19,8 @@ package services
 import base.SpecBase
 import connectors.EmailConnector
 import generators.Generators
-import models.BusinessType.Sole
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.{Name, NonUkName, SubscriptionID, UserAnswers}
+import models.ReporterType.Sole
+import models.{Name, NonUkName, ReporterType, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -57,10 +56,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
     "sendAnLogEmail" - {
       "must submit to the email connector with valid business details Organisation and return Some(Accepted)" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
           .set(ContactNamePage, "")
@@ -86,10 +85,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
       }
       "must submit to the email connector with valid business details Individual and return Some(Accepted)" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(ReporterTypePage, ReporterType.Individual)
           .success
           .value
           .set(ContactNamePage, "")
@@ -115,10 +111,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
       }
       "must Internal_Server_Error when both Contact and Individual emails pages are missing" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
           .set(ContactNamePage, "")
@@ -141,10 +137,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
       }
       "must submit to the email connector and return NOT_FOUND when the template is missing" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
           .set(ContactNamePage, "")
@@ -170,10 +166,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
       }
       "must submit to the email connector and return BAD_REQUEST email service rejects request" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
           .set(ContactNamePage, "")
@@ -201,10 +197,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
     "sendEmail" - {
       "must submit to the email connector when 1 set of business valid details provided" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
           .set(ContactNamePage, "")
@@ -234,7 +230,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(BusinessTypePage, Sole)
+          .set(ReporterTypePage, Sole)
           .success
           .value
           .set(SoleNamePage, Name("firstName", "lastName"))
@@ -261,10 +257,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
       "must submit to the email connector when 1 individuals set of valid details provided" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+          .set(ReporterTypePage, ReporterType.Individual)
           .success
           .value
           .set(WhatIsYourNamePage, Name("", ""))
@@ -291,10 +284,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
       "must submit to the email connector when 1 nonUk individuals set of valid details provided" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+          .set(ReporterTypePage, ReporterType.Individual)
           .success
           .value
           .set(NonUkNamePage, NonUkName("", ""))
@@ -321,10 +311,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
       "must submit to the email connector twice when 2 sets of valid details provided" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
           .set(ContactNamePage, "")
@@ -357,10 +347,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
       "must fail to submit to the email connector when invalid email address provided" in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
           .set(ContactNamePage, "")

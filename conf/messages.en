@@ -216,15 +216,6 @@ weCouldNotConfirm.identity = confirm your identity
 weCouldNotConfirm.guidance = The information you entered does not match our records.
 weCouldNotConfirm.button = Try again
 
-whatAreYouRegisteringAs.title = What are you registering as?
-whatAreYouRegisteringAs.heading = What are you registering as?
-whatAreYouRegisteringAs.hint = A business could be a company or a limited liability partnership. An individual could be someone who is self-employed.
-whatAreYouRegisteringAs.checkYourAnswersLabel = Registering as
-whatAreYouRegisteringAs.checkYourAnswersLabel.hiddenText = Change what you are registering as
-whatAreYouRegisteringAs.registrationTypeBusiness = A business
-whatAreYouRegisteringAs.registrationTypeIndividual = An individual
-whatAreYouRegisteringAs.error.required = Select business or individual
-
 doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
 doYouHaveNIN.hint = You can find your National Insurance number on your payslip, P60 or letters about tax, pensions and benefits.
@@ -383,16 +374,6 @@ businessWithoutIDName.checkYourAnswersLabel.hiddenText = Change business name
 businessWithoutIDName.error.businessName.required = Enter the name of your business
 businessWithoutIDName.error.businessName.length = Business name must be 105 characters or less
 businessWithoutIDName.error.businessName.invalid = Business name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
-businessType.title = What type of business do you have?
-businessType.heading = What type of business do you have?
-businessType.limited = Limited company
-businessType.sole = Sole trader
-businessType.partnership = Partnership
-businessType.limitedPartnership = Limited partnership or limited liability partnership
-businessType.unincorporatedAssociation = Unincorporated association or trust
-businessType.hint = Select one option.
-businessType.checkYourAnswersLabel = What type of business do you have?
-businessType.error.required = Select the type of business you have
 
 utr.title = What is your {0} Unique Taxpayer Reference?
 utr.heading = What is your {0} Unique Taxpayer Reference?

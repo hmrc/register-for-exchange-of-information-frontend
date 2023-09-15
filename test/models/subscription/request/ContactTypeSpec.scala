@@ -18,8 +18,7 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
-import models.{BusinessType, Name, NonUkName, UserAnswers}
+import models.{Name, NonUkName, ReporterType, UserAnswers}
 import org.scalatest.EitherValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -64,7 +63,7 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
     "must return PrimaryContact for the input 'Individual with Id UserAnswers' " in {
       val userAnswers = UserAnswers("id")
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, true)
@@ -88,7 +87,7 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
     "must return PrimaryContact for the input 'Individual without Id UserAnswers' " in {
       val userAnswers = UserAnswers("id")
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)
@@ -107,12 +106,12 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
       ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
     }
 
-    "must return PrimaryContact for the input 'UserAnswers with BusinessType as Sole trader'" in {
+    "must return PrimaryContact for the input 'UserAnswers with ReporterType as Sole trader'" in {
       val userAnswers = UserAnswers("id")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
         .value
-        .set(BusinessTypePage, BusinessType.Sole)
+        .set(ReporterTypePage, ReporterType.Sole)
         .success
         .value
         .set(SoleNamePage, Name("Name", "Name"))

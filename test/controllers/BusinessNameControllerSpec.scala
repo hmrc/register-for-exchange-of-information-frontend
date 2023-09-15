@@ -17,10 +17,10 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.BusinessType.LimitedCompany
-import models.{BusinessType, NormalMode, UserAnswers}
+import models.ReporterType.LimitedCompany
+import models.{NormalMode, ReporterType, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{BusinessNamePage, BusinessTypePage}
+import pages.{BusinessNamePage, ReporterTypePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.BusinessNameView
@@ -32,16 +32,16 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode).url
 
-  val selectedBusinessTypeText = "llp"
-  private def form             = new forms.BusinessNameFormProvider().apply(selectedBusinessTypeText)
+  val selectedReporterTypeText = "llp"
+  private def form             = new forms.BusinessNameFormProvider().apply(selectedReporterTypeText)
 
-  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.LimitedCompany).success.value
 
   "BusinessName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, LimitedCompany).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, LimitedCompany).success.value
       retrieveUserAnswersData(userAnswers)
       val application = guiceApplicationBuilder().build()
 
@@ -60,7 +60,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
     "redirect to 'There is a problem with this page' page when business type is 'Sole trader'" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
+        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.Sole).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
@@ -90,7 +90,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value.set(BusinessNamePage, "answer").success.value
+        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.LimitedCompany).success.value.set(BusinessNamePage, "answer").success.value
 
       retrieveUserAnswersData(userAnswers)
       val application = guiceApplicationBuilder().build()
@@ -141,7 +141,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
     "must redirect to 'There is a problem with this page' when business type is 'sole trader' on submission" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
+        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.Sole).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))

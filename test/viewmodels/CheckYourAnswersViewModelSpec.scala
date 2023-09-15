@@ -17,13 +17,15 @@
 package viewmodels
 
 import base.SpecBase
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.{Address, Country, Name, NonUkName}
+import models.matching.{OrgRegistrationInfo, SafeId}
+import models.register.response.details.AddressResponse
+import models.{Address, Country, Name, NonUkName, ReporterType, UniqueTaxpayerReference}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pages._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import uk.gov.hmrc.domain.Nino
 import utils.CountryListFactory
 
 import java.time.LocalDate
@@ -34,18 +36,34 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
   val countryListFactory: CountryListFactory           = app.injector.instanceOf[CountryListFactory]
+  val orgRegistrationInfo                              = OrgRegistrationInfo(SafeId("id"), "name", AddressResponse("line1", None, None, None, None, "GB"))
 
   "CheckYourAnswersViewModel" - {
 
     "must return required rows for 'business-with-id' flow" in {
       val userAnswers = emptyUserAnswers
-        .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+        .set(ReporterTypePage, ReporterType.LimitedCompany)
         .success
         .value
-        .set(ContactEmailPage, "test@test.com")
+        .set(RegisteredAddressInUKPage, true)
+        .success
+        .value
+        .set(UTRPage, UniqueTaxpayerReference("utr"))
+        .success
+        .value
+        .set(BusinessNamePage, "Name")
+        .success
+        .value
+        .set(RegistrationInfoPage, orgRegistrationInfo)
+        .success
+        .value
+        .set(IsThisYourBusinessPage, true)
         .success
         .value
         .set(ContactNamePage, "Name Name")
+        .success
+        .value
+        .set(ContactEmailPage, "test@test.com")
         .success
         .value
         .set(IsContactTelephonePage, false)
@@ -83,22 +101,34 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
     "must return required rows for 'business-without-id' flow" in {
       val businessAddress = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = emptyUserAnswers
+        .set(ReporterTypePage, ReporterType.LimitedCompany)
+        .success
+        .value
+        .set(RegisteredAddressInUKPage, false)
+        .success
+        .value
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+        .set(BusinessWithoutIDNamePage, "name")
         .success
         .value
-        .set(ContactEmailPage, "hello")
+        .set(BusinessHaveDifferentNamePage, true)
+        .success
+        .value
+        .set(WhatIsTradingNamePage, "trading name")
+        .success
+        .value
+        .set(BusinessAddressWithoutIdPage, businessAddress)
         .success
         .value
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(ContactEmailPage, "hello")
         .success
         .value
-        .set(BusinessAddressWithoutIdPage, businessAddress)
+        .set(IsContactTelephonePage, false)
         .success
         .value
         .set(SecondContactPage, false)
@@ -108,7 +138,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
       val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = true)
 
       result.size mustBe 3
-      result.head.rows.size mustBe 3
+      result.head.rows.size mustBe 6
       result.head.sectionName mustBe "Business details"
 
       result(1).sectionName mustBe "First contact"
@@ -120,16 +150,19 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must return required rows for 'individual-with-id' flow" in {
       val userAnswers = emptyUserAnswers
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, true)
         .success
         .value
+        .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
+        .success
+        .value
         .set(WhatIsYourNamePage, Name("name", "last"))
+        .success
+        .value
+        .set(WhatIsYourDateOfBirthPage, LocalDate.now())
         .success
         .value
         .set(IndividualContactEmailPage, "email@email.com")
@@ -144,7 +177,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
       result.size mustBe 2
 
       result.head.sectionName mustBe "Your details"
-      result.head.rows.size mustBe 4
+      result.head.rows.size mustBe 5
 
       result(1).sectionName mustBe "Contact details"
       result(1).rows.size mustBe 2
@@ -154,10 +187,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
     "must return required rows for 'individual-without-id' flow" in {
       val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = emptyUserAnswers
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)
@@ -166,19 +196,19 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(IndividualContactEmailPage, "test@gmail.com")
-        .success
-        .value
         .set(WhatIsYourDateOfBirthPage, LocalDate.now())
         .success
         .value
-        .set(IndividualHaveContactTelephonePage, false)
+        .set(DoYouLiveInTheUKPage, false)
         .success
         .value
         .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
-        .set(DoYouLiveInTheUKPage, false)
+        .set(IndividualContactEmailPage, "test@gmail.com")
+        .success
+        .value
+        .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
@@ -187,7 +217,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
       result.size mustBe 2
 
       result.head.sectionName mustBe "Your details"
-      result.head.rows.size mustBe 6
+      result.head.rows.size mustBe 5
 
       result(1).sectionName mustBe "Contact details"
       result(1).rows.size mustBe 2

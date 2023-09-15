@@ -16,8 +16,7 @@
 
 package pages
 
-import models.BusinessType.LimitedCompany
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
+import models.ReporterType.LimitedCompany
 import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
 import models.{Address, AddressLookup, Country, Name, NonUkName, UniqueTaxpayerReference, UserAnswers}
@@ -57,7 +56,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(BusinessTypePage, LimitedCompany)
+            .set(ReporterTypePage, LimitedCompany)
             .success
             .value
             .set(UTRPage, UniqueTaxpayerReference("123456789"))
@@ -112,7 +111,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(BusinessTypePage) must not be defined
+          result.get(ReporterTypePage) must not be defined
           result.get(UTRPage) must not be defined
           result.get(BusinessNamePage) must not be defined
           result.get(SoleNamePage) must not be defined
@@ -139,9 +138,6 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-            .success
-            .value
             .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA123456A"))
             .success
             .value
@@ -191,7 +187,6 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(WhatAreYouRegisteringAsPage) must not be defined
           result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
           result.get(WhatIsYourNamePage) must not be defined
           result.get(WhatIsYourDateOfBirthPage) must not be defined

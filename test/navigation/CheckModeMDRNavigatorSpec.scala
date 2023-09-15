@@ -19,7 +19,6 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
 import models._
 import models.matching.{IndRegistrationInfo, SafeId}
 import org.scalacheck.Arbitrary.arbitrary
@@ -42,25 +41,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       "must go from 'Do You Have Unique Tax Payer Reference?' (have-utr) page to " - {
 
-        "'What Are You Registering As?' (registration-type) page " +
-          "if user has changed answer to 'NO' " in {
-
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers = answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-                  .success
-                  .value
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                  .success
-                  .value
-
-                navigator
-                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
-                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode))
-            }
-          }
-
         "'What type of business do you have?' (business-type) page " +
           "if user has changed answer to 'YES' " in {
 
@@ -76,92 +56,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
                 navigator
                   .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
-                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode))
-            }
-          }
-
-        "'What type of business do you have?' (business-type) page " +
-          "if user has not changed the answer 'NO' " in {
-
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers = answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                  .success
-                  .value
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                  .success
-                  .value
-
-                navigator
-                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
-                  .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode))
-            }
-          }
-
-        "'What type of business do you have?' (business-type) page " +
-          "if user has not changed the answer 'YES' " in {
-
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers = answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-                  .success
-                  .value
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-                  .success
-                  .value
-
-                navigator
-                  .nextPage(page = DoYouHaveUniqueTaxPayerReferencePage, mode = CheckMode, userAnswers = updatedAnswers)
-                  .mustBe(routes.BusinessTypeController.onPageLoad(CheckMode))
-            }
-          }
-      }
-
-      "must go from 'What Are You Registering As' (registration-type) page to " - {
-
-        "'Do You Have NINO?' page" +
-          "if user has changed answer to 'Individual' " in {
-
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers = answers
-                  .remove(DoYouHaveNINPage)
-                  .success
-                  .value
-                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
-                  .success
-                  .value
-                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                  .success
-                  .value
-
-                navigator
-                  .nextPage(page = WhatAreYouRegisteringAsPage, mode = CheckMode, userAnswers = updatedAnswers)
-                  .mustBe(routes.DoYouHaveNINController.onPageLoad(CheckMode))
-            }
-          }
-
-        "'What is the name of your business' page " +
-          "if user has changed answer to 'Business' " in {
-            forAll(arbitrary[UserAnswers]) {
-              answers =>
-                val updatedAnswers = answers
-                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                  .success
-                  .value
-                  .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeBusiness)
-                  .success
-                  .value
-
-                navigator
-                  .nextPage(
-                    page = WhatAreYouRegisteringAsPage,
-                    mode = CheckMode,
-                    userAnswers = updatedAnswers
-                  )
-                  .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(CheckMode))
+                  .mustBe(routes.ReporterTypeController.onPageLoad(CheckMode))
             }
           }
       }
@@ -212,14 +107,14 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         "'What is your Unique Tax Payer Reference' page " in {
 
           forAll(arbitrary[UserAnswers], arbitraryBussinessType.arbitrary) {
-            (answers, businessType) =>
+            (answers, reporterType) =>
               val updatedAnswers = answers
-                .set(BusinessTypePage, businessType)
+                .set(ReporterTypePage, reporterType)
                 .success
                 .value
 
               navigator
-                .nextPage(BusinessTypePage, CheckMode, updatedAnswers)
+                .nextPage(ReporterTypePage, CheckMode, updatedAnswers)
                 .mustBe(routes.UTRController.onPageLoad(CheckMode))
           }
         }
@@ -233,7 +128,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
             forAll(arbitrary[UserAnswers], arbitraryUniqueTaxpayerReference.arbitrary) {
               (answers, utr) =>
                 val updatedAnswers = answers
-                  .set(BusinessTypePage, BusinessType.Sole)
+                  .set(ReporterTypePage, ReporterType.Sole)
                   .success
                   .value
                   .set(UTRPage, utr)
@@ -247,12 +142,12 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           }
 
         "'What is your {business} Name' page " +
-          "if the business type is other than 'Sole trader'" in {
+          "if the reporter type is other than 'Sole trader'" in {
 
-            forAll(arbitrary[UserAnswers], Gen.oneOf(models.BusinessType.values.toSeq)) {
-              (answers, businessType) =>
+            forAll(arbitrary[UserAnswers], Gen.oneOf(models.ReporterType.values.toSeq)) {
+              (answers, reporterType) =>
                 val updatedAnswers = answers
-                  .set(BusinessTypePage, BusinessType.LimitedCompany)
+                  .set(ReporterTypePage, ReporterType.LimitedCompany)
                   .success
                   .value
                   .set(UTRPage, utr)
@@ -408,9 +303,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers = answers
-              .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-              .success
-              .value
               .set(BusinessAddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
               .success
               .value
@@ -636,9 +528,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-                .success
-                .value
                 .set(IndividualAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                 .success
                 .value
@@ -658,9 +547,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-                .success
-                .value
                 .remove(ContactNamePage)
                 .success
                 .value
@@ -694,9 +580,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         answers =>
           val updatedAnswers =
             answers
-              .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-              .success
-              .value
               .set(SelectAddressPage, "Some Address")
               .success
               .value
@@ -716,9 +599,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                .success
-                .value
                 .set(SelectAddressPage, "Some Address")
                 .success
                 .value
@@ -737,9 +617,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         answers =>
           val updatedAnswers =
             answers
-              .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-              .success
-              .value
               .set(AddressUKPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
               .success
               .value
@@ -759,9 +636,6 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                .success
-                .value
                 .set(AddressUKPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                 .success
                 .value

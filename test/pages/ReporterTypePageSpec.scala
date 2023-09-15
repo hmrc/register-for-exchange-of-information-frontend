@@ -16,14 +16,13 @@
 
 package pages
 
-import models.ReporterType
-import pages.behaviours.PageBehaviours
 import models.ReporterType.{LimitedCompany, Sole}
+import models.{ReporterType, UserAnswers}
 import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
-import models.{ReporterType, UserAnswers}
-import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.{Arbitrary, Gen}
+import pages.behaviours.PageBehaviours
 
 class ReporterTypePageSpec extends PageBehaviours {
   implicit val reporterTypeArbitrary: Arbitrary[ReporterType] = Arbitrary(Gen.oneOf(ReporterType.values))
