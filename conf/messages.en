@@ -519,5 +519,5 @@ informationSent.p1 = We will contact you if we have any questions about the deta
 registeredAddressInUK.title = Is your registered address in the UK?
 registeredAddressInUK.heading = Is your registered address in the UK?
 registeredAddressInUK.checkYourAnswersLabel = TODO when CYA changes are implemented
-registeredAddressInUK.error.required = Select yes if your registered address in the UK
+registeredAddressInUK.error.required = Select yes if your registered address is in the UK
 registeredAddressInUK.change.hidden = TODO when CYA changes are implemented
