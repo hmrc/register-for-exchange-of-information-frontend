@@ -528,4 +528,4 @@ registeredAddressInUK.title = Is your registered address in the UK?
 registeredAddressInUK.heading = Is your registered address in the UK?
 registeredAddressInUK.checkYourAnswersLabel = Is your registered address in the UK?
 registeredAddressInUK.checkYourAnswersLabel.hiddenText =  Change whether your registered address is in the UK
-registeredAddressInUK.error.required = Select yes if your registered address in the UK
+registeredAddressInUK.error.required = Select yes if your registered address is in the UK
