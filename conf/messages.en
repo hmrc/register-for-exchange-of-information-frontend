@@ -460,8 +460,8 @@ unauthorisedAssistant.heading = You’re unable to use this service
 unauthorisedAssistant.paragraph.1 = You’ve signed in as a standard user. Only people in your organisation with an administrator role can register for the service.
 unauthorisedAssistant.paragraph.2 = You need to find an administrator who can then sign in with their Government Gateway details.
 unauthorisedAssistant.paragraph.3 = Once registered, they can give you permission to use the service to send MDR reports using your own Government Gateway details.
-unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change access for team members in the ‘Manage account’ section within your organisation’s {0}
-unauthorisedAssistant.paragraph.4b = business tax account.
+unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change access for team members in the ‘Manage account’ section within your organisation’s {0}.
+unauthorisedAssistant.paragraph.4b = business tax account
 
 #Agent messages
 unauthorisedAgent.title = Sorry, you’re unable to use this service
