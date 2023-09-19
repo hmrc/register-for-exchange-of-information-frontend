@@ -16,7 +16,7 @@
 
 package pages
 
-import models.ReporterType.Sole
+import models.ReporterType.{Individual, Sole}
 import models.{ReporterType, UserAnswers}
 import play.api.libs.json.JsPath
 
@@ -24,8 +24,9 @@ import scala.util.Try
 
 case object ReporterTypePage extends QuestionPage[ReporterType] {
 
-  private val otherBusinessTypePages = List(
+  private val soleTraderCleanup = List(
     IsThisYourBusinessPage,
+    RegistrationInfoPage,
     ContactNamePage,
     ContactEmailPage,
     IsContactTelephonePage,
@@ -35,20 +36,51 @@ case object ReporterTypePage extends QuestionPage[ReporterType] {
     SndContactEmailPage,
     SndConHavePhonePage,
     SndContactPhonePage,
-    RegistrationInfoPage,
     BusinessWithoutIDNamePage,
     BusinessHaveDifferentNamePage,
-    WhatIsTradingNamePage
+    WhatIsTradingNamePage,
+    BusinessNamePage
   )
 
-  private val soleTraderPages = List(
+  private val individualCleanup = List(
     IsThisYourBusinessPage,
     RegistrationInfoPage,
+    RegisteredAddressInUKPage,
+    DoYouHaveUniqueTaxPayerReferencePage,
+    UTRPage,
+    BusinessNamePage,
+    SoleNamePage,
+    ContactNamePage,
+    ContactEmailPage,
+    IsContactTelephonePage,
+    ContactPhonePage,
+    SecondContactPage,
+    SndContactNamePage,
+    SndContactEmailPage,
+    SndConHavePhonePage,
+    SndContactPhonePage,
+    BusinessWithoutIDNamePage,
+    BusinessHaveDifferentNamePage,
+    WhatIsTradingNamePage,
+    BusinessAddressWithoutIdPage
+  )
+
+  private val otherBusinessTyeCleanup = List(
+    IsThisYourBusinessPage,
+    RegistrationInfoPage,
+    DoYouHaveNINPage,
+    WhatIsYourNationalInsuranceNumberPage,
+    WhatIsYourNamePage,
+    WhatIsYourDateOfBirthPage,
     IndividualContactEmailPage,
     IndividualHaveContactTelephonePage,
     IndividualContactPhonePage,
-    BusinessWithoutIDNamePage,
-    BusinessHaveDifferentNamePage,
+    NonUkNamePage,
+    DateOfBirthWithoutIdPage,
+    DoYouLiveInTheUKPage,
+    WhatIsYourPostcodePage,
+    IndividualAddressWithoutIdPage,
+    SelectAddressPage,
     WhatIsTradingNamePage
   )
 
@@ -57,8 +89,9 @@ case object ReporterTypePage extends QuestionPage[ReporterType] {
   override def toString: String = "reporterType"
 
   override def cleanup(value: Option[ReporterType], userAnswers: UserAnswers): Try[UserAnswers] = value match {
-    case Some(Sole) => otherBusinessTypePages.foldLeft(Try(userAnswers))(PageLists.removePage)
-    case Some(_)    => soleTraderPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-    case _          => super.cleanup(value, userAnswers)
+    case Some(Sole)       => soleTraderCleanup.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case Some(Individual) => individualCleanup.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case Some(_)          => otherBusinessTyeCleanup.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case _                => super.cleanup(value, userAnswers)
   }
 }

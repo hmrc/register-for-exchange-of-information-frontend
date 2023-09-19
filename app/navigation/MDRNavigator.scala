@@ -45,48 +45,40 @@ class MDRNavigator @Inject() () extends Navigator {
     case DoYouHaveNINPage                       => doYouHaveNINORoutes(NormalMode)
     case WhatIsYourNationalInsuranceNumberPage  => _ => Some(routes.WhatIsYourNameController.onPageLoad(NormalMode))
     case WhatIsYourNamePage                     => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(NormalMode))
-    case WhatIsYourDateOfBirthPage             => whatIsYourDateOfBirthRoutes(NormalMode)
+    case WhatIsYourDateOfBirthPage              => whatIsYourDateOfBirthRoutes(NormalMode)
 
     case NonUkNamePage                          => _ => Some(routes.DateOfBirthWithoutIdController.onPageLoad(NormalMode))
-    case DateOfBirthWithoutIdPage              => whatIsYourDateOfBirthRoutes(NormalMode)
+    case DateOfBirthWithoutIdPage               => whatIsYourDateOfBirthRoutes(NormalMode)
     case DoYouLiveInTheUKPage                   => doYouLiveInTheUkRoutes(NormalMode)
     case WhatIsYourPostcodePage                 => _ => Some(routes.SelectAddressController.onPageLoad(NormalMode))
     case SelectAddressPage                      => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case AddressUKPage                          => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case IndividualAddressWithoutIdPage         => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
     case RegistrationInfoPage                   => _ => Some(routes.IndividualContactEmailController.onPageLoad(NormalMode))
-    case _                                     => _ => None
+    case _                                      => _ => None
   }
 
   override val checkRouteMap: Page => UserAnswers => Option[Call] = {
-    case DoYouHaveUniqueTaxPayerReferencePage  => doYouHaveUniqueTaxPayerReference(CheckMode)
-    case BusinessHaveDifferentNamePage         => businessHaveDifferentNameRoutes(CheckMode)
-    case DoYouHaveNINPage                      => doYouHaveNINORoutes(CheckMode)
-    case WhatIsYourDateOfBirthPage            => whatIsYourDateOfBirthRoutes(CheckMode)
-    case DateOfBirthWithoutIdPage             => whatIsYourDateOfBirthRoutes(CheckMode)
-    case DoYouLiveInTheUKPage                  => doYouLiveInTheUkRoutes(CheckMode)
-    case WhatIsYourPostcodePage                => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
-    case UTRPage                              => isSoleProprietor(CheckMode)
-    case IsThisYourBusinessPage               => isThisYourBusiness(CheckMode)
+    case ReporterTypePage                       => whatAreYouReportingAs(CheckMode)
+    case RegisteredAddressInUKPage              => isRegisteredAddressInUk(CheckMode)
+    case UTRPage                                => isSoleProprietor(CheckMode)
+    case IsThisYourBusinessPage                 => isThisYourBusiness(CheckMode)
+    case DoYouHaveUniqueTaxPayerReferencePage   => doYouHaveUniqueTaxPayerReference(CheckMode)
+    case BusinessHaveDifferentNamePage          => businessHaveDifferentNameRoutes(CheckMode)
+    case DoYouHaveNINPage                       => doYouHaveNINORoutes(CheckMode)
     case WhatIsYourNationalInsuranceNumberPage  => _ => Some(routes.WhatIsYourNameController.onPageLoad(CheckMode))
-    case WhatIsYourNamePage                    => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode))
-
-
-    case RegistrationInfoPage                  => ua =>
-      checkNextPageForValueThenRoute(CheckMode, ua, IndividualContactEmailPage, routes.IndividualContactEmailController.onPageLoad(CheckMode)
-      )
-
-    case SoleNamePage  => ua =>
-      checkNextPageForValueThenRoute(CheckMode, ua, RegistrationInfoPage, routes.IsThisYourBusinessController.onPageLoad(CheckMode)
-      )
+    case WhatIsYourNamePage                     => _ => Some(routes.WhatIsYourDateOfBirthController.onPageLoad(CheckMode))
+    case WhatIsYourDateOfBirthPage              => whatIsYourDateOfBirthRoutes(CheckMode)
+    case DateOfBirthWithoutIdPage               => whatIsYourDateOfBirthRoutes(CheckMode)
+    case DoYouLiveInTheUKPage                   => doYouLiveInTheUkRoutes(CheckMode)
+    case WhatIsYourPostcodePage                 => _ => Some(routes.SelectAddressController.onPageLoad(CheckMode))
 
     case BusinessNamePage  => ua =>
       checkNextPageForValueThenRoute(CheckMode, ua, RegistrationInfoPage, routes.IsThisYourBusinessController.onPageLoad(CheckMode)
       )
 
-    case ContactNamePage  => ua =>
-      checkNextPageForValueThenRoute(
-        CheckMode, ua, ContactEmailPage, routes.ContactEmailController.onPageLoad(CheckMode)
+    case SoleNamePage  => ua =>
+      checkNextPageForValueThenRoute(CheckMode, ua, RegistrationInfoPage, routes.IsThisYourBusinessController.onPageLoad(CheckMode)
       )
 
     case BusinessWithoutIDNamePage  => ua =>
@@ -97,6 +89,15 @@ class MDRNavigator @Inject() () extends Navigator {
     case WhatIsTradingNamePage  => ua =>
       checkNextPageForValueThenRoute(
         CheckMode, ua, BusinessAddressWithoutIdPage, routes.BusinessAddressWithoutIdController.onPageLoad(CheckMode)
+      )
+
+    case RegistrationInfoPage                  => ua =>
+      checkNextPageForValueThenRoute(CheckMode, ua, IndividualContactEmailPage, routes.IndividualContactEmailController.onPageLoad(CheckMode)
+      )
+
+    case ContactNamePage  => ua =>
+      checkNextPageForValueThenRoute(
+        CheckMode, ua, ContactEmailPage, routes.ContactEmailController.onPageLoad(CheckMode)
       )
 
     case NonUkNamePage  => ua =>
