@@ -19,23 +19,23 @@ package controllers
 import base.ControllerSpecBase
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{ContactNamePage, IsContactTelephonePage}
+import pages.{ContactHavePhonePage, ContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.IsContactTelephoneView
+import views.html.ContactHavePhoneView
 
 import scala.concurrent.Future
 
-class IsContactTelephoneControllerSpec extends ControllerSpecBase {
+class ContactHavePhoneControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.IsContactTelephoneController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.IsContactTelephoneController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.ContactHavePhoneController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.ContactHavePhoneController.onSubmit(NormalMode).url
 
-  private def form = new forms.IsContactTelephoneFormProvider().apply()
+  private def form = new forms.ContactHavePhoneFormProvider().apply()
 
   val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
 
-  "IsContactTelephone Controller" - {
+  "ContactHavePhone Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -44,7 +44,7 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
       val result = route(app, request).value
 
-      val view = app.injector.instanceOf[IsContactTelephoneView]
+      val view = app.injector.instanceOf[ContactHavePhoneView]
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual view(form, "Name", NormalMode)(request, messages).toString
@@ -57,13 +57,13 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
         .set(ContactNamePage, "Name")
         .success
         .value
-        .set(IsContactTelephonePage, true)
+        .set(ContactHavePhonePage, true)
         .success
         .value
       retrieveUserAnswersData(userAnswers2)
       val request = FakeRequest(GET, loadRoute)
 
-      val view       = app.injector.instanceOf[IsContactTelephoneView]
+      val view       = app.injector.instanceOf[ContactHavePhoneView]
       val filledForm = form.bind(Map("value" -> "true"))
 
       val result = route(app, request).value
@@ -94,7 +94,7 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(userAnswers)
       val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
-      val view      = app.injector.instanceOf[IsContactTelephoneView]
+      val view      = app.injector.instanceOf[ContactHavePhoneView]
 
       val result = route(app, request).value
 

@@ -41,12 +41,12 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
         }
       }
 
-      "must go from Contact Email page to IsContactTelephone page" in {
+      "must go from Contact Email page to ContactHavePhone page" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             navigator
               .nextPage(ContactEmailPage, NormalMode, answers)
-              .mustBe(routes.IsContactTelephoneController.onPageLoad(NormalMode))
+              .mustBe(routes.ContactHavePhoneController.onPageLoad(NormalMode))
         }
       }
 
@@ -68,22 +68,22 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
         }
       }
 
-      "must go from IsContactTelephone page to Contact Phone page if YES is selected" in {
+      "must go from ContactHavePhone page to Contact Phone page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, true)
+                .set(ContactHavePhonePage, true)
                 .success
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
+              .nextPage(ContactHavePhonePage, NormalMode, updatedAnswers)
               .mustBe(routes.ContactPhoneController.onPageLoad(NormalMode))
         }
       }
 
-      "must go from IsContactTelephone page to Second Contact Phone page if NO is selected and they are a business" in {
+      "must go from ContactHavePhone page to Second Contact Phone page if NO is selected and they are a business" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
@@ -94,12 +94,12 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .set(ReporterTypePage, LimitedCompany)
                 .success
                 .value
-                .set(IsContactTelephonePage, false)
+                .set(ContactHavePhonePage, false)
                 .success
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, NormalMode, updatedAnswers)
+              .nextPage(ContactHavePhonePage, NormalMode, updatedAnswers)
               .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
         }
       }

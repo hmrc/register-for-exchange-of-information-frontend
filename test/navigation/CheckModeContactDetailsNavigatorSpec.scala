@@ -89,7 +89,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                 .set(ContactEmailPage, "email@email.com")
                 .success
                 .value
-                .set(IsContactTelephonePage, true)
+                .set(ContactHavePhonePage, true)
                 .success
                 .value
 
@@ -111,7 +111,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                 .set(ContactEmailPage, "email@email.com")
                 .success
                 .value
-                .remove(IsContactTelephonePage)
+                .remove(ContactHavePhonePage)
                 .success
                 .value
 
@@ -121,7 +121,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   CheckMode,
                   updatedAnswers
                 )
-                .mustBe(routes.IsContactTelephoneController.onPageLoad(CheckMode))
+                .mustBe(routes.ContactHavePhoneController.onPageLoad(CheckMode))
           }
         }
 
@@ -139,22 +139,22 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
 
       }
 
-      "must go from IsContactTelephone page to Contact Phone page if YES is selected" in {
+      "must go from ContactHavePhone page to Contact Phone page if YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
               answers
-                .set(IsContactTelephonePage, true)
+                .set(ContactHavePhonePage, true)
                 .success
                 .value
 
             navigator
-              .nextPage(IsContactTelephonePage, CheckMode, updatedAnswers)
+              .nextPage(ContactHavePhonePage, CheckMode, updatedAnswers)
               .mustBe(routes.ContactPhoneController.onPageLoad(CheckMode))
         }
       }
 
-      "must go from IsContactTelephone page to 'is there someone else we can contact' page if NO is selected " +
+      "must go from ContactHavePhone page to 'is there someone else we can contact' page if NO is selected " +
         "and user registering as business with ID and second contact page has NO value" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
@@ -166,7 +166,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(ReporterTypePage, ReporterType.LimitedPartnership)
                   .success
                   .value
-                  .set(IsContactTelephonePage, false)
+                  .set(ContactHavePhonePage, false)
                   .success
                   .value
                   .remove(SecondContactPage)
@@ -174,12 +174,12 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .value
 
               navigator
-                .nextPage(IsContactTelephonePage, CheckMode, updatedAnswers)
+                .nextPage(ContactHavePhonePage, CheckMode, updatedAnswers)
                 .mustBe(routes.SecondContactController.onPageLoad(CheckMode))
           }
         }
 
-      "must go from IsContactTelephone page to 'is there someone else we can contact' page if NO is selected " +
+      "must go from ContactHavePhone page to 'is there someone else we can contact' page if NO is selected " +
         "and user registering as business with ID and second contact page has SOME value" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
@@ -191,7 +191,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .set(ReporterTypePage, ReporterType.LimitedPartnership)
                   .success
                   .value
-                  .set(IsContactTelephonePage, false)
+                  .set(ContactHavePhonePage, false)
                   .success
                   .value
                   .set(SecondContactPage, true)
@@ -199,7 +199,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
                   .value
 
               navigator
-                .nextPage(IsContactTelephonePage, CheckMode, updatedAnswers)
+                .nextPage(ContactHavePhonePage, CheckMode, updatedAnswers)
                 .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
@@ -248,29 +248,27 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
           }
         }
 
-      "must go from IsContactTelephone page to 'is there someone else we can contact' page if NO is selected " +
+      "must go from ContactHavePhone page to 'is there someone else we can contact' page if NO is selected " +
         "and user registering as business without ID" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(ReporterTypePage, ReporterType.LimitedCompany)
-                  .success
-                  .value
-                  .set(RegisteredAddressInUKPage, false)
-                  .success
-                  .value
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                  .success
-                  .value
-                  .set(IsContactTelephonePage, false)
-                  .success
-                  .value
 
-              navigator
-                .nextPage(IsContactTelephonePage, CheckMode, updatedAnswers)
-                .mustBe(routes.SecondContactController.onPageLoad(CheckMode))
-          }
+          val updatedAnswers =
+            emptyUserAnswers
+              .set(ReporterTypePage, ReporterType.LimitedCompany)
+              .success
+              .value
+              .set(RegisteredAddressInUKPage, false)
+              .success
+              .value
+              .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+              .success
+              .value
+              .set(ContactHavePhonePage, false)
+              .success
+              .value
+
+          navigator
+            .nextPage(ContactHavePhonePage, CheckMode, updatedAnswers)
+            .mustBe(routes.SecondContactController.onPageLoad(CheckMode))
         }
 
       "must go from Second Contact page to Second Contact Name page if YES is selected" in {

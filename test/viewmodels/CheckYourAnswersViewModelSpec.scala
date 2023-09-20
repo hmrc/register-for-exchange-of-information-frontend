@@ -66,7 +66,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(ContactEmailPage, "test@test.com")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(ContactHavePhonePage, false)
         .success
         .value
         .set(SecondContactPage, true)
@@ -128,7 +128,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(ContactEmailPage, "hello")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(ContactHavePhonePage, false)
         .success
         .value
         .set(SecondContactPage, false)

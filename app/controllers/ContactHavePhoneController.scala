@@ -17,28 +17,28 @@
 package controllers
 
 import controllers.actions._
-import forms.IsContactTelephoneFormProvider
+import forms.ContactHavePhoneFormProvider
 import models.Mode
 import navigation.ContactDetailsNavigator
-import pages.IsContactTelephonePage
+import pages.ContactHavePhonePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{ContactHelper, UserAnswersHelper}
-import views.html.IsContactTelephoneView
+import views.html.ContactHavePhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsContactTelephoneController @Inject() (
+class ContactHavePhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: ContactDetailsNavigator,
   standardActionSets: StandardActionSets,
-  formProvider: IsContactTelephoneFormProvider,
+  formProvider: ContactHavePhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: IsContactTelephoneView
+  view: ContactHavePhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -49,7 +49,7 @@ class IsContactTelephoneController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      val preparedForm = request.userAnswers.get(IsContactTelephonePage) match {
+      val preparedForm = request.userAnswers.get(ContactHavePhonePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -65,9 +65,9 @@ class IsContactTelephoneController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsContactTelephonePage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactHavePhonePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsContactTelephonePage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(ContactHavePhonePage, mode, updatedAnswers))
         )
   }
 }

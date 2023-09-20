@@ -179,7 +179,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(ContactNamePage, "Name Name")
           .success
           .value
-          .set(IsContactTelephonePage, false)
+          .set(ContactHavePhonePage, false)
           .success
           .value
           .set(SecondContactPage, true)

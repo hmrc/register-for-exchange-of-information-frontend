@@ -32,10 +32,10 @@ POST       /register/email                               controllers.ContactEmai
 GET        /register/change-email                        controllers.ContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-email                        controllers.ContactEmailController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/have-phone                          controllers.IsContactTelephoneController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/have-phone                          controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-have-phone                   controllers.IsContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-have-phone                   controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode)
+GET        /register/have-phone                          controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-phone                          controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-phone                   controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-phone                   controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/phone                               controllers.ContactPhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/phone                               controllers.ContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode)

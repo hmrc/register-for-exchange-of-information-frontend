@@ -54,7 +54,7 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(ContactHavePhonePage, false)
         .success
         .value
 

@@ -20,15 +20,15 @@ import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
-class IsContactTelephonePageSpec extends PageBehaviours {
+class ContactHavePhonePageSpec extends PageBehaviours {
 
-  "IsContactTelephonePage" - {
+  "ContactHavePhonePage" - {
 
-    beRetrievable[Boolean](IsContactTelephonePage)
+    beRetrievable[Boolean](ContactHavePhonePage)
 
-    beSettable[Boolean](IsContactTelephonePage)
+    beSettable[Boolean](ContactHavePhonePage)
 
-    beRemovable[Boolean](IsContactTelephonePage)
+    beRemovable[Boolean](ContactHavePhonePage)
 
     "cleanup" - {
 
@@ -40,7 +40,7 @@ class IsContactTelephonePageSpec extends PageBehaviours {
               .set(ContactPhonePage, "112233445566")
               .success
               .value
-              .set(IsContactTelephonePage, false)
+              .set(ContactHavePhonePage, false)
               .success
               .value
 
@@ -56,7 +56,7 @@ class IsContactTelephonePageSpec extends PageBehaviours {
               .set(ContactPhonePage, "112233445566")
               .success
               .value
-              .set(IsContactTelephonePage, true)
+              .set(ContactHavePhonePage, true)
               .success
               .value
 

@@ -16,13 +16,15 @@
 
 package pages
 
-import models.ReporterType.{LimitedCompany, Sole}
-import models.{ReporterType, UserAnswers}
+import models.ReporterType.{Individual, LimitedCompany, Sole}
 import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
+import models.{NonUkName, ReporterType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import pages.behaviours.PageBehaviours
+
+import java.time.LocalDate
 
 class ReporterTypePageSpec extends PageBehaviours {
   implicit val reporterTypeArbitrary: Arbitrary[ReporterType] = Arbitrary(Gen.oneOf(ReporterType.values))
@@ -38,7 +40,7 @@ class ReporterTypePageSpec extends PageBehaviours {
 
   "cleanup" - {
 
-    "must remove organisation contact details when user selects a sole trader as business type" in {
+    "must remove organisation contact details when user selects a sole trader as reporter type" in {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
@@ -51,7 +53,7 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(ContactEmailPage, "contact@email.com")
             .success
             .value
-            .set(IsContactTelephonePage, true)
+            .set(ContactHavePhonePage, true)
             .success
             .value
             .set(ContactPhonePage, "07540000000")
@@ -91,7 +93,7 @@ class ReporterTypePageSpec extends PageBehaviours {
           result.get(IsThisYourBusinessPage) must not be defined
           result.get(ContactNamePage) must not be defined
           result.get(ContactEmailPage) must not be defined
-          result.get(IsContactTelephonePage) must not be defined
+          result.get(ContactHavePhonePage) must not be defined
           result.get(ContactPhonePage) must not be defined
           result.get(SecondContactPage) must not be defined
           result.get(SndContactNamePage) must not be defined
@@ -105,7 +107,7 @@ class ReporterTypePageSpec extends PageBehaviours {
       }
     }
 
-    "must remove individual contact details when user selects any other organisation business type" in {
+    "must remove organisation contact details when user selects a Individual as reporter type" in {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
@@ -115,13 +117,31 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
-            .set(IndividualContactEmailPage, "contact@email.com")
+            .set(ContactNamePage, "SomeContact")
             .success
             .value
-            .set(IndividualHaveContactTelephonePage, true)
+            .set(ContactEmailPage, "contact@email.com")
             .success
             .value
-            .set(IndividualContactPhonePage, "07540000000")
+            .set(ContactHavePhonePage, true)
+            .success
+            .value
+            .set(ContactPhonePage, "07540000000")
+            .success
+            .value
+            .set(SecondContactPage, true)
+            .success
+            .value
+            .set(SndContactNamePage, "SomeSecondContact")
+            .success
+            .value
+            .set(SndContactEmailPage, "secondcontact@email.com")
+            .success
+            .value
+            .set(SndConHavePhonePage, true)
+            .success
+            .value
+            .set(SndContactPhonePage, "07540000000")
             .success
             .value
             .set(BusinessWithoutIDNamePage, "Organisation")
@@ -133,18 +153,78 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(WhatIsTradingNamePage, "TradingName")
             .success
             .value
+            .set(ReporterTypePage, Individual)
+            .success
+            .value
+
+          result.get(IsThisYourBusinessPage) must not be defined
+          result.get(ContactNamePage) must not be defined
+          result.get(ContactEmailPage) must not be defined
+          result.get(ContactHavePhonePage) must not be defined
+          result.get(ContactPhonePage) must not be defined
+          result.get(SecondContactPage) must not be defined
+          result.get(SndContactNamePage) must not be defined
+          result.get(SndContactEmailPage) must not be defined
+          result.get(SndConHavePhonePage) must not be defined
+          result.get(SndContactPhonePage) must not be defined
+          result.get(RegistrationInfoPage) must not be defined
+          result.get(BusinessWithoutIDNamePage) must not be defined
+          result.get(BusinessHaveDifferentNamePage) must not be defined
+          result.get(WhatIsTradingNamePage) must not be defined
+      }
+    }
+
+    "must remove individual contact details when user selects any other organisation reporter type" in {
+      forAll(arbitrary[UserAnswers]) {
+        userAnswers =>
+          val result = userAnswers
+            .set(IsThisYourBusinessPage, true)
+            .success
+            .value
+            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
+            .success
+            .value
+            .set(DoYouHaveNINPage, false)
+            .success
+            .value
+            .set(NonUkNamePage, NonUkName("first", "last"))
+            .success
+            .value
+            .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+            .success
+            .value
+            .set(DoYouLiveInTheUKPage, true)
+            .success
+            .value
+            .set(WhatIsYourPostcodePage, "postcode")
+            .success
+            .value
+            .set(SelectAddressPage, "address")
+            .success
+            .value
+            .set(IndividualContactEmailPage, "contact@email.com")
+            .success
+            .value
+            .set(IndividualHaveContactTelephonePage, true)
+            .success
+            .value
+            .set(IndividualContactPhonePage, "07540000000")
+            .success
+            .value
             .set(ReporterTypePage, LimitedCompany)
             .success
             .value
 
           result.get(IsThisYourBusinessPage) must not be defined
           result.get(RegistrationInfoPage) must not be defined
+          result.get(DoYouHaveNINPage) must not be defined
+          result.get(NonUkNamePage) must not be defined
+          result.get(WhatIsYourDateOfBirthPage) must not be defined
+          result.get(DoYouLiveInTheUKPage) must not be defined
+          result.get(WhatIsYourPostcodePage) must not be defined
           result.get(IndividualContactEmailPage) must not be defined
           result.get(IndividualHaveContactTelephonePage) must not be defined
           result.get(IndividualContactPhonePage) must not be defined
-          result.get(BusinessWithoutIDNamePage) must not be defined
-          result.get(BusinessHaveDifferentNamePage) must not be defined
-          result.get(WhatIsTradingNamePage) must not be defined
       }
     }
   }

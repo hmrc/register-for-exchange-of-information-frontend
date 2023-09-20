@@ -165,7 +165,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .set(ContactNamePage, "Name Name")
           .success
           .value
-          .set(IsContactTelephonePage, false)
+          .set(ContactHavePhonePage, false)
           .success
           .value
           .set(SecondContactPage, false)

@@ -52,7 +52,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
 
   "cleanup" - {
 
-    "must remove business pages when user selects no to do you have a utr?" in {
+    "must remove business with ID pages when user selects no to do you have a utr?" in {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
@@ -65,43 +65,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(BusinessNamePage, "businessName")
             .success
             .value
-            .set(SoleNamePage, Name("Sole", "Trader"))
-            .success
-            .value
             .set(IsThisYourBusinessPage, true)
-            .success
-            .value
-            .set(AddressLookupPage, Seq(addressLookup))
-            .success
-            .value
-            .set(AddressUKPage, address)
-            .success
-            .value
-            .set(ContactNamePage, "SomeContact")
-            .success
-            .value
-            .set(ContactEmailPage, "contact@email.com")
-            .success
-            .value
-            .set(IsContactTelephonePage, true)
-            .success
-            .value
-            .set(ContactPhonePage, "07540000000")
-            .success
-            .value
-            .set(SecondContactPage, true)
-            .success
-            .value
-            .set(SndContactNamePage, "SomeSecondContact")
-            .success
-            .value
-            .set(SndContactEmailPage, "secondcontact@email.com")
-            .success
-            .value
-            .set(SndConHavePhonePage, true)
-            .success
-            .value
-            .set(SndContactPhonePage, "07540000000")
             .success
             .value
             .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
@@ -111,26 +75,10 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .success
             .value
 
-          result.get(ReporterTypePage) must not be defined
           result.get(UTRPage) must not be defined
           result.get(BusinessNamePage) must not be defined
-          result.get(SoleNamePage) must not be defined
           result.get(IsThisYourBusinessPage) must not be defined
-          result.get(AddressLookupPage) must not be defined
-          result.get(AddressUKPage) must not be defined
-          result.get(ContactNamePage) must not be defined
-          result.get(ContactEmailPage) must not be defined
-          result.get(IsContactTelephonePage) must not be defined
-          result.get(ContactPhonePage) must not be defined
-          result.get(SecondContactPage) must not be defined
-          result.get(SndContactNamePage) must not be defined
-          result.get(SndContactEmailPage) must not be defined
-          result.get(SndConHavePhonePage) must not be defined
-          result.get(SndContactPhonePage) must not be defined
           result.get(RegistrationInfoPage) must not be defined
-          result.get(BusinessWithoutIDNamePage) must not be defined
-          result.get(BusinessHaveDifferentNamePage) must not be defined
-          result.get(WhatIsTradingNamePage) must not be defined
       }
     }
 
@@ -160,9 +108,6 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .success
             .value
             .set(WhatIsYourPostcodePage, "NE320AA")
-            .success
-            .value
-            .set(BusinessAddressWithoutIdPage, address)
             .success
             .value
             .set(IndividualAddressWithoutIdPage, address)
@@ -195,12 +140,46 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
           result.get(NonUkNamePage) must not be defined
           result.get(DoYouLiveInTheUKPage) must not be defined
           result.get(WhatIsYourPostcodePage) must not be defined
-          result.get(BusinessAddressWithoutIdPage) must not be defined
           result.get(IndividualAddressWithoutIdPage) must not be defined
           result.get(AddressLookupPage) must not be defined
           result.get(AddressUKPage) must not be defined
           result.get(SelectAddressPage) must not be defined
           result.get(SelectedAddressLookupPage) must not be defined
+          result.get(RegistrationInfoPage) must not be defined
+      }
+    }
+
+    "must remove business without ID pages when user selects YES to do you have a utr?" in {
+      forAll(arbitrary[UserAnswers]) {
+        userAnswers =>
+          val result = userAnswers
+            .set(BusinessWithoutIDNamePage, "organisation")
+            .success
+            .value
+            .set(BusinessHaveDifferentNamePage, true)
+            .success
+            .value
+            .set(WhatIsTradingNamePage, "Some name")
+            .success
+            .value
+            .set(DoYouLiveInTheUKPage, true)
+            .success
+            .value
+            .set(BusinessAddressWithoutIdPage, address)
+            .success
+            .value
+            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
+            .success
+            .value
+            .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+            .success
+            .value
+
+          result.get(BusinessWithoutIDNamePage) must not be defined
+          result.get(BusinessHaveDifferentNamePage) must not be defined
+          result.get(WhatIsTradingNamePage) must not be defined
+          result.get(DoYouLiveInTheUKPage) must not be defined
+          result.get(BusinessAddressWithoutIdPage) must not be defined
           result.get(RegistrationInfoPage) must not be defined
       }
     }

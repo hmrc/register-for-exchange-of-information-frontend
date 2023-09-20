@@ -24,21 +24,21 @@
 
 @(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("isContactTelephone.title.business"))) {
+@layout(pageTitle = title(form, messages("contactHavePhone.title.business"))) {
 
-    @formHelper(action = routes.IsContactTelephoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.ContactHavePhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-       <h1 class="govuk-heading-l">@messages(messages(s"isContactTelephone.heading.business", contactName))</h1>
-       <p class="govuk-body">@messages("isContactTelephone.p1")</p>
+       <h1 class="govuk-heading-l">@messages(messages(s"contactHavePhone.heading.business", contactName))</h1>
+       <p class="govuk-body">@messages("contactHavePhone.p1")</p>
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("isContactTelephone.heading.business", contactName)).asPageHeading().withCssClass("govuk-visually-hidden")
+                legend = LegendViewModel(messages("contactHavePhone.heading.business", contactName)).asPageHeading().withCssClass("govuk-visually-hidden")
             )
         )
         @govukButton(

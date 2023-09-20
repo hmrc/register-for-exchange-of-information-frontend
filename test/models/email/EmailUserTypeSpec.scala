@@ -17,7 +17,7 @@
 package models.email
 
 import base.SpecBase
-import models.ReporterType.{Partnership, Sole}
+import models.ReporterType.Sole
 import models.{ReporterType, UserAnswers}
 import org.scalacheck.Gen
 import org.scalacheck.rng.Seed

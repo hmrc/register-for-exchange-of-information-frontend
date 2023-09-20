@@ -319,16 +319,16 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "contactPhone",
         value = Text(s"$value"),
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+        href = routes.ContactHavePhoneController.onPageLoad(CheckMode).url
       )
     )
 
-  def isContactTelephone: Option[SummaryListRow] = userAnswers.get(pages.IsContactTelephonePage) map {
+  def contactHavePhone: Option[SummaryListRow] = userAnswers.get(pages.ContactHavePhonePage) map {
     answer =>
       toRow(
-        msgKey = "isContactTelephone",
+        msgKey = "contactHavePhone",
         value = yesOrNo(answer),
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+        href = routes.ContactHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 
