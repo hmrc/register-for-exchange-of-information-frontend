@@ -74,6 +74,7 @@ enquiries.emailAddress = aeoi.enquiries@hmrc.gov.uk
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
 signedOut.guidance = We did not save your answers.
+signedOut.link = Sign in again using Government Gateway
 
 needContactDetails.title = We need your contact details
 needContactDetails.heading = We need your contact details

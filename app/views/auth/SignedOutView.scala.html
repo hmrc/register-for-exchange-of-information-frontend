@@ -36,7 +36,7 @@
     <p class="govuk-body">@messages("signedOut.guidance")</p>
 
     @govukButton(
-        ButtonViewModel(messages("site.signIn")).withAttribute("id" -> "submit")
+        ButtonViewModel(messages("signedOut.link")).withAttribute("id" -> "submit")
                 .asLink(appConfig.loginContinueUrl)
     )
 
