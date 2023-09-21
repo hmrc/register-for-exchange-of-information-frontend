@@ -39,7 +39,8 @@ case object ReporterTypePage extends QuestionPage[ReporterType] {
     BusinessWithoutIDNamePage,
     BusinessHaveDifferentNamePage,
     WhatIsTradingNamePage,
-    BusinessNamePage
+    BusinessNamePage,
+    BusinessAddressWithoutIdPage
   )
 
   private val individualCleanup = List(
@@ -80,8 +81,11 @@ case object ReporterTypePage extends QuestionPage[ReporterType] {
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
     IndividualAddressWithoutIdPage,
+    AddressUKPage,
+    AddressLookupPage,
     SelectAddressPage,
-    WhatIsTradingNamePage
+    SelectedAddressLookupPage,
+    SoleNamePage
   )
 
   override def path: JsPath = JsPath \ toString

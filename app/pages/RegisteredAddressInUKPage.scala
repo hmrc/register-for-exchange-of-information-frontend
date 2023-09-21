@@ -24,11 +24,12 @@ import scala.util.Try
 case object RegisteredAddressInUKPage extends QuestionPage[Boolean] {
 
   private val individualAndWithoutIdPages = List(
+    DoYouHaveUniqueTaxPayerReferencePage,
+    DoYouHaveNINPage,
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,
     WhatIsYourDateOfBirthPage,
     DateOfBirthWithoutIdPage,
-    DoYouHaveNINPage,
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,

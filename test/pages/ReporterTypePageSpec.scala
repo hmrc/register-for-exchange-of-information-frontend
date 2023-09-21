@@ -19,7 +19,7 @@ package pages
 import models.ReporterType.{Individual, LimitedCompany, Sole}
 import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
-import models.{NonUkName, ReporterType, UserAnswers}
+import models.{AddressLookup, Name, NonUkName, ReporterType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import pages.behaviours.PageBehaviours
@@ -175,6 +175,9 @@ class ReporterTypePageSpec extends PageBehaviours {
     }
 
     "must remove individual contact details when user selects any other organisation reporter type" in {
+
+      val address = AddressLookup(None, None, None, None, "town", None, "postcode")
+
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
@@ -190,6 +193,9 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(NonUkNamePage, NonUkName("first", "last"))
             .success
             .value
+            .set(SoleNamePage, Name("first", "last"))
+            .success
+            .value
             .set(WhatIsYourDateOfBirthPage, LocalDate.now())
             .success
             .value
@@ -200,6 +206,12 @@ class ReporterTypePageSpec extends PageBehaviours {
             .success
             .value
             .set(SelectAddressPage, "address")
+            .success
+            .value
+            .set(SelectedAddressLookupPage, address)
+            .success
+            .value
+            .set(AddressLookupPage, Seq(address))
             .success
             .value
             .set(IndividualContactEmailPage, "contact@email.com")
@@ -219,9 +231,13 @@ class ReporterTypePageSpec extends PageBehaviours {
           result.get(RegistrationInfoPage) must not be defined
           result.get(DoYouHaveNINPage) must not be defined
           result.get(NonUkNamePage) must not be defined
+          result.get(SoleNamePage) must not be defined
           result.get(WhatIsYourDateOfBirthPage) must not be defined
           result.get(DoYouLiveInTheUKPage) must not be defined
           result.get(WhatIsYourPostcodePage) must not be defined
+          result.get(SelectAddressPage) must not be defined
+          result.get(SelectedAddressLookupPage) must not be defined
+          result.get(AddressLookupPage) must not be defined
           result.get(IndividualContactEmailPage) must not be defined
           result.get(IndividualHaveContactTelephonePage) must not be defined
           result.get(IndividualContactPhonePage) must not be defined
