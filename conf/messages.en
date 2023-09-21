@@ -436,13 +436,13 @@ whatIsTradingName.error.businessName.invalid = Trading name must only include le
 whatIsTradingName.error.businessName.length = Trading name must be 80 characters or less
 
 #Assistant messages
-unauthorisedAssistant.title = Sorry, you’re unable to use this service
-unauthorisedAssistant.heading = Sorry, you’re unable to use this service
+unauthorisedAssistant.title = You’re unable to use this service
+unauthorisedAssistant.heading = You’re unable to use this service
 unauthorisedAssistant.paragraph.1 = You’ve signed in as a standard user. Only people in your organisation with an administrator role can register for the service.
-unauthorisedAssistant.paragraph.2 = You need to find someone with an administrator’s credentials who can then sign in with their Government Gateway details.
-unauthorisedAssistant.paragraph.3 = Once registered, they can give you permission to use the service to submit MDR reports using your own Government Gateway credentials.
-unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change team members’ access in the manage account section within your organisation’s {0}
-unauthorisedAssistant.paragraph.4b = business tax account (opens in new tab)
+unauthorisedAssistant.paragraph.2 = You need to find an administrator who can then sign in with their Government Gateway details.
+unauthorisedAssistant.paragraph.3 = Once registered, they can give you permission to use the service to send MDR reports using your own Government Gateway details.
+unauthorisedAssistant.paragraph.4a = Your administrator can add, delete or change access for team members in the ‘Manage account’ section within your organisation’s {0}.
+unauthorisedAssistant.paragraph.4b = business tax account
 
 #Agent messages
 unauthorisedAgent.title = Sorry, you’re unable to use this service
@@ -506,8 +506,8 @@ yourContactDetails.heading = Setting up contact details for MDR
 yourContactDetails.p1 = Provide the name and contact details for one or two people or teams within your organisation who could answer questions about your reports.
 yourContactDetails.p2 = You can change your MDR contact names and details later, if you want to.
 
-informationSent.title = Information sent
-informationSent.heading = Information sent
+informationSent.title = You have already sent this information
+informationSent.heading = You have already sent this information
 informationSent.p1 = We will contact you if we have any questions about the details you have provided.
 
 reporterType.title = What will you report as?
