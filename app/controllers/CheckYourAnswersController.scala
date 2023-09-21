@@ -85,16 +85,6 @@ class CheckYourAnswersController @Inject() (
         result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID))
       } yield result)
         .valueOrF {
-          case EnrolmentExistsError(groupIds) if request.affinityGroup == Individual =>
-            logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
-            Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad()))
-          case EnrolmentExistsError(groupIds) =>
-            logger.info(s"CheckYourAnswersController: EnrolmentExistsError for the groupIds $groupIds")
-            if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithId()))
-            } else {
-              Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId()))
-            }
           case MandatoryInformationMissingError(_) =>
             logger.warn(s"CheckYourAnswersController: Mandatory information is missing")
             Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad()))
