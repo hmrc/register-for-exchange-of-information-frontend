@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.SndContactEmailFormProvider
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.ContactDetailsNavigator
 import pages.SndContactEmailPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,10 +49,6 @@ class SndContactEmailController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData() {
       implicit request =>
-        if (mode == CheckMode) {
-          request.userAnswers.remove(SndContactEmailPage)
-        }
-
         val preparedForm = request.userAnswers.get(SndContactEmailPage) match {
           case None        => form
           case Some(value) => form.fill(value)

@@ -112,6 +112,21 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
       }
 
+      "must redirect to Information sent when UserAnswers is empty" in {
+
+        val userAnswers: UserAnswers = emptyUserAnswers
+
+        retrieveUserAnswersData(userAnswers)
+
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustBe routes.InformationSentController.onPageLoad().url
+
+      }
+
       "must return OK and the correct view for a GET - First Contact without phone" in {
 
         val userAnswers: UserAnswers = UserAnswers(userAnswersId)
@@ -453,7 +468,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(EnrolmentExistsError(GroupIds(Seq("id"), Seq.empty)))))
 
-        val userAnswers = UserAnswers("Id")
+        val userAnswers = UserAnswers("id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value

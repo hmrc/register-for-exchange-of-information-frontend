@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions._
 import forms.ContactEmailFormProvider
-import models.{CheckMode, Mode}
+import models.Mode
 import navigation.ContactDetailsNavigator
 import pages.ContactEmailPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,10 +49,6 @@ class ContactEmailController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData() {
       implicit request =>
-        if (mode == CheckMode) {
-          request.userAnswers.remove(ContactEmailPage)
-        }
-
         val preparedForm = request.userAnswers.get(ContactEmailPage) match {
           case None        => form
           case Some(value) => form.fill(value)
