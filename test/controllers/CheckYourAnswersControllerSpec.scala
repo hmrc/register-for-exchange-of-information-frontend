@@ -21,6 +21,7 @@ import connectors.AddressLookupConnector
 import controllers.actions._
 import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
+import models.error.ApiError
 import models.error.ApiError._
 import models.matching.{IndRegistrationInfo, SafeId}
 import models.{Address, Country, SubscriptionID, UserAnswers}
@@ -45,8 +46,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
   final val mockRegistrationService: BusinessMatchingWithoutIdService = mock[BusinessMatchingWithoutIdService]
 
-  lazy val loadRoute   = routes.CheckYourAnswersController.onPageLoad().url
-  lazy val submitRoute = routes.CheckYourAnswersController.onSubmit().url
+  lazy val loadRoute                                     = routes.CheckYourAnswersController.onPageLoad().url
+  lazy val submitRoute                                   = routes.CheckYourAnswersController.onSubmit().url
+  val unknownErrorAsApiError: ApiError                   = UnknownError
+  val expectedResponse: Either[ApiError, SubscriptionID] = Left(unknownErrorAsApiError)
 
   // first contact
   val firstContactName    = "first-contact-name"
@@ -610,6 +613,83 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         redirectLocation(result).value mustEqual controllers.routes.SomeInformationIsMissingController.onPageLoad().url
       }
+
+      "onSubmit" - {
+
+        // ... Existing test cases ...
+
+        "must redirect to 'Technical difficulty' page when the registration service fails" in {
+          when(mockRegistrationService.registerWithoutId()(any(), any()))
+            .thenReturn(Future.successful(Left(ServiceUnavailableError)))
+          when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+          val userAnswers = UserAnswers("Id")
+          retrieveUserAnswersData(userAnswers)
+
+          val request = FakeRequest(POST, submitRoute)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+        }
+
+        "must redirect to 'There is a problem' page when an unknown error occurs during registration" in {
+          when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
+            .thenReturn(Future.successful(expectedResponse))
+          when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+          val userAnswers = UserAnswers("Id")
+          retrieveUserAnswersData(userAnswers)
+
+          val request = FakeRequest(POST, submitRoute)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+        }
+
+        "must redirect to 'There is a problem' page when an unknown error occurs during subscription creation" in {
+          when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
+            .thenReturn(Future.successful(expectedResponse))
+
+          when(mockRegistrationService.registerWithoutId()(any(), any()))
+            .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
+          when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+          val userAnswers = UserAnswers("Id")
+          retrieveUserAnswersData(userAnswers)
+
+          val request = FakeRequest(POST, submitRoute)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+        }
+
+        "must return ServiceUnavailable when the tax enrolment service fails" in {
+          when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+            .thenReturn(Future.successful(Left(ServiceUnavailableError)))
+          when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+          when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
+            .thenReturn(Future.successful(Right(SubscriptionID("id"))))
+          when(mockRegistrationService.registerWithoutId()(any(), any()))
+            .thenReturn(Future.successful(Right(SafeId("SAFEID"))))
+
+          val userAnswers = UserAnswers("Id")
+            .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+            .success
+            .value
+
+          retrieveUserAnswersData(userAnswers)
+
+          val request = FakeRequest(POST, submitRoute)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual SERVICE_UNAVAILABLE
+        }
+      }
+
     }
   }
 }
