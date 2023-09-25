@@ -201,7 +201,7 @@ checkYourAnswers.information.p = By sending these contact details, you are confi
 checkYourAnswers.button = Confirm and send
 
 doYouHaveUniqueTaxPayerReference.title = Do you have a UK Unique Taxpayer Reference (UTR)?
-doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a UK Unique Taxpayer Reference?
+doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a Unique Taxpayer Reference?
 doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel.hiddenText = Change if you have a Unique Taxpayer Reference
 doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.p1 = You can {0}.
