@@ -488,12 +488,12 @@ pageNotFound.p1 = If you typed the web address, check it is correct.
 pageNotFound.p2 = If you pasted the web address, check you copied the entire address.
 pageNotFound.p3 = You can email {0} if you have any questions about this service.
 
-businessAlreadyRegistered.title = Your organisation is already registered to use the MDR service
-businessAlreadyRegistered.heading = Your organisation is already registered to use the MDR service
+businessAlreadyRegistered.title = Your organisation is already registered to use this service
+businessAlreadyRegistered.heading = Your organisation is already registered to use this service
 businessAlreadyRegistered.withOutID.information = You can access the service using the Government Gateway account you used to register for MDR.
 businessAlreadyRegistered.withOutID.GGLink = Sign in to your Government Gateway account (opens in new tab)
-businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the ‘Manage account’ settings within their Business Tax Account.
-businessAlreadyRegistered.help = If you’re having problems accessing the service, you can email {0}
+businessAlreadyRegistered.withID.information = You will need to contact your administrator to give you access via the ‘Manage account’ settings within their business tax account.
+businessAlreadyRegistered.help = You can email {0} if you’re having problems accessing the service.
 
 individualAlreadyRegistered.title = You are already registered to use the MDR service
 individualAlreadyRegistered.heading = You are already registered to use the MDR service
