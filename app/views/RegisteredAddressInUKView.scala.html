@@ -24,24 +24,23 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("businessType.title"))) {
+@layout(pageTitle = title(form, messages("registeredAddressInUK.title"))) {
 
-     @formHelper(action = routes.BusinessTypeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.RegisteredAddressInUKController.onSubmit(mode), 'autoComplete -> "off") {
 
-          @if(form.errors.nonEmpty) {
-                @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-          }
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
 
-         @govukRadios(
-            RadiosViewModel(
-            field  = form("value"),
-            legend = LegendViewModel(messages("businessType.heading")).asPageHeading(),
-            items  = BusinessType.options
-            ).withHint(HintViewModel(Text(messages("businessType.hint"))))
-         )
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("registeredAddressInUK.heading")).asPageHeading()
+            )
+        )
 
-         @govukButton(
+        @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
-         )
-     }
+        )
+    }
 }

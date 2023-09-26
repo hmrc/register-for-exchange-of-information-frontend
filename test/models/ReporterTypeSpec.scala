@@ -16,45 +16,46 @@
 
 package models
 
+import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.OptionValues
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.OptionValues
 import play.api.libs.json.{JsError, JsString, Json}
 
-class WhatAreYouRegisteringAsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class ReporterTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
-  "WhatAreYouRegisteringAs" - {
+  "ReporterType" - {
 
     "must deserialise valid values" in {
 
-      val gen = Gen.oneOf(WhatAreYouRegisteringAs.values)
+      val gen = Gen.oneOf(ReporterType.values)
 
       forAll(gen) {
-        whatAreYouRegisteringAs =>
-          JsString(whatAreYouRegisteringAs.toString).validate[WhatAreYouRegisteringAs].asOpt.value mustEqual whatAreYouRegisteringAs
+        reporterType =>
+          JsString(reporterType.toString).validate[ReporterType].asOpt.value mustEqual reporterType
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!WhatAreYouRegisteringAs.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!ReporterType.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
-          JsString(invalidValue).validate[WhatAreYouRegisteringAs] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[ReporterType] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(WhatAreYouRegisteringAs.values)
+      val gen = Gen.oneOf(ReporterType.values)
 
       forAll(gen) {
-        whatAreYouRegisteringAs =>
-          Json.toJson(whatAreYouRegisteringAs) mustEqual JsString(whatAreYouRegisteringAs.toString)
+        reporterType =>
+          Json.toJson(reporterType) mustEqual JsString(reporterType.toString)
       }
     }
   }

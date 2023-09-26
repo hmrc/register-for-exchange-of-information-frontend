@@ -124,13 +124,13 @@ contactEmail.error.length = The email address must be 132 characters or less
 contactEmail.error.invalid.business = Enter an email address in the right format, like yourname@example.com
 contactEmail.error.invalid.individual = Enter an email address in the right format, like yourname@example.com
 
-isContactTelephone.title.business = Can we contact your first contact by telephone?
-isContactTelephone.heading.business = Can we contact {0} by telephone?
-isContactTelephone.title.individual = Can we contact you by telephone?
-isContactTelephone.heading.individual = Can we contact you by telephone?
-isContactTelephone.p1 = We will call if we have any questions about your reports.
-isContactTelephone.error.required.individual = Select yes if we can contact you by telephone
-isContactTelephone.error.required.business = Select yes if they can be contacted by telephone
+contactHavePhone.title.business = Can we contact your first contact by telephone?
+contactHavePhone.heading.business = Can we contact {0} by telephone?
+contactHavePhone.title.individual = Can we contact you by telephone?
+contactHavePhone.heading.individual = Can we contact you by telephone?
+contactHavePhone.p1 = We will call if we have any questions about your reports.
+contactHavePhone.error.required.individual = Select yes if we can contact you by telephone
+contactHavePhone.error.required.business = Select yes if they can be contacted by telephone
 
 contactPhone.title = What is the telephone number for the first contact?
 contactPhone.heading = What is the telephone number for {0}?
@@ -197,11 +197,11 @@ checkYourAnswers.firstContact.h2 = First contact
 checkYourAnswers.secondContact.h2 = Second contact
 checkYourAnswers.contactDetails.h2 = Contact details
 checkYourAnswers.information.h2 = Now send your registration for MDR
-checkYourAnswers.information.p = By sending these contact details, you are confirming that the information is correct and complete to the best of your knowledge.
+checkYourAnswers.information.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
 checkYourAnswers.button = Confirm and send
 
 doYouHaveUniqueTaxPayerReference.title = Do you have a UK Unique Taxpayer Reference (UTR)?
-doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a UK Unique Taxpayer Reference?
+doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel =  Do you have a Unique Taxpayer Reference?
 doYouHaveUniqueTaxPayerReference.checkYourAnswersLabel.hiddenText = Change if you have a Unique Taxpayer Reference
 doYouHaveUniqueTaxPayerReference.heading = Do you have a UK Unique Taxpayer Reference (UTR)?
 doYouHaveUniqueTaxPayerReference.p1 = You can {0}.
@@ -215,15 +215,6 @@ weCouldNotConfirm.organisation = find your business
 weCouldNotConfirm.identity = confirm your identity
 weCouldNotConfirm.guidance = The information you entered does not match our records.
 weCouldNotConfirm.button = Try again
-
-whatAreYouRegisteringAs.title = What are you registering as?
-whatAreYouRegisteringAs.heading = What are you registering as?
-whatAreYouRegisteringAs.hint = A business could be a company or a limited liability partnership. An individual could be someone who is self-employed.
-whatAreYouRegisteringAs.checkYourAnswersLabel = Registering as
-whatAreYouRegisteringAs.checkYourAnswersLabel.hiddenText = Change what you are registering as
-whatAreYouRegisteringAs.registrationTypeBusiness = A business
-whatAreYouRegisteringAs.registrationTypeIndividual = An individual
-whatAreYouRegisteringAs.error.required = Select business or individual
 
 doYouHaveNIN.title = Do you have a National Insurance number?
 doYouHaveNIN.heading = Do you have a National Insurance number?
@@ -383,16 +374,6 @@ businessWithoutIDName.checkYourAnswersLabel.hiddenText = Change business name
 businessWithoutIDName.error.businessName.required = Enter the name of your business
 businessWithoutIDName.error.businessName.length = Business name must be 105 characters or less
 businessWithoutIDName.error.businessName.invalid = Business name must only include letters a to z, numbers 0-9, apostrophes, slashes, ampersands and spaces
-businessType.title = What type of business do you have?
-businessType.heading = What type of business do you have?
-businessType.limited = Limited company
-businessType.sole = Sole trader
-businessType.partnership = Partnership
-businessType.limitedPartnership = Limited partnership or limited liability partnership
-businessType.unincorporatedAssociation = Unincorporated association or trust
-businessType.hint = Select one option.
-businessType.checkYourAnswersLabel = What type of business do you have?
-businessType.error.required = Select the type of business you have
 
 utr.title = What is your {0} Unique Taxpayer Reference?
 utr.heading = What is your {0} Unique Taxpayer Reference?
@@ -528,3 +509,23 @@ yourContactDetails.p2 = You can change your MDR contact names and details later,
 informationSent.title = You have already sent this information
 informationSent.heading = You have already sent this information
 informationSent.p1 = We will contact you if we have any questions about the details you have provided.
+
+reporterType.title = What will you report as?
+reporterType.heading = What will you report as?
+reporterType.checkYourAnswersLabel = What will you report as?
+reporterType.checkYourAnswersLabel.hiddenText = Change what will you report as
+reporterType.error.required = Select what you will report as
+reporterType.limited = Limited company
+reporterType.partnership = Partnership
+reporterType.limitedPartnership = Limited partnership or limited liability partnership
+reporterType.unincorporatedAssociation = Unincorporated association or trust
+reporterType.sole = Sole trader
+reporterType.individual = An individual not connected to a business
+reporterType.hint = Select one option.
+
+
+registeredAddressInUK.title = Is your registered address in the UK?
+registeredAddressInUK.heading = Is your registered address in the UK?
+registeredAddressInUK.checkYourAnswersLabel = Is your registered address in the UK?
+registeredAddressInUK.checkYourAnswersLabel.hiddenText =  Change whether your registered address is in the UK
+registeredAddressInUK.error.required = Select yes if your registered address is in the UK

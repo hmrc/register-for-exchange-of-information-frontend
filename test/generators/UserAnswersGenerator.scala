@@ -40,17 +40,14 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(SoleNamePage.type, JsValue)] ::
       arbitrary[(AddressUKPage.type, JsValue)] ::
       arbitrary[(BusinessAddressWithoutIdPage.type, JsValue)] ::
-      arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
       arbitrary[(pages.WhatIsYourDateOfBirthPage.type, JsValue)] ::
       arbitrary[(WhatIsYourNamePage.type, JsValue)] ::
       arbitrary[(WhatIsYourNationalInsuranceNumberPage.type, JsValue)] ::
-      arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
       arbitrary[(BusinessNamePage.type, JsValue)] ::
       arbitrary[(IsThisYourBusinessPage.type, JsValue)] ::
       arbitrary[(BusinessNamePage.type, JsValue)] ::
       arbitrary[(UTRPage.type, JsValue)] ::
-      arbitrary[(BusinessTypePage.type, JsValue)] ::
-      arbitrary[(WhatAreYouRegisteringAsPage.type, JsValue)] ::
+      arbitrary[(ReporterTypePage.type, JsValue)] ::
       arbitrary[(DoYouHaveUniqueTaxPayerReferencePage.type, JsValue)] ::
       arbitrary[(SndConHavePhonePage.type, JsValue)] ::
       arbitrary[(DoYouHaveNINPage.type, JsValue)] ::
@@ -60,7 +57,7 @@ trait UserAnswersGenerator extends TryValues {
       arbitrary[(SndContactEmailPage.type, JsValue)] ::
       arbitrary[(SndContactNamePage.type, JsValue)] ::
       arbitrary[(SecondContactPage.type, JsValue)] ::
-      arbitrary[(IsContactTelephonePage.type, JsValue)] ::
+      arbitrary[(ContactHavePhonePage.type, JsValue)] ::
       arbitrary[(ContactNamePage.type, JsValue)] ::
       arbitrary[(ContactPhonePage.type, JsValue)] ::
       arbitrary[(ContactEmailPage.type, JsValue)] ::

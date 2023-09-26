@@ -77,14 +77,9 @@ trait ModelGenerators {
     } yield Nino(f"$prefix$number%06d$suffix")
   }
 
-  implicit lazy val arbitraryBussinessType: Arbitrary[models.BusinessType] =
+  implicit lazy val arbitraryBussinessType: Arbitrary[models.ReporterType] =
     Arbitrary {
-      Gen.oneOf(models.BusinessType.values)
-    }
-
-  implicit lazy val arbitraryWhatAreYouRegisteringAs: Arbitrary[models.WhatAreYouRegisteringAs] =
-    Arbitrary {
-      Gen.oneOf(models.WhatAreYouRegisteringAs.values)
+      Gen.oneOf(models.ReporterType.values)
     }
 
   implicit val arbitraryRequestParameter: Arbitrary[RequestParameter] = Arbitrary {

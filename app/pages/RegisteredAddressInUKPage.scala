@@ -21,22 +21,15 @@ import play.api.libs.json.JsPath
 
 import scala.util.Try
 
-case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
-
-  private val businessWithIdPages = List(
-    UTRPage,
-    BusinessNamePage,
-    SoleNamePage,
-    IsThisYourBusinessPage,
-    RegistrationInfoPage
-  )
+case object RegisteredAddressInUKPage extends QuestionPage[Boolean] {
 
   private val individualAndWithoutIdPages = List(
+    DoYouHaveUniqueTaxPayerReferencePage,
+    DoYouHaveNINPage,
     WhatIsYourNationalInsuranceNumberPage,
     WhatIsYourNamePage,
     WhatIsYourDateOfBirthPage,
     DateOfBirthWithoutIdPage,
-    DoYouHaveNINPage,
     NonUkNamePage,
     DoYouLiveInTheUKPage,
     WhatIsYourPostcodePage,
@@ -51,14 +44,12 @@ case object DoYouHaveUniqueTaxPayerReferencePage extends QuestionPage[Boolean] {
     BusinessAddressWithoutIdPage,
     RegistrationInfoPage
   )
-
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "doYouHaveUniqueTaxPayerReference"
+  override def toString: String = "registeredAddressInUK"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] = value match {
-    case Some(true)  => individualAndWithoutIdPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-    case Some(false) => businessWithIdPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-    case _           => super.cleanup(value, userAnswers)
+    case Some(true) => individualAndWithoutIdPages.foldLeft(Try(userAnswers))(PageLists.removePage)
+    case _          => super.cleanup(value, userAnswers)
   }
 }

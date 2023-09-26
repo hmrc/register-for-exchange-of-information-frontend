@@ -31,6 +31,6 @@ class IndexController @Inject() (val controllerComponents: MessagesControllerCom
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify() andThen checkEnrolment()) {
-    Redirect(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode))
+    Redirect(routes.ReporterTypeController.onPageLoad(NormalMode))
   }
 }

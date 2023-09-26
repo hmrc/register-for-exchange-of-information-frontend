@@ -17,15 +17,14 @@
 package forms
 
 import forms.mappings.Mappings
-import models.BusinessType
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class BusinessTypeFormProvider @Inject() extends Mappings {
+class ContactHavePhoneFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[BusinessType] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[BusinessType]("businessType.error.required")
+      "value" -> boolean("contactHavePhone.error.required.business")
     )
 }

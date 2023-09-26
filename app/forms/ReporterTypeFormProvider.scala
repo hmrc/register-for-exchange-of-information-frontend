@@ -16,30 +16,16 @@
 
 package forms
 
-import forms.behaviours.OptionFieldBehaviours
-import models.BusinessType
-import play.api.data.FormError
+import forms.mappings.Mappings
+import models.ReporterType
+import play.api.data.Form
 
-class BusinessTypeFormProviderSpec extends OptionFieldBehaviours {
+import javax.inject.Inject
 
-  val form = new BusinessTypeFormProvider()()
+class ReporterTypeFormProvider @Inject() extends Mappings {
 
-  ".value" - {
-
-    val fieldName   = "value"
-    val requiredKey = "businessType.error.required"
-
-    behave like optionsField[BusinessType](
-      form,
-      fieldName,
-      validValues = BusinessType.values,
-      invalidError = FormError(fieldName, "error.invalid")
+  def apply(): Form[ReporterType] =
+    Form(
+      "value" -> enumerable[ReporterType]("reporterType.error.required")
     )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
 }

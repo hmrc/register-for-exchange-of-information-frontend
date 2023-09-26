@@ -41,14 +41,15 @@ object CheckYourAnswersViewModel {
   }
 
   private def buildDetails(userAnswers: UserAnswers, helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryListRow] =
-    if (userAnswers.get(pages.BusinessTypePage).isDefined) {
+    if (userAnswers.get(pages.UTRPage).isDefined) {
       Seq(
         helper.confirmBusiness
       ).flatten
     } else {
       Seq(
+        helper.reporterType,
+        helper.registeredAddressInUk,
         helper.doYouHaveUniqueTaxPayerReference,
-        helper.whatAreYouRegisteringAs,
         helper.doYouHaveNIN,
         helper.nino,
         helper.whatIsYourName,

@@ -28,8 +28,8 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Option[Call] = {
     case ContactNamePage                    => _ => Some(routes.ContactEmailController.onPageLoad(NormalMode))
-    case ContactEmailPage                   => _ => Some(routes.IsContactTelephoneController.onPageLoad(NormalMode))
-    case IsContactTelephonePage             => isContactTelephoneRoutes(NormalMode)
+    case ContactEmailPage                   => _ => Some(routes.ContactHavePhoneController.onPageLoad(NormalMode))
+    case ContactHavePhonePage               => contactHavePhoneRoutes(NormalMode)
     case ContactPhonePage                   => _ => Some(routes.SecondContactController.onPageLoad(NormalMode))
     case IndividualContactEmailPage         => _ => Some(routes.IndividualHaveContactTelephoneController.onPageLoad(NormalMode))
     case IndividualHaveContactTelephonePage => ua => individualHasContactTelephoneRoute(NormalMode)(ua)
@@ -57,11 +57,11 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
         checkNextPageForValueThenRoute(
           CheckMode,
           ua,
-          IsContactTelephonePage,
-          routes.IsContactTelephoneController.onPageLoad(CheckMode)
+          ContactHavePhonePage,
+          routes.ContactHavePhoneController.onPageLoad(CheckMode)
         )
 
-    case IsContactTelephonePage => isContactTelephoneRoutes(CheckMode)
+    case ContactHavePhonePage => contactHavePhoneRoutes(CheckMode)
 
     case ContactPhonePage =>
       ua =>
@@ -107,8 +107,8 @@ class ContactDetailsNavigator @Inject() () extends Navigator {
     case _                   => _ => Some(Navigator.checkYourAnswers)
   }
 
-  private def isContactTelephoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
-    ua.get(IsContactTelephonePage) map {
+  private def contactHavePhoneRoutes(mode: Mode)(ua: UserAnswers): Option[Call] =
+    ua.get(ContactHavePhonePage) map {
       case true => routes.ContactPhoneController.onPageLoad(mode)
       case false =>
         checkNextPageForValueThenRoute(mode, ua, SecondContactPage, routes.SecondContactController.onPageLoad(mode)).get

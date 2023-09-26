@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.BusinessType.{LimitedCompany, Sole}
+import models.ReporterType.{LimitedCompany, Sole}
 import models.error.ApiError.{BadRequestError, ServiceUnavailableError}
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.response.details.AddressResponse
@@ -47,7 +47,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
   val registrationInfo    = OrgRegistrationInfo(safeId, "name", address)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(BusinessTypePage, LimitedCompany)
+    .set(ReporterTypePage, LimitedCompany)
     .success
     .value
     .set(UTRPage, utr)
@@ -98,7 +98,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
     }
 
-    "must return OK and the correct view for a GET for BusinessType as SoleTrader" in {
+    "must return OK and the correct view for a GET for ReporterType as SoleTrader" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
@@ -106,7 +106,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
       val updatedUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-        .set(BusinessTypePage, Sole)
+        .set(ReporterTypePage, Sole)
         .success
         .value
         .set(UTRPage, utr)

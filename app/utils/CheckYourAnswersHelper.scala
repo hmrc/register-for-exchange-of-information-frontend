@@ -53,7 +53,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
                         |<p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
                         |${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
                         |""".stripMargin),
-          href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
+          href = routes.ReporterTypeController.onPageLoad(CheckMode).url
         )
       case _ => None
     }
@@ -227,12 +227,21 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
-  def businessType: Option[SummaryListRow] = userAnswers.get(pages.BusinessTypePage) map {
-    _ =>
+  def reporterType: Option[SummaryListRow] = userAnswers.get(pages.ReporterTypePage) map {
+    value =>
       toRow(
-        msgKey = "bussinessType",
-        value = Text(messages("site.edit")),
-        href = routes.BusinessTypeController.onPageLoad(CheckMode).url
+        msgKey = "reporterType",
+        value = Text(messages(s"reporterType.${value.toString}")),
+        href = routes.ReporterTypeController.onPageLoad(CheckMode).url
+      )
+  }
+
+  def registeredAddressInUk: Option[SummaryListRow] = userAnswers.get(pages.RegisteredAddressInUKPage) map {
+    answer =>
+      toRow(
+        msgKey = "registeredAddressInUK",
+        value = yesOrNo(answer),
+        href = routes.RegisteredAddressInUKController.onPageLoad(CheckMode).url
       )
   }
 
@@ -242,15 +251,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         msgKey = "doYouHaveUniqueTaxPayerReference",
         value = yesOrNo(answer),
         href = routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(CheckMode).url
-      )
-  }
-
-  def whatAreYouRegisteringAs: Option[SummaryListRow] = userAnswers.get(pages.WhatAreYouRegisteringAsPage) map {
-    answer =>
-      toRow(
-        msgKey = "whatAreYouRegisteringAs",
-        value = Text(messages(s"whatAreYouRegisteringAs.$answer")),
-        href = routes.WhatAreYouRegisteringAsController.onPageLoad(CheckMode).url
       )
   }
 
@@ -319,16 +319,16 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       toRow(
         msgKey = "contactPhone",
         value = Text(s"$value"),
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+        href = routes.ContactHavePhoneController.onPageLoad(CheckMode).url
       )
     )
 
-  def isContactTelephone: Option[SummaryListRow] = userAnswers.get(pages.IsContactTelephonePage) map {
+  def contactHavePhone: Option[SummaryListRow] = userAnswers.get(pages.ContactHavePhonePage) map {
     answer =>
       toRow(
-        msgKey = "isContactTelephone",
+        msgKey = "contactHavePhone",
         value = yesOrNo(answer),
-        href = routes.IsContactTelephoneController.onPageLoad(CheckMode).url
+        href = routes.ContactHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 

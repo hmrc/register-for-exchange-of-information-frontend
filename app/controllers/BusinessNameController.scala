@@ -18,15 +18,16 @@ package controllers
 
 import controllers.actions.StandardActionSets
 import forms.BusinessNameFormProvider
-import models.BusinessType._
-import models.{BusinessType, Mode}
+import models.ReporterType._
+import models.{Mode, ReporterType}
 import navigation.MDRNavigator
-import pages.{BusinessNamePage, BusinessTypePage}
+import pages.{BusinessNamePage, ReporterTypePage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.BusinessNameView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,8 +43,8 @@ class BusinessNameController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  private def selectedBusinessTypeText(businessType: BusinessType): Option[String] =
-    businessType match {
+  private def selectedReporterTypeText(reporterType: ReporterType): Option[String] =
+    reporterType match {
       case LimitedPartnership | LimitedCompany => Some("llp")
       case Partnership                         => Some("partner")
       case UnincorporatedAssociation           => Some("unincorporated")
@@ -51,9 +52,9 @@ class BusinessNameController @Inject() (
     }
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
+    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
       implicit request =>
-        selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
+        selectedReporterTypeText(request.userAnswers.get(ReporterTypePage).get) match {
           case Some(businessTypeText) =>
             val form = formProvider(businessTypeText)
             val preparedForm = request.userAnswers.get(BusinessNamePage) match {
@@ -66,9 +67,9 @@ class BusinessNameController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(BusinessTypePage).async {
+    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
       implicit request =>
-        selectedBusinessTypeText(request.userAnswers.get(BusinessTypePage).get) match {
+        selectedReporterTypeText(request.userAnswers.get(ReporterTypePage).get) match {
           case Some(businessTypeText) =>
             formProvider(businessTypeText)
               .bindFromRequest()

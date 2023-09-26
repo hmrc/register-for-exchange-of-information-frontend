@@ -18,8 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.BusinessType.{LimitedCompany, UnincorporatedAssociation}
-import pages.BusinessTypePage
+import models.ReporterType.{LimitedCompany, UnincorporatedAssociation}
+import pages.ReporterTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,7 +40,7 @@ class BusinessNotIdentifiedController @Inject() (
     implicit request =>
       val startUrl = routes.IndexController.onPageLoad().url
 
-      val contactLink: String = request.userAnswers.get(BusinessTypePage) match {
+      val contactLink: String = request.userAnswers.get(ReporterTypePage) match {
         case Some(LimitedCompany) | Some(UnincorporatedAssociation) => appConfig.corporationTaxEnquiriesLink
         case _                                                      => appConfig.selfAssessmentEnquiriesLink
       }

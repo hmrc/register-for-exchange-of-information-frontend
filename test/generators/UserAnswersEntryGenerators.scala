@@ -167,11 +167,11 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryBussinessTypeUserAnswersEntry: Arbitrary[(pages.BusinessTypePage.type, JsValue)] =
+  implicit lazy val arbitraryBussinessTypeUserAnswersEntry: Arbitrary[(pages.ReporterTypePage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[pages.BusinessTypePage.type]
-        value <- arbitrary[models.BusinessType].map(Json.toJson(_))
+        page  <- arbitrary[pages.ReporterTypePage.type]
+        value <- arbitrary[models.ReporterType].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -180,14 +180,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[pages.DoYouHaveUniqueTaxPayerReferencePage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryWhatAreYouRegisteringAsUserAnswersEntry: Arbitrary[(pages.WhatAreYouRegisteringAsPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[pages.WhatAreYouRegisteringAsPage.type]
-        value <- arbitrary[models.WhatAreYouRegisteringAs].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -239,10 +231,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryIsContactTelephoneUserAnswersEntry: Arbitrary[(pages.IsContactTelephonePage.type, JsValue)] =
+  implicit lazy val arbitraryContactHavePhoneUserAnswersEntry: Arbitrary[(pages.ContactHavePhonePage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[pages.IsContactTelephonePage.type]
+        page  <- arbitrary[pages.ContactHavePhonePage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }

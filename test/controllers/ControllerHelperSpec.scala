@@ -17,7 +17,6 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError}
@@ -61,9 +60,6 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
 
   val userAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-    .success
-    .value
-    .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
     .success
     .value
     .set(ContactNamePage, "")

@@ -19,8 +19,7 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import generators.Generators
-import models.BusinessType.{LimitedCompany, Sole}
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
+import models.ReporterType._
 import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -29,70 +28,172 @@ import uk.gov.hmrc.domain.Nino
 
 import java.time.LocalDate
 
-class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
+class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generators {
   val navigator: MDRNavigator = new MDRNavigator
 
   "Navigator" - {
 
     "in Normal mode" - {
 
-      "must go from 'Do You Have Unique Tax Payer Reference?' page to 'What Are You Registering As?' page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                .success
-                .value
+      "must go from Reporter type page" - {
 
-            navigator
-              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatAreYouRegisteringAsController.onPageLoad(NormalMode))
+        "to do you have Nino page if Individual is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ReporterTypePage, Individual)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(ReporterTypePage, NormalMode, updatedAnswers)
+                .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode))
+          }
+        }
+
+        "to Registered address in UK page if any organisation type or sole trader is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val orgOrSoleTraderReporters = List(LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation, Sole)
+
+              orgOrSoleTraderReporters.foreach {
+                organisation =>
+                  val updatedAnswers =
+                    answers
+                      .set(ReporterTypePage, organisation)
+                      .success
+                      .value
+
+                  navigator
+                    .nextPage(ReporterTypePage, NormalMode, updatedAnswers)
+                    .mustBe(routes.RegisteredAddressInUKController.onPageLoad(NormalMode))
+              }
+          }
         }
       }
 
-      "must go from 'What Are You Registering As' page to 'Do You Have NINO?' page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatAreYouRegisteringAsPage, WhatAreYouRegisteringAs.RegistrationTypeIndividual)
-                .success
-                .value
+      "must go from Registered address in the UK page" - {
 
-            navigator
-              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode))
+        "to UTR page if Yes is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(RegisteredAddressInUKPage, true)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(RegisteredAddressInUKPage, NormalMode, updatedAnswers)
+                .mustBe(routes.UTRController.onPageLoad(NormalMode))
+          }
+        }
+
+        "to do you have UTR page if No is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(RegisteredAddressInUKPage, false)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(RegisteredAddressInUKPage, NormalMode, updatedAnswers)
+                .mustBe(routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode))
+          }
         }
       }
 
-      "must go from 'Do You Have NINO?' page to 'What Is Your Name?' page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveNINPage, false)
-                .success
-                .value
+      "must go from Do you have UTR page" - {
 
-            navigator
-              .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
-              .mustBe(routes.NonUkNameController.onPageLoad(NormalMode))
+        "to UTR page if Yes is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
+                .mustBe(routes.UTRController.onPageLoad(NormalMode))
+          }
+        }
+
+        "to business without ID name page if No is selected and reporter type is any organisation" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val organisationReporters = List(LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation)
+
+              organisationReporters.foreach {
+                organisation =>
+                  val updatedAnswers =
+                    answers
+                      .set(ReporterTypePage, organisation)
+                      .success
+                      .value
+                      .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                      .success
+                      .value
+
+                  navigator
+                    .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
+                    .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(NormalMode))
+              }
+          }
+        }
+
+        "to do you have NINO page if No is selected and reporter type is Sole Trader" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ReporterTypePage, Sole)
+                  .success
+                  .value
+                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
+                .mustBe(routes.DoYouHaveNINController.onPageLoad(NormalMode))
+          }
         }
       }
 
-      "must go from 'Do You Have NINO?' page to 'What Is Your NINO?' page if YES is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveNINPage, true)
-                .success
-                .value
+      "must go from 'Do You Have NINO?' page" - {
+        "to 'What Is Your Name?' page if NO is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveNINPage, false)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(NormalMode))
+              navigator
+                .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
+                .mustBe(routes.NonUkNameController.onPageLoad(NormalMode))
+          }
+        }
+
+        "to 'What Is Your NINO?' page if YES is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(DoYouHaveNINPage, true)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(DoYouHaveNINPage, NormalMode, updatedAnswers)
+                .mustBe(routes.WhatIsYourNationalInsuranceNumberController.onPageLoad(NormalMode))
+          }
         }
       }
 
@@ -141,31 +242,13 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'What Is Your DOB?' page to 'Do You Live in the UK?' page when valid DOB is entered" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveNINPage, false)
-                .success
-                .value
-                .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
-              .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'What Is Your DOB?' page to 'We could not confirm your identity' page when valid DOB is entered " +
-        "but individual could not be matched" in {
+      "must go from 'What Is Your DOB?' page" - {
+        "to 'Do You Live in the UK?' page when valid DOB is entered" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers =
                 answers
-                  .set(DoYouHaveNINPage, true)
+                  .set(DoYouHaveNINPage, false)
                   .success
                   .value
                   .set(WhatIsYourDateOfBirthPage, LocalDate.now())
@@ -174,9 +257,29 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
               navigator
                 .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
-                .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode))
+                .mustBe(routes.DoYouLiveInTheUKController.onPageLoad(NormalMode))
           }
         }
+
+        "to 'We could not confirm your identity' page when valid DOB is entered " +
+          "but individual could not be matched" in {
+            forAll(arbitrary[UserAnswers]) {
+              answers =>
+                val updatedAnswers =
+                  answers
+                    .set(DoYouHaveNINPage, true)
+                    .success
+                    .value
+                    .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+                    .success
+                    .value
+
+                navigator
+                  .nextPage(WhatIsYourDateOfBirthPage, NormalMode, updatedAnswers)
+                  .mustBe(routes.WeHaveConfirmedYourIdentityController.onPageLoad(NormalMode))
+            }
+          }
+      }
 
       "must go from DateOfBirthWithoutId page to 'Do you live in the UK' page when valid DOB is entered" in {
 
@@ -209,43 +312,35 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'What is your home address?'(NON-UK) page to " +
-        "'What is your email address' page when valid address entered" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-                  .success
-                  .value
-                  .set(IndividualAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
-                  .success
-                  .value
+      "must go from 'What is your home address?'(NON-UK) page to 'What is your email address' page when valid address entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(IndividualAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
+                .success
+                .value
 
-              navigator
-                .nextPage(IndividualAddressWithoutIdPage, NormalMode, updatedAnswers)
-                .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
-          }
+            navigator
+              .nextPage(IndividualAddressWithoutIdPage, NormalMode, updatedAnswers)
+              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
         }
+      }
 
-      "must go from 'What is the main address of your business'(NON-UK) page to " +
-        "'Your contact details' page when valid address entered" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-                  .success
-                  .value
-                  .set(BusinessAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
-                  .success
-                  .value
+      "must go from 'What is the main address of your business'(NON-UK) page to 'Your contact details' page when valid address entered" in {
+        forAll(arbitrary[UserAnswers]) {
+          answers =>
+            val updatedAnswers =
+              answers
+                .set(BusinessAddressWithoutIdPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
+                .success
+                .value
 
-              navigator
-                .nextPage(BusinessAddressWithoutIdPage, NormalMode, updatedAnswers)
-                .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
-          }
+            navigator
+              .nextPage(BusinessAddressWithoutIdPage, NormalMode, updatedAnswers)
+              .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
         }
+      }
 
       "must go from 'Do You Live in the UK?' page to 'What is your postcode?' page selected when YES is selected" in {
         forAll(arbitrary[UserAnswers]) {
@@ -307,29 +402,11 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'What are you registering as' page to 'What is the name of your business' page when business is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-                .success
-                .value
-
-            navigator
-              .nextPage(WhatAreYouRegisteringAsPage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessWithoutIDNameController.onPageLoad(NormalMode))
-        }
-      }
-
       "must go from 'What is the name of your business' page to 'Does your business trade under a different name' page when a valid business name is entered" in {
         forAll(arbitrary[UserAnswers]) {
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-                .success
-                .value
                 .set(BusinessWithoutIDNamePage, "a business")
                 .success
                 .value
@@ -340,18 +417,35 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'Does your business trade under a different name' page to 'What is the trading name of your business' page when yes is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(BusinessHaveDifferentNamePage, true)
-                .success
-                .value
+      "must go from 'Does your business trade under a different name' page" - {
+        "to 'What is the trading name of your business' page when yes is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(BusinessHaveDifferentNamePage, true)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
-              .mustBe(routes.WhatIsTradingNameController.onPageLoad(NormalMode))
+              navigator
+                .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
+                .mustBe(routes.WhatIsTradingNameController.onPageLoad(NormalMode))
+          }
+        }
+
+        "to 'What is the main address of your business' page when no is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(BusinessHaveDifferentNamePage, false)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
+                .mustBe(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode))
+          }
         }
       }
 
@@ -364,88 +458,50 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'Does your business trade under a different name' page to 'What is the main address of your business' page when no is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(BusinessHaveDifferentNamePage, false)
-                .success
-                .value
+      "must go from 'UTR?' page" - {
+        "to 'What is your name?' page when sole trader is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(UTRPage, UniqueTaxpayerReference("0123456789"))
+                  .success
+                  .value
+                  .set(ReporterTypePage, ReporterType.Sole)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(BusinessHaveDifferentNamePage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode))
+              navigator
+                .nextPage(UTRPage, NormalMode, updatedAnswers)
+                .mustBe(routes.SoleNameController.onPageLoad(NormalMode))
+          }
+        }
+
+        "to 'What is your business name?' page when any organisation type is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val organisationReporters = List(LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation)
+
+              organisationReporters.foreach {
+                organisation =>
+                  val updatedAnswers =
+                    answers
+                      .set(UTRPage, UniqueTaxpayerReference("0123456789"))
+                      .success
+                      .value
+                      .set(ReporterTypePage, organisation)
+                      .success
+                      .value
+
+                  navigator
+                    .nextPage(UTRPage, NormalMode, updatedAnswers)
+                    .mustBe(routes.BusinessNameController.onPageLoad(NormalMode))
+              }
+          }
         }
       }
 
-      "must go from 'Do You Have UTR?' page to 'What is your business type?' page if YES is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-                .success
-                .value
-
-            navigator
-              .nextPage(DoYouHaveUniqueTaxPayerReferencePage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessTypeController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'What is your business type?' page to 'UTR?' page when business type is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(BusinessTypePage, BusinessType.Sole)
-                .success
-                .value
-
-            navigator
-              .nextPage(BusinessTypePage, NormalMode, updatedAnswers)
-              .mustBe(routes.UTRController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'UTR?' page to 'What is your name?' page when sole proprietor business type is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(UTRPage, UniqueTaxpayerReference("0123456789"))
-                .success
-                .value
-                .set(BusinessTypePage, BusinessType.Sole)
-                .success
-                .value
-
-            navigator
-              .nextPage(UTRPage, NormalMode, updatedAnswers)
-              .mustBe(routes.SoleNameController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'UTR?' page to 'What is your business name?' page when NOT sole proprietor business type is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(UTRPage, UniqueTaxpayerReference("0123456789"))
-                .success
-                .value
-                .set(BusinessTypePage, BusinessType.LimitedCompany)
-                .success
-                .value
-
-            navigator
-              .nextPage(UTRPage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessNameController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'What is your name?' page for sole proprietor business to 'Is this your business?' page" in {
+      "must go from 'What is your name?' page for sole trader to 'Is this your business?' page" in {
         val firstName: String = "First Name"
         val lastName: String  = "Last"
         val validAnswer: Name = Name(firstName, lastName)
@@ -490,57 +546,64 @@ class NormalModeNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks wit
         }
       }
 
-      "must go from 'Is this your business' page to ' What is the email address for [contact name]' page when sole proprietor" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(BusinessTypePage, Sole)
-                .success
-                .value
-                .set(IsThisYourBusinessPage, true)
-                .success
-                .value
+      "must go from 'Is this your business' page" - {
+        "to 'What is the email address for [contact name]' page when Yes is selected for a Sole Trader" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ReporterTypePage, Sole)
+                  .success
+                  .value
+                  .set(IsThisYourBusinessPage, true)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
-              .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
+              navigator
+                .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+                .mustBe(routes.IndividualContactEmailController.onPageLoad(NormalMode))
+          }
         }
-      }
 
-      "must go from 'Is this your business' page to 'Your contact details?'' page when any business other than Sole Proprietor" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(BusinessTypePage, LimitedCompany)
-                .success
-                .value
-                .set(IsThisYourBusinessPage, true)
-                .success
-                .value
+        "to 'Your contact details?' page when Yes is selected for any business other than Sole Trader" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val organisationReporters = List(LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation)
 
-            navigator
-              .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
-              .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
+              organisationReporters.foreach {
+                organisation =>
+                  val updatedAnswers =
+                    answers
+                      .set(ReporterTypePage, organisation)
+                      .success
+                      .value
+                      .set(IsThisYourBusinessPage, true)
+                      .success
+                      .value
+
+                  navigator
+                    .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+                    .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
+              }
+          }
         }
-      }
 
-      "must go from 'Is this your business' page to 'no-records-matched'' page when 'NO' is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(BusinessTypePage, LimitedCompany)
-                .success
-                .value
-                .set(IsThisYourBusinessPage, false)
-                .success
-                .value
+        "to 'no-records-matched'' page when 'NO' is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ReporterTypePage, LimitedCompany)
+                  .success
+                  .value
+                  .set(IsThisYourBusinessPage, false)
+                  .success
+                  .value
 
-            navigator
-              .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
-              .mustBe(routes.BusinessNotIdentifiedController.onPageLoad())
+              navigator
+                .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+                .mustBe(routes.BusinessNotIdentifiedController.onPageLoad())
+          }
         }
       }
     }

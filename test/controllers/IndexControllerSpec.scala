@@ -34,7 +34,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
       val result = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual routes.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(NormalMode).url
+      redirectLocation(result).value mustEqual routes.ReporterTypeController.onPageLoad(NormalMode).url
 
     }
   }

@@ -17,54 +17,57 @@
 package controllers
 
 import controllers.actions._
-import forms.WhatAreYouRegisteringAsFormProvider
+import forms.ContactHavePhoneFormProvider
 import models.Mode
-import navigation.MDRNavigator
-import pages.WhatAreYouRegisteringAsPage
+import navigation.ContactDetailsNavigator
+import pages.ContactHavePhonePage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.WhatAreYouRegisteringAsView
+import utils.{ContactHelper, UserAnswersHelper}
+import views.html.ContactHavePhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WhatAreYouRegisteringAsController @Inject() (
+class ContactHavePhoneController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: MDRNavigator,
+  navigator: ContactDetailsNavigator,
   standardActionSets: StandardActionSets,
-  formProvider: WhatAreYouRegisteringAsFormProvider,
+  formProvider: ContactHavePhoneFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: WhatAreYouRegisteringAsView
+  view: ContactHavePhoneView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with ContactHelper
+    with UserAnswersHelper {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      val preparedForm = request.userAnswers.get(WhatAreYouRegisteringAsPage) match {
+      val preparedForm = request.userAnswers.get(ContactHavePhonePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode))
+
+      Ok(view(preparedForm, getFirstContactName(request.userAnswers), mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatAreYouRegisteringAsPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(WhatAreYouRegisteringAsPage, mode, updatedAnswers))
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, getFirstContactName(request.userAnswers), mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactHavePhonePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(ContactHavePhonePage, mode, updatedAnswers))
+        )
+  }
 }

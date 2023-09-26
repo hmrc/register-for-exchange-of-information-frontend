@@ -16,49 +16,46 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import controllers.actions._
-import forms.DoYouHaveUniqueTaxPayerReferenceFormProvider
+import forms.ReporterTypeFormProvider
 import models.Mode
 import navigation.MDRNavigator
-import pages.DoYouHaveUniqueTaxPayerReferencePage
+import pages.ReporterTypePage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DoYouHaveUTRView
+import views.html.ReporterTypeView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
+class ReporterTypeController @Inject() (
   override val messagesApi: MessagesApi,
-  appConfig: FrontendAppConfig,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
   standardActionSets: StandardActionSets,
-  formProvider: DoYouHaveUniqueTaxPayerReferenceFormProvider,
+  formProvider: ReporterTypeFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: DoYouHaveUTRView
+  view: ReporterTypeView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider()
+  val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData() {
-      implicit request =>
-        val preparedForm = request.userAnswers.get(DoYouHaveUniqueTaxPayerReferencePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithInitializedData() {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(ReporterTypePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
 
-        Ok(view(preparedForm, mode))
-    }
+      Ok(view(preparedForm, mode))
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
+    standardActionSets.identifiedUserWithInitializedData().async {
       implicit request =>
         form
           .bindFromRequest()
@@ -66,9 +63,9 @@ class DoYouHaveUniqueTaxPayerReferenceController @Inject() (
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, value))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(ReporterTypePage, value))
                 _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(DoYouHaveUniqueTaxPayerReferencePage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(ReporterTypePage, mode, updatedAnswers))
           )
     }
 }

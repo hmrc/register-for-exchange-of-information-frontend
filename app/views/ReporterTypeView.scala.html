@@ -18,31 +18,31 @@
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
+    govukCheckboxes: GovukCheckboxes,
     govukRadios: GovukRadios,
     govukButton: GovukButton
 )
 
-@(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("isContactTelephone.title.business"))) {
+@layout(pageTitle = title(form, messages("reporterType.title"))) {
 
-    @formHelper(action = routes.IsContactTelephoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.ReporterTypeController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-       <h1 class="govuk-heading-l">@messages(messages(s"isContactTelephone.heading.business", contactName))</h1>
-       <p class="govuk-body">@messages("isContactTelephone.p1")</p>
+       @govukRadios(
+           RadiosViewModel(
+           field  = form("value"),
+           legend = LegendViewModel(messages("reporterType.heading")).asPageHeading(),
+           items  = ReporterType.options
+       ).withHint(HintViewModel(Text(messages("reporterType.hint"))))
+       )
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("isContactTelephone.heading.business", contactName)).asPageHeading().withCssClass("govuk-visually-hidden")
-            )
-        )
-        @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
-        )
+       @govukButton(
+       ButtonViewModel(messages("site.continue")).withAttribute("id" -> "submit")
+       )
     }
 }

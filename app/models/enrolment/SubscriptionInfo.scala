@@ -16,7 +16,7 @@
 
 package models.enrolment
 
-import models.BusinessType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
+import models.ReporterType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
 import models.error.ApiError
 import models.matching.SafeId
 import models.{SubscriptionID, UserAnswers}
@@ -77,13 +77,13 @@ object SubscriptionInfo {
     }
 
   private def getSaUtrIfProvided(userAnswers: UserAnswers): Option[String] =
-    userAnswers.get(BusinessTypePage) match {
+    userAnswers.get(ReporterTypePage) match {
       case Some(Partnership) | Some(Sole) | Some(LimitedPartnership) => userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
       case _                                                         => None
     }
 
   private def getCtUtrIfProvided(userAnswers: UserAnswers): Option[String] =
-    userAnswers.get(BusinessTypePage) match {
+    userAnswers.get(ReporterTypePage) match {
       case Some(LimitedCompany) | Some(UnincorporatedAssociation) => userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
       case _                                                      => None
     }

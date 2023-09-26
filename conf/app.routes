@@ -32,10 +32,10 @@ POST       /register/email                               controllers.ContactEmai
 GET        /register/change-email                        controllers.ContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-email                        controllers.ContactEmailController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/have-phone                          controllers.IsContactTelephoneController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/have-phone                          controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-have-phone                   controllers.IsContactTelephoneController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-have-phone                   controllers.IsContactTelephoneController.onSubmit(mode: models.Mode = models.CheckMode)
+GET        /register/have-phone                          controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
+POST       /register/have-phone                          controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.NormalMode)
+GET        /register/change-have-phone                   controllers.ContactHavePhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
+POST       /register/change-have-phone                   controllers.ContactHavePhoneController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/phone                               controllers.ContactPhoneController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/phone                               controllers.ContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode)
@@ -73,11 +73,6 @@ GET        /register/have-utr                            controllers.DoYouHaveUn
 POST       /register/have-utr                            controllers.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-have-utr                     controllers.DoYouHaveUniqueTaxPayerReferenceController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-have-utr                     controllers.DoYouHaveUniqueTaxPayerReferenceController.onSubmit(mode: models.Mode = models.CheckMode)
-
-GET        /register/registration-type                   controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/registration-type                   controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-registration-type            controllers.WhatAreYouRegisteringAsController.onSubmit(mode: models.Mode = models.CheckMode)
 
 GET        /register/could-not-confirm/:key              controllers.WeCouldNotConfirmController.onPageLoad(key: String)
 
@@ -149,11 +144,6 @@ POST       /register/without-id/business-name            controllers.BusinessWit
 GET        /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/without-id/business-name-change     controllers.BusinessWithoutIDNameController.onSubmit(mode: models.Mode = models.CheckMode)
 
-GET        /register/business-type                      controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.NormalMode)
-POST       /register/business-type                      controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.NormalMode)
-GET        /register/change-bussiness-type              controllers.BusinessTypeController.onPageLoad(mode: models.Mode = models.CheckMode)
-POST       /register/change-bussiness-type              controllers.BusinessTypeController.onSubmit(mode: models.Mode = models.CheckMode)
-
 GET        /register/utr                                controllers.UTRController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/utr                                controllers.UTRController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-utr                         controllers.UTRController.onPageLoad(mode: models.Mode = models.CheckMode)
@@ -212,3 +202,13 @@ GET        /register/individual-phone                        controllers.Individ
 POST       /register/individual-phone                        controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-individual-phone                  controllers.IndividualContactPhoneController.onPageLoad(mode: models.Mode = models.CheckMode)
 POST       /register/change-individual-phone                  controllers.IndividualContactPhoneController.onSubmit(mode: models.Mode = models.CheckMode)
+
+GET        /register/reporter-type                           controllers.ReporterTypeController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/reporter-type                           controllers.ReporterTypeController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-reporter-type                    controllers.ReporterTypeController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-reporter-type                    controllers.ReporterTypeController.onSubmit(mode: Mode = CheckMode)
+
+GET        /register/registered-address-in-uk                         controllers.RegisteredAddressInUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /register/registered-address-in-uk                         controllers.RegisteredAddressInUKController.onSubmit(mode: Mode = NormalMode)
+GET        /register/change-registered-address-in-uk                   controllers.RegisteredAddressInUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /register/change-registered-address-in-uk                   controllers.RegisteredAddressInUKController.onSubmit(mode: Mode = CheckMode)

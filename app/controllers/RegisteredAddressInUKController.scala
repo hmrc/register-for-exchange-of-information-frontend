@@ -17,55 +17,53 @@
 package controllers
 
 import controllers.actions._
-import forms.BusinessTypeFormProvider
+import forms.RegisteredAddressInUKFormProvider
 import models.Mode
 import navigation.MDRNavigator
-import pages.BusinessTypePage
+import pages.RegisteredAddressInUKPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.BusinessTypeView
+import views.html.RegisteredAddressInUKView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessTypeController @Inject() (
+class RegisteredAddressInUKController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
   navigator: MDRNavigator,
   standardActionSets: StandardActionSets,
-  formProvider: BusinessTypeFormProvider,
+  formProvider: RegisteredAddressInUKFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: BusinessTypeView
+  view: RegisteredAddressInUKView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider()
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
-      val preparedForm = request.userAnswers.get(BusinessTypePage) match {
+      val preparedForm = request.userAnswers.get(RegisteredAddressInUKPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessTypePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(BusinessTypePage, mode, updatedAnswers))
-          )
-    }
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(RegisteredAddressInUKPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(RegisteredAddressInUKPage, mode, updatedAnswers))
+        )
+  }
 }

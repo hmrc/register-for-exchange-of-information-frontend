@@ -19,7 +19,6 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import connectors.AddressLookupConnector
 import controllers.actions._
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
 import models.error.ApiError._
 import models.matching.{IndRegistrationInfo, SafeId}
@@ -195,7 +194,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(ContactNamePage, "Name Name")
           .success
           .value
-          .set(IsContactTelephonePage, false)
+          .set(ContactHavePhonePage, false)
           .success
           .value
           .set(SecondContactPage, true)
@@ -291,9 +290,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val userAnswers = UserAnswers("Id")
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-          .success
-          .value
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
@@ -374,9 +370,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-          .success
-          .value
           .set(DoYouHaveNINPage, false)
           .success
           .value
@@ -404,9 +397,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
           .success
           .value
           .set(DoYouHaveNINPage, false)
@@ -472,9 +462,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-          .success
-          .value
           .set(DoYouHaveNINPage, true)
           .success
           .value
@@ -501,9 +488,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
           .success
           .value
           .set(DoYouHaveNINPage, true)
@@ -558,9 +542,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
           .success
           .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-          .success
-          .value
           .set(DoYouHaveNINPage, true)
           .success
           .value
@@ -587,9 +568,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
         val userAnswers = UserAnswers("Id")
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
           .success
           .value
           .set(DoYouHaveNINPage, true)

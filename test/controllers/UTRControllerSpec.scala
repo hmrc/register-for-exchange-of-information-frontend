@@ -17,9 +17,9 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{BusinessType, NormalMode, UniqueTaxpayerReference, UserAnswers}
+import models.{NormalMode, ReporterType, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{BusinessTypePage, UTRPage}
+import pages.{ReporterTypePage, UTRPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.UTRView
@@ -31,9 +31,9 @@ class UTRControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.UTRController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.UTRController.onSubmit(NormalMode).url
 
-  private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match BusinessType in user answer
+  private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match ReporterType in user answer
 
-  val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.Sole).success.value
+  val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.Sole).success.value
   val taxType     = "Self Assessment"
 
   "UTR Controller" - {
@@ -53,7 +53,7 @@ class UTRControllerSpec extends ControllerSpecBase {
 
     "must return OK and the correct view for a GET when corporation tax" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.LimitedCompany).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.LimitedCompany).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
@@ -71,7 +71,7 @@ class UTRControllerSpec extends ControllerSpecBase {
 
       val userAnswers =
         UserAnswers(userAnswersId)
-          .set(BusinessTypePage, BusinessType.Sole)
+          .set(ReporterTypePage, ReporterType.Sole)
           .success
           .value
           .set(UTRPage, UniqueTaxpayerReference("1234567890"))

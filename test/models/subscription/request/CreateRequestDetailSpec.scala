@@ -18,8 +18,7 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import models.{Address, Country, Name, NonUkName, UserAnswers}
+import models.{Address, Country, Name, NonUkName, ReporterType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -97,7 +96,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(ContactHavePhonePage, false)
         .success
         .value
         .set(SecondContactPage, false)
@@ -120,7 +119,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(ContactHavePhonePage, false)
         .success
         .value
         .set(SecondContactPage, false)
@@ -135,10 +134,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     "must create a request with the isGBUser flag set to true by Individual and has a NINO" in {
       val userAnswers = UserAnswers("")
       val updatedUserAnswers = userAnswers
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, true)
@@ -162,43 +158,19 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
       request.isGBUser mustBe true
     }
 
-    "must create a request with the isGBUser flag set to true by business without UTR and based in the UK" in {
-      val businessAddress = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
-      val updatedUserAnswers = UserAnswers("")
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-        .success
-        .value
-        .set(ContactEmailPage, "hello")
-        .success
-        .value
-        .set(ContactNamePage, "Name Name")
-        .success
-        .value
-        .set(IsContactTelephonePage, false)
-        .success
-        .value
-        .set(BusinessAddressWithoutIdPage, businessAddress)
-        .success
-        .value
-        .set(SecondContactPage, false)
-        .success
-        .value
-
-      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
-
-      request.isGBUser mustBe true
-    }
-
     "must create a request with the isGBUser flag set to false by business without UTR not based in the UK" in {
       val businessAddress = Address("", None, "", None, None, Country("valid", "DE", "Germany"))
       val updatedUserAnswers = UserAnswers("")
+        .set(ReporterTypePage, ReporterType.LimitedCompany)
+        .success
+        .value
+        .set(RegisteredAddressInUKPage, false)
+        .success
+        .value
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
+        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
         .set(ContactEmailPage, "hello")
@@ -207,7 +179,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(ContactNamePage, "Name Name")
         .success
         .value
-        .set(IsContactTelephonePage, false)
+        .set(ContactHavePhonePage, false)
         .success
         .value
         .set(BusinessAddressWithoutIdPage, businessAddress)
@@ -226,10 +198,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
       val userAnswers = UserAnswers("")
       val address     = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val updatedUserAnswers = userAnswers
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)
@@ -263,10 +232,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
       val userAnswers = UserAnswers("")
       val address     = Address("", None, "", None, None, Country("valid", "FR", "France"))
       val updatedUserAnswers = userAnswers
-        .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)

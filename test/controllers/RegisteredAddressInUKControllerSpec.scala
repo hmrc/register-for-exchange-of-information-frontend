@@ -16,24 +16,25 @@
 
 package controllers
 
-import base.{ControllerMockFixtures, SpecBase}
-import models.{BusinessType, NormalMode, UserAnswers}
+import base.ControllerSpecBase
+import forms.RegisteredAddressInUKFormProvider
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.BusinessTypePage
+import pages.RegisteredAddressInUKPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.BusinessTypeView
+import views.html.RegisteredAddressInUKView
 
 import scala.concurrent.Future
 
-class BusinessTypeControllerSpec extends SpecBase with ControllerMockFixtures {
+class RegisteredAddressInUKControllerSpec extends ControllerSpecBase {
 
-  lazy val loadRoute   = routes.BusinessTypeController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.BusinessTypeController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.RegisteredAddressInUKController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.RegisteredAddressInUKController.onSubmit(NormalMode).url
 
-  private def form = new forms.BusinessTypeFormProvider().apply()
+  private def form = new RegisteredAddressInUKFormProvider().apply()
 
-  "BusinessType Controller" - {
+  "RegisteredAddressInUK Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -42,23 +43,22 @@ class BusinessTypeControllerSpec extends SpecBase with ControllerMockFixtures {
 
       val result = route(app, request).value
 
-      val view = app.injector.instanceOf[BusinessTypeView]
+      val view = app.injector.instanceOf[RegisteredAddressInUKView]
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual view(form, NormalMode)(request, messages).toString
+
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers =
-        UserAnswers(userAnswersId).set(BusinessTypePage, BusinessType.values.last).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(RegisteredAddressInUKPage, true).success.value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, loadRoute)
+      val request    = FakeRequest(GET, loadRoute)
+      val filledForm = form.bind(Map("value" -> "true"))
+      val result     = route(app, request).value
 
-      val filledForm = form.bind(Map("value" -> BusinessType.values.last.toString))
-
-      val view   = app.injector.instanceOf[BusinessTypeView]
-      val result = route(app, request).value
+      val view = app.injector.instanceOf[RegisteredAddressInUKView]
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual view(filledForm, NormalMode)(request, messages).toString
@@ -71,7 +71,7 @@ class BusinessTypeControllerSpec extends SpecBase with ControllerMockFixtures {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", BusinessType.values.head.toString))
+          .withFormUrlEncodedBody(("value", "true"))
 
       val result = route(app, request).value
 
@@ -85,12 +85,12 @@ class BusinessTypeControllerSpec extends SpecBase with ControllerMockFixtures {
       retrieveUserAnswersData(emptyUserAnswers)
       val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
-      val view      = app.injector.instanceOf[BusinessTypeView]
+
+      val view = app.injector.instanceOf[RegisteredAddressInUKView]
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-
       contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages).toString
     }
   }

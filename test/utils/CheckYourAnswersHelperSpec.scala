@@ -73,7 +73,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
               "",
               List(
                 ActionItem(
-                  "/register-for-mdr/register/change-have-utr",
+                  "/register-for-mdr/register/change-reporter-type",
                   HtmlContent(
                     """
                       |<span aria-hidden="true">site.edit</span>

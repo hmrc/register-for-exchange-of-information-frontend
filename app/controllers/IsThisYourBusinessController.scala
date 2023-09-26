@@ -18,11 +18,12 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
+import models.Mode
+import models.ReporterType.Sole
 import models.error.ApiError.NotFoundError
 import models.matching.{OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
-import models.{BusinessType, Mode}
 import navigation.MDRNavigator
 import pages._
 import play.api.Logging
@@ -111,16 +112,16 @@ class IsThisYourBusinessController @Inject() (
   }
 
   def buildRegisterWithId()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
-    request.userAnswers.get(BusinessTypePage) flatMap {
-      case BusinessType.Sole => buildIndividualRegistrationRequest()
-      case _                 => buildBusinessRegistrationRequest()
+    request.userAnswers.get(ReporterTypePage) flatMap {
+      case Sole => buildIndividualRegistrationRequest()
+      case _    => buildBusinessRegistrationRequest()
     }
 
   def buildBusinessRegistrationRequest()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
     for {
       utr          <- request.userAnswers.get(UTRPage)
       businessName <- request.userAnswers.get(BusinessNamePage)
-      businessType = request.userAnswers.get(BusinessTypePage)
+      businessType = request.userAnswers.get(ReporterTypePage)
     } yield RegisterWithID(RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, businessType, None))
 
   def buildIndividualRegistrationRequest()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =

@@ -27,7 +27,7 @@ case object IndividualContactEmailPage extends QuestionPage[String] {
     List(
       ContactNamePage,
       ContactEmailPage,
-      IsContactTelephonePage,
+      ContactHavePhonePage,
       ContactPhonePage,
       SecondContactPage,
       SndContactNamePage,

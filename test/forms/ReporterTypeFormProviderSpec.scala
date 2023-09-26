@@ -16,23 +16,23 @@
 
 package forms
 
-import forms.behaviours.OptionFieldBehaviours
-import models.WhatAreYouRegisteringAs
+import models.{ReporterType}
 import play.api.data.FormError
+import forms.behaviours.OptionFieldBehaviours
 
-class WhatAreYouRegisteringAsFormProviderSpec extends OptionFieldBehaviours {
+class ReporterTypeFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new WhatAreYouRegisteringAsFormProvider()()
+  val form = new ReporterTypeFormProvider()()
 
   ".value" - {
 
     val fieldName   = "value"
-    val requiredKey = "whatAreYouRegisteringAs.error.required"
+    val requiredKey = "reporterType.error.required"
 
-    behave like optionsField[WhatAreYouRegisteringAs](
+    behave like optionsField[ReporterType](
       form,
       fieldName,
-      validValues = WhatAreYouRegisteringAs.values,
+      validValues = ReporterType.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

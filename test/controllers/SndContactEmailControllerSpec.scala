@@ -17,10 +17,9 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.WhatAreYouRegisteringAs.RegistrationTypeBusiness
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{SndContactEmailPage, SndContactNamePage, WhatAreYouRegisteringAsPage}
+import pages.{SndContactEmailPage, SndContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.sndContactEmailView
@@ -38,9 +37,6 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
 
   val userAnswers = UserAnswers(userAnswersId)
     .set(SndContactNamePage, contactName)
-    .success
-    .value
-    .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
     .success
     .value
 

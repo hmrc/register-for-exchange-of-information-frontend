@@ -20,28 +20,55 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-sealed trait WhatAreYouRegisteringAs
+sealed trait ReporterType {
+  val code: String
+}
 
-object WhatAreYouRegisteringAs extends Enumerable.Implicits {
+object ReporterType extends Enumerable.Implicits {
 
-  case object RegistrationTypeBusiness extends WithName("registrationTypeBusiness") with WhatAreYouRegisteringAs
-  case object RegistrationTypeIndividual extends WithName("registrationTypeIndividual") with WhatAreYouRegisteringAs
+  case object Sole extends WithName("sole") with ReporterType {
+    val code = "0000"
+  }
 
-  val values: Seq[WhatAreYouRegisteringAs] = Seq(
-    RegistrationTypeBusiness,
-    RegistrationTypeIndividual
+  case object Partnership extends WithName("partnership") with ReporterType {
+    val code = "0001"
+  }
+
+  case object LimitedPartnership extends WithName("limitedPartnership") with ReporterType {
+    val code = "0002"
+  }
+
+  case object LimitedCompany extends WithName("limited") with ReporterType {
+    val code = "0003"
+  }
+
+  case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with ReporterType {
+    val code = "0004"
+  }
+
+  case object Individual extends WithName("individual") with ReporterType {
+    val code = "N/A"
+  }
+
+  val values: Seq[ReporterType] = Seq(
+    LimitedCompany,
+    Partnership,
+    LimitedPartnership,
+    UnincorporatedAssociation,
+    Sole,
+    Individual
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (value, index) =>
       RadioItem(
-        content = Text(messages(s"whatAreYouRegisteringAs.${value.toString}")),
+        content = Text(messages(s"reporterType.${value.toString}")),
         value = Some(value.toString),
         id = if (index == 0) Some(s"value") else Some(s"value_$index")
       )
   }
 
-  implicit val enumerable: Enumerable[WhatAreYouRegisteringAs] =
+  implicit val enumerable: Enumerable[ReporterType] =
     Enumerable(
       values.map(
         v => v.toString -> v

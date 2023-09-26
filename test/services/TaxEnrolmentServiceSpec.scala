@@ -20,7 +20,6 @@ import base.{ControllerMockFixtures, SpecBase}
 import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.{EnrolmentStoreProxyConnector, TaxEnrolmentsConnector}
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
 import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, UnableToCreateEnrolmentError}
@@ -68,9 +67,6 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
-        .success
-        .value
         .set(DoYouHaveNINPage, false)
         .success
         .value
@@ -103,9 +99,6 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
         .success
         .value
         .set(DoYouHaveNINPage, false)
@@ -142,9 +135,6 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-        .success
-        .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
         .success
         .value
         .set(DoYouHaveNINPage, false)

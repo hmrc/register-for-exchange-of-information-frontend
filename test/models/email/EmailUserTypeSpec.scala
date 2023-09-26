@@ -17,10 +17,11 @@
 package models.email
 
 import base.SpecBase
-import models.BusinessType.{Partnership, Sole}
-import models.UserAnswers
-import models.WhatAreYouRegisteringAs.{RegistrationTypeBusiness, RegistrationTypeIndividual}
-import pages.{BusinessTypePage, DoYouHaveUniqueTaxPayerReferencePage, WhatAreYouRegisteringAsPage}
+import models.ReporterType.Sole
+import models.{ReporterType, UserAnswers}
+import org.scalacheck.Gen
+import org.scalacheck.rng.Seed
+import pages.{DoYouHaveUniqueTaxPayerReferencePage, ReporterTypePage}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -33,52 +34,45 @@ class EmailUserTypeSpec extends SpecBase {
     val emailUserType = app.injector.instanceOf[EmailUserType]
 
     "getUserTypeFromUa" - {
-      "must return Sole when UserAnswers has BusinessTypePage containing Sole" in {
+      "must return Sole when UserAnswers has ReporterTypePage containing Sole" in {
         val userAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(BusinessTypePage, Sole)
+          .set(ReporterTypePage, Sole)
           .success
           .value
 
         emailUserType.getUserTypeFromUa(userAnswers) mustBe SoleTrader
       }
-      "must return Organisation when UserAnswers has WhatAreYouRegisteringAs RegistrationTypeBusiness " in {
-        val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeBusiness)
-          .success
-          .value
 
-        emailUserType.getUserTypeFromUa(userAnswers) mustBe Organisation
-      }
-      "must return Individual when UserAnswers has WhatAreYouRegisteringAs RegistrationTypeBusiness " in {
+      "must return Individual when UserAnswers has ReporterType containing Individual " in {
         val userAnswers = UserAnswers(userAnswersId)
-          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-          .success
-          .value
-          .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+          .set(ReporterTypePage, ReporterType.Individual)
           .success
           .value
 
         emailUserType.getUserTypeFromUa(userAnswers) mustBe Individual
       }
-      "must return Organisation when UserAnswers has BusinessTypePage containing something other than Sole " in {
+      "must return Organisation when UserAnswers has ReporterTypePage containing something other than Sole or Individual" in {
+        val reporterType = Gen
+          .oneOf(ReporterType.values)
+          .filterNot(
+            reporter => reporter == Sole || reporter == ReporterType.Individual
+          )
+          .pureApply(Gen.Parameters.default, Seed.random())
         val userAnswers = UserAnswers(userAnswersId)
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(BusinessTypePage, Partnership)
+          .set(ReporterTypePage, reporterType)
           .success
           .value
 
         emailUserType.getUserTypeFromUa(userAnswers) mustBe Organisation
       }
     }
-    "Throws exception when userAnswers does not contain BusinessTypePage or WhatAreYouRegisteringAs" in {
+    "Throws exception when userAnswers does not contain ReporterTypePage" in {
       val userAnswers = UserAnswers(userAnswersId)
       assertThrows[RuntimeException] {
         emailUserType.getUserTypeFromUa(userAnswers)

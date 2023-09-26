@@ -16,61 +16,52 @@
 
 package controllers
 
-import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import base.{ControllerMockFixtures, SpecBase}
+import models.{NormalMode, ReporterType, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import pages.{ContactNamePage, IsContactTelephonePage}
+import pages.ReporterTypePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.IsContactTelephoneView
+import views.html.ReporterTypeView
 
 import scala.concurrent.Future
 
-class IsContactTelephoneControllerSpec extends ControllerSpecBase {
+class ReporterTypeControllerSpec extends SpecBase with ControllerMockFixtures {
 
-  lazy val loadRoute   = routes.IsContactTelephoneController.onPageLoad(NormalMode).url
-  lazy val submitRoute = routes.IsContactTelephoneController.onSubmit(NormalMode).url
+  lazy val loadRoute   = routes.ReporterTypeController.onPageLoad(NormalMode).url
+  lazy val submitRoute = routes.ReporterTypeController.onSubmit(NormalMode).url
 
-  private def form = new forms.IsContactTelephoneFormProvider().apply()
+  private def form = new forms.ReporterTypeFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
-
-  "IsContactTelephone Controller" - {
+  "ReporterType Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      retrieveUserAnswersData(userAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, loadRoute)
 
       val result = route(app, request).value
 
-      val view = app.injector.instanceOf[IsContactTelephoneView]
+      val view = app.injector.instanceOf[ReporterTypeView]
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(form, "Name", NormalMode)(request, messages).toString
-
+      contentAsString(result) mustEqual view(form, NormalMode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers2 = UserAnswers(userAnswersId)
-        .set(ContactNamePage, "Name")
-        .success
-        .value
-        .set(IsContactTelephonePage, true)
-        .success
-        .value
-      retrieveUserAnswersData(userAnswers2)
+      val userAnswers =
+        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.values.last).success.value
+      retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
 
-      val view       = app.injector.instanceOf[IsContactTelephoneView]
-      val filledForm = form.bind(Map("value" -> "true"))
+      val filledForm = form.bind(Map("value" -> ReporterType.values.last.toString))
 
+      val view   = app.injector.instanceOf[ReporterTypeView]
       val result = route(app, request).value
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(filledForm, "Name", NormalMode)(request, messages).toString
-
+      contentAsString(result) mustEqual view(filledForm, NormalMode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
@@ -80,7 +71,7 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("value", ReporterType.values.head.toString))
 
       val result = route(app, request).value
 
@@ -91,15 +82,16 @@ class IsContactTelephoneControllerSpec extends ControllerSpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      retrieveUserAnswersData(userAnswers)
+      retrieveUserAnswersData(emptyUserAnswers)
       val request   = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm = form.bind(Map("value" -> ""))
-      val view      = app.injector.instanceOf[IsContactTelephoneView]
+      val view      = app.injector.instanceOf[ReporterTypeView]
 
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual view(boundForm, "Name", NormalMode)(request, messages).toString
+
+      contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages).toString
     }
   }
 }

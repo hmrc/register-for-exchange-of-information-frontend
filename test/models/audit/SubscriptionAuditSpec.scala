@@ -18,7 +18,7 @@ package models.audit
 
 import base.SpecBase
 import generators.Generators
-import models.WhatAreYouRegisteringAs.RegistrationTypeIndividual
+import models.ReporterType.Individual
 import models.subscription.request.{ContactInformation, CreateRequestDetail, IndividualDetails, OrganisationDetails}
 import models.{Address, Country, NonUkName, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -43,7 +43,7 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
-        .set(WhatAreYouRegisteringAsPage, RegistrationTypeIndividual)
+        .set(ReporterTypePage, Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)
