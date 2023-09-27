@@ -107,7 +107,7 @@ footer.links.welsh = Rhestr o Wasanaethau Cymraeg
 sessionExpired.title = For your security, we signed you out
 sessionExpired.heading = For your security, we signed you out
 sessionExpired.guidance = We did not save your answers.
-sessionExpired.link = Sign in again using Government Gateway
+sessionExpired.link = {0}
 
 contactName.checkYourAnswersLabel = Contact name
 contactName.checkYourAnswersLabel.hiddenText = Change contact name
