@@ -77,8 +77,14 @@ class IsThisYourBusinessController @Inject() (
         case Some(registerWithID) =>
           matchingService.sendBusinessRegistrationInformation(registerWithID).flatMap {
             case Right(response) =>
-              request.userAnswers.set(RegistrationInfoPage, response).map(sessionRepository.set)
-              result(mode, form, response)
+              Future.fromTry(request.userAnswers.set(RegistrationInfoPage, response)).flatMap {
+                updatedAnswers =>
+                  sessionRepository.set(updatedAnswers).flatMap {
+                    _ =>
+                      val updatedRequest = DataRequest(request.request, request.userId, request.affinityGroup, updatedAnswers)
+                      result(mode, form, response)(ec, updatedRequest)
+                  }
+              }
             case Left(NotFoundError) =>
               Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad()))
             case _ =>
