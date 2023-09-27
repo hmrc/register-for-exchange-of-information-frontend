@@ -85,6 +85,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
 
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
       retrieveUserAnswersData(validUserAnswers)
@@ -102,6 +105,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
@@ -170,6 +176,9 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
