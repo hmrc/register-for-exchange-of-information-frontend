@@ -31,8 +31,8 @@
     @if(withId) {
         <p class="govuk-body">@messages("businessAlreadyRegistered.withID.information")</p>
     } else {
-        <p class="govuk-body">@messages("businessAlreadyRegistered.withOutID.information")</p>
-        <p class="govuk-body">@link(appConfig.loginUrl, "businessAlreadyRegistered.withOutID.GGLink", openInNewWindow = true)</p>
+        <p class="govuk-body">@messages("businessAlreadyRegistered.withoutID.information")</p>
+        <p class="govuk-body">@link(appConfig.loginUrl, "businessAlreadyRegistered.withoutID.GGLink", openInNewWindow = false)</p>
     }
     <p class="govuk-body">@Html(messages("businessAlreadyRegistered.help" , link(s"mailto:${appConfig.emailEnquiries}", "enquiries.emailAddress", openInNewWindow = true)))</p>
 }
