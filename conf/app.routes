@@ -188,6 +188,10 @@ GET        /register/problem/organisation-without-utr-pre-registered            
 
 GET        /register/problem/individual-pre-registered                                  controllers.IndividualAlreadyRegisteredController.onPageLoad()
 
+GET        /register/problem/different-business                       controllers.DifferentBusinessController.onPageLoad()
+
+GET        /register/problem/unable-to-change-business                       controllers.UnableToChangeBusinessController.onPageLoad()
+
 GET        /register/individual-email                        controllers.IndividualContactEmailController.onPageLoad(mode: models.Mode = models.NormalMode)
 POST       /register/individual-email                        controllers.IndividualContactEmailController.onSubmit(mode: models.Mode = models.NormalMode)
 GET        /register/change-individual-email                  controllers.IndividualContactEmailController.onPageLoad(mode: models.Mode = models.CheckMode)
@@ -212,3 +216,4 @@ GET        /register/registered-address-in-uk                         controller
 POST       /register/registered-address-in-uk                         controllers.RegisteredAddressInUKController.onSubmit(mode: Mode = NormalMode)
 GET        /register/change-registered-address-in-uk                   controllers.RegisteredAddressInUKController.onPageLoad(mode: Mode = CheckMode)
 POST       /register/change-registered-address-in-uk                   controllers.RegisteredAddressInUKController.onSubmit(mode: Mode = CheckMode)
+
