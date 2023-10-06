@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.Mode
+import models.{Mode, UUIDGen}
 import models.error.ApiError.NotFoundError
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
@@ -31,6 +31,7 @@ import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{ThereIsAProblemView, WeHaveConfirmedYourIdentityView}
 
+import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,11 +45,16 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
+  uuidGen: UUIDGen,
+  clock: Clock,
   view: WeHaveConfirmedYourIdentityView,
   errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
+
+  implicit private val uuidGenerator: UUIDGen = uuidGen
+  implicit private val implicitClock: Clock   = clock
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithData().async {

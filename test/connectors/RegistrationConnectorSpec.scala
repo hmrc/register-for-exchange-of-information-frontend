@@ -57,14 +57,26 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
   val registrationWithIndividualIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
       requestCommon,
-      RequestWithIDDetails("NINO", "0123456789", requiresNameMatch = true, isAnAgent = false, WithIDIndividual("Fred", None, "Flint", Some("1999-12-20")))
+      RequestWithIDDetails(
+        "NINO",
+        "0123456789",
+        requiresNameMatch = true,
+        isAnAgent = false,
+        Option(WithIDIndividual("Fred", None, "Flint", Some("1999-12-20")))
+      )
     )
   )
 
   val registrationWithOrganisationIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
       requestCommon,
-      RequestWithIDDetails("UTR", "utr", requiresNameMatch = true, isAnAgent = false, WithIDOrganisation("name", "0001"))
+      RequestWithIDDetails(
+        "UTR",
+        "utr",
+        requiresNameMatch = true,
+        isAnAgent = false,
+        Option(WithIDOrganisation("name", "0001"))
+      )
     )
   )
 

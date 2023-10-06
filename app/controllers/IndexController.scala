@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.actions.{CheckEnrolledToServiceActionProvider, IdentifierAction}
+import controllers.actions.{IdentifierAction, StandardActionSets}
 import models.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -24,13 +24,15 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 
-class IndexController @Inject() (val controllerComponents: MessagesControllerComponents,
-                                 identify: IdentifierAction,
-                                 checkEnrolment: CheckEnrolledToServiceActionProvider
-) extends FrontendBaseController
+class IndexController @Inject() (val controllerComponents: MessagesControllerComponents, identify: IdentifierAction, standardActionSets: StandardActionSets)
+    extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify() andThen checkEnrolment()) {
-    Redirect(routes.ReporterTypeController.onPageLoad(NormalMode))
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheck() {
+    implicit request =>
+      request.utr match {
+        case Some(_) => Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+        case None    => Redirect(routes.ReporterTypeController.onPageLoad(NormalMode))
+      }
   }
 }

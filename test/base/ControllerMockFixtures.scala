@@ -19,7 +19,7 @@ package base
 import connectors.AddressLookupConnector
 import controllers.actions._
 import matchers.JsonMatchers
-import models.UserAnswers
+import models.{UniqueTaxpayerReference, UserAnswers}
 import navigation.{ContactDetailsFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.{Mockito, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
@@ -38,6 +38,7 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
 
   def onwardRoute: Call                                              = Call("GET", "/foo")
   final val mockDataRetrievalAction: DataRetrievalAction             = mock[DataRetrievalAction]
+  final val mockCtUtrRetrievalAction: CtUtrRetrievalAction           = mock[CtUtrRetrievalAction]
   final val mockSessionRepository: SessionRepository                 = mock[SessionRepository]
   final val mockAddressLookupConnector                               = mock[AddressLookupConnector]
   protected val mdrFakeNavigator: MDRNavigator                       = new MDRFakeNavigator(onwardRoute)
@@ -48,15 +49,15 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
 
   override def beforeEach(): Unit = {
-    Mockito.reset(
-      mockSessionRepository,
-      mockDataRetrievalAction
-    )
+    Mockito.reset(mockSessionRepository, mockDataRetrievalAction, mockCtUtrRetrievalAction, mockCtUtrRetrievalAction)
     super.beforeEach()
   }
 
-  protected def retrieveUserAnswersData(userAnswers: UserAnswers): Unit =
-    when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(Some(userAnswers)))
+  protected def retrieveUserAnswersData(
+    userAnswers: UserAnswers,
+    utr: Option[UniqueTaxpayerReference] = None
+  ): Unit =
+    when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(Some(userAnswers), utr))
 
   protected def retrieveNoData(): Unit =
     when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(None))

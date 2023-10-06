@@ -87,7 +87,7 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[DateOfBirthView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LocalDate.now()), NormalMode).toString()
+        contentAsString(result) mustEqual view(form.fill(LocalDate.now(ZoneOffset.UTC)), NormalMode).toString()
       }
 
     }

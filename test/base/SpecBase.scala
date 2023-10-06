@@ -17,7 +17,7 @@
 package base
 
 import models.matching.SafeId
-import models.{UniqueTaxpayerReference, UserAnswers}
+import models.{UUIDGen, UUIDGenImpl, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.MockitoSugar
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -28,6 +28,8 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
+
+import java.time.{Clock, Instant, ZoneId}
 
 trait SpecBase
     extends AnyFreeSpec
@@ -46,6 +48,10 @@ trait SpecBase
   implicit val hc: HeaderCarrier   = HeaderCarrier()
   val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("UTR")
   val safeId: SafeId               = SafeId("SAFEID")
+
+  implicit val uuidGenerator: UUIDGen = new UUIDGenImpl
+
+  implicit val fixedClock: Clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

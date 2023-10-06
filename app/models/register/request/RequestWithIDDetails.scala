@@ -17,7 +17,7 @@
 package models.register.request
 
 import models.Name
-import models.matching.RegistrationRequest
+import models.matching.{AutoMatchedRegistrationRequest, RegistrationRequest}
 import models.register.request
 import models.register.request.details.{PartnerDetails, WithIDIndividual, WithIDOrganisation}
 import play.api.libs.json.{__, Json, OWrites, Reads}
@@ -30,7 +30,7 @@ case class RequestWithIDDetails(
   IDNumber: String,
   requiresNameMatch: Boolean,
   isAnAgent: Boolean,
-  partnerDetails: PartnerDetails
+  partnerDetails: Option[PartnerDetails] = None
 )
 
 object RequestWithIDDetails {
@@ -49,15 +49,15 @@ object RequestWithIDDetails {
       (idType, idNumber, requiresNameMatch, isAnAgent, individual, organisation) =>
         (individual, organisation) match {
           case (Some(_), Some(_)) => throw new Exception("Request details cannot have both and organisation or individual element")
-          case (Some(ind), _)     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, ind)
-          case (_, Some(org))     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, org)
-          case (None, None)       => throw new Exception("Request Details must have either an organisation or individual element")
+          case (Some(ind), _)     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Option(ind))
+          case (_, Some(org))     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Option(org))
+          case (None, None)       => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent)
         }
     )
   }
 
   implicit lazy val requestWithIDDetailsWrites: OWrites[RequestWithIDDetails] = OWrites[RequestWithIDDetails] {
-    case RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, individual @ WithIDIndividual(_, _, _, _)) =>
+    case RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Some(individual @ WithIDIndividual(_, _, _, _))) =>
       Json.obj(
         "IDType"            -> idType,
         "IDNumber"          -> idNumber,
@@ -65,13 +65,20 @@ object RequestWithIDDetails {
         "isAnAgent"         -> isAnAgent,
         "individual"        -> individual
       )
-    case RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, organisation @ WithIDOrganisation(_, _)) =>
+    case RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Some(organisation @ WithIDOrganisation(_, _))) =>
       Json.obj(
         "IDType"            -> idType,
         "IDNumber"          -> idNumber,
         "requiresNameMatch" -> requiresNameMatch,
         "isAnAgent"         -> isAnAgent,
         "organisation"      -> organisation
+      )
+    case RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, None) =>
+      Json.obj(
+        "IDType"            -> idType,
+        "IDNumber"          -> idNumber,
+        "requiresNameMatch" -> requiresNameMatch,
+        "isAnAgent"         -> isAnAgent
       )
   }
 
@@ -81,7 +88,7 @@ object RequestWithIDDetails {
       identifierValue,
       requiresNameMatch = true,
       isAnAgent = false, //This may change
-      WithIDIndividual(name.firstName, None, name.lastName, dob.map(_.format(dateFormat)))
+      Option(WithIDIndividual(name.firstName, None, name.lastName, dob.map(_.format(dateFormat))))
     )
 
   def apply(registrationRequest: RegistrationRequest): RequestWithIDDetails =
@@ -90,6 +97,15 @@ object RequestWithIDDetails {
       registrationRequest.identifier,
       requiresNameMatch = true,
       isAnAgent = false, //This may change
-      WithIDOrganisation(registrationRequest.name, registrationRequest.businessType.map(_.code).getOrElse(""))
+      Option(WithIDOrganisation(registrationRequest.name, registrationRequest.businessType.map(_.code).getOrElse("")))
+    )
+
+  def apply(registrationRequest: AutoMatchedRegistrationRequest): RequestWithIDDetails =
+    RequestWithIDDetails(
+      registrationRequest.identifierType,
+      registrationRequest.identifier,
+      requiresNameMatch = false,
+      isAnAgent = true,
+      partnerDetails = None
     )
 }

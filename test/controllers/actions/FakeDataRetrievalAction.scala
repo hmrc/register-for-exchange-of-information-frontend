@@ -16,26 +16,32 @@
 
 package controllers.actions
 
-import models.UserAnswers
+import models.{UniqueTaxpayerReference, UserAnswers}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataRetrievalActionProvider(dataToReturn: Option[UserAnswers]) extends DataRetrievalAction {
+class FakeDataRetrievalActionProvider(
+  dataToReturn: Option[UserAnswers],
+  utr: Option[UniqueTaxpayerReference] = None
+) extends DataRetrievalAction {
 
   def apply(): ActionTransformer[IdentifierRequest, OptionalDataRequest] =
     new FakeDataRetrievalAction(dataToReturn)
 }
 
-class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers] = None) extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {
+class FakeDataRetrievalAction(
+  dataToReturn: Option[UserAnswers] = None,
+  utr: Option[UniqueTaxpayerReference] = None
+) extends ActionTransformer[IdentifierRequest, OptionalDataRequest] {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
     dataToReturn match {
       case None =>
-        Future(OptionalDataRequest(request.request, request.userId, request.affinityGroup, None))
+        Future(OptionalDataRequest(request.request, request.userId, request.affinityGroup, None, utr))
       case Some(userAnswers) =>
-        Future(OptionalDataRequest(request.request, request.userId, request.affinityGroup, Some(userAnswers)))
+        Future(OptionalDataRequest(request.request, request.userId, request.affinityGroup, Some(userAnswers), utr))
     }
 
   implicit override protected val executionContext: ExecutionContext =

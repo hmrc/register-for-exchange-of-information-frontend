@@ -23,16 +23,19 @@ import models.matching.SafeId
 import models.register.request.RegisterWithoutID
 import models.requests.DataRequest
 import models.shared.ContactDetails
-import models.{Address, Name}
+import models.{Address, Name, UUIDGen}
 import pages._
 import play.api.mvc.AnyContent
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingWithoutIdService @Inject() (registrationConnector: RegistrationConnector)(implicit ec: ExecutionContext) {
+class BusinessMatchingWithoutIdService @Inject() (registrationConnector: RegistrationConnector, uuidGen: UUIDGen, clock: Clock)(implicit ec: ExecutionContext) {
+
+  implicit private val uuidGenerator: UUIDGen = uuidGen
+  implicit private val implicitClock: Clock   = clock
 
   def registerWithoutId()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
     request.userAnswers.get(DoYouHaveNINPage) match {

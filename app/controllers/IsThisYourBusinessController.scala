@@ -18,10 +18,10 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.Mode
+import models.{Mode, UUIDGen, UniqueTaxpayerReference}
 import models.ReporterType.Sole
 import models.error.ApiError.NotFoundError
-import models.matching.{OrgRegistrationInfo, RegistrationRequest}
+import models.matching.{AutoMatchedRegistrationRequest, OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
 import navigation.MDRNavigator
@@ -35,6 +35,7 @@ import services.{BusinessMatchingWithIdService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{IsThisYourBusinessView, ThereIsAProblemView}
 
+import java.time.Clock
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,6 +49,8 @@ class IsThisYourBusinessController @Inject() (
   matchingService: BusinessMatchingWithIdService,
   subscriptionService: SubscriptionService,
   controllerHelper: ControllerHelper,
+  uuidGen: UUIDGen,
+  clock: Clock,
   view: IsThisYourBusinessView,
   errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
@@ -56,6 +59,9 @@ class IsThisYourBusinessController @Inject() (
     with Logging {
 
   private val form = formProvider()
+
+  implicit private val uuidGenerator: UUIDGen = uuidGen
+  implicit private val implicitClock: Clock   = clock
 
   private def result(mode: Mode, form: Form[Boolean], registrationInfo: OrgRegistrationInfo)(implicit
     ec: ExecutionContext,
@@ -73,7 +79,7 @@ class IsThisYourBusinessController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
-      buildRegisterWithId() match {
+      buildRegisterWithId(request.utr) match {
         case Some(registerWithID) =>
           matchingService.sendBusinessRegistrationInformation(registerWithID).flatMap {
             case Right(response) =>
@@ -85,8 +91,10 @@ class IsThisYourBusinessController @Inject() (
                       result(mode, form, response)(ec, updatedRequest)
                   }
               }
-            case Left(NotFoundError) =>
+            case Left(NotFoundError) if request.utr.isEmpty =>
               Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad()))
+            case Left(NotFoundError) if request.utr.nonEmpty =>
+              Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(mode)))
             case _ =>
               Future.successful(InternalServerError(errorView()))
           }
@@ -117,10 +125,14 @@ class IsThisYourBusinessController @Inject() (
         )
   }
 
-  def buildRegisterWithId()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
+  def buildRegisterWithId(ctUTR: Option[UniqueTaxpayerReference])(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
     request.userAnswers.get(ReporterTypePage) flatMap {
       case Sole => buildIndividualRegistrationRequest()
-      case _    => buildBusinessRegistrationRequest()
+      case _ =>
+        ctUTR match {
+          case Some(utr) => buildAutoMatchedBusinessRegistrationRequest(utr)
+          case None      => buildBusinessRegistrationRequest()
+        }
     }
 
   def buildBusinessRegistrationRequest()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
@@ -129,6 +141,9 @@ class IsThisYourBusinessController @Inject() (
       businessName <- request.userAnswers.get(BusinessNamePage)
       businessType = request.userAnswers.get(ReporterTypePage)
     } yield RegisterWithID(RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, businessType, None))
+
+  def buildAutoMatchedBusinessRegistrationRequest(utr: UniqueTaxpayerReference): Option[RegisterWithID] =
+    Option(RegisterWithID(AutoMatchedRegistrationRequest("UTR", utr.uniqueTaxPayerReference)))
 
   def buildIndividualRegistrationRequest()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
     for {

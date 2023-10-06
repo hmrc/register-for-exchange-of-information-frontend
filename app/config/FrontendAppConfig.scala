@@ -81,6 +81,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val emailEnquiries: String                      = configuration.get[String]("urls.emailEnquiries")
   lazy val countryCodeJson: String                     = configuration.get[String]("json.countries")
   val enrolmentKey: String                             = configuration.get[String](s"keys.enrolmentKey.mdr")
+  val ctEnrolmentKey: String                           = configuration.get[String](s"keys.enrolmentKey.ct")
   lazy val mandatoryDisclosureRulesFrontendUrl: String = configuration.get[String]("urls.mandatory-disclosure-rules-frontend")
 
 }

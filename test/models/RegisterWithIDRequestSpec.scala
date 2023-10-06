@@ -35,7 +35,7 @@ class RegisterWithIDRequestSpec extends SpecBase {
                            "0123456789",
                            requiresNameMatch = true,
                            isAnAgent = false,
-                           WithIDIndividual("Fred", Some("Flintstone"), "Flint", Some("1999-12-20"))
+                           Option(WithIDIndividual("Fred", Some("Flintstone"), "Flint", Some("1999-12-20")))
       )
     )
   )
