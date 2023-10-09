@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions.{IdentifierAction, StandardActionSets}
 import models.NormalMode
+import pages.UTRPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,13 +43,16 @@ class IndexController @Inject() (
   def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithInitializedData().async {
     implicit request =>
       request.utr match {
-        case Some(_) =>
-          sessionRepository.set(request.userAnswers) map {
-            case true =>
-              Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
-            case false =>
-              logger.error("Failed to set initial user answers to session repository")
-              InternalServerError(errorView())
+        case Some(utr) =>
+          Future.fromTry(request.userAnswers.set(UTRPage, utr)).flatMap {
+            updatedAnswers =>
+              sessionRepository.set(updatedAnswers) map {
+                case true =>
+                  Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+                case false =>
+                  logger.error("Failed to set initial user answers to session repository")
+                  InternalServerError(errorView())
+              }
           }
         case None => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(NormalMode)))
       }
