@@ -20,7 +20,8 @@ import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import matchers.JsonMatchers
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
+import pages.UTRPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -57,9 +58,11 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
     }
 
     "must redirect to IsThisYourBusinessPage for a GET when there is a CT UTR" in {
+      val userAnswersWithUtr = emptyUserAnswers.set(UTRPage, utr).success.value
+
       when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      retrieveUserAnswersData(emptyUserAnswers, Option(utr))
+      when(mockSessionRepository.set(mockitoEq(userAnswersWithUtr))) thenReturn Future.successful(true)
+      retrieveUserAnswersData(userAnswersWithUtr, Option(utr))
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
