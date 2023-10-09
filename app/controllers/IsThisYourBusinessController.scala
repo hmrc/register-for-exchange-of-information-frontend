@@ -79,7 +79,7 @@ class IsThisYourBusinessController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
-      buildRegisterWithId(request.utr) match {
+      buildRegisterWithId() match {
         case Some(registerWithID) =>
           matchingService.sendBusinessRegistrationInformation(registerWithID).flatMap {
             case Right(response) =>
@@ -87,7 +87,7 @@ class IsThisYourBusinessController @Inject() (
                 updatedAnswers =>
                   sessionRepository.set(updatedAnswers).flatMap {
                     _ =>
-                      val updatedRequest = DataRequest(request.request, request.userId, request.affinityGroup, updatedAnswers)
+                      val updatedRequest = DataRequest(request.request, request.userId, request.affinityGroup, updatedAnswers, request.utr)
                       result(mode, form, response)(ec, updatedRequest)
                   }
               }
@@ -125,11 +125,11 @@ class IsThisYourBusinessController @Inject() (
         )
   }
 
-  def buildRegisterWithId(ctUTR: Option[UniqueTaxpayerReference])(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
-    request.userAnswers.get(ReporterTypePage) flatMap {
-      case Sole => buildIndividualRegistrationRequest()
+  def buildRegisterWithId()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
+    request.userAnswers.get(ReporterTypePage) match {
+      case Some(Sole) => buildIndividualRegistrationRequest()
       case _ =>
-        ctUTR match {
+        request.utr match {
           case Some(utr) => buildAutoMatchedBusinessRegistrationRequest(utr)
           case None      => buildBusinessRegistrationRequest()
         }

@@ -49,7 +49,10 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
 
   override def beforeEach(): Unit = {
-    Mockito.reset(mockSessionRepository, mockDataRetrievalAction, mockCtUtrRetrievalAction, mockCtUtrRetrievalAction)
+    Mockito.reset(
+      mockSessionRepository,
+      mockDataRetrievalAction
+    )
     super.beforeEach()
   }
 

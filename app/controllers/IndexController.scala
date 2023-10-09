@@ -20,19 +20,31 @@ import controllers.actions.{IdentifierAction, StandardActionSets}
 import models.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class IndexController @Inject() (val controllerComponents: MessagesControllerComponents, identify: IdentifierAction, standardActionSets: StandardActionSets)
+class IndexController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  sessionRepository: SessionRepository,
+  identify: IdentifierAction,
+  standardActionSets: StandardActionSets
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheck() {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithInitializedData().async {
     implicit request =>
       request.utr match {
-        case Some(_) => Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
-        case None    => Redirect(routes.ReporterTypeController.onPageLoad(NormalMode))
+        case Some(_) =>
+          sessionRepository
+            .set(request.userAnswers)
+            .map(
+              _ => Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+            )
+        case None => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(NormalMode)))
       }
   }
 }

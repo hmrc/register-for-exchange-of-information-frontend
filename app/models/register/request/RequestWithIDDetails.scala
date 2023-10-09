@@ -105,7 +105,7 @@ object RequestWithIDDetails {
       registrationRequest.identifierType,
       registrationRequest.identifier,
       requiresNameMatch = false,
-      isAnAgent = true,
+      isAnAgent = false, //This may change
       partnerDetails = None
     )
 }

@@ -19,17 +19,26 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import matchers.JsonMatchers
-import models.{NormalMode, UniqueTaxpayerReference}
-import play.api.Application
+import models.NormalMode
+import org.mockito.ArgumentMatchers.any
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
+import scala.concurrent.Future
+
 class IndexControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
-  override lazy val app: Application = guiceApplicationBuilder()
-    .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
-    .build()
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
+
+  override def beforeEach(): Unit = {
+    reset(mockCtUtrRetrievalAction)
+    super.beforeEach()
+  }
 
   "Index Controller" - {
 
@@ -47,9 +56,10 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
     }
 
     "must redirect to IsThisYourBusinessPage for a GET when there is a CT UTR" in {
-      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(UniqueTaxpayerReference("123"))))
+      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      retrieveUserAnswersData(emptyUserAnswers, Option(utr))
 
-      retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
       val result = route(app, request).value

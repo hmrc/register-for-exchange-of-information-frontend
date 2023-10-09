@@ -167,6 +167,35 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
     }
 
+    "must return OK and the correct view for a GET when there is a CT UTR but ReporterType is not specified" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      val userAnswersWithoutReporterType = validUserAnswers.remove(ReporterTypePage).success.value
+
+      val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, utr.uniqueTaxPayerReference)
+      val registerWithID     = RegisterWithID(autoMatchedRequest)
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
+      retrieveUserAnswersData(userAnswersWithoutReporterType, Option(utr))
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      val view = mockedApp.injector.instanceOf[IsThisYourBusinessView]
+
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
+    }
+
     "must redirect to ReporterTypePage for a GET when there is a CT UTR but registration info not found" in {
 
       val mockedApp = guiceApplicationBuilder()
