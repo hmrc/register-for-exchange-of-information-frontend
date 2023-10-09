@@ -25,6 +25,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.ThereIsAProblemView
 
 import scala.concurrent.Future
 
@@ -66,6 +67,22 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.IsThisYourBusinessController.onPageLoad(NormalMode).url
+
+    }
+
+    "must return ThereIsAProblemPage for a GET when there is a CT UTR but call to session repository fails" in {
+      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+      retrieveUserAnswersData(emptyUserAnswers, Option(utr))
+
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+      val result = route(app, request).value
+
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+      contentAsString(result) mustEqual view()(request, messages).toString
 
     }
   }

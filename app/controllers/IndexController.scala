@@ -18,10 +18,12 @@ package controllers
 
 import controllers.actions.{IdentifierAction, StandardActionSets}
 import models.NormalMode
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,20 +32,24 @@ class IndexController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   sessionRepository: SessionRepository,
   identify: IdentifierAction,
-  standardActionSets: StandardActionSets
+  standardActionSets: StandardActionSets,
+  errorView: ThereIsAProblemView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithInitializedData().async {
     implicit request =>
       request.utr match {
         case Some(_) =>
-          sessionRepository
-            .set(request.userAnswers)
-            .map(
-              _ => Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
-            )
+          sessionRepository.set(request.userAnswers) map {
+            case true =>
+              Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+            case false =>
+              logger.error("Failed to set initial user answers to session repository")
+              InternalServerError(errorView())
+          }
         case None => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(NormalMode)))
       }
   }
