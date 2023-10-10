@@ -104,8 +104,9 @@ class IsThisYourBusinessController @Inject() (
     val updatedAnswersWithUtrPage = autoMatchedUtr.map(request.userAnswers.set(UTRPage, _)).getOrElse(Success(request.userAnswers))
     for {
       updatedAnswers <- Future.fromTry(updatedAnswersWithUtrPage.flatMap(_.set(RegistrationInfoPage, registrationInfo)))
+      updatedRequest = DataRequest(request.request, request.userId, request.affinityGroup, updatedAnswers)
       result <- sessionRepository.set(updatedAnswers).flatMap {
-        case true => result(mode, form, registrationInfo)(ec, request)
+        case true => result(mode, form, registrationInfo)(ec, updatedRequest)
         case false =>
           logger.error(s"Failed to update user answers after registration was found for userId: [${request.userId}]")
           Future.successful(InternalServerError(errorView()))

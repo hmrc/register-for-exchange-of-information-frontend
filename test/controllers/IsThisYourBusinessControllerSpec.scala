@@ -172,16 +172,24 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
         .build()
 
+      val registrationInfo              = OrgRegistrationInfo(safeId, businessName, address)
       val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTR, autoMatchedUtr).success.value
+      val updatedUserAnswer = userAnswersWithAutoMatchedUtr
+        .set(RegistrationInfoPage, registrationInfo)
+        .success
+        .value
+        .set(UTRPage, autoMatchedUtr)
+        .success
+        .value
 
       val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
       val registerWithID     = RegisterWithID(autoMatchedRequest)
 
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
+        .thenReturn(Future.successful(Right(registrationInfo)))
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(mockitoEq(updatedUserAnswer))) thenReturn Future.successful(true)
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       retrieveUserAnswersData(userAnswersWithAutoMatchedUtr)
 
