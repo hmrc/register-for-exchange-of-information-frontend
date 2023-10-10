@@ -43,7 +43,7 @@ trait SpecBase
 
   val userAnswersId = "id"
 
-  def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj())
+  def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj(), Instant.now(fixedClock))
 
   implicit val hc: HeaderCarrier   = HeaderCarrier()
   val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("UTR")

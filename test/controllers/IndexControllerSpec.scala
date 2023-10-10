@@ -21,13 +21,14 @@ import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import matchers.JsonMatchers
 import models.NormalMode
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
-import pages.UTRPage
+import pages.AutoMatchedUTR
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.ThereIsAProblemView
 
+import java.time.Clock
 import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
@@ -35,7 +36,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
       .guiceApplicationBuilder()
-      .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction))
+      .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction), bind[Clock].toInstance(fixedClock))
 
   override def beforeEach(): Unit = {
     reset(mockCtUtrRetrievalAction)
@@ -57,12 +58,12 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
 
     }
 
-    "must redirect to IsThisYourBusinessPage for a GET when there is a CT UTR" in {
-      val userAnswersWithUtr = emptyUserAnswers.set(UTRPage, utr).success.value
+    "must set AutoMatchedUTR field and redirect to IsThisYourBusinessPage for a GET when there is a CT UTR" in {
+      val userAnswersWithAutoMatchedUtr = emptyUserAnswers.set(AutoMatchedUTR, utr).success.value
 
       when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
-      when(mockSessionRepository.set(mockitoEq(userAnswersWithUtr))) thenReturn Future.successful(true)
-      retrieveUserAnswersData(userAnswersWithUtr, Option(utr))
+      when(mockSessionRepository.set(mockitoEq(userAnswersWithAutoMatchedUtr))) thenReturn Future.successful(true)
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 
@@ -76,7 +77,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
     "must return ThereIsAProblemPage for a GET when there is a CT UTR but call to session repository fails" in {
       when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
-      retrieveUserAnswersData(emptyUserAnswers, Option(utr))
+      retrieveUserAnswersData(emptyUserAnswers)
 
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
 

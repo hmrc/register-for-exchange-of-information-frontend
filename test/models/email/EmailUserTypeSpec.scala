@@ -21,7 +21,7 @@ import models.ReporterType.Sole
 import models.{ReporterType, UserAnswers}
 import org.scalacheck.Gen
 import org.scalacheck.rng.Seed
-import pages.{DoYouHaveUniqueTaxPayerReferencePage, ReporterTypePage}
+import pages.{AutoMatchedUTR, DoYouHaveUniqueTaxPayerReferencePage, ReporterTypePage}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -72,7 +72,14 @@ class EmailUserTypeSpec extends SpecBase {
         emailUserType.getUserTypeFromUa(userAnswers) mustBe Organisation
       }
     }
-    "Throws exception when userAnswers does not contain ReporterTypePage" in {
+
+    "must default to Organisation when userAnswers does not contain ReporterTypePage but has AutoMatchedUtr set" in {
+      val userAnswers = UserAnswers(userAnswersId).set(AutoMatchedUTR, utr).success.value
+
+      emailUserType.getUserTypeFromUa(userAnswers) mustBe Organisation
+    }
+
+    "Throws exception when userAnswers does not contain ReporterTypePage and AutoMatchedUtr" in {
       val userAnswers = UserAnswers(userAnswersId)
       assertThrows[RuntimeException] {
         emailUserType.getUserTypeFromUa(userAnswers)

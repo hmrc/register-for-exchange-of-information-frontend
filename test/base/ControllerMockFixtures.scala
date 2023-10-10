@@ -19,7 +19,7 @@ package base
 import connectors.AddressLookupConnector
 import controllers.actions._
 import matchers.JsonMatchers
-import models.{UniqueTaxpayerReference, UserAnswers}
+import models.UserAnswers
 import navigation.{ContactDetailsFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.{Mockito, MockitoSugar}
 import org.scalatest.BeforeAndAfterEach
@@ -56,11 +56,8 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
     super.beforeEach()
   }
 
-  protected def retrieveUserAnswersData(
-    userAnswers: UserAnswers,
-    utr: Option[UniqueTaxpayerReference] = None
-  ): Unit =
-    when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(Some(userAnswers), utr))
+  protected def retrieveUserAnswersData(userAnswers: UserAnswers): Unit =
+    when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(Some(userAnswers)))
 
   protected def retrieveNoData(): Unit =
     when(mockDataRetrievalAction.apply()).thenReturn(new FakeDataRetrievalAction(None))

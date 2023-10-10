@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package models.requests
+package pages
 
-import models.UserAnswers
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.AffinityGroup
+import models.UniqueTaxpayerReference
+import play.api.libs.json.JsPath
+import queries.{Gettable, Settable}
 
-case class OptionalDataRequest[A](
-  request: Request[A],
-  userId: String,
-  affinityGroup: AffinityGroup,
-  userAnswers: Option[UserAnswers]
-) extends WrappedRequest[A](request)
+case object AutoMatchedUTR extends Gettable[UniqueTaxpayerReference] with Settable[UniqueTaxpayerReference] {
 
-case class DataRequest[A](
-  request: Request[A],
-  userId: String,
-  affinityGroup: AffinityGroup,
-  userAnswers: UserAnswers
-) extends WrappedRequest[A](request)
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "autoMatchedUTR"
+
+}

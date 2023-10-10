@@ -19,7 +19,7 @@ package utils
 import controllers.routes
 import models.matching.OrgRegistrationInfo
 import models.{CheckMode, UserAnswers}
-import pages.{RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
+import pages.{AutoMatchedUTR, RegistrationInfoPage, SelectAddressPage, SndContactPhonePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -53,7 +53,11 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
                         |<p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
                         |${if (address.countryCode.toUpperCase != "GB") s"<p $paragraphClass>$countryName</p>" else ""}
                         |""".stripMargin),
-          href = routes.ReporterTypeController.onPageLoad(CheckMode).url
+          href = if (userAnswers.get(AutoMatchedUTR).isEmpty) {
+            routes.ReporterTypeController.onPageLoad(CheckMode).url
+          } else {
+            routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
+          }
         )
       case _ => None
     }
