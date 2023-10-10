@@ -46,15 +46,14 @@ class SndContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData() {
-      implicit request =>
-        val preparedForm = request.userAnswers.get(SndContactPhonePage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-        Ok(view(preparedForm, getSecondContactName(request.userAnswers), mode))
-    }
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(SndContactPhonePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
+      Future.successful(Ok(view(preparedForm, getSecondContactName(request.userAnswers), mode)))
+  }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {

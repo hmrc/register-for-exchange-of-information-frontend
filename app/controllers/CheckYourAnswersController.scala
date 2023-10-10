@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits._
 import controllers.actions.{CheckForSubmissionAction, StandardActionSets}
 import models.error.ApiError
-import models.error.ApiError.{EnrolmentExistsError, MandatoryInformationMissingError, ServiceUnavailableError}
+import models.error.ApiError.{MandatoryInformationMissingError, ServiceUnavailableError}
 import models.matching.{IndRegistrationInfo, OrgRegistrationInfo, SafeId}
 import models.requests.DataRequest
 import pages._
@@ -28,7 +28,6 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{AuditService, BusinessMatchingWithoutIdService, SubscriptionService}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{CountryListFactory, UserAnswersHelper}
