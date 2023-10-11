@@ -16,19 +16,22 @@
 
 package models.register.request
 
-import models.Name
+import models.{Name, UUIDGen}
 import models.Regime.MDR
-import models.matching.RegistrationRequest
+import models.matching.{AutoMatchedRegistrationRequest, RegistrationRequest}
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 
 case class RegisterWithID(registerWithIDRequest: RegisterWithIDRequest)
 
 object RegisterWithID {
   implicit val format: Format[RegisterWithID] = Json.format[RegisterWithID]
 
-  def apply(name: Name, dob: Option[LocalDate], identifierName: String, identifierValue: String): RegisterWithID =
+  def apply(name: Name, dob: Option[LocalDate], identifierName: String, identifierValue: String)(implicit
+    uuidGenerator: UUIDGen,
+    clock: Clock
+  ): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
         RequestCommon(MDR.toString),
@@ -36,7 +39,15 @@ object RegisterWithID {
       )
     )
 
-  def apply(registrationRequest: RegistrationRequest): RegisterWithID =
+  def apply(registrationRequest: RegistrationRequest)(implicit uuidGenerator: UUIDGen, clock: Clock): RegisterWithID =
+    RegisterWithID(
+      RegisterWithIDRequest(
+        RequestCommon(MDR.toString),
+        RequestWithIDDetails(registrationRequest)
+      )
+    )
+
+  def apply(registrationRequest: AutoMatchedRegistrationRequest)(implicit uuidGenerator: UUIDGen, clock: Clock): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
         RequestCommon(MDR.toString),

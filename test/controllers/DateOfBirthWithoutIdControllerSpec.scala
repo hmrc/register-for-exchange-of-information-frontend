@@ -83,7 +83,7 @@ class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[DateOfBirthWithoutIdView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LocalDate.now()), NormalMode).toString()
+        contentAsString(result) mustEqual view(form.fill(LocalDate.now(ZoneOffset.UTC)), NormalMode).toString()
       }
 
     }

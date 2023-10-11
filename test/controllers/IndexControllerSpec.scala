@@ -17,16 +17,36 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
+import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import matchers.JsonMatchers
 import models.NormalMode
+import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
+import pages.AutoMatchedUTRPage
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import views.html.ThereIsAProblemView
+
+import java.time.Clock
+import scala.concurrent.Future
 
 class IndexControllerSpec extends SpecBase with ControllerMockFixtures with JsonMatchers {
 
+  override def guiceApplicationBuilder(): GuiceApplicationBuilder =
+    super
+      .guiceApplicationBuilder()
+      .overrides(bind[CtUtrRetrievalAction].toInstance(mockCtUtrRetrievalAction), bind[Clock].toInstance(fixedClock))
+
+  override def beforeEach(): Unit = {
+    reset(mockCtUtrRetrievalAction)
+    super.beforeEach()
+  }
+
   "Index Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must redirect to ReporterTypePage for a GET when there is no CT UTR" in {
+      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction())
 
       retrieveUserAnswersData(emptyUserAnswers)
       val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
@@ -35,6 +55,38 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.ReporterTypeController.onPageLoad(NormalMode).url
+
+    }
+
+    "must set AutoMatchedUTR field and redirect to IsThisYourBusinessPage for a GET when there is a CT UTR" in {
+      val userAnswersWithAutoMatchedUtr = emptyUserAnswers.set(AutoMatchedUTRPage, utr).success.value
+
+      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
+      when(mockSessionRepository.set(mockitoEq(userAnswersWithAutoMatchedUtr))) thenReturn Future.successful(true)
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+      val result = route(app, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.IsThisYourBusinessController.onPageLoad(NormalMode).url
+
+    }
+
+    "must return ThereIsAProblemPage for a GET when there is a CT UTR but call to session repository fails" in {
+      when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+
+      val result = route(app, request).value
+
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+      contentAsString(result) mustEqual view()(request, messages).toString
 
     }
   }

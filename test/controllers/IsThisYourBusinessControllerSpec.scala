@@ -18,11 +18,12 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.ReporterType.{LimitedCompany, Sole}
-import models.error.ApiError.{BadRequestError, ServiceUnavailableError}
-import models.matching.{OrgRegistrationInfo, RegistrationRequest}
+import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
+import models.matching.{AutoMatchedRegistrationRequest, OrgRegistrationInfo, RegistrationRequest}
+import models.register.request.RegisterWithID
 import models.register.response.details.AddressResponse
-import models.{CheckMode, Name, NormalMode, SubscriptionID, UserAnswers}
-import org.mockito.ArgumentMatchers.any
+import models.{CheckMode, Name, NormalMode, SubscriptionID, UUIDGen, UniqueTaxpayerReference, UserAnswers}
+import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import pages._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -32,6 +33,8 @@ import play.api.test.Helpers._
 import services.{BusinessMatchingWithIdService, SubscriptionService, TaxEnrolmentService}
 import views.html.{IsThisYourBusinessView, ThereIsAProblemView}
 
+import java.time.Clock
+import java.util.UUID
 import scala.concurrent.Future
 
 class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtures {
@@ -42,9 +45,12 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 
-  val address             = AddressResponse("line1", None, None, None, None, "GB")
-  val registrationRequest = RegistrationRequest("UTR", "UTR", "name", Some(LimitedCompany))
-  val registrationInfo    = OrgRegistrationInfo(safeId, "name", address)
+  private val businessName = "name"
+
+  private val autoMatchedUtr      = UniqueTaxpayerReference("SomeAutoMatchedUtr")
+  private val address             = AddressResponse("line1", None, None, None, None, "GB")
+  private val registrationRequest = RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, Some(LimitedCompany))
+  private val registrationInfo    = OrgRegistrationInfo(safeId, businessName, address)
 
   val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(ReporterTypePage, LimitedCompany)
@@ -53,7 +59,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     .set(UTRPage, utr)
     .success
     .value
-    .set(BusinessNamePage, "name")
+    .set(BusinessNamePage, businessName)
     .success
     .value
     .set(RegistrationInfoPage, registrationInfo)
@@ -63,6 +69,11 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
   val mockMatchingService: BusinessMatchingWithIdService = mock[BusinessMatchingWithIdService]
   val mockSubscriptionService: SubscriptionService       = mock[SubscriptionService]
   val mockTaxEnrolmentService: TaxEnrolmentService       = mock[TaxEnrolmentService]
+  val mockUUIDGen: UUIDGen                               = mock[UUIDGen]
+
+  when(mockUUIDGen.randomUUID()).thenReturn(UUID.randomUUID())
+
+  implicit override val uuidGenerator: UUIDGen = mockUUIDGen
 
   override def guiceApplicationBuilder(): GuiceApplicationBuilder =
     super
@@ -74,31 +85,180 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       )
 
   override def beforeEach(): Unit = {
-    reset(mockMatchingService, mockSubscriptionService, mockTaxEnrolmentService)
+    reset(mockMatchingService, mockSubscriptionService, mockTaxEnrolmentService, mockDataRetrievalAction)
     super.beforeEach
   }
 
   "IsThisYourBusiness Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when there is no CT UTR" in {
 
-      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      val registerWithID = RegisterWithID(registrationRequest)
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
-
       retrieveUserAnswersData(validUserAnswers)
+
       implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
 
-      val result = route(app, request).value
+      val result = route(mockedApp, request).value
 
-      val view = app.injector.instanceOf[IsThisYourBusinessView]
+      val view = mockedApp.injector.instanceOf[IsThisYourBusinessView]
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
+    }
+
+    "must return ThereIsAProblemPage for a GET when registration is found but a repository error occurs" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      val registerWithID = RegisterWithID(registrationRequest)
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+      retrieveUserAnswersData(validUserAnswers)
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+      contentAsString(result) mustEqual view()(request, messages).toString
+    }
+
+    "must redirect to BusinessNotIdentifiedPage for a GET when there is no CT UTR and registration info not found" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      val registerWithID = RegisterWithID(registrationRequest)
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
+        .thenReturn(Future.successful(Left(NotFoundError)))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
+      retrieveUserAnswersData(validUserAnswers)
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.BusinessNotIdentifiedController.onPageLoad().url
+    }
+
+    "must return OK and the correct view for a GET when there is a CT UTR" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      val registrationInfo              = OrgRegistrationInfo(safeId, businessName, address)
+      val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value
+      val updatedUserAnswer = userAnswersWithAutoMatchedUtr
+        .set(RegistrationInfoPage, registrationInfo)
+        .success
+        .value
+        .set(UTRPage, autoMatchedUtr)
+        .success
+        .value
+
+      val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
+      val registerWithID     = RegisterWithID(autoMatchedRequest)
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
+        .thenReturn(Future.successful(Right(registrationInfo)))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(mockitoEq(updatedUserAnswer))) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
+      retrieveUserAnswersData(userAnswersWithAutoMatchedUtr)
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      val view = mockedApp.injector.instanceOf[IsThisYourBusinessView]
+
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
+    }
+
+    "must return OK and the correct view for a GET when there is a CT UTR but ReporterType is not specified" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      val userAnswersWithoutReporterType = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value.remove(ReporterTypePage).success.value
+
+      val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
+      val registerWithID     = RegisterWithID(autoMatchedRequest)
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
+      retrieveUserAnswersData(userAnswersWithoutReporterType)
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      val view = mockedApp.injector.instanceOf[IsThisYourBusinessView]
+
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual view(form, registrationInfo, NormalMode).toString
+    }
+
+    "must clear autoMatched field from userAnswers and redirect to ReporterTypePage for a GET with a CT UTR when registration info not found" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value
+
+      val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
+      val registerWithID     = RegisterWithID(autoMatchedRequest)
+
+      val userAnswersWithAutoMatchedFieldCleared = userAnswersWithAutoMatchedUtr.remove(AutoMatchedUTRPage).success.value
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
+        .thenReturn(Future.successful(Left(NotFoundError)))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(mockitoEq(userAnswersWithAutoMatchedFieldCleared))) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
+      retrieveUserAnswersData(userAnswersWithAutoMatchedUtr)
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.ReporterTypeController.onPageLoad(NormalMode).url
     }
 
     "must return OK and the correct view for a GET for ReporterType as SoleTrader" in {

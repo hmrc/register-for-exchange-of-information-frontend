@@ -38,6 +38,7 @@ trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with Mock
 
   def onwardRoute: Call                                              = Call("GET", "/foo")
   final val mockDataRetrievalAction: DataRetrievalAction             = mock[DataRetrievalAction]
+  final val mockCtUtrRetrievalAction: CtUtrRetrievalAction           = mock[CtUtrRetrievalAction]
   final val mockSessionRepository: SessionRepository                 = mock[SessionRepository]
   final val mockAddressLookupConnector                               = mock[AddressLookupConnector]
   protected val mdrFakeNavigator: MDRNavigator                       = new MDRFakeNavigator(onwardRoute)

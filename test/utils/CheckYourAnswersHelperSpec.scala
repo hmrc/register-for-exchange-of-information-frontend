@@ -21,7 +21,7 @@ import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import pages.{IsThisYourBusinessPage, RegistrationInfoPage}
+import pages.{AutoMatchedUTRPage, IsThisYourBusinessPage, RegistrationInfoPage}
 import play.api.test.Helpers
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -37,7 +37,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
 
   "CheckYourAnswersHelper" - {
 
-    "confirmBusiness must return a SummaryListRow with the business details if they exist" in {
+    "confirmBusiness must return a SummaryListRow with the business details with href to change-reporter-type when AutoMatchedUTR is not set" in {
       val userAnswers = emptyUserAnswers
         .set(IsThisYourBusinessPage, true)
         .success
@@ -51,44 +51,27 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
       val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
 
       service.confirmBusiness mustBe Some(
-        SummaryListRow(
-          Key(Text("businessWithIDName.checkYourAnswersLabel"), "govuk-!-width-one-half"),
-          Value(
-            HtmlContent(
-              """
-                |<p>name</p>
-                |<p class=govuk-!-margin-0>line1</p>
-                |<p class=govuk-!-margin-0>line2</p>
-                |
-                |
-                |<p class=govuk-!-margin-0>NE98  1ZZ</p>
-                |
-                |""".stripMargin
-            ),
-            ""
-          ),
-          "",
-          Some(
-            Actions(
-              "",
-              List(
-                ActionItem(
-                  "/register-for-mdr/register/change-reporter-type",
-                  HtmlContent(
-                    """
-                      |<span aria-hidden="true">site.edit</span>
-                      |<span class="govuk-visually-hidden">businessWithIDName.checkYourAnswersLabel</span>
-                      |""".stripMargin
-                  ),
-                  None,
-                  "",
-                  Map("id" -> "business-with-i-d-name")
-                )
-              )
-            )
-          )
-        )
+        createSummaryListRow("/register-for-mdr/register/change-reporter-type")
       )
+    }
+
+    "confirmBusiness must return a SummaryListRow with the business details with href to change-is-this-your-business when AutoMatchedUTR is set" in {
+      val userAnswers = emptyUserAnswers
+        .set(AutoMatchedUTRPage, utr)
+        .success
+        .value
+        .set(IsThisYourBusinessPage, true)
+        .success
+        .value
+        .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("SafeId"), "name", addressResponse))
+        .success
+        .value
+
+      when(mockCountryListFactory.getDescriptionFromCode(any())).thenReturn(Some("United Kingdom"))
+
+      val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.confirmBusiness mustBe Some(createSummaryListRow("/register-for-mdr/register/change-is-this-your-business"))
     }
 
     "confirmBusiness must return Non when the business details don't exist" in {
@@ -97,4 +80,43 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
       service.confirmBusiness mustBe None
     }
   }
+
+  private def createSummaryListRow(href: String) =
+    SummaryListRow(
+      Key(Text("businessWithIDName.checkYourAnswersLabel"), "govuk-!-width-one-half"),
+      Value(
+        HtmlContent(
+          """
+            |<p>name</p>
+            |<p class=govuk-!-margin-0>line1</p>
+            |<p class=govuk-!-margin-0>line2</p>
+            |
+            |
+            |<p class=govuk-!-margin-0>NE98  1ZZ</p>
+            |
+            |""".stripMargin
+        ),
+        ""
+      ),
+      "",
+      Some(
+        Actions(
+          "",
+          List(
+            ActionItem(
+              href,
+              HtmlContent(
+                """
+                  |<span aria-hidden="true">site.edit</span>
+                  |<span class="govuk-visually-hidden">businessWithIDName.checkYourAnswersLabel</span>
+                  |""".stripMargin
+              ),
+              None,
+              "",
+              Map("id" -> "business-with-i-d-name")
+            )
+          )
+        )
+      )
+    )
 }

@@ -588,6 +588,29 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           }
         }
 
+        "to 'Your contact details?' page when there is no ReporterType and Yes is selected" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val organisationReporters = List(LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation)
+
+              organisationReporters.foreach {
+                organisation =>
+                  val updatedAnswers =
+                    answers
+                      .remove(ReporterTypePage)
+                      .success
+                      .value
+                      .set(IsThisYourBusinessPage, true)
+                      .success
+                      .value
+
+                  navigator
+                    .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+                    .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
+              }
+          }
+        }
+
         "to 'no-records-matched'' page when 'NO' is selected" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>

@@ -17,7 +17,7 @@
 package models.email
 
 import models.{ReporterType, UserAnswers}
-import pages.ReporterTypePage
+import pages.{AutoMatchedUTRPage, ReporterTypePage}
 
 import javax.inject.Inject
 
@@ -27,7 +27,8 @@ class EmailUserType @Inject() ()() {
     userAnswers.get(ReporterTypePage) match {
       case Some(ReporterType.Sole)       => SoleTrader
       case Some(ReporterType.Individual) => Individual
-      case None                          => throw new RuntimeException("Cannot determine whether the registration should be Organisation or Individual")
-      case _                             => Organisation
+      case None if userAnswers.get(AutoMatchedUTRPage).isEmpty =>
+        throw new RuntimeException("Cannot determine whether the registration should be Organisation or Individual")
+      case _ => Organisation
     }
 }

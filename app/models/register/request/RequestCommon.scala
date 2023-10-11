@@ -16,12 +16,12 @@
 
 package models.register.request
 
+import models.UUIDGen
 import models.shared.Parameters
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.format.DateTimeFormatter
-import java.time.{ZoneId, ZonedDateTime}
-import java.util.UUID
+import java.time.{Clock, ZonedDateTime}
 
 case class RequestCommon(
   receiptDate: String,
@@ -31,14 +31,14 @@ case class RequestCommon(
 )
 
 object RequestCommon {
-  implicit val format = Json.format[RequestCommon]
+  implicit val format: OFormat[RequestCommon] = Json.format[RequestCommon]
 
-  def apply(regime: String): RequestCommon = {
-    val acknRef: String = UUID.randomUUID().toString.replaceAll("-", "") //uuids are 36 and spec demands 32
+  def apply(regime: String)(implicit uuidGenerator: UUIDGen, clock: Clock): RequestCommon = {
+    val acknRef: String = uuidGenerator.randomUUID().toString.replaceAll("-", "") //uuids are 36 and spec demands 32
     //Format: ISO 8601 YYYY-MM-DDTHH:mm:ssZ e.g. 2020-09-23T16:12:11Z
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
     val dateTime: String = ZonedDateTime
-      .now(ZoneId.of("UTC"))
+      .now(clock)
       .format(formatter)
     RequestCommon(dateTime, regime, acknRef, None)
   }

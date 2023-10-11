@@ -16,21 +16,48 @@
 
 package controllers
 
-import controllers.actions.{CheckEnrolledToServiceActionProvider, IdentifierAction}
-import models.NormalMode
+import controllers.actions.{IdentifierAction, StandardActionSets}
+import models.{NormalMode, UserAnswers}
+import pages.AutoMatchedUTRPage
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.ThereIsAProblemView
 
+import java.time.{Clock, Instant}
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
-class IndexController @Inject() (val controllerComponents: MessagesControllerComponents,
-                                 identify: IdentifierAction,
-                                 checkEnrolment: CheckEnrolledToServiceActionProvider
-) extends FrontendBaseController
-    with I18nSupport {
+class IndexController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  sessionRepository: SessionRepository,
+  clock: Clock,
+  identify: IdentifierAction,
+  standardActionSets: StandardActionSets,
+  errorView: ThereIsAProblemView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify() andThen checkEnrolment()) {
-    Redirect(routes.ReporterTypeController.onPageLoad(NormalMode))
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheck().async {
+    implicit request =>
+      request.utr match {
+        case Some(utr) =>
+          val userAnswers = UserAnswers(request.userId, lastUpdated = Instant.now(clock))
+          for {
+            autoMatchedUserAnswers <- Future.fromTry(userAnswers.set(AutoMatchedUTRPage, utr))
+            result <- sessionRepository.set(autoMatchedUserAnswers) map {
+              case true =>
+                Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+              case false =>
+                logger.error(s"Failed to update user answers with autoMatchedUTR field for userId: [${request.userId}]")
+                InternalServerError(errorView())
+            }
+          } yield result
+        case None => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(NormalMode)))
+      }
   }
 }
