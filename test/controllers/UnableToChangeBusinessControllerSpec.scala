@@ -48,7 +48,7 @@ class UnableToChangeBusinessControllerSpec extends SpecBase with ControllerMockF
         val view = application.injector.instanceOf[UnableToChangeBusinessView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(loginURL, "test", List("line1", "")).toString
+        contentAsString(result) mustEqual view(loginURL, Some("test"), Some(List("line1", ""))).toString
       }
     }
   }

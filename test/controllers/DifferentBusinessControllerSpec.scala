@@ -16,14 +16,14 @@
 
 package controllers
 
-import base.{ControllerMockFixtures, ControllerSpecBase, SpecBase}
+import base.{ControllerMockFixtures, SpecBase}
 import models.UserAnswers
 import models.matching.OrgRegistrationInfo
 import models.register.response.details.AddressResponse
 import pages.RegistrationInfoPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.{DifferentBusinessView, UnableToChangeBusinessView}
+import views.html.DifferentBusinessView
 
 class DifferentBusinessControllerSpec extends SpecBase with ControllerMockFixtures {
 
@@ -51,7 +51,7 @@ class DifferentBusinessControllerSpec extends SpecBase with ControllerMockFixtur
         val view = application.injector.instanceOf[DifferentBusinessView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(loginURL, "test", List("line1", "")).toString
+        contentAsString(result) mustEqual view(loginURL, Some("test"), Some(List("line1", ""))).toString
       }
     }
   }

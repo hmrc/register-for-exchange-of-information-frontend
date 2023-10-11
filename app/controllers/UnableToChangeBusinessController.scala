@@ -41,9 +41,9 @@ class UnableToChangeBusinessController @Inject() (
     implicit request =>
       request.userAnswers.get(RegistrationInfoPage) match {
         case Some(registrationInfo: OrgRegistrationInfo) =>
-          val (name, address) = (registrationInfo.name, registrationInfo.address.asList)
+          val (name, address) = (Some(registrationInfo.name), Some(registrationInfo.address.asList))
           Ok(view(appConfig.loginUrl, name, address))
-        case _ => InternalServerError(errorView())
+        case _ => Ok(view(appConfig.loginUrl, None, None))
       }
 
   }
