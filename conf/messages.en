@@ -530,3 +530,15 @@ registeredAddressInUK.heading = Is your registered address in the UK?
 registeredAddressInUK.checkYourAnswersLabel = Is your registered address in the UK?
 registeredAddressInUK.checkYourAnswersLabel.hiddenText =  Change whether your registered address is in the UK
 registeredAddressInUK.error.required = Select yes if your registered address is in the UK
+
+differentBusiness.title = You’re unable to use this service with this Government Gateway user ID
+differentBusiness.heading = You’re unable to use this service with this Government Gateway user ID
+differentBusiness.p1 = You have signed in with a Government Gateway user ID that is linked to the following business details:
+differentBusiness.p2 = If you want to register a different organisation for MDR, you must {0}.
+differentBusiness.link = sign in with the Government Gateway user ID for the organisation you wish to register
+
+unableToChangeBusiness.title = You’re unable to change your business details
+unableToChangeBusiness.heading = You’re unable to change your business details
+unableToChangeBusiness.p1 = You have signed in with a Government Gateway user ID that is linked to the following business details:
+unableToChangeBusiness.p2 = If you want to register a different organisation for MDR, you must {0}.
+unableToChangeBusiness.link = sign in with the Government Gateway user ID for the organisation you wish to register
