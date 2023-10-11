@@ -184,10 +184,10 @@ class MDRNavigator @Inject() () extends Navigator {
     }
 
   private def isThisYourBusiness(mode: Mode)(ua: UserAnswers): Option[Call] =
-    (ua.get(IsThisYourBusinessPage), ua.get(ReporterTypePage), ua.get(AutoMatchedUTRPage).nonEmpty) match {
-      case (Some(true), Some(Sole), false) =>
+    (ua.get(IsThisYourBusinessPage), ua.get(ReporterTypePage), ua.get(AutoMatchedUTRPage).isDefined) match {
+      case (Some(true), Some(Sole), _) =>
         checkNextPageForValueThenRoute(mode, ua, IndividualContactEmailPage, routes.IndividualContactEmailController.onPageLoad(mode))
-      case (Some(true), _, false)    =>
+      case (Some(true), _, _)    =>
         checkNextPageForValueThenRoute(mode, ua, ContactNamePage, routes.YourContactDetailsController.onPageLoad(mode))
       case (Some(false), _, true)    =>
         Some(routes.DifferentBusinessController.onPageLoad())

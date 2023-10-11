@@ -565,6 +565,27 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           }
         }
 
+        "to 'You’re unable to use this service with this Government Gateway user ID' page when No is selected for a Sole Trader and user is auto matched" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val updatedAnswers =
+                answers
+                  .set(ReporterTypePage, Sole)
+                  .success
+                  .value
+                  .set(IsThisYourBusinessPage, false)
+                  .success
+                  .value
+                  .set(AutoMatchedUTRPage, utr)
+                  .success
+                  .value
+
+              navigator
+                .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+                .mustBe(routes.DifferentBusinessController.onPageLoad())
+          }
+        }
+
         "to 'Your contact details?' page when Yes is selected for any business other than Sole Trader" in {
           forAll(arbitrary[UserAnswers]) {
             answers =>
@@ -584,6 +605,32 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                   navigator
                     .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
                     .mustBe(routes.YourContactDetailsController.onPageLoad(NormalMode))
+              }
+          }
+        }
+
+        "to 'You’re unable to use this service with this Government Gateway user ID' page when Yes is selected for any business other than Sole Trader and its auto matched" in {
+          forAll(arbitrary[UserAnswers]) {
+            answers =>
+              val organisationReporters = List(LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation)
+
+              organisationReporters.foreach {
+                organisation =>
+                  val updatedAnswers =
+                    answers
+                      .set(ReporterTypePage, organisation)
+                      .success
+                      .value
+                      .set(IsThisYourBusinessPage, false)
+                      .success
+                      .value
+                      .set(AutoMatchedUTRPage, utr)
+                      .success
+                      .value
+
+                  navigator
+                    .nextPage(IsThisYourBusinessPage, NormalMode, updatedAnswers)
+                    .mustBe(routes.DifferentBusinessController.onPageLoad())
               }
           }
         }
