@@ -31,7 +31,7 @@
     <p class="govuk-body">@messages("unableToChangeBusiness.p1")</p>
 
     <div class="govuk-body">
-        <p class="govuk-body">name</p>
+        <p class="govuk-body">@name</p>
             @for(addressLine <- address){
         <p class="govuk-body govuk-!-margin-bottom-0">@addressLine</p>
         }
@@ -39,5 +39,5 @@
 
     }
 
-    <p class="govuk-body">@messages("unableToChangeBusiness.p2") @link(contactLink, "unableToChangeBusiness.link", openInNewWindow = false).</p>
+    <p class="govuk-body">@Html(messages("unableToChangeBusiness.p2", link(contactLink, "unableToChangeBusiness.link", openInNewWindow = false)))</p>
 }
