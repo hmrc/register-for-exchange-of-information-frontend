@@ -54,5 +54,23 @@ class DifferentBusinessControllerSpec extends SpecBase with ControllerMockFixtur
         contentAsString(result) mustEqual view(loginURL, Some("test"), Some(List("line1", ""))).toString
       }
     }
+
+    "must return OK and the correct view for a GET with no registrationInfo set" in {
+
+      retrieveUserAnswersData(emptyUserAnswers)
+
+      val application = guiceApplicationBuilder().build()
+
+      running(application) {
+        implicit val request = FakeRequest(GET, routes.DifferentBusinessController.onPageLoad().url)
+
+        val result = route(app, request).value
+
+        val view = application.injector.instanceOf[DifferentBusinessView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(loginURL, None, None).toString
+      }
+    }
   }
 }
