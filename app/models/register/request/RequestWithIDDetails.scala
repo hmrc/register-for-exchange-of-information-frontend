@@ -87,7 +87,7 @@ object RequestWithIDDetails {
       identifierName,
       identifierValue,
       requiresNameMatch = true,
-      isAnAgent = false, //This may change
+      isAnAgent = false,
       Option(WithIDIndividual(name.firstName, None, name.lastName, dob.map(_.format(dateFormat))))
     )
 
@@ -96,7 +96,7 @@ object RequestWithIDDetails {
       registrationRequest.identifierType,
       registrationRequest.identifier,
       requiresNameMatch = true,
-      isAnAgent = false, //This may change
+      isAnAgent = false,
       Option(WithIDOrganisation(registrationRequest.name, registrationRequest.businessType.map(_.code).getOrElse("")))
     )
 
@@ -105,7 +105,7 @@ object RequestWithIDDetails {
       registrationRequest.identifierType,
       registrationRequest.identifier,
       requiresNameMatch = false,
-      isAnAgent = false, //This may change
+      isAnAgent = false,
       partnerDetails = None
     )
 }

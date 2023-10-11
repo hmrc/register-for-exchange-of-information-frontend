@@ -173,7 +173,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .build()
 
       val registrationInfo              = OrgRegistrationInfo(safeId, businessName, address)
-      val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTR, autoMatchedUtr).success.value
+      val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value
       val updatedUserAnswer = userAnswersWithAutoMatchedUtr
         .set(RegistrationInfoPage, registrationInfo)
         .success
@@ -209,7 +209,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
         .build()
 
-      val userAnswersWithoutReporterType = validUserAnswers.set(AutoMatchedUTR, autoMatchedUtr).success.value.remove(ReporterTypePage).success.value
+      val userAnswersWithoutReporterType = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value.remove(ReporterTypePage).success.value
 
       val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
       val registerWithID     = RegisterWithID(autoMatchedRequest)
@@ -238,12 +238,12 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
         .build()
 
-      val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTR, autoMatchedUtr).success.value
+      val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value
 
       val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
       val registerWithID     = RegisterWithID(autoMatchedRequest)
 
-      val userAnswersWithAutoMatchedFieldCleared = userAnswersWithAutoMatchedUtr.remove(AutoMatchedUTR).success.value
+      val userAnswersWithAutoMatchedFieldCleared = userAnswersWithAutoMatchedUtr.remove(AutoMatchedUTRPage).success.value
 
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))

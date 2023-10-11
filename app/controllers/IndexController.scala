@@ -18,7 +18,7 @@ package controllers
 
 import controllers.actions.{IdentifierAction, StandardActionSets}
 import models.{NormalMode, UserAnswers}
-import pages.AutoMatchedUTR
+import pages.AutoMatchedUTRPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,7 +48,7 @@ class IndexController @Inject() (
         case Some(utr) =>
           val userAnswers = UserAnswers(request.userId, lastUpdated = Instant.now(clock))
           for {
-            autoMatchedUserAnswers <- Future.fromTry(userAnswers.set(AutoMatchedUTR, utr))
+            autoMatchedUserAnswers <- Future.fromTry(userAnswers.set(AutoMatchedUTRPage, utr))
             result <- sessionRepository.set(autoMatchedUserAnswers) map {
               case true =>
                 Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))

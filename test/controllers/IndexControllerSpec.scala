@@ -21,7 +21,7 @@ import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import matchers.JsonMatchers
 import models.NormalMode
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
-import pages.AutoMatchedUTR
+import pages.AutoMatchedUTRPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -59,7 +59,7 @@ class IndexControllerSpec extends SpecBase with ControllerMockFixtures with Json
     }
 
     "must set AutoMatchedUTR field and redirect to IsThisYourBusinessPage for a GET when there is a CT UTR" in {
-      val userAnswersWithAutoMatchedUtr = emptyUserAnswers.set(AutoMatchedUTR, utr).success.value
+      val userAnswersWithAutoMatchedUtr = emptyUserAnswers.set(AutoMatchedUTRPage, utr).success.value
 
       when(mockCtUtrRetrievalAction.apply()).thenReturn(new FakeCtUtrRetrievalAction(Option(utr)))
       when(mockSessionRepository.set(mockitoEq(userAnswersWithAutoMatchedUtr))) thenReturn Future.successful(true)

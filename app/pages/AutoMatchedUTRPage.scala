@@ -20,7 +20,7 @@ import models.UniqueTaxpayerReference
 import play.api.libs.json.JsPath
 import queries.{Gettable, Settable}
 
-case object AutoMatchedUTR extends Gettable[UniqueTaxpayerReference] with Settable[UniqueTaxpayerReference] {
+case object AutoMatchedUTRPage extends Gettable[UniqueTaxpayerReference] with Settable[UniqueTaxpayerReference] {
 
   override def path: JsPath = JsPath \ toString
 

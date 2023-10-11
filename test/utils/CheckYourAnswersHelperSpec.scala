@@ -21,7 +21,7 @@ import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import pages.{AutoMatchedUTR, IsThisYourBusinessPage, RegistrationInfoPage}
+import pages.{AutoMatchedUTRPage, IsThisYourBusinessPage, RegistrationInfoPage}
 import play.api.test.Helpers
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -57,7 +57,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "confirmBusiness must return a SummaryListRow with the business details with href to change-is-this-your-business when AutoMatchedUTR is set" in {
       val userAnswers = emptyUserAnswers
-        .set(AutoMatchedUTR, utr)
+        .set(AutoMatchedUTRPage, utr)
         .success
         .value
         .set(IsThisYourBusinessPage, true)

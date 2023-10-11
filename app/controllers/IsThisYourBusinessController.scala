@@ -80,7 +80,7 @@ class IsThisYourBusinessController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
-      val autoMatchedUtr = request.userAnswers.get(AutoMatchedUTR)
+      val autoMatchedUtr = request.userAnswers.get(AutoMatchedUTRPage)
       buildRegisterWithId(autoMatchedUtr) match {
         case Some(registerWithID) =>
           matchingService.sendBusinessRegistrationInformation(registerWithID).flatMap {
@@ -126,7 +126,7 @@ class IsThisYourBusinessController @Inject() (
 
   private def resultWithAutoMatchedFieldCleared(mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
     for {
-      autoMatchedUtrRemoved <- Future.fromTry(request.userAnswers.remove(AutoMatchedUTR))
+      autoMatchedUtrRemoved <- Future.fromTry(request.userAnswers.remove(AutoMatchedUTRPage))
       result <- sessionRepository.set(autoMatchedUtrRemoved) flatMap {
         case true => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(mode)))
         case false =>
