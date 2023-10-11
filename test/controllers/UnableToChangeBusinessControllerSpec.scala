@@ -30,7 +30,10 @@ class UnableToChangeBusinessControllerSpec extends SpecBase with ControllerMockF
   lazy val loginURL: String = "http://localhost:9949/auth-login-stub/gg-sign-in"
 
   val userAnswers: UserAnswers =
-    UserAnswers(userAnswersId).set(RegistrationInfoPage, OrgRegistrationInfo(safeId, "", AddressResponse("line1", None, None, None, None, ""))).success.value
+    UserAnswers(userAnswersId)
+      .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, "test", AddressResponse("line1", None, None, None, None, "")))
+      .success
+      .value
 
   "UnableToChangeBusiness Controller" - {
 
