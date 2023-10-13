@@ -33,8 +33,8 @@ class SecondContactControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.SecondContactFormProvider().apply()
 
-  val contactName              = "Contact name"
-  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(ContactNamePage, contactName).success.value
+  val contactName              = name.fullName
+  val userAnswers: UserAnswers = emptyUserAnswers.set(ContactNamePage, contactName).success.value
 
   "SecondContact Controller" - {
 

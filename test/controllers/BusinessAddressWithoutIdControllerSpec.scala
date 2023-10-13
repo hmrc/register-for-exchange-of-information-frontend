@@ -48,7 +48,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
   lazy val loadRoute: String   = routes.BusinessAddressWithoutIdController.onPageLoad(NormalMode).url
   lazy val submitRoute: String = routes.BusinessAddressWithoutIdController.onSubmit(NormalMode).url
 
-  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(BusinessAddressWithoutIdPage, address).success.value
+  val userAnswers: UserAnswers = emptyUserAnswers.set(BusinessAddressWithoutIdPage, address).success.value
 
   "BusinessAddressWithoutId Controller" - {
 

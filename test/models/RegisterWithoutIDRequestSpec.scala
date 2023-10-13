@@ -29,7 +29,7 @@ import scala.util.matching.Regex
 
 class RegisterWithoutIDRequestSpec extends SpecBase {
 
-  val individual = Individual(name = Name("Fred", "Flint"), dateOfBirth = LocalDate.parse("1999-12-20"))
+  val individual = Individual(name = name, dateOfBirth = LocalDate.parse(TestDate))
 
   val aaddress = AddressRequest(addressLine1 = "line 1",
                                 addressLine2 = Some("line 2"),
@@ -43,7 +43,7 @@ class RegisterWithoutIDRequestSpec extends SpecBase {
     phoneNumber = Some("111111"),
     mobileNumber = Some("222222"),
     faxNumber = Some("333333"),
-    emailAddress = Some("test@test.org")
+    emailAddress = Some(TestEmail)
   )
 
   val identification = Identification(idNumber = "", issuingInstitution = "", issuingCountryCode = "")

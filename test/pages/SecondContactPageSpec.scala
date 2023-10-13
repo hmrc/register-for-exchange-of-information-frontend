@@ -36,10 +36,10 @@ class SecondContactPageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
             val result = userAnswers
-              .set(SndContactNamePage, "name")
+              .set(SndContactNamePage, OrgName)
               .success
               .value
-              .set(SndContactEmailPage, "test@gmail.com")
+              .set(SndContactEmailPage, TestEmail)
               .success
               .value
               .set(SndConHavePhonePage, true)
@@ -64,10 +64,10 @@ class SecondContactPageSpec extends PageBehaviours {
         forAll(arbitrary[UserAnswers]) {
           userAnswers =>
             val result = userAnswers
-              .set(SndContactNamePage, "name")
+              .set(SndContactNamePage, OrgName)
               .success
               .value
-              .set(SndContactEmailPage, "test@gmail.com")
+              .set(SndContactEmailPage, TestEmail)
               .success
               .value
               .set(SndConHavePhonePage, true)

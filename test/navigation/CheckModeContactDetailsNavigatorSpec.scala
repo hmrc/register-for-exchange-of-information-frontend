@@ -42,10 +42,10 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(ContactNamePage, "someName")
+                .set(ContactNamePage, name.fullName)
                 .success
                 .value
-                .set(ContactEmailPage, "email@email.com")
+                .set(ContactEmailPage, TestEmail)
                 .success
                 .value
 
@@ -86,7 +86,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(ContactEmailPage, "email@email.com")
+                .set(ContactEmailPage, TestEmail)
                 .success
                 .value
                 .set(ContactHavePhonePage, true)
@@ -108,7 +108,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
           forAll(arbitrary[UserAnswers]) {
             answers =>
               val updatedAnswers = answers
-                .set(ContactEmailPage, "email@email.com")
+                .set(ContactEmailPage, TestEmail)
                 .success
                 .value
                 .remove(ContactHavePhonePage)
@@ -344,10 +344,10 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
             answers =>
               val updatedAnswers =
                 answers
-                  .set(SndContactNamePage, "someName")
+                  .set(SndContactNamePage, name.fullName)
                   .success
                   .value
-                  .set(SndContactEmailPage, "email@email.com")
+                  .set(SndContactEmailPage, TestEmail)
                   .success
                   .value
 
@@ -382,7 +382,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
             answers =>
               val updatedAnswers =
                 answers
-                  .set(SndContactEmailPage, "email@email.com")
+                  .set(SndContactEmailPage, TestEmail)
                   .success
                   .value
                   .set(SndConHavePhonePage, true)
@@ -401,7 +401,7 @@ class CheckModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckPrope
             answers =>
               val updatedAnswers =
                 answers
-                  .set(SndContactEmailPage, "email@email.com")
+                  .set(SndContactEmailPage, TestEmail)
                   .success
                   .value
                   .remove(SndConHavePhonePage)

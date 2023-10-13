@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, ReporterType, UniqueTaxpayerReference, UserAnswers}
+import models.{NormalMode, ReporterType}
 import org.mockito.ArgumentMatchers.any
 import pages.{ReporterTypePage, UTRPage}
 import play.api.test.FakeRequest
@@ -33,7 +33,7 @@ class UTRControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.UTRFormProvider().apply("Self Assessment") // has to match ReporterType in user answer
 
-  val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.Sole).success.value
+  val userAnswers = emptyUserAnswers.set(ReporterTypePage, ReporterType.Sole).success.value
   val taxType     = "Self Assessment"
 
   "UTR Controller" - {
@@ -53,7 +53,7 @@ class UTRControllerSpec extends ControllerSpecBase {
 
     "must return OK and the correct view for a GET when corporation tax" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.LimitedCompany).success.value
+      val userAnswers = emptyUserAnswers.set(ReporterTypePage, ReporterType.LimitedCompany).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
@@ -70,18 +70,18 @@ class UTRControllerSpec extends ControllerSpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId)
+        emptyUserAnswers
           .set(ReporterTypePage, ReporterType.Sole)
           .success
           .value
-          .set(UTRPage, UniqueTaxpayerReference("1234567890"))
+          .set(UTRPage, utr)
           .success
           .value
 
       retrieveUserAnswersData(userAnswers)
       val request   = FakeRequest(GET, loadRoute)
       val view      = app.injector.instanceOf[UTRView]
-      val boundForm = form.bind(Map("value" -> "1234567890"))
+      val boundForm = form.bind(Map("value" -> utr.uniqueTaxPayerReference))
 
       val result = route(app, request).value
 
@@ -97,7 +97,7 @@ class UTRControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(userAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "1234567890"))
+          .withFormUrlEncodedBody(("value", utr.uniqueTaxPayerReference))
 
       val result = route(app, request).value
 

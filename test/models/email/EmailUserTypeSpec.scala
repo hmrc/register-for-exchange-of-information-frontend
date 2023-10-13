@@ -17,8 +17,8 @@
 package models.email
 
 import base.SpecBase
+import models.ReporterType
 import models.ReporterType.Sole
-import models.{ReporterType, UserAnswers}
 import org.scalacheck.Gen
 import org.scalacheck.rng.Seed
 import pages.{AutoMatchedUTRPage, DoYouHaveUniqueTaxPayerReferencePage, ReporterTypePage}
@@ -35,7 +35,7 @@ class EmailUserTypeSpec extends SpecBase {
 
     "getUserTypeFromUa" - {
       "must return Sole when UserAnswers has ReporterTypePage containing Sole" in {
-        val userAnswers = UserAnswers(userAnswersId)
+        val userAnswers = emptyUserAnswers
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
@@ -47,7 +47,7 @@ class EmailUserTypeSpec extends SpecBase {
       }
 
       "must return Individual when UserAnswers has ReporterType containing Individual " in {
-        val userAnswers = UserAnswers(userAnswersId)
+        val userAnswers = emptyUserAnswers
           .set(ReporterTypePage, ReporterType.Individual)
           .success
           .value
@@ -61,7 +61,7 @@ class EmailUserTypeSpec extends SpecBase {
             reporter => reporter == Sole || reporter == ReporterType.Individual
           )
           .pureApply(Gen.Parameters.default, Seed.random())
-        val userAnswers = UserAnswers(userAnswersId)
+        val userAnswers = emptyUserAnswers
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
@@ -74,13 +74,13 @@ class EmailUserTypeSpec extends SpecBase {
     }
 
     "must default to Organisation when userAnswers does not contain ReporterTypePage but has AutoMatchedUtr set" in {
-      val userAnswers = UserAnswers(userAnswersId).set(AutoMatchedUTRPage, utr).success.value
+      val userAnswers = emptyUserAnswers.set(AutoMatchedUTRPage, utr).success.value
 
       emailUserType.getUserTypeFromUa(userAnswers) mustBe Organisation
     }
 
     "Throws exception when userAnswers does not contain ReporterTypePage and AutoMatchedUtr" in {
-      val userAnswers = UserAnswers(userAnswersId)
+      val userAnswers = emptyUserAnswers
       assertThrows[RuntimeException] {
         emailUserType.getUserTypeFromUa(userAnswers)
       }

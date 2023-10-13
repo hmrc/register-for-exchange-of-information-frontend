@@ -48,9 +48,11 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
     override lazy val countryList: Option[Seq[Country]] = Some(testCountryList)
   }
 
-  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(IndividualAddressWithoutIdPage, address).success.value
+  val userAnswers: UserAnswers = emptyUserAnswers.set(IndividualAddressWithoutIdPage, address).success.value
 
   "IndividualAddressWithoutId Controller" - {
+
+    val IndividualKey = "individual"
 
     "must return OK and the correct view for a GET" in {
 
@@ -74,7 +76,7 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "individual",
+          IndividualKey,
           NormalMode
         ).toString
       }
@@ -102,7 +104,7 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form.fill(address),
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "individual",
+          IndividualKey,
           NormalMode
         ).toString
       }
@@ -164,7 +166,7 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
           boundForm,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "individual",
+          IndividualKey,
           NormalMode
         ).toString
       }

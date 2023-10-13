@@ -18,7 +18,7 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.{Name, NonUkName, ReporterType, UserAnswers}
+import models.ReporterType
 import org.scalatest.EitherValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -30,169 +30,175 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
   "ContactInformation" - {
     "must serialise and de-serialise PrimaryContact" in {
       val json: JsValue =
-        Json.parse("""
-          |{"organisation":{"organisationName":"name"},"email":"test@t.com"}""".stripMargin)
+        Json.parse(s"""
+          |{"organisation":{"organisationName":"$OrgName"},"email":"$TestEmail"}""".stripMargin)
 
-      val primaryContact = ContactInformation(OrganisationDetails("name"), "test@t.com", None, None)
+      val primaryContact = ContactInformation(OrganisationDetails(OrgName), TestEmail, None, None)
       Json.toJson(primaryContact) mustBe json
       json.as[ContactInformation] mustBe primaryContact
     }
 
     "must serialise and de-serialise SecondaryContact" in {
-      val json: JsValue = Json.parse("""{"individual":{"firstName":"name","lastName":"last"},"email":"test@t.com"}""".stripMargin)
+      val json: JsValue = Json.parse(s"""{"individual":{"firstName":"${name.firstName}","lastName":"${name.lastName}"},"email":"$TestEmail"}""".stripMargin)
 
-      val secondaryContact = ContactInformation(IndividualDetails("name", None, "last"), "test@t.com", None, None)
+      val secondaryContact = ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, None, None)
       Json.toJson(secondaryContact) mustBe json
       json.as[ContactInformation] mustBe secondaryContact
     }
 
     "must return PrimaryContact for the input 'Business with/without Id UserAnswers' " in {
-      val userAnswers = UserAnswers("id")
-        .set(ContactEmailPage, "test@test.com")
+      val userAnswers = emptyUserAnswers
+        .set(ContactEmailPage, TestEmail)
         .success
         .value
-        .set(ContactNamePage, "Name Name")
+        .set(ContactNamePage, name.fullName)
         .success
         .value
         .set(ContactHavePhonePage, false)
         .success
         .value
 
-      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None)
+      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(OrganisationDetails(name.fullName), TestEmail, None, None)
     }
 
     "must return PrimaryContact for the input 'Individual with Id UserAnswers' " in {
-      val userAnswers = UserAnswers("id")
+      val userAnswers = emptyUserAnswers
         .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, true)
         .success
         .value
-        .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
+        .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
         .success
         .value
-        .set(WhatIsYourNamePage, Name("Name", "Name"))
+        .set(WhatIsYourNamePage, name)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@test.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
-      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
+      ContactInformation
+        .convertToPrimary(userAnswers)
+        .value mustBe ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, None, None)
     }
 
     "must return PrimaryContact for the input 'Individual without Id UserAnswers' " in {
-      val userAnswers = UserAnswers("id")
+      val userAnswers = emptyUserAnswers
         .set(ReporterTypePage, ReporterType.Individual)
         .success
         .value
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, NonUkName("Name", "Name"))
+        .set(NonUkNamePage, nonUkName)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@test.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
-      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
+      ContactInformation
+        .convertToPrimary(userAnswers)
+        .value mustBe ContactInformation(IndividualDetails(nonUkName.givenName, None, nonUkName.familyName), TestEmail, None, None)
     }
 
     "must return PrimaryContact for the input 'UserAnswers with ReporterType as Sole trader'" in {
-      val userAnswers = UserAnswers("id")
+      val userAnswers = emptyUserAnswers
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
         .value
         .set(ReporterTypePage, ReporterType.Sole)
         .success
         .value
-        .set(SoleNamePage, Name("Name", "Name"))
+        .set(SoleNamePage, name)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@test.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
         .success
         .value
 
-      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(IndividualDetails("Name", None, "Name"), "test@test.com", None, None)
+      ContactInformation
+        .convertToPrimary(userAnswers)
+        .value mustBe ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, None, None)
     }
 
     "must return SecondaryContact for the input 'Business with/without Id UserAnswers' " in {
-      val userAnswers = UserAnswers("id")
+      val userAnswers = emptyUserAnswers
         .set(SecondContactPage, true)
         .success
         .value
-        .set(SndContactEmailPage, "test@test.com")
+        .set(SndContactEmailPage, TestEmail)
         .success
         .value
         .set(SecondContactPage, true)
         .success
         .value
-        .set(SndContactNamePage, "Name Name")
+        .set(SndContactNamePage, name.fullName)
         .success
         .value
         .set(SndConHavePhonePage, true)
         .success
         .value
-        .set(SndContactPhonePage, "11222244")
+        .set(SndContactPhonePage, TestPhoneNumber)
         .success
         .value
 
-      val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", Some("11222244"), None)
+      val expectedValue = ContactInformation(OrganisationDetails(name.fullName), TestEmail, Some(TestPhoneNumber), None)
       ContactInformation.convertToSecondary(userAnswers).value mustBe Some(expectedValue)
     }
 
     "must return SecondaryContact for the input 'Business with/without Id UserAnswers' when SndConHavePhonePage is false" in {
-      val userAnswers = UserAnswers("id")
+      val userAnswers = emptyUserAnswers
         .set(SecondContactPage, true)
         .success
         .value
-        .set(SndContactEmailPage, "test@test.com")
+        .set(SndContactEmailPage, TestEmail)
         .success
         .value
-        .set(SndContactNamePage, "Name Name")
+        .set(SndContactNamePage, name.fullName)
         .success
         .value
         .set(SndConHavePhonePage, false)
         .success
         .value
 
-      val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None)
+      val expectedValue = ContactInformation(OrganisationDetails(name.fullName), TestEmail, None, None)
       ContactInformation.convertToSecondary(userAnswers).value mustBe Some(expectedValue)
     }
 
     "must return None when SecondContactPage is true and SndConHavePhonePage is true and SndContactPhonePage is empty" in {
-      val userAnswers = UserAnswers("id")
+      val userAnswers = emptyUserAnswers
         .set(SecondContactPage, true)
         .success
         .value
-        .set(SndContactEmailPage, "test@test.com")
+        .set(SndContactEmailPage, TestEmail)
         .success
         .value
         .set(SecondContactPage, true)
         .success
         .value
-        .set(SndContactNamePage, "Name Name")
+        .set(SndContactNamePage, name.fullName)
         .success
         .value
         .set(SndConHavePhonePage, true)
         .success
         .value
-        .set(SndContactPhonePage, "07540000000")
+        .set(SndContactPhonePage, TestPhoneNumber)
         .success
         .value
 
-      val expectedValue = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", Some("07540000000"), None)
+      val expectedValue = ContactInformation(OrganisationDetails(name.fullName), TestEmail, Some(TestPhoneNumber), None)
       ContactInformation.convertToSecondary(userAnswers).value mustBe Some(expectedValue)
     }
   }

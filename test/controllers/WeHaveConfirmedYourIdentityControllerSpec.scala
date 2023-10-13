@@ -19,7 +19,7 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.matching.IndRegistrationInfo
-import models.{Name, NormalMode, SubscriptionID, UserAnswers}
+import models.{NormalMode, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.{WhatIsYourDateOfBirthPage, WhatIsYourNamePage, WhatIsYourNationalInsuranceNumberPage}
 import play.api.inject.bind
@@ -37,11 +37,11 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
   val registrationInfo = IndRegistrationInfo(safeId)
 
-  val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-    .set(WhatIsYourNationalInsuranceNumberPage, Nino("CC123456C"))
+  val validUserAnswers: UserAnswers = emptyUserAnswers
+    .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
     .success
     .value
-    .set(WhatIsYourNamePage, Name("First", "Last"))
+    .set(WhatIsYourNamePage, name)
     .success
     .value
     .set(WhatIsYourDateOfBirthPage, LocalDate.now())

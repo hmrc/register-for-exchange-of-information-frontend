@@ -18,7 +18,8 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.{Address, Country, Name, NonUkName, ReporterType, UserAnswers}
+import models.IdentifierType.SAFE
+import models.{Address, Country, ReporterType}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -35,18 +36,18 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     "must de-serialise to json" in {
 
       val expectedRequestDtls = CreateRequestDetail(
-        "SAFE",
+        SAFE,
         "AB123456Z",
         Some("Tools for Traders Limited"),
         true,
-        ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
-        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None))
+        ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some(TestPhoneNumber), Some(TestMobilePhoneNumber)),
+        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some(TestPhoneNumber), None))
       )
 
       val json: String =
-        """
+        s"""
           {
-          |   "IDType": "SAFE",
+          |   "IDType": "$SAFE",
           |   "IDNumber": "AB123456Z",
           |   "tradingName": "Tools for Traders Limited",
           |   "isGBUser": true,
@@ -56,15 +57,15 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
           |     "lastName": "Smith"
           |    },
           |    "email": "john@toolsfortraders.com",
-          |    "phone": "0188899999",
-          |    "mobile": "07321012345"
+          |    "phone": "$TestPhoneNumber",
+          |    "mobile": "$TestMobilePhoneNumber"
           |   },
           |   "secondaryContact": {
           |    "organisation": {
           |     "organisationName": "Tools for Traders"
           |    },
           |    "email": "contact@toolsfortraders.com",
-          |    "phone": "0188899999"
+          |    "phone": "$TestPhoneNumber"
           |   }
           |}""".stripMargin
       Json.parse(json).as[CreateRequestDetail] mustBe expectedRequestDtls
@@ -72,15 +73,15 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
     "must return 'CreateRequestDetail' for the input userAnswers" in {
       val createRequestDetails = CreateRequestDetail(
-        IDType = "SAFE",
-        IDNumber = "SAFEID",
+        IDType = SAFE,
+        IDNumber = safeId.value,
         tradingName = Some("traderName"),
         isGBUser = true,
-        primaryContact = ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None),
+        primaryContact = ContactInformation(OrganisationDetails(OrgName), TestEmail, None, None),
         secondaryContact = None
       )
 
-      val updatedUserAnswers = UserAnswers("id")
+      val updatedUserAnswers = emptyUserAnswers
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
         .value
@@ -90,10 +91,10 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(WhatIsTradingNamePage, "traderName")
         .success
         .value
-        .set(ContactEmailPage, "test@test.com")
+        .set(ContactEmailPage, TestEmail)
         .success
         .value
-        .set(ContactNamePage, "Name Name")
+        .set(ContactNamePage, OrgName)
         .success
         .value
         .set(ContactHavePhonePage, false)
@@ -108,15 +109,15 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to true by UTR" in {
-      val userAnswers = UserAnswers("")
+      val userAnswers = emptyUserAnswers
       val updatedUserAnswers = userAnswers
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
         .value
-        .set(ContactEmailPage, "test@test.com")
+        .set(ContactEmailPage, TestEmail)
         .success
         .value
-        .set(ContactNamePage, "Name Name")
+        .set(ContactNamePage, OrgName)
         .success
         .value
         .set(ContactHavePhonePage, false)
@@ -132,7 +133,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to true by Individual and has a NINO" in {
-      val userAnswers = UserAnswers("")
+      val userAnswers = emptyUserAnswers
       val updatedUserAnswers = userAnswers
         .set(ReporterTypePage, ReporterType.Individual)
         .success
@@ -140,10 +141,10 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(DoYouHaveNINPage, true)
         .success
         .value
-        .set(WhatIsYourNamePage, Name("name", "last"))
+        .set(WhatIsYourNamePage, name)
         .success
         .value
-        .set(IndividualContactEmailPage, "hello")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
@@ -160,7 +161,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
     "must create a request with the isGBUser flag set to false by business without UTR not based in the UK" in {
       val businessAddress = Address("", None, "", None, None, Country("valid", "DE", "Germany"))
-      val updatedUserAnswers = UserAnswers("")
+      val updatedUserAnswers = emptyUserAnswers
         .set(ReporterTypePage, ReporterType.LimitedCompany)
         .success
         .value
@@ -173,10 +174,10 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
-        .set(ContactEmailPage, "hello")
+        .set(ContactEmailPage, TestEmail)
         .success
         .value
-        .set(ContactNamePage, "Name Name")
+        .set(ContactNamePage, OrgName)
         .success
         .value
         .set(ContactHavePhonePage, false)
@@ -195,7 +196,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to true by Individual without NINO if address is UK" in {
-      val userAnswers = UserAnswers("")
+      val userAnswers = emptyUserAnswers
       val address     = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val updatedUserAnswers = userAnswers
         .set(ReporterTypePage, ReporterType.Individual)
@@ -204,10 +205,10 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, NonUkName("a", "b"))
+        .set(NonUkNamePage, nonUkName)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
@@ -229,7 +230,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to false by Individual without NINO if address is non UK" in {
-      val userAnswers = UserAnswers("")
+      val userAnswers = emptyUserAnswers
       val address     = Address("", None, "", None, None, Country("valid", "FR", "France"))
       val updatedUserAnswers = userAnswers
         .set(ReporterTypePage, ReporterType.Individual)
@@ -238,10 +239,10 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, NonUkName("a", "b"))
+        .set(NonUkNamePage, nonUkName)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)

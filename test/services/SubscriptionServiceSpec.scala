@@ -22,7 +22,7 @@ import cats.implicits.catsStdInstancesForFuture
 import connectors.SubscriptionConnector
 import models.error.ApiError
 import models.error.ApiError.{BadRequestError, DuplicateSubmissionError, MandatoryInformationMissingError, NotFoundError, UnableToCreateEMTPSubscriptionError}
-import models.{Address, Country, NonUkName, ReporterType, SubscriptionID, UserAnswers}
+import models.{Address, Country, ReporterType, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -70,10 +70,10 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, NonUkName("a", "b"))
+        .set(NonUkNamePage, nonUkName)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
@@ -106,10 +106,10 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, NonUkName("a", "b"))
+        .set(NonUkNamePage, nonUkName)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
@@ -159,10 +159,10 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(ContactEmailPage, "test@test.com")
+          .set(ContactEmailPage, TestEmail)
           .success
           .value
-          .set(ContactNamePage, "Name Name")
+          .set(ContactNamePage, name.fullName)
           .success
           .value
           .set(ContactHavePhonePage, false)

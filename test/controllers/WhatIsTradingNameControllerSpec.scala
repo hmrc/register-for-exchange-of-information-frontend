@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsTradingNamePage
 import play.api.test.FakeRequest
@@ -63,7 +63,7 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatIsTradingNamePage, tradingName).success.value
+      val userAnswers = emptyUserAnswers.set(WhatIsTradingNamePage, tradingName).success.value
       retrieveUserAnswersData(userAnswers)
       implicit val request = FakeRequest(GET, loadRoute)
 
