@@ -18,7 +18,7 @@ package navigation
 
 import base.SpecBase
 import generators.Generators
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.QuestionPage
 import play.api.libs.json.JsPath
@@ -42,7 +42,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
         "must always go to the specified route" in {
 
-          val userAnswers = UserAnswers(userAnswersId)
+          val userAnswers = emptyUserAnswers
 
           navigator.checkNextPageForValueThenRoute(NormalMode, userAnswers, NextPage, goto) mustBe Some(goto)
         }
@@ -52,7 +52,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
         "must go to the next page if that page is clean" in {
 
-          val userAnswers = UserAnswers(userAnswersId)
+          val userAnswers = emptyUserAnswers
 
           navigator.checkNextPageForValueThenRoute(CheckMode, userAnswers, NextPage, goto) mustBe Some(goto)
         }
@@ -60,7 +60,7 @@ class NavigatorSpec extends SpecBase with ScalaCheckPropertyChecks with Generato
 
       "must go to 'Check your Answers' page if next page has content" in {
 
-        val userAnswers = UserAnswers(userAnswersId)
+        val userAnswers = emptyUserAnswers
           .set(NextPage, "HAS_CONTENT")
           .success
           .value

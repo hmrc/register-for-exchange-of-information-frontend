@@ -16,26 +16,27 @@
 
 package helpers
 
-import models.matching.SafeId
+import base.TestValues
+import models.ReporterType.Partnership
 import models.register.request.details.AddressRequest
-import models.register.response.details.{AddressResponse, IndividualResponse, OrganisationResponse}
 import models.register.response._
+import models.register.response.details.{AddressResponse, IndividualResponse, OrganisationResponse}
 import models.shared.{ContactDetails, Parameters, ResponseCommon}
 
-object RegisterHelper {
+object RegisterHelper extends TestValues {
 
   val addressRequest: AddressRequest = AddressRequest("100 Parliament Street", None, "", Some("London"), Some("SW1A 2BQ"), "GB")
 
   val addressResponse: AddressResponse = AddressResponse("100 Parliament Street", None, None, Some("London"), Some("SW1A 2BQ"), "GB")
 
-  val contactDetails: ContactDetails = ContactDetails(Some("1111111"), Some("2222222"), Some("1111111"), Some("test@test.org"))
+  val contactDetails: ContactDetails = ContactDetails(Some("1111111"), Some("2222222"), Some("1111111"), Some(TestEmail))
 
   val registrationWithIDIndividualResponse: RegistrationWithIDResponse = RegistrationWithIDResponse(
     RegisterWithIDResponse(
       ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
       Some(
         RegisterWithIDResponseDetail(
-          SafeId("XE0000123456789"),
+          safeId,
           Some("WARN8764123"),
           isEditable = true,
           isAnAgent = false,
@@ -54,13 +55,13 @@ object RegisterHelper {
       ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
       Some(
         RegisterWithIDResponseDetail(
-          SafeId("XE0000123456789"),
+          safeId,
           Some("WARN8764123"),
           isEditable = true,
           isAnAgent = false,
           isAnASAgent = None,
           isAnIndividual = true,
-          partnerDetails = OrganisationResponse("name", false, Some("0001"), None),
+          partnerDetails = OrganisationResponse(OrgName, isAGroup = false, organisationType = Some(Partnership.code), code = None),
           address = addressResponse,
           contactDetails = contactDetails
         )
@@ -68,5 +69,4 @@ object RegisterHelper {
     )
   )
 
-  val expectedSafeId: SafeId = SafeId("XE0000123456789")
 }

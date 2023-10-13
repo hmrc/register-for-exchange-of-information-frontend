@@ -18,7 +18,6 @@ package controllers.auth
 
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
-import models.UserAnswers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.auth.SignedOutView
@@ -29,7 +28,7 @@ class SignedOutControllerSpec extends SpecBase with ControllerMockFixtures with 
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = UserAnswers(userAnswersId)
+      val userAnswers = emptyUserAnswers
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, controllers.auth.routes.SignedOutController.onPageLoad().url)

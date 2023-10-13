@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, put, urlEqual
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
+import models.IdentifierType.NINO
 import models.enrolment.{SubscriptionInfo, Verifier}
 import models.error.ApiError
 import models.error.ApiError.{ServiceUnavailableError, UnableToCreateEnrolmentError}
@@ -89,7 +90,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
           (safeID, subID, nino) =>
             val enrolmentInfo = SubscriptionInfo(safeID = safeID, nino = Some(nino), mdrId = subID)
 
-            val expectedVerifiers = Seq(Verifier("SAFEID", enrolmentInfo.safeID), Verifier("NINO", enrolmentInfo.nino.get))
+            val expectedVerifiers = Seq(Verifier("SAFEID", enrolmentInfo.safeID), Verifier(NINO, enrolmentInfo.nino.get))
 
             enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
 

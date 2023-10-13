@@ -25,7 +25,7 @@ class BusinessDetailsSpec extends SpecBase {
   val businessAddress: BusinessAddress = BusinessAddress("100 Parliament Street", None, None, Some("London"), "SW1A 2BQ", "GB")
 
   val businessDetails: BusinessDetails = BusinessDetails(
-    "name",
+    OrgName,
     businessAddress
   )
 
@@ -34,8 +34,8 @@ class BusinessDetailsSpec extends SpecBase {
     "must serialise BusinessDetails" in {
       val json: JsValue =
         Json.parse(
-          """
-            |{"name":"name","address":{"addressLine1":"100 Parliament Street","addressLine4":"London","postCode":"SW1A 2BQ","countryCode":"GB"}}""".stripMargin
+          s"""
+            |{"name":"$OrgName","address":{"addressLine1":"100 Parliament Street","addressLine4":"London","postCode":"SW1A 2BQ","countryCode":"GB"}}""".stripMargin
         )
 
       Json.toJson(businessDetails) mustBe json
@@ -44,8 +44,8 @@ class BusinessDetailsSpec extends SpecBase {
     "must de-serialise BusinessDetails" in {
       val json: JsValue =
         Json.parse(
-          """
-            |{"organisation": {"organisationName": "name"},"address":{"addressLine1":"100 Parliament Street","addressLine4":"London","postalCode":"SW1A 2BQ","countryCode":"GB"}}""".stripMargin
+          s"""
+            |{"organisation": {"organisationName": "$OrgName"},"address":{"addressLine1":"100 Parliament Street","addressLine4":"London","postalCode":"SW1A 2BQ","countryCode":"GB"}}""".stripMargin
         )
 
       json.as[BusinessDetails] mustBe businessDetails

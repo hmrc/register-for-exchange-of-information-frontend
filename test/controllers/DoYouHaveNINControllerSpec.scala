@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.DoYouHaveNINPage
 import play.api.test.FakeRequest
@@ -55,7 +55,7 @@ class DoYouHaveNINControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(DoYouHaveNINPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(DoYouHaveNINPage, true).success.value
       retrieveUserAnswersData(userAnswers)
 
       val application = guiceApplicationBuilder().build()

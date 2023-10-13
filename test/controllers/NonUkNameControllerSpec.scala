@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NonUkName, NormalMode, UserAnswers}
+import models.{NonUkName, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import pages.NonUkNamePage
 import play.api.test.FakeRequest
@@ -60,7 +60,7 @@ class NonUkNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(NonUkNamePage, validAnswer).success.value
+      val userAnswers = emptyUserAnswers.set(NonUkNamePage, validAnswer).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)

@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.{SndContactEmailPage, SndContactNamePage}
 import play.api.test.FakeRequest
@@ -33,9 +33,9 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.SndContactEmailFormProvider().apply()
 
-  val contactName = "Name"
+  val contactName = name.fullName
 
-  val userAnswers = UserAnswers(userAnswersId)
+  val userAnswers = emptyUserAnswers
     .set(SndContactNamePage, contactName)
     .success
     .value
@@ -65,7 +65,7 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
 
       val userAnswers2 =
         userAnswers
-          .set(SndContactEmailPage, "some@email.com")
+          .set(SndContactEmailPage, TestEmail)
           .success
           .value
 
@@ -81,7 +81,7 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[sndContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("some@email.com"), NormalMode, "Name").toString()
+        contentAsString(result) mustEqual view(form.fill(TestEmail), NormalMode, name.fullName).toString()
       }
     }
 
@@ -92,7 +92,7 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "some@email.com"))
+          .withFormUrlEncodedBody(("value", TestEmail))
 
       val result = route(app, request).value
 
@@ -115,7 +115,7 @@ class SndContactEmailControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[sndContactEmailView]
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "Name").toString()
+        contentAsString(result) mustEqual view(boundForm, NormalMode, name.fullName).toString()
       }
     }
   }

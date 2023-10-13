@@ -217,7 +217,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatIsYourNamePage, Name("Little", "Comets"))
+                .set(WhatIsYourNamePage, name)
                 .success
                 .value
 
@@ -232,7 +232,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
           answers =>
             val updatedAnswers =
               answers
-                .set(NonUkNamePage, NonUkName("FirstName", "Surname"))
+                .set(NonUkNamePage, nonUkName)
                 .success
                 .value
 
@@ -464,7 +464,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
             answers =>
               val updatedAnswers =
                 answers
-                  .set(UTRPage, UniqueTaxpayerReference("0123456789"))
+                  .set(UTRPage, utr)
                   .success
                   .value
                   .set(ReporterTypePage, ReporterType.Sole)
@@ -486,7 +486,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                 organisation =>
                   val updatedAnswers =
                     answers
-                      .set(UTRPage, UniqueTaxpayerReference("0123456789"))
+                      .set(UTRPage, utr)
                       .success
                       .value
                       .set(ReporterTypePage, organisation)
@@ -502,9 +502,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
       }
 
       "must go from 'What is your name?' page for sole trader to 'Is this your business?' page" in {
-        val firstName: String = "First Name"
-        val lastName: String  = "Last"
-        val validAnswer: Name = Name(firstName, lastName)
+        val validAnswer: Name = name
 
         forAll(arbitrary[UserAnswers]) {
           answers =>

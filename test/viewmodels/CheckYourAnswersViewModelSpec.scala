@@ -17,9 +17,9 @@
 package viewmodels
 
 import base.SpecBase
-import models.matching.{OrgRegistrationInfo, SafeId}
+import models.matching.OrgRegistrationInfo
 import models.register.response.details.AddressResponse
-import models.{Address, Country, Name, NonUkName, ReporterType, UniqueTaxpayerReference}
+import models.{Address, Country, ReporterType}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pages._
 import play.api.i18n.{Messages, MessagesApi}
@@ -36,7 +36,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
   def messagesApi: MessagesApi                         = app.injector.instanceOf[MessagesApi]
   implicit def messages: Messages                      = messagesApi.preferred(fakeRequest)
   val countryListFactory: CountryListFactory           = app.injector.instanceOf[CountryListFactory]
-  val orgRegistrationInfo                              = OrgRegistrationInfo(SafeId("id"), "name", AddressResponse("line1", None, None, None, None, "GB"))
+  val orgRegistrationInfo                              = OrgRegistrationInfo(safeId, OrgName, AddressResponse("line1", None, None, None, None, "GB"))
 
   "CheckYourAnswersViewModel" - {
 
@@ -48,10 +48,10 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(RegisteredAddressInUKPage, true)
         .success
         .value
-        .set(UTRPage, UniqueTaxpayerReference("utr"))
+        .set(UTRPage, utr)
         .success
         .value
-        .set(BusinessNamePage, "Name")
+        .set(BusinessNamePage, OrgName)
         .success
         .value
         .set(RegistrationInfoPage, orgRegistrationInfo)
@@ -60,10 +60,10 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(IsThisYourBusinessPage, true)
         .success
         .value
-        .set(ContactNamePage, "Name Name")
+        .set(ContactNamePage, name.fullName)
         .success
         .value
-        .set(ContactEmailPage, "test@test.com")
+        .set(ContactEmailPage, TestEmail)
         .success
         .value
         .set(ContactHavePhonePage, false)
@@ -72,16 +72,16 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(SecondContactPage, true)
         .success
         .value
-        .set(SndContactNamePage, "secondContactName")
+        .set(SndContactNamePage, TestPhoneNumber)
         .success
         .value
-        .set(SndContactEmailPage, "secondContactEmail")
+        .set(SndContactEmailPage, TestEmail)
         .success
         .value
         .set(SndConHavePhonePage, true)
         .success
         .value
-        .set(SndContactPhonePage, "secondContactPhone")
+        .set(SndContactPhonePage, TestMobilePhoneNumber)
         .success
         .value
 
@@ -110,22 +110,22 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
-        .set(BusinessWithoutIDNamePage, "name")
+        .set(BusinessWithoutIDNamePage, OrgName)
         .success
         .value
         .set(BusinessHaveDifferentNamePage, true)
         .success
         .value
-        .set(WhatIsTradingNamePage, "trading name")
+        .set(WhatIsTradingNamePage, OrgName)
         .success
         .value
         .set(BusinessAddressWithoutIdPage, businessAddress)
         .success
         .value
-        .set(ContactNamePage, "Name Name")
+        .set(ContactNamePage, name.fullName)
         .success
         .value
-        .set(ContactEmailPage, "hello")
+        .set(ContactEmailPage, TestEmail)
         .success
         .value
         .set(ContactHavePhonePage, false)
@@ -156,16 +156,16 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(DoYouHaveNINPage, true)
         .success
         .value
-        .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
+        .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
         .success
         .value
-        .set(WhatIsYourNamePage, Name("name", "last"))
+        .set(WhatIsYourNamePage, name)
         .success
         .value
         .set(WhatIsYourDateOfBirthPage, LocalDate.now())
         .success
         .value
-        .set(IndividualContactEmailPage, "email@email.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
@@ -193,7 +193,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, NonUkName("a", "b"))
+        .set(NonUkNamePage, nonUkName)
         .success
         .value
         .set(WhatIsYourDateOfBirthPage, LocalDate.now())
@@ -205,7 +205,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
-        .set(IndividualContactEmailPage, "test@gmail.com")
+        .set(IndividualContactEmailPage, TestEmail)
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)

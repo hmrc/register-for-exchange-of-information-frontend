@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.{ContactHavePhonePage, ContactNamePage}
 import play.api.test.FakeRequest
@@ -33,7 +33,7 @@ class ContactHavePhoneControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.ContactHavePhoneFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId).set(ContactNamePage, "Name").success.value
+  val userAnswers = emptyUserAnswers.set(ContactNamePage, name.fullName).success.value
 
   "ContactHavePhone Controller" - {
 
@@ -47,14 +47,14 @@ class ContactHavePhoneControllerSpec extends ControllerSpecBase {
       val view = app.injector.instanceOf[ContactHavePhoneView]
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(form, "Name", NormalMode)(request, messages).toString
+      contentAsString(result) mustEqual view(form, name.fullName, NormalMode)(request, messages).toString
 
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers2 = UserAnswers(userAnswersId)
-        .set(ContactNamePage, "Name")
+      val userAnswers2 = emptyUserAnswers
+        .set(ContactNamePage, name.fullName)
         .success
         .value
         .set(ContactHavePhonePage, true)
@@ -69,7 +69,7 @@ class ContactHavePhoneControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(filledForm, "Name", NormalMode)(request, messages).toString
+      contentAsString(result) mustEqual view(filledForm, name.fullName, NormalMode)(request, messages).toString
 
     }
 
@@ -99,7 +99,7 @@ class ContactHavePhoneControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual view(boundForm, "Name", NormalMode)(request, messages).toString
+      contentAsString(result) mustEqual view(boundForm, name.fullName, NormalMode)(request, messages).toString
     }
   }
 }

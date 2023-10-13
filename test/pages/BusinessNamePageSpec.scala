@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{Name, UserAnswers}
+import models.UserAnswers
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 
@@ -37,7 +37,7 @@ class BusinessNamePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(SoleNamePage, Name("Sole", "Trader"))
+            .set(SoleNamePage, name)
             .success
             .value
             .set(BusinessNamePage, "Organisation")

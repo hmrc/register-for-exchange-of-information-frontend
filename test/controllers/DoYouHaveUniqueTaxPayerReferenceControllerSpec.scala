@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.DoYouHaveUniqueTaxPayerReferencePage
 import play.api.test.FakeRequest
@@ -50,7 +50,7 @@ class DoYouHaveUniqueTaxPayerReferenceControllerSpec extends SpecBase with Contr
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(DoYouHaveUniqueTaxPayerReferencePage, true).success.value
+      val userAnswers = emptyUserAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, true).success.value
       retrieveUserAnswersData(userAnswers)
       val request    = FakeRequest(GET, loadRoute)
       val filledForm = form.bind(Map("value" -> "true"))

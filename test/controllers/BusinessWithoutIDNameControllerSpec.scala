@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerSpecBase
 import forms.BusinessWithoutIDNameFormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.BusinessWithoutIDNamePage
 import play.api.mvc.AnyContentAsFormUrlEncoded
@@ -58,7 +58,7 @@ class BusinessWithoutIDNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(BusinessWithoutIDNamePage, "answer").success.value
+      val userAnswers = emptyUserAnswers.set(BusinessWithoutIDNamePage, "answer").success.value
       retrieveUserAnswersData(userAnswers)
 
       val application = guiceApplicationBuilder()

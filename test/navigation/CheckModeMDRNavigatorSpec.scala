@@ -21,7 +21,7 @@ import controllers.routes
 import generators.Generators
 import models.ReporterType._
 import models._
-import models.matching.{IndRegistrationInfo, SafeId}
+import models.matching.IndRegistrationInfo
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -276,7 +276,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
           answers =>
             val updatedAnswers =
               answers
-                .set(WhatIsYourNamePage, Name("name", "surname"))
+                .set(WhatIsYourNamePage, name)
                 .success
                 .value
 
@@ -448,7 +448,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         answers =>
           val updatedAnswers =
             answers
-              .set(WhatIsYourNamePage, Name("Little", "Comets"))
+              .set(WhatIsYourNamePage, name)
               .success
               .value
               .remove(WhatIsYourDateOfBirthPage)
@@ -466,7 +466,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
         answers =>
           val updatedAnswers =
             answers
-              .set(NonUkNamePage, NonUkName("FirstName", "Surname"))
+              .set(NonUkNamePage, nonUkName)
               .success
               .value
 
@@ -558,7 +558,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       val updatedAnswers =
         emptyUserAnswers
-          .set(RegistrationInfoPage, IndRegistrationInfo(SafeId("safe")))
+          .set(RegistrationInfoPage, IndRegistrationInfo(safeId))
           .success
           .value
 
@@ -571,7 +571,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       val updatedAnswers =
         emptyUserAnswers
-          .set(SoleNamePage, Name("first", "last"))
+          .set(SoleNamePage, name)
           .success
           .value
 
@@ -584,7 +584,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       val updatedAnswers =
         emptyUserAnswers
-          .set(BusinessNamePage, "name")
+          .set(BusinessNamePage, OrgName)
           .success
           .value
 
@@ -597,7 +597,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
 
       val updatedAnswers =
         emptyUserAnswers
-          .set(ContactNamePage, "name")
+          .set(ContactNamePage, OrgName)
           .success
           .value
 
@@ -683,7 +683,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
               .set(SelectAddressPage, "Some Address")
               .success
               .value
-              .set(IndividualContactEmailPage, "email@email.com")
+              .set(IndividualContactEmailPage, TestEmail)
               .success
               .value
 
@@ -720,7 +720,7 @@ class CheckModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks w
                 .set(AddressUKPage, Address("Jarrow", None, "Park", None, None, Country("", "GB", "United Kingdom")))
                 .success
                 .value
-                .set(IndividualContactEmailPage, "email@email.com")
+                .set(IndividualContactEmailPage, TestEmail)
                 .success
                 .value
 

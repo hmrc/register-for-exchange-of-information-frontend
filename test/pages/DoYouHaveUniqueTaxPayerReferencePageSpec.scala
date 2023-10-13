@@ -17,9 +17,9 @@
 package pages
 
 import models.ReporterType.LimitedCompany
-import models.matching.{OrgRegistrationInfo, SafeId}
+import models.matching.OrgRegistrationInfo
 import models.register.response.details.AddressResponse
-import models.{Address, AddressLookup, Country, Name, NonUkName, UniqueTaxpayerReference, UserAnswers}
+import models.{Address, AddressLookup, Country, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Nino
@@ -59,16 +59,16 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(ReporterTypePage, LimitedCompany)
             .success
             .value
-            .set(UTRPage, UniqueTaxpayerReference("123456789"))
+            .set(UTRPage, utr)
             .success
             .value
-            .set(BusinessNamePage, "businessName")
+            .set(BusinessNamePage, OrgName)
             .success
             .value
             .set(IsThisYourBusinessPage, true)
             .success
             .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
+            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
             .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -86,10 +86,10 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA123456A"))
+            .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
             .success
             .value
-            .set(WhatIsYourNamePage, Name("Some", "name"))
+            .set(WhatIsYourNamePage, name)
             .success
             .value
             .set(WhatIsYourDateOfBirthPage, LocalDate.now())
@@ -101,13 +101,13 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(DoYouHaveNINPage, true)
             .success
             .value
-            .set(NonUkNamePage, NonUkName("Some", "name"))
+            .set(NonUkNamePage, nonUkName)
             .success
             .value
             .set(DoYouLiveInTheUKPage, true)
             .success
             .value
-            .set(WhatIsYourPostcodePage, "NE320AA")
+            .set(WhatIsYourPostcodePage, TestPostCode)
             .success
             .value
             .set(IndividualAddressWithoutIdPage, address)
@@ -125,7 +125,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(SelectedAddressLookupPage, addressLookup)
             .success
             .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
+            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
             .set(DoYouHaveUniqueTaxPayerReferencePage, true)
@@ -153,13 +153,13 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(BusinessWithoutIDNamePage, "organisation")
+            .set(BusinessWithoutIDNamePage, OrgName)
             .success
             .value
             .set(BusinessHaveDifferentNamePage, true)
             .success
             .value
-            .set(WhatIsTradingNamePage, "Some name")
+            .set(WhatIsTradingNamePage, OrgName)
             .success
             .value
             .set(DoYouLiveInTheUKPage, true)
@@ -168,7 +168,7 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
             .set(BusinessAddressWithoutIdPage, address)
             .success
             .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
+            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
             .set(DoYouHaveUniqueTaxPayerReferencePage, true)

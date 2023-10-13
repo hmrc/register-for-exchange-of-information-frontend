@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.{NormalMode, ReporterType, UserAnswers}
+import models.{NormalMode, ReporterType}
 import org.mockito.ArgumentMatchers.any
 import pages.ReporterTypePage
 import play.api.test.FakeRequest
@@ -51,7 +51,7 @@ class ReporterTypeControllerSpec extends SpecBase with ControllerMockFixtures {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.values.last).success.value
+        emptyUserAnswers.set(ReporterTypePage, ReporterType.values.last).success.value
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
 

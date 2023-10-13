@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.{SndConHavePhonePage, SndContactNamePage}
 import play.api.test.FakeRequest
@@ -33,7 +33,7 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.SndConHavePhoneFormProvider().apply()
 
-  val userAnswers = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value
+  val userAnswers = emptyUserAnswers.set(SndContactNamePage, name.fullName).success.value
 
   "SndConHavePhone Controller" - {
 
@@ -47,12 +47,12 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(form, "Name", NormalMode)(request, messages).toString
+      contentAsString(result) mustEqual view(form, name.fullName, NormalMode)(request, messages).toString
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers2 = UserAnswers(userAnswersId).set(SndContactNamePage, "Name").success.value.set(SndConHavePhonePage, true).success.value
+      val userAnswers2 = emptyUserAnswers.set(SndContactNamePage, name.fullName).success.value.set(SndConHavePhonePage, true).success.value
       retrieveUserAnswersData(userAnswers2)
       val request = FakeRequest(GET, loadRoute)
 
@@ -63,14 +63,14 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
       status(result) mustEqual OK
 
       val filledForm = form.bind(Map("value" -> "true"))
-      contentAsString(result) mustEqual view(filledForm, "Name", NormalMode)(request, messages).toString
+      contentAsString(result) mustEqual view(filledForm, name.fullName, NormalMode)(request, messages).toString
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val userAnswers = emptyUserAnswers.set(SndContactNamePage, "Name").success.value
+      val userAnswers = emptyUserAnswers.set(SndContactNamePage, name.fullName).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request =
@@ -95,7 +95,7 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
       val result = route(app, request).value
 
       status(result) mustEqual BAD_REQUEST
-      contentAsString(result) mustEqual view(boundForm, "Name", NormalMode)(request, messages).toString
+      contentAsString(result) mustEqual view(boundForm, name.fullName, NormalMode)(request, messages).toString
 
     }
   }

@@ -18,6 +18,7 @@ package controllers
 
 import controllers.actions.StandardActionSets
 import forms.BusinessNameFormProvider
+import models.ReporterTypeText.{LimitedLiabilityPartnership, Partner, Unincorporated}
 import models.ReporterType._
 import models.{Mode, ReporterType}
 import navigation.MDRNavigator
@@ -45,9 +46,9 @@ class BusinessNameController @Inject() (
 
   private def selectedReporterTypeText(reporterType: ReporterType): Option[String] =
     reporterType match {
-      case LimitedPartnership | LimitedCompany => Some("llp")
-      case Partnership                         => Some("partner")
-      case UnincorporatedAssociation           => Some("unincorporated")
+      case LimitedPartnership | LimitedCompany => Some(LimitedLiabilityPartnership)
+      case Partnership                         => Some(Partner)
+      case UnincorporatedAssociation           => Some(Unincorporated)
       case _                                   => None
     }
 

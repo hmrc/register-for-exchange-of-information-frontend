@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import helpers.JsonFixtures.{registerWithIDJson, registerWithIDPayloadJson}
+import models.IdentifierType.NINO
 import models.Regime.MDR
 import models.register.request.details.WithIDIndividual
 import models.register.request.{RegisterWithID, RegisterWithIDRequest, RequestCommon, RequestWithIDDetails}
@@ -31,11 +32,11 @@ class RegisterWithIDRequestSpec extends SpecBase {
   val registrationWithIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
       RequestCommon("2016-08-16T15:55:30Z", MDR.toString, "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", MDR.toString)))),
-      RequestWithIDDetails("NINO",
-                           "0123456789",
+      RequestWithIDDetails(NINO,
+                           TestNiNumber,
                            requiresNameMatch = true,
                            isAnAgent = false,
-                           Option(WithIDIndividual("Fred", Some("Flintstone"), "Flint", Some("1999-12-20")))
+                           Option(WithIDIndividual(name.firstName, Some(MiddleName), name.lastName, Some(TestDate)))
       )
     )
   )

@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.IndividualContactPhonePage
 import play.api.data.Form
@@ -54,7 +54,7 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(IndividualContactPhonePage, "07500000000").success.value
+      val userAnswers = emptyUserAnswers.set(IndividualContactPhonePage, TestPhoneNumber).success.value
 
       retrieveUserAnswersData(userAnswers)
 
@@ -67,7 +67,7 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
       val view = app.injector.instanceOf[IndividualContactPhoneView]
 
       status(result) mustEqual OK
-      contentAsString(result) mustEqual view(form.fill("07500000000"), NormalMode).toString()
+      contentAsString(result) mustEqual view(form.fill(TestPhoneNumber), NormalMode).toString()
 
     }
 
@@ -78,7 +78,7 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", "07500000000"))
+          .withFormUrlEncodedBody(("value", TestPhoneNumber))
 
       val result = route(app, request).value
 

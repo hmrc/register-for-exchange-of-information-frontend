@@ -17,12 +17,13 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
+import models.IdentifierType.UTR
 import models.ReporterType.{LimitedCompany, Sole}
 import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.matching.{AutoMatchedRegistrationRequest, OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.register.response.details.AddressResponse
-import models.{CheckMode, Name, NormalMode, SubscriptionID, UUIDGen, UniqueTaxpayerReference, UserAnswers}
+import models.{CheckMode, NormalMode, SubscriptionID, UUIDGen, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
 import pages._
 import play.api.inject.bind
@@ -45,14 +46,14 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   private def form = new forms.IsThisYourBusinessFormProvider().apply()
 
-  private val businessName = "name"
+  private val businessName = OrgName
 
   private val autoMatchedUtr      = UniqueTaxpayerReference("SomeAutoMatchedUtr")
   private val address             = AddressResponse("line1", None, None, None, None, "GB")
-  private val registrationRequest = RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, Some(LimitedCompany))
+  private val registrationRequest = RegistrationRequest(UTR, utr.uniqueTaxPayerReference, businessName, Some(LimitedCompany))
   private val registrationInfo    = OrgRegistrationInfo(safeId, businessName, address)
 
-  val validUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+  val validUserAnswers: UserAnswers = emptyUserAnswers
     .set(ReporterTypePage, LimitedCompany)
     .success
     .value
@@ -264,21 +265,21 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     "must return OK and the correct view for a GET for ReporterType as SoleTrader" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
 
-      val updatedUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+      val updatedUserAnswers: UserAnswers = emptyUserAnswers
         .set(ReporterTypePage, Sole)
         .success
         .value
         .set(UTRPage, utr)
         .success
         .value
-        .set(SoleNamePage, Name("name", "name"))
+        .set(SoleNamePage, name)
         .success
         .value
 
@@ -296,7 +297,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     "must redirect to 'confirmation' page when there is an existing subscription" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
@@ -315,7 +316,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     "render technical difficulties page when there is an existing subscription and fails to create an enrolment" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
@@ -335,7 +336,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
-        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, "name", address))))
+        .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)

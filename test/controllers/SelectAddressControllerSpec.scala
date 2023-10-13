@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import forms.SelectAddressFormProvider
-import models.{AddressLookup, NormalMode, UserAnswers}
+import models.{AddressLookup, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import pages.AddressLookupPage
 import play.api.data.Form
@@ -50,7 +50,7 @@ class SelectAddressControllerSpec extends SpecBase with ControllerMockFixtures {
     RadioItem(content = Text("2 Address line 1, Town, ZZ1 1ZZ"), value = Some("2 Address line 1, Town, ZZ1 1ZZ"))
   )
 
-  val userAnswers = UserAnswers(userAnswersId)
+  val userAnswers = emptyUserAnswers
     .set(AddressLookupPage, addresses)
     .success
     .value

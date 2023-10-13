@@ -17,6 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
+import models.ReporterTypeText.LimitedLiabilityPartnership
 import models.ReporterType.LimitedCompany
 import models.{NormalMode, ReporterType, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -32,16 +33,15 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
   lazy val loadRoute   = routes.BusinessNameController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.BusinessNameController.onSubmit(NormalMode).url
 
-  val selectedReporterTypeText = "llp"
-  private def form             = new forms.BusinessNameFormProvider().apply(selectedReporterTypeText)
+  private def form = new forms.BusinessNameFormProvider().apply(LimitedLiabilityPartnership)
 
-  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.LimitedCompany).success.value
+  val userAnswers: UserAnswers = emptyUserAnswers.set(ReporterTypePage, ReporterType.LimitedCompany).success.value
 
   "BusinessName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, LimitedCompany).success.value
+      val userAnswers = emptyUserAnswers.set(ReporterTypePage, LimitedCompany).success.value
       retrieveUserAnswersData(userAnswers)
       val application = guiceApplicationBuilder().build()
 
@@ -53,14 +53,14 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[BusinessNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "llp").toString
+        contentAsString(result) mustEqual view(form, NormalMode, LimitedLiabilityPartnership).toString
       }
     }
 
     "redirect to 'There is a problem with this page' page when business type is 'Sole trader'" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.Sole).success.value
+        emptyUserAnswers.set(ReporterTypePage, ReporterType.Sole).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(GET, loadRoute)
@@ -90,7 +90,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.LimitedCompany).success.value.set(BusinessNamePage, "answer").success.value
+        emptyUserAnswers.set(ReporterTypePage, ReporterType.LimitedCompany).success.value.set(BusinessNamePage, "answer").success.value
 
       retrieveUserAnswersData(userAnswers)
       val application = guiceApplicationBuilder().build()
@@ -102,7 +102,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
         val result     = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(filledForm, NormalMode, "llp").toString
+        contentAsString(result) mustEqual view(filledForm, NormalMode, LimitedLiabilityPartnership).toString
 
       }
     }
@@ -121,7 +121,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "llp")(request, messages).toString()
+        contentAsString(result) mustEqual view(boundForm, NormalMode, LimitedLiabilityPartnership)(request, messages).toString()
       }
     }
 
@@ -141,7 +141,7 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
     "must redirect to 'There is a problem with this page' when business type is 'sole trader' on submission" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId).set(ReporterTypePage, ReporterType.Sole).success.value
+        emptyUserAnswers.set(ReporterTypePage, ReporterType.Sole).success.value
 
       retrieveUserAnswersData(userAnswers)
       val request = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))

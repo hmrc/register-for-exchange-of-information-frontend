@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourDateOfBirthPage
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
@@ -36,8 +36,6 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
   private def form = new forms.DateOfBirthFormProvider().apply()
 
   val validAnswer = LocalDate.now(ZoneOffset.UTC)
-
-  override val emptyUserAnswers = UserAnswers(userAnswersId)
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, loadRoute)
@@ -74,7 +72,7 @@ class WhatIsYourDateOfBirthControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourDateOfBirthPage, validAnswer).success.value
+      val userAnswers = emptyUserAnswers.set(WhatIsYourDateOfBirthPage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
 
       val application = guiceApplicationBuilder().build()

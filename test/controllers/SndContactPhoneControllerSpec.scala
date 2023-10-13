@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import pages.{SndContactNamePage, SndContactPhonePage}
 import play.api.test.FakeRequest
@@ -30,8 +30,8 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
 
   lazy val loadRoute   = routes.SndContactPhoneController.onPageLoad(NormalMode).url
   lazy val submitRoute = routes.SndContactPhoneController.onSubmit(NormalMode).url
-  val contactName      = "SecondContactName"
-  val userAnswers      = UserAnswers(userAnswersId).set(SndContactNamePage, contactName).success.value
+  val contactName      = name.fullName
+  val userAnswers      = emptyUserAnswers.set(SndContactNamePage, contactName).success.value
 
   private def form = new forms.SndContactPhoneFormProvider().apply()
 
@@ -53,7 +53,7 @@ class SndContactPhoneControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers2 = UserAnswers(userAnswersId)
+      val userAnswers2 = emptyUserAnswers
         .set(SndContactNamePage, contactName)
         .success
         .value
