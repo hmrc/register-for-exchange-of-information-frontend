@@ -25,6 +25,10 @@ import uk.gov.hmrc.domain.Nino
 
 trait ModelGenerators {
 
+  val maximumNumber = 999999
+  val minimumNumber = 1
+  val countryNumber = 2
+
   implicit lazy val arbitraryWhatIsTradingName: Arbitrary[models.WhatIsTradingName] =
     Arbitrary {
       for {
@@ -44,7 +48,7 @@ trait ModelGenerators {
     Arbitrary {
       for {
         state <- Gen.oneOf(Seq("Valid", "Invalid"))
-        code  <- Gen.pick(2, 'A' to 'Z')
+        code  <- Gen.pick(countryNumber, 'A' to 'Z')
         name  <- arbitrary[String]
       } yield Country(state, code.mkString, name)
     }
@@ -72,7 +76,7 @@ trait ModelGenerators {
   implicit val arbitraryNino: Arbitrary[Nino] = Arbitrary {
     for {
       prefix <- Gen.oneOf(Nino.validPrefixes)
-      number <- Gen.choose(0, 999999)
+      number <- Gen.choose(minimumNumber, maximumNumber)
       suffix <- Gen.oneOf(Nino.validSuffixes)
     } yield Nino(f"$prefix$number%06d$suffix")
   }

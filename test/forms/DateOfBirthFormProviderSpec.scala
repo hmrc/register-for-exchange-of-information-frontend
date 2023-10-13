@@ -25,10 +25,13 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
 
   val form = new DateOfBirthFormProvider()()
 
+  val twoThousand = 2000
+  val year        = 1908
+
   ".value" - {
 
     val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
+      min = LocalDate.of(twoThousand, one, one),
       max = LocalDate.now(ZoneOffset.UTC)
     )
 
@@ -48,7 +51,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
 
       val result = form.bind(data)
 
-      result.errors.size mustBe 1
+      result.errors.size mustBe one
       result.errors.head.message mustBe "dateOfBirth.error.required"
       result.errors.head.args mustBe Seq("month")
     }
@@ -65,14 +68,14 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
 
       val result = form.bind(data)
 
-      result.errors.size mustBe 1
+      result.errors.size mustBe one
       result.errors.head.message mustBe "dateOfBirth.error.invalid"
       result.errors.head.args mustBe Seq("month")
     }
 
     "must not allow a date later than today" in {
       val key  = "value"
-      val date = LocalDate.now().plusYears(1)
+      val date = LocalDate.now().plusYears(one)
       val data = Map(
         s"$key.day"   -> date.getDayOfMonth.toString,
         s"$key.month" -> date.getMonthValue.toString,
@@ -81,13 +84,13 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
 
       val result: Form[LocalDate] = form.bind(data)
 
-      result.errors.size mustBe 1
+      result.errors.size mustBe one
       result.errors.head.message mustBe "dateOfBirth.error.futureDate"
     }
 
     "must not allow a date earlier than 01/01/1909" in {
       val key  = "value"
-      val date = LocalDate.of(1908, 1, 1)
+      val date = LocalDate.of(year, one, one)
       val data = Map(
         s"$key.day"   -> date.getDayOfMonth.toString,
         s"$key.month" -> date.getMonthValue.toString,
@@ -96,7 +99,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
 
       val result: Form[LocalDate] = form.bind(data)
 
-      result.errors.size mustBe 1
+      result.errors.size mustBe one
       result.errors.head.message mustBe "dateOfBirth.error.pastDate"
     }
 

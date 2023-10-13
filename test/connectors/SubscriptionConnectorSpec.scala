@@ -44,9 +44,10 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
     )
     .build()
 
+  private val seqOfCodes                    = Seq(400, 404, 403, 500, 501, 502, 503, 504)
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
   private val subscriptionUrl               = "/register-for-exchange-of-information/subscription"
-  private val errorCodes: Gen[Int]          = Gen.oneOf(Seq(400, 404, 403, 500, 501, 502, 503, 504))
+  private val errorCodes: Gen[Int]          = Gen.oneOf(seqOfCodes)
 
   "SubscriptionConnector" - {
     "readSubscription" - {
