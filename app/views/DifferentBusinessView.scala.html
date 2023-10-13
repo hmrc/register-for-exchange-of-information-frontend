@@ -26,18 +26,17 @@
 
     <h1 class="govuk-heading-l">@messages("differentBusiness.heading")</h1>
 
-    @if(name.isDefined && address.isDefined) {
+    @name.map { businessName =>
+        @address.map { businessAddress =>
+            <p class="govuk-body">@messages("differentBusiness.p1")</p>
 
-    <p class="govuk-body">@messages("unableToChangeBusiness.p1")</p>
-
-    <div class="govuk-body">
-        <p class="govuk-body">@name</p>
-            @for(addressLine <- address){
-        <p class="govuk-body govuk-!-margin-bottom-0">@addressLine</p>
-
+            <div class="govuk-body">
+                <p class="govuk-body govuk-!-margin-bottom-1">@businessName</p>
+                    @for(addressLine <- businessAddress) {
+                <p class="govuk-body govuk-!-margin-bottom-0">@addressLine</p>
+                }
+            </div>
         }
-    </div>
-
     }
 
     <p class="govuk-body">@Html(messages("differentBusiness.p2", link(contactLink, "differentBusiness.link", openInNewWindow = false)))</p>
