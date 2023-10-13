@@ -17,7 +17,7 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import models.UniqueTaxpayerReference
+import models.{IdentifierType, UniqueTaxpayerReference}
 import models.requests.IdentifierRequest
 import play.api.mvc.ActionTransformer
 
@@ -38,13 +38,11 @@ class CtUtrRetrievalActionProvider @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends ActionTransformer[IdentifierRequest, IdentifierRequest] {
 
-  private val EnrolmentKey = "UTR"
-
   override protected def transform[A](request: IdentifierRequest[A]): Future[IdentifierRequest[A]] = {
     val ctUtr = request.enrolments
       .find(_.key == config.ctEnrolmentKey)
       .flatMap(_.identifiers.collectFirst {
-        case i if i.key == EnrolmentKey => UniqueTaxpayerReference(i.value)
+        case i if i.key == IdentifierType.UTR => UniqueTaxpayerReference(i.value)
       })
 
     Future.successful(request.copy(utr = ctUtr))

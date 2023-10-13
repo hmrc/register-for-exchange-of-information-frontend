@@ -20,4 +20,11 @@ object IdentifierType {
   val UTR  = "UTR"
   val NINO = "NINO"
   val SAFE = "SAFE"
+
+  val MDRID  = "MDRID"
+  val SAFEID = "SAFEID"
+  val SAUTR  = "SAUTR"
+  val CTUTR  = "CTUTR"
+
+  val NonUKPostalCode = "NonUKPostalCode"
 }
