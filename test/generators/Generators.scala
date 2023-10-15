@@ -28,6 +28,16 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
+  val one           = 1
+  val two           = 2
+  val nine          = 9
+  val ten           = 10
+  val zero          = 0
+  val fifty         = 50
+  val oneHundred    = 100
+  val twentyFour    = 24
+  val listOfNumbers = List(1, 2, 3, 4, 5, 6, 7, 8, 9)
+
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
     val genValue: Gen[Option[String]] = Gen.frequency(frequencyN -> None, frequencyV -> Gen.const(Some(value)))
@@ -44,8 +54,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   }
 
   def stringsLongerThanAlpha(minLength: Int): Gen[String] = for {
-    maxLength <- (minLength * 2).max(100)
-    length    <- Gen.chooseNum(minLength + 1, maxLength)
+    maxLength <- (minLength * two).max(oneHundred)
+    length    <- Gen.chooseNum(minLength + one, maxLength)
     chars     <- listOfN(length, Gen.alphaChar)
   } yield chars.mkString
 
@@ -57,11 +67,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   } yield chars.mkString
 
   def stringWithinMaxLengthByRegex(maxLength: Int, regex: String): Gen[String] = for {
-    length <- Gen.chooseNum(1, maxLength)
+    length <- Gen.chooseNum(one, maxLength)
     chars  <- listOfN(length, RegexpGen.from(regex))
   } yield chars.mkString match {
     case str if str.isEmpty            => str
-    case str if str.length > maxLength => str.substring(0, maxLength - 1)
+    case str if str.length > maxLength => str.substring(zero, maxLength - one)
     case str                           => str
   }
 
@@ -70,13 +80,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       chars <- listOfN(length, RegexpGen.from(regex))
     } yield chars.mkString match {
       case str if str.isEmpty         => str
-      case str if str.length > length => str.substring(0, length - 1)
+      case str if str.length > length => str.substring(zero, length - one)
       case str                        => str
     }
   } suchThat (_.length == length)
 
   def validUtr: Gen[String] = for {
-    chars <- listOfN(10, Gen.oneOf(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)))
+    chars <- listOfN(ten, Gen.oneOf(listOfNumbers))
   } yield chars.mkString
 
   def nonEmptyStringWithinMaxLengthByRegex(maxLength: Int, regex: String): Gen[String] = stringWithinMaxLengthByRegex(maxLength, regex) suchThat (_.nonEmpty)
@@ -94,7 +104,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def validNino: Gen[String] = for {
     first   <- Gen.oneOf("ACEHJLMOPRSWXY".toCharArray)
     second  <- Gen.oneOf("ABCEGHJKLMNPRSTWXYZ".toCharArray)
-    numbers <- listOfN(6, Gen.oneOf(List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)))
+    numbers <- listOfN(6, Gen.oneOf(listOfNumbers))
     last    <- Gen.oneOf("ABCD".toCharArray)
   } yield s"$first$second${numbers.mkString}$last"
 
@@ -107,15 +117,15 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def validPostCodes: Gen[String] = {
     val disallowed = List('c', 'i', 'k', 'm', 'o', 'v')
     for {
-      pt1Quantity <- Gen.choose(1, 2)
+      pt1Quantity <- Gen.choose(one, two)
       pt1         <- Gen.listOfN(pt1Quantity, Gen.alphaChar).map(_.mkString)
-      pt2         <- Gen.choose(0, 9)
+      pt2         <- Gen.choose(zero, nine)
 
       pt3alphaOpt <- Gen.option(Gen.alphaChar)
-      pt3numOpt   <- Gen.option(Gen.choose(0, 9))
+      pt3numOpt   <- Gen.option(Gen.choose(zero, nine))
       pt3 = if (pt3alphaOpt.isEmpty) pt3numOpt.getOrElse("").toString else pt3alphaOpt.get.toString
 
-      pt4 <- Gen.choose(0, 9)
+      pt4 <- Gen.choose(zero, nine)
       pt5a <- Gen.alphaChar suchThat (
         ch => !disallowed.contains(ch.toLower)
       )
@@ -141,7 +151,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     )
 
   def nonNumerics: Gen[String] =
-    alphaStr suchThat (_.size > 0)
+    alphaStr suchThat (_.size > zero)
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]
@@ -176,19 +186,19 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     } yield chars.mkString
 
   def stringsLongerThan(minLength: Int): Gen[String] = for {
-    maxLength <- (minLength * 2).max(100)
-    length    <- Gen.chooseNum(minLength + 1, maxLength)
+    maxLength <- (minLength * two).max(oneHundred)
+    length    <- Gen.chooseNum(minLength + one, maxLength)
     chars     <- listOfN(length, arbitrary[Char])
   } yield chars.mkString
 
   def phoneMaxLength(ln: Int): Gen[String] = for {
-    length <- Gen.chooseNum(ln, 24)
-    chars  <- listOfN(length, Gen.chooseNum(0, 9))
+    length <- Gen.chooseNum(ln, twentyFour)
+    chars  <- listOfN(length, Gen.chooseNum(zero, nine))
   } yield "+" + chars.mkString
 
   def validPhoneNumber(ln: Int): Gen[String] = for {
-    length <- Gen.chooseNum(1, ln - 1)
-    chars  <- listOfN(length, Gen.chooseNum(0, 9))
+    length <- Gen.chooseNum(one, ln - one)
+    chars  <- listOfN(length, Gen.chooseNum(zero, nine))
   } yield "+" + chars.mkString
 
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
@@ -199,7 +209,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       throw new IllegalArgumentException("oneOf called on empty collection")
     } else {
       val vector = xs.toVector
-      choose(0, vector.size - 1).flatMap(vector(_))
+      choose(zero, vector.size - one).flatMap(vector(_))
     }
 
   def datesBetween(min: LocalDate, max: LocalDate): Gen[LocalDate] = {
@@ -214,8 +224,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   }
 
   def stringsNotOfFixedLengthNumeric(givenLength: Int): Gen[String] = for {
-    maxLength <- givenLength + 50
-    length    <- Gen.chooseNum(1, maxLength).suchThat(_ != givenLength)
+    maxLength <- givenLength + fifty
+    length    <- Gen.chooseNum(one, maxLength).suchThat(_ != givenLength)
     chars     <- listOfN(length, Gen.numChar)
   } yield chars.mkString
 
