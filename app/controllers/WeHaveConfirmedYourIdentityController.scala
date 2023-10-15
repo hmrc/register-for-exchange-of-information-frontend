@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{IdentifierType, Mode, UUIDGen}
+import models.{Mode, UUIDGen}
 import models.error.ApiError.NotFoundError
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
@@ -87,5 +87,5 @@ class WeHaveConfirmedYourIdentityController @Inject() (
       nino <- request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage)
       name <- request.userAnswers.get(WhatIsYourNamePage)
       dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage)
-    } yield RegisterWithID(name, Some(dob), IdentifierType.NINO, nino.nino)
+    } yield RegisterWithID(name, Some(dob), "NINO", nino.nino)
 }

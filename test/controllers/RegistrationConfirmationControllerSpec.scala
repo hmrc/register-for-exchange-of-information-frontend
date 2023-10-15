@@ -17,7 +17,7 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.SubscriptionID
+import models.{SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.SubscriptionIDPage
 import play.api.test.FakeRequest
@@ -33,7 +33,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase with ControllerMoc
     "return OK and the correct view for a GET" in {
       when(mockSessionRepository.reset(any())).thenReturn(Future.successful(true))
 
-      val userAnswers = emptyUserAnswers
+      val userAnswers = UserAnswers(userAnswersId)
         .set(SubscriptionIDPage, SubscriptionID("SID"))
         .success
         .value

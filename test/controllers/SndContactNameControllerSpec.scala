@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.SndContactNamePage
 import play.api.test.FakeRequest
@@ -51,14 +51,14 @@ class SndContactNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(SndContactNamePage, name.fullName).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(SndContactNamePage, "answer").success.value
       retrieveUserAnswersData(userAnswers)
       implicit val request = FakeRequest(GET, loadRoute)
 
       val view = app.injector.instanceOf[SndContactNameView]
 
       val result     = route(app, request).value
-      val filledForm = form.bind(Map("value" -> name.fullName))
+      val filledForm = form.bind(Map("value" -> "answer"))
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual view(filledForm, NormalMode).toString

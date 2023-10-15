@@ -24,7 +24,7 @@ import models.enrolment.GroupIds
 import models.error.ApiError
 import models.error.ApiError.{EnrolmentExistsError, UnableToCreateEnrolmentError}
 import models.matching.IndRegistrationInfo
-import models.{Address, Country, SubscriptionID, UserAnswers}
+import models.{Address, Country, NonUkName, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.scalatest.BeforeAndAfterEach
 import pages._
@@ -70,10 +70,10 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, nonUkName)
+        .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(ContactEmailPage, TestEmail)
+        .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
         .set(BusinessAddressWithoutIdPage, address)
@@ -104,10 +104,10 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, nonUkName)
+        .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(ContactEmailPage, TestEmail)
+        .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
         .set(BusinessAddressWithoutIdPage, address)
@@ -140,10 +140,10 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, nonUkName)
+        .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(ContactEmailPage, TestEmail)
+        .set(ContactEmailPage, "test@gmail.com")
         .success
         .value
         .set(BusinessAddressWithoutIdPage, address)

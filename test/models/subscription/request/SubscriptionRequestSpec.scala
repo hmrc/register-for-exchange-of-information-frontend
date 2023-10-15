@@ -18,9 +18,8 @@ package models.subscription.request
 
 import base.SpecBase
 import generators.Generators
-import models.IdentifierType.SAFE
-import models.UserAnswers
 import models.matching.IndRegistrationInfo
+import models.{NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
@@ -36,19 +35,19 @@ class SubscriptionRequestSpec extends SpecBase with Generators with ScalaCheckPr
 
     "must return SubscriptionRequest for the input 'UserAnswers'" in {
       val requestDtls =
-        CreateRequestDetail(SAFE, safeId.value, None, true, ContactInformation(OrganisationDetails(OrgName), TestEmail, None, None), None)
+        CreateRequestDetail("SAFE", "SAFEID", None, true, ContactInformation(OrganisationDetails("Name Name"), "test@test.com", None, None), None)
 
       val userAnswers = UserAnswers("id")
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
         .value
-        .set(NonUkNamePage, nonUkName)
+        .set(NonUkNamePage, NonUkName("fred", "smith"))
         .success
         .value
-        .set(ContactEmailPage, TestEmail)
+        .set(ContactEmailPage, "test@test.com")
         .success
         .value
-        .set(ContactNamePage, OrgName)
+        .set(ContactNamePage, "Name Name")
         .success
         .value
         .set(ContactHavePhonePage, false)

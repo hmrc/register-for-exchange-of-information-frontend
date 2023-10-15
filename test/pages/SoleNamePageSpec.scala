@@ -37,10 +37,10 @@ class SoleNamePageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(BusinessNamePage, OrgName)
+            .set(BusinessNamePage, "name")
             .success
             .value
-            .set(SoleNamePage, name)
+            .set(SoleNamePage, Name("Sole", "Trader"))
             .success
             .value
 

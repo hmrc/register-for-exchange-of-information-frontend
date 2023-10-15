@@ -16,7 +16,6 @@
 
 package models.enrolment
 
-import models.IdentifierType._
 import models.ReporterType.{LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
 import models.error.ApiError
 import models.matching.SafeId
@@ -33,17 +32,17 @@ case class SubscriptionInfo(safeID: String,
 ) {
 
   def convertToEnrolmentRequest: EnrolmentRequest =
-    EnrolmentRequest(identifiers = Seq(Identifier(MDRID, mdrId)), verifiers = buildVerifiers)
+    EnrolmentRequest(identifiers = Seq(Identifier("MDRID", mdrId)), verifiers = buildVerifiers)
 
   def buildVerifiers: Seq[Verifier] = {
 
-    val mandatoryVerifiers = Seq(Verifier(SAFEID, safeID))
+    val mandatoryVerifiers = Seq(Verifier("SAFEID", safeID))
 
     mandatoryVerifiers ++
-      buildOptionalVerifier(saUtr, SAUTR) ++
-      buildOptionalVerifier(ctUtr, CTUTR) ++
-      buildOptionalVerifier(nino, NINO) ++
-      buildOptionalVerifier(nonUkPostcode, NonUKPostalCode)
+      buildOptionalVerifier(saUtr, "SAUTR") ++
+      buildOptionalVerifier(ctUtr, "CTUTR") ++
+      buildOptionalVerifier(nino, "NINO") ++
+      buildOptionalVerifier(nonUkPostcode, "NonUKPostalCode")
 
   }
 

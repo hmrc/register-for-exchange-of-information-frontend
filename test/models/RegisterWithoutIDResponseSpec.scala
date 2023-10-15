@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import helpers.JsonFixtures.{registerWithoutIDResponse, registerWithoutIDResponseJson}
+import models.matching.SafeId
 import models.register.response.{RegisterWithoutIDResponse, RegisterWithoutIDResponseDetail, RegistrationWithoutIDResponse}
 import models.shared.ResponseCommon
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -27,7 +28,7 @@ class RegisterWithoutIDResponseSpec extends SpecBase with ScalaCheckPropertyChec
 
   val responseCommon: ResponseCommon =
     ResponseCommon(status = "OK", statusText = Some("Success"), processingDate = "2020-09-01T01:00:00Z", returnParameters = None)
-  val responseDetail: RegisterWithoutIDResponseDetail = RegisterWithoutIDResponseDetail(SAFEID = safeId, ARN = None)
+  val responseDetail: RegisterWithoutIDResponseDetail = RegisterWithoutIDResponseDetail(SAFEID = SafeId("XE0000123456789"), ARN = None)
 
   val registerWithoutID: RegistrationWithoutIDResponse = RegistrationWithoutIDResponse(
     RegisterWithoutIDResponse(responseCommon, Some(responseDetail))

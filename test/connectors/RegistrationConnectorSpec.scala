@@ -23,14 +23,13 @@ import generators.Generators
 import helpers.JsonFixtures.{withIDIndividualResponse, withIDOrganisationResponse, withoutIDResponse}
 import helpers.RegisterHelper._
 import helpers.WireMockServerHandler
-import models.IdentifierType.{NINO, UTR}
+import models.Name
 import models.Regime.MDR
-import models.ReporterType.Partnership
 import models.error.ApiError
 import models.error.ApiError.{NotFoundError, ServiceUnavailableError}
 import models.matching.SafeId
-import models.register.request._
 import models.register.request.details.{Individual, NoIdOrganisation, WithIDIndividual, WithIDOrganisation}
+import models.register.request._
 import models.shared.Parameters
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
@@ -59,11 +58,11 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
     RegisterWithIDRequest(
       requestCommon,
       RequestWithIDDetails(
-        NINO,
-        TestNiNumber,
+        "NINO",
+        "0123456789",
         requiresNameMatch = true,
         isAnAgent = false,
-        Option(WithIDIndividual(name.firstName, None, name.lastName, Some(TestDate)))
+        Option(WithIDIndividual("Fred", None, "Flint", Some("1999-12-20")))
       )
     )
   )
@@ -72,11 +71,11 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
     RegisterWithIDRequest(
       requestCommon,
       RequestWithIDDetails(
-        UTR,
-        utr.uniqueTaxPayerReference,
+        "UTR",
+        "utr",
         requiresNameMatch = true,
         isAnAgent = false,
-        Option(WithIDOrganisation(OrgName, Partnership.code))
+        Option(WithIDOrganisation("name", "0001"))
       )
     )
   )
@@ -84,14 +83,14 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
   val registrationWithoutOrganisationIDPayload: RegisterWithoutID = RegisterWithoutID(
     RegisterWithoutIDRequest(
       requestCommon,
-      RequestWithoutIDDetails(Some(NoIdOrganisation(OrgName)), None, addressRequest, contactDetails, None)
+      RequestWithoutIDDetails(Some(NoIdOrganisation("name")), None, addressRequest, contactDetails, None)
     )
   )
 
   val registrationWithoutIndividualIDPayload: RegisterWithoutID = RegisterWithoutID(
     RegisterWithoutIDRequest(
       requestCommon,
-      RequestWithoutIDDetails(None, Some(Individual(name, LocalDate.parse(TestDate, formatter))), addressRequest, contactDetails, None)
+      RequestWithoutIDDetails(None, Some(Individual(Name("Fred", "Flint"), LocalDate.of(1999, 12, 20))), addressRequest, contactDetails, None)
     )
   )
 
@@ -159,7 +158,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/individual/noId", OK, withoutIDResponse)
 
         val result: Future[Either[ApiError, SafeId]] = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
-        result.futureValue mustBe Right(safeId)
+        result.futureValue mustBe Right(expectedSafeId)
       }
 
       "return 404 and NotFoundError when there is no match" in {
@@ -186,7 +185,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
         stubResponse("/organisation/noId", OK, withoutIDResponse)
 
         val result = connector.withOrganisationNoId(registrationWithoutOrganisationIDPayload)
-        result.futureValue mustBe Right(safeId)
+        result.futureValue mustBe Right(expectedSafeId)
       }
 
       "return 404 and NotFoundError when there is no match" in {

@@ -53,7 +53,7 @@ class AddressUKControllerSpec extends ControllerSpecBase {
     override lazy val countryList: Option[Seq[Country]] = None
   }
 
-  val userAnswers: UserAnswers = emptyUserAnswers.set(AddressUKPage, address).success.value
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(AddressUKPage, address).success.value
 
   "AddressUk Controller" - {
 

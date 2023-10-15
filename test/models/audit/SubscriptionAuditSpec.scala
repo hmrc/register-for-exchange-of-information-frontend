@@ -18,10 +18,9 @@ package models.audit
 
 import base.SpecBase
 import generators.Generators
-import models.IdentifierType.SAFE
 import models.ReporterType.Individual
 import models.subscription.request.{ContactInformation, CreateRequestDetail, IndividualDetails, OrganisationDetails}
-import models.{Address, Country, UserAnswers}
+import models.{Address, Country, NonUkName, UserAnswers}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages._
 
@@ -31,12 +30,12 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
     "convert to SubscriptionAudit" in {
 
       val requestDtls = CreateRequestDetail(
-        SAFE,
+        "SAFE",
         "AB123456Z",
         Some("Tools for Traders Limited"),
         true,
-        ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, Some(TestPhoneNumber), Some(TestMobilePhoneNumber)),
-        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some(TestPhoneNumber), None))
+        ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
+        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None))
       )
       val auditResponse = AuditResponse("Success", 200, Some("sub"), None)
       val address       = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
@@ -50,10 +49,10 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
         .set(DoYouHaveNINPage, false)
         .success
         .value
-        .set(NonUkNamePage, nonUkName)
+        .set(NonUkNamePage, NonUkName("a", "b"))
         .success
         .value
-        .set(IndividualContactEmailPage, TestEmail)
+        .set(IndividualContactEmailPage, "test@gmail.com")
         .success
         .value
         .set(IndividualHaveContactTelephonePage, false)
@@ -72,9 +71,8 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
         isBusiness = false,
         tradingName = Some("Tools for Traders Limited"),
         isGBUser = true,
-        primaryContact =
-          ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, Some(TestPhoneNumber), Some(TestMobilePhoneNumber)),
-        secondaryContact = Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some(TestPhoneNumber), None)),
+        primaryContact = ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some("0188899999"), Some("07321012345")),
+        secondaryContact = Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some("0188899999"), None)),
         response = AuditResponse("Success", 200, Some("sub"), None)
       )
 

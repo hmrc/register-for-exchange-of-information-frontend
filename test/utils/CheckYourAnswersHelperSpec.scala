@@ -17,7 +17,7 @@
 package utils
 
 import base.SpecBase
-import models.matching.OrgRegistrationInfo
+import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -42,7 +42,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(IsThisYourBusinessPage, true)
         .success
         .value
-        .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, addressResponse))
+        .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("SafeId"), "name", addressResponse))
         .success
         .value
 
@@ -63,7 +63,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
         .set(IsThisYourBusinessPage, true)
         .success
         .value
-        .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, addressResponse))
+        .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("SafeId"), "name", addressResponse))
         .success
         .value
 
@@ -86,8 +86,8 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
       Key(Text("businessWithIDName.checkYourAnswersLabel"), "govuk-!-width-one-half"),
       Value(
         HtmlContent(
-          s"""
-            |<p>$OrgName</p>
+          """
+            |<p>name</p>
             |<p class=govuk-!-margin-0>line1</p>
             |<p class=govuk-!-margin-0>line2</p>
             |

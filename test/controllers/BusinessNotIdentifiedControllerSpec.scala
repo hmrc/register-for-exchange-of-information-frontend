@@ -18,6 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.ReporterType.{LimitedCompany, LimitedPartnership}
+import models.UserAnswers
 import pages.ReporterTypePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -32,7 +33,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
 
     "return OK and the correct view for a GET with link for corporation tax enquiries" in {
 
-      val userAnswers = emptyUserAnswers.set(ReporterTypePage, LimitedCompany).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, LimitedCompany).success.value
       retrieveUserAnswersData(userAnswers)
       val application = guiceApplicationBuilder().build()
 
@@ -51,7 +52,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
 
     "return OK and the correct view for a GET when a Sole Trader" in {
 
-      val userAnswers = emptyUserAnswers.set(ReporterTypePage, LimitedPartnership).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(ReporterTypePage, LimitedPartnership).success.value
       retrieveUserAnswersData(userAnswers)
       val application = guiceApplicationBuilder().build()
 

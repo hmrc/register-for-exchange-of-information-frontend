@@ -18,7 +18,7 @@ package controllers
 
 import base.ControllerSpecBase
 import forms.RegisteredAddressInUKFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.RegisteredAddressInUKPage
 import play.api.test.FakeRequest
@@ -52,7 +52,7 @@ class RegisteredAddressInUKControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(RegisteredAddressInUKPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(RegisteredAddressInUKPage, true).success.value
       retrieveUserAnswersData(userAnswers)
       val request    = FakeRequest(GET, loadRoute)
       val filledForm = form.bind(Map("value" -> "true"))

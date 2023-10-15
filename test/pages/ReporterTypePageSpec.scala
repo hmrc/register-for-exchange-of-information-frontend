@@ -17,9 +17,9 @@
 package pages
 
 import models.ReporterType.{Individual, LimitedCompany, Sole}
-import models.matching.OrgRegistrationInfo
+import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
-import models.{AddressLookup, ReporterType, UserAnswers}
+import models.{AddressLookup, Name, NonUkName, ReporterType, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import pages.behaviours.PageBehaviours
@@ -47,43 +47,43 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(IsThisYourBusinessPage, true)
             .success
             .value
-            .set(ContactNamePage, name.fullName)
+            .set(ContactNamePage, "SomeContact")
             .success
             .value
-            .set(ContactEmailPage, TestEmail)
+            .set(ContactEmailPage, "contact@email.com")
             .success
             .value
             .set(ContactHavePhonePage, true)
             .success
             .value
-            .set(ContactPhonePage, TestPhoneNumber)
+            .set(ContactPhonePage, "07540000000")
             .success
             .value
             .set(SecondContactPage, true)
             .success
             .value
-            .set(SndContactNamePage, name.fullName)
+            .set(SndContactNamePage, "SomeSecondContact")
             .success
             .value
-            .set(SndContactEmailPage, TestEmail)
+            .set(SndContactEmailPage, "secondcontact@email.com")
             .success
             .value
             .set(SndConHavePhonePage, true)
             .success
             .value
-            .set(SndContactPhonePage, TestMobilePhoneNumber)
+            .set(SndContactPhonePage, "07540000000")
             .success
             .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
+            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
-            .set(BusinessWithoutIDNamePage, OrgName)
+            .set(BusinessWithoutIDNamePage, "Organisation")
             .success
             .value
             .set(BusinessHaveDifferentNamePage, true)
             .success
             .value
-            .set(WhatIsTradingNamePage, OrgName)
+            .set(WhatIsTradingNamePage, "TradingName")
             .success
             .value
             .set(ReporterTypePage, Sole)
@@ -114,43 +114,43 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(IsThisYourBusinessPage, true)
             .success
             .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
+            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
-            .set(ContactNamePage, name.fullName)
+            .set(ContactNamePage, "SomeContact")
             .success
             .value
-            .set(ContactEmailPage, TestEmail)
+            .set(ContactEmailPage, "contact@email.com")
             .success
             .value
             .set(ContactHavePhonePage, true)
             .success
             .value
-            .set(ContactPhonePage, TestPhoneNumber)
+            .set(ContactPhonePage, "07540000000")
             .success
             .value
             .set(SecondContactPage, true)
             .success
             .value
-            .set(SndContactNamePage, name.fullName)
+            .set(SndContactNamePage, "SomeSecondContact")
             .success
             .value
-            .set(SndContactEmailPage, TestEmail)
+            .set(SndContactEmailPage, "secondcontact@email.com")
             .success
             .value
             .set(SndConHavePhonePage, true)
             .success
             .value
-            .set(SndContactPhonePage, TestMobilePhoneNumber)
+            .set(SndContactPhonePage, "07540000000")
             .success
             .value
-            .set(BusinessWithoutIDNamePage, OrgName)
+            .set(BusinessWithoutIDNamePage, "Organisation")
             .success
             .value
             .set(BusinessHaveDifferentNamePage, true)
             .success
             .value
-            .set(WhatIsTradingNamePage, OrgName)
+            .set(WhatIsTradingNamePage, "TradingName")
             .success
             .value
             .set(ReporterTypePage, Individual)
@@ -176,7 +176,7 @@ class ReporterTypePageSpec extends PageBehaviours {
 
     "must remove individual contact details when user selects any other organisation reporter type" in {
 
-      val address = AddressLookup(None, None, None, None, "town", None, TestPostCode)
+      val address = AddressLookup(None, None, None, None, "town", None, "postcode")
 
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
@@ -184,16 +184,16 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(IsThisYourBusinessPage, true)
             .success
             .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
+            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
             .set(DoYouHaveNINPage, false)
             .success
             .value
-            .set(NonUkNamePage, nonUkName)
+            .set(NonUkNamePage, NonUkName("first", "last"))
             .success
             .value
-            .set(SoleNamePage, name)
+            .set(SoleNamePage, Name("first", "last"))
             .success
             .value
             .set(WhatIsYourDateOfBirthPage, LocalDate.now())
@@ -202,7 +202,7 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(DoYouLiveInTheUKPage, true)
             .success
             .value
-            .set(WhatIsYourPostcodePage, TestPostCode)
+            .set(WhatIsYourPostcodePage, "postcode")
             .success
             .value
             .set(SelectAddressPage, "address")
@@ -214,13 +214,13 @@ class ReporterTypePageSpec extends PageBehaviours {
             .set(AddressLookupPage, Seq(address))
             .success
             .value
-            .set(IndividualContactEmailPage, TestEmail)
+            .set(IndividualContactEmailPage, "contact@email.com")
             .success
             .value
             .set(IndividualHaveContactTelephonePage, true)
             .success
             .value
-            .set(IndividualContactPhonePage, TestPhoneNumber)
+            .set(IndividualContactPhonePage, "07540000000")
             .success
             .value
             .set(ReporterTypePage, LimitedCompany)

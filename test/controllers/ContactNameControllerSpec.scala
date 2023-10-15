@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.ContactNamePage
 import play.api.test.FakeRequest
@@ -35,7 +35,7 @@ class ContactNameControllerSpec extends ControllerSpecBase {
 
   val contactName = "Test Test"
 
-  val userAnswers = emptyUserAnswers
+  val userAnswers = UserAnswers(userAnswersId)
     .set(ContactNamePage, contactName)
     .success
     .value

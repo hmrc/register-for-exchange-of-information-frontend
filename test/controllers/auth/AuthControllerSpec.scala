@@ -42,7 +42,7 @@ class AuthControllerSpec extends SpecBase with ControllerMockFixtures with JsonM
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual expectedRedirectUrl
-      verify(mockSessionRepository, times(1)).clear(eqTo(UserAnswersId))
+      verify(mockSessionRepository, times(1)).clear(eqTo(userAnswersId))
     }
   }
 
@@ -61,7 +61,7 @@ class AuthControllerSpec extends SpecBase with ControllerMockFixtures with JsonM
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual expectedRedirectUrl
-      verify(mockSessionRepository, times(1)).clear(eqTo(UserAnswersId))
+      verify(mockSessionRepository, times(1)).clear(eqTo(userAnswersId))
     }
   }
 }

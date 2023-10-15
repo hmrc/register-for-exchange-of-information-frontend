@@ -25,17 +25,17 @@ class ContactDetailsSpec extends SpecBase {
     "must serialise and de-serialise ContactDetails" in {
       val json: JsValue =
         Json.parse(
-          s"""
-            |{"phoneNumber":"$TestPhoneNumber","mobileNumber":"$TestMobilePhoneNumber","faxNumber": "$TestFaxNumber","emailAddress":"$TestEmail"}""".stripMargin
+          """
+            |{"phoneNumber":"0987654321","mobileNumber":"0987654322","faxNumber": "0987654323","emailAddress":"test@test.com"}""".stripMargin
         )
 
-      val contactDetails: ContactDetails = ContactDetails(Some(TestPhoneNumber), Some(TestMobilePhoneNumber), Some(TestFaxNumber), Some(TestEmail))
+      val contactDetails: ContactDetails = ContactDetails(Some("0987654321"), Some("0987654322"), Some("0987654323"), Some("test@test.com"))
       Json.toJson(contactDetails) mustBe json
       json.as[ContactDetails] mustBe contactDetails
     }
 
     "apply method must create a ContactDetails from a phoneNumber and emailAddress" in {
-      ContactDetails(Some(TestPhoneNumber), Some(TestEmail)) mustBe ContactDetails(Some(TestPhoneNumber), None, None, Some(TestEmail))
+      ContactDetails(Some("0987654321"), Some("test@test.com")) mustBe ContactDetails(Some("0987654321"), None, None, Some("test@test.com"))
     }
   }
 }

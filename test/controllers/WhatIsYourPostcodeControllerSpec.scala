@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{AddressLookup, NormalMode}
+import models.{AddressLookup, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourPostcodePage
 import play.api.test.FakeRequest
@@ -57,14 +57,14 @@ class WhatIsYourPostcodeControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(WhatIsYourPostcodePage, TestPostCode).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourPostcodePage, "ZZ1 1ZZ").success.value
       retrieveUserAnswersData(userAnswers)
       implicit val request = FakeRequest(GET, loadRoute)
 
       val view = app.injector.instanceOf[WhatIsYourPostCodeView]
 
       val result     = route(app, request).value
-      val filledForm = form.bind(Map("postCode" -> TestPostCode))
+      val filledForm = form.bind(Map("postCode" -> "ZZ1 1ZZ"))
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual view(filledForm, NormalMode).toString

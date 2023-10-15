@@ -18,7 +18,6 @@ package controllers
 
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
-import models.IdentifierType.UTR
 import models.{Mode, UUIDGen, UniqueTaxpayerReference}
 import models.ReporterType.Sole
 import models.error.ApiError.NotFoundError
@@ -173,15 +172,15 @@ class IsThisYourBusinessController @Inject() (
       utr          <- request.userAnswers.get(UTRPage)
       businessName <- request.userAnswers.get(BusinessNamePage)
       businessType = request.userAnswers.get(ReporterTypePage)
-    } yield RegisterWithID(RegistrationRequest(UTR, utr.uniqueTaxPayerReference, businessName, businessType, None))
+    } yield RegisterWithID(RegistrationRequest("UTR", utr.uniqueTaxPayerReference, businessName, businessType, None))
 
   def buildAutoMatchedBusinessRegistrationRequest(utr: UniqueTaxpayerReference): Option[RegisterWithID] =
-    Option(RegisterWithID(AutoMatchedRegistrationRequest(UTR, utr.uniqueTaxPayerReference)))
+    Option(RegisterWithID(AutoMatchedRegistrationRequest("UTR", utr.uniqueTaxPayerReference)))
 
   def buildIndividualRegistrationRequest()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
     for {
       utr             <- request.userAnswers.get(UTRPage)
       soleTradersName <- request.userAnswers.get(SoleNamePage)
-    } yield RegisterWithID(soleTradersName, None, UTR, utr.uniqueTaxPayerReference)
+    } yield RegisterWithID(soleTradersName, None, "UTR", utr.uniqueTaxPayerReference)
 
 }

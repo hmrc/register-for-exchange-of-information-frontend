@@ -30,8 +30,8 @@ class DifferentBusinessControllerSpec extends SpecBase with ControllerMockFixtur
   lazy val loginURL: String = "http://localhost:9949/auth-login-stub/gg-sign-in"
 
   val userAnswers: UserAnswers =
-    emptyUserAnswers
-      .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("line1", None, None, None, None, "")))
+    UserAnswers(userAnswersId)
+      .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, "test", AddressResponse("line1", None, None, None, None, "")))
       .success
       .value
 
@@ -51,7 +51,7 @@ class DifferentBusinessControllerSpec extends SpecBase with ControllerMockFixtur
         val view = application.injector.instanceOf[DifferentBusinessView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(loginURL, Some(OrgName), Some(List("line1", ""))).toString
+        contentAsString(result) mustEqual view(loginURL, Some("test"), Some(List("line1", ""))).toString
       }
     }
 

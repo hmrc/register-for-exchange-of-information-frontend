@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.{Name, NormalMode}
+import models.{Name, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.WhatIsYourNamePage
 import play.api.test.FakeRequest
@@ -33,11 +33,13 @@ class WhatIsYourNameControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.WhatIsYourNameFormProvider().apply()
 
-  val validAnswer: Name = name
+  val firstName: String = "First Name"
+  val lastName: String  = "Last"
+  val validAnswer: Name = Name(firstName, lastName)
 
   val validData = Map(
-    "firstName" -> name.firstName,
-    "lastName"  -> name.lastName
+    "firstName" -> firstName,
+    "lastName"  -> lastName
   )
 
   "WhatIsYourName Controller" - {
@@ -58,7 +60,7 @@ class WhatIsYourNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(WhatIsYourNamePage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(WhatIsYourNamePage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
       implicit val request = FakeRequest(GET, loadRoute)
 
@@ -78,7 +80,7 @@ class WhatIsYourNameControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("firstName", name.firstName), ("lastName", name.lastName))
+          .withFormUrlEncodedBody(("firstName", firstName), ("lastName", lastName))
 
       val result = route(app, request).value
 

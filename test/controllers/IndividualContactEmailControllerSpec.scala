@@ -34,8 +34,8 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.IndividualContactEmailFormProvider().apply()
 
-  val userAnswers: UserAnswers = emptyUserAnswers
-    .set(IndividualContactEmailPage, TestEmail)
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+    .set(IndividualContactEmailPage, "email@email.com")
     .success
     .value
 
@@ -67,7 +67,7 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
       val filledForm = form.bind(
         Map(
-          "email" -> TestEmail
+          "email" -> "email@email.com"
         )
       )
 
@@ -83,7 +83,7 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("email", TestEmail))
+          .withFormUrlEncodedBody(("email", "email@email.com"))
 
       val result = route(app, request).value
 

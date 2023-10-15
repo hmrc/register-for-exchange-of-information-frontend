@@ -58,14 +58,14 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
 
   val subscriptionId: SubscriptionID = SubscriptionID("ABC123")
 
-  val userAnswers: UserAnswers = emptyUserAnswers
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId)
     .set(DoYouHaveUniqueTaxPayerReferencePage, false)
     .success
     .value
     .set(ContactNamePage, "")
     .success
     .value
-    .set(ContactEmailPage, TestEmail)
+    .set(ContactEmailPage, "test@test.com")
     .success
     .value
 
@@ -73,7 +73,7 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
     "updateSubscriptionIdAndCreateEnrolment update the subscription ID in user answers and create an enrolment" in {
 
       val affinityGroup: AffinityGroup         = AffinityGroup.Individual
-      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, UserAnswersId, affinityGroup, userAnswers)
+      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, userAnswersId, affinityGroup, userAnswers)
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Right(1)))
@@ -91,7 +91,7 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
     "Redirect to Individual already registered when tax enrolments returns EnrolmentExists error" in {
       val affinityGroup: AffinityGroup = AffinityGroup.Individual
 
-      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, UserAnswersId, affinityGroup, userAnswers)
+      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, userAnswersId, affinityGroup, userAnswers)
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(EnrolmentExistsError(mock[GroupIds]))))
@@ -110,7 +110,7 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
       val affinityGroup: AffinityGroup         = AffinityGroup.Organisation
       val addressResponse                      = AddressResponse("line1", None, None, None, None, "UK")
       val userAnswers2                         = userAnswers.set(RegistrationInfoPage, OrgRegistrationInfo(safeId, name = "", address = addressResponse)).success.value
-      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, UserAnswersId, affinityGroup, userAnswers2)
+      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, userAnswersId, affinityGroup, userAnswers2)
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(EnrolmentExistsError(mock[GroupIds]))))
@@ -128,7 +128,7 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
     "Redirect to Business already registered without ID when tax enrolments returns EnrolmentExists error" in {
       val affinityGroup: AffinityGroup = AffinityGroup.Organisation
 
-      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, UserAnswersId, affinityGroup, userAnswers)
+      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, userAnswersId, affinityGroup, userAnswers)
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(EnrolmentExistsError(mock[GroupIds]))))
@@ -146,7 +146,7 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
     "Redirect to SomeInformation is missing controller" in {
       val affinityGroup: AffinityGroup = AffinityGroup.Organisation
 
-      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, UserAnswersId, affinityGroup, userAnswers)
+      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, userAnswersId, affinityGroup, userAnswers)
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(MandatoryInformationMissingError("Error"))))
@@ -164,7 +164,7 @@ class ControllerHelperSpec extends SpecBase with ControllerMockFixtures with Bef
     "Return service unavailable for other errors" in {
       val affinityGroup: AffinityGroup = AffinityGroup.Organisation
 
-      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, UserAnswersId, affinityGroup, userAnswers)
+      val dataRequest: DataRequest[AnyContent] = DataRequest(fakeRequest, userAnswersId, affinityGroup, userAnswers)
 
       when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
         .thenReturn(Future.successful(Left(ApiError.ServiceUnavailableError)))

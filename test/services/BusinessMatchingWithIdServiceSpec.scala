@@ -21,8 +21,8 @@ import cats.data.EitherT
 import cats.implicits.catsStdInstancesForFuture
 import connectors.RegistrationConnector
 import helpers.RegisterHelper._
-import models.IdentifierType.{NINO, UTR}
 import models.ReporterType.LimitedCompany
+import models.Name
 import models.error.ApiError
 import models.error.ApiError.NotFoundError
 import models.matching._
@@ -56,6 +56,8 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
     super.beforeEach()
   }
 
+  val name: Name = Name("First", "Last")
+
   val dob: LocalDate = LocalDate.now
 
   "BusinessMatchingWithIdService" - {
@@ -69,9 +71,9 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(RegisterWithID(name, Some(LocalDate.now()), NINO, TestNiNumber))
+          service.sendIndividualRegistrationInformation(RegisterWithID(name, Some(LocalDate.now()), "NINO", "CC123456C"))
 
-        result.futureValue mustBe Right(IndRegistrationInfo(safeId))
+        result.futureValue mustBe Right(IndRegistrationInfo(SafeId("XE0000123456789")))
       }
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
@@ -81,7 +83,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
-          service.sendIndividualRegistrationInformation(RegisterWithID(name, Some(LocalDate.now()), NINO, TestNiNumber))
+          service.sendIndividualRegistrationInformation(RegisterWithID(name, Some(LocalDate.now()), "NINO", "CC123456C"))
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -97,11 +99,11 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendBusinessRegistrationInformation(
-            RegisterWithID(RegistrationRequest(UTR, utr.uniqueTaxPayerReference, OrgName, Some(LimitedCompany)))
+            RegisterWithID(RegistrationRequest("UTR", "XE0000123456789", "name", Some(LimitedCompany)))
           )
 
         result.futureValue mustBe Right(
-          OrgRegistrationInfo(safeId, OrgName, addressResponse)
+          OrgRegistrationInfo(SafeId("XE0000123456789"), "name", addressResponse)
         )
       }
 
@@ -111,8 +113,7 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
-        val registerWithID =
-          RegisterWithID(RegistrationRequest(UTR, utr.uniqueTaxPayerReference, OrgName, Some(LimitedCompany)))
+        val registerWithID = RegisterWithID(RegistrationRequest("UTR", "UTR", "name", Some(LimitedCompany)))
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendBusinessRegistrationInformation(registerWithID)
 

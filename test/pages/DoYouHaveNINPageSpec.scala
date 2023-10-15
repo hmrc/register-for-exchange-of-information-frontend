@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{Address, AddressLookup, Country, UserAnswers}
+import models.{Address, AddressLookup, Country, Name, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Nino
@@ -41,10 +41,10 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
+            .set(WhatIsYourNationalInsuranceNumberPage, Nino("CS700100A"))
             .success
             .value
-            .set(WhatIsYourNamePage, name)
+            .set(WhatIsYourNamePage, Name("firstName", "lastName"))
             .success
             .value
             .set(WhatIsYourDateOfBirthPage, LocalDate.now())
@@ -65,7 +65,7 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
       forAll(arbitrary[UserAnswers]) {
         userAnswers =>
           val result = userAnswers
-            .set(NonUkNamePage, nonUkName)
+            .set(NonUkNamePage, NonUkName("firstName", "lastName"))
             .success
             .value
             .set(DateOfBirthWithoutIdPage, LocalDate.now())

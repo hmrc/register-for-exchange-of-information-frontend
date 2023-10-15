@@ -16,7 +16,7 @@
 
 package models.subscription.request
 
-import models.{IdentifierType, UserAnswers}
+import models.UserAnswers
 import models.matching.SafeId
 import pages._
 import play.api.libs.json.{Json, OFormat}
@@ -33,7 +33,7 @@ case class CreateRequestDetail(IDType: String,
 object CreateRequestDetail extends UserAnswersHelper {
 
   implicit val format: OFormat[CreateRequestDetail] = Json.format[CreateRequestDetail]
-  private val idType: String                        = IdentifierType.SAFE
+  private val idType: String                        = "SAFE"
 
   def convertTo(safeId: SafeId, userAnswers: UserAnswers): Option[CreateRequestDetail] = {
     for {

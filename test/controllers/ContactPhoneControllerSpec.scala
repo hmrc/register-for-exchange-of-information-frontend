@@ -34,8 +34,8 @@ class ContactPhoneControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.ContactPhoneFormProvider().apply()
 
-  val contactName              = name.fullName
-  val userAnswers: UserAnswers = emptyUserAnswers.set(ContactNamePage, contactName).success.value
+  val contactName              = "Contact name"
+  val userAnswers: UserAnswers = UserAnswers(userAnswersId).set(ContactNamePage, contactName).success.value
 
   "ContactPhone Controller" - {
 

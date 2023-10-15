@@ -16,15 +16,12 @@
 
 package helpers
 
-import base.TestValues
-import models.IdentifierType.NINO
-import models.ReporterType.Partnership
 import play.api.libs.json.{JsNull, JsObject, JsString, Json}
 
-object JsonFixtures extends TestValues {
+object JsonFixtures {
 
   val registerWithIDPayloadJson: String =
-    s"""
+    """
       |{
       |"registerWithIDRequest": {
       |"requestCommon": {
@@ -39,15 +36,15 @@ object JsonFixtures extends TestValues {
       |]
       |},
       |"requestDetail": {
-      |"IDType": "$NINO",
-      |"IDNumber": "$TestNiNumber",
+      |"IDType": "NINO",
+      |"IDNumber": "0123456789",
       |"requiresNameMatch": true,
       |"isAnAgent": false,
       |"individual": {
-      |"firstName": "${name.firstName}",
-      |"middleName": "$MiddleName",
-      |"lastName": "${name.lastName}",
-      |"dateOfBirth": "$TestDate"
+      |"firstName": "Fred",
+      |"middleName": "Flintstone",
+      |"lastName": "Flint",
+      |"dateOfBirth": "1999-12-20"
       |}
       |}
       |}
@@ -67,15 +64,15 @@ object JsonFixtures extends TestValues {
         )
       ),
       "requestDetail" -> Json.obj(
-        "IDType"            -> NINO,
-        "IDNumber"          -> TestNiNumber,
+        "IDType"            -> "NINO",
+        "IDNumber"          -> "0123456789",
         "requiresNameMatch" -> true,
         "isAnAgent"         -> false,
         "individual" -> Json.obj(
-          "firstName"   -> name.firstName,
-          "middleName"  -> MiddleName,
-          "lastName"    -> name.lastName,
-          "dateOfBirth" -> TestDate
+          "firstName"   -> "Fred",
+          "middleName"  -> "Flintstone",
+          "lastName"    -> "Flint",
+          "dateOfBirth" -> "1999-12-20"
         )
       )
     )
@@ -99,7 +96,7 @@ object JsonFixtures extends TestValues {
       |]
       |},
       |"responseDetail": {
-      |"SAFEID": "${safeId.value}",
+      |"SAFEID": "XE0000123456789",
       |"ARN": "WARN8764123",
       |"isEditable": true,
       |"isAnAgent": false,
@@ -126,14 +123,14 @@ object JsonFixtures extends TestValues {
       |"faxNumber":
       |"1111111",
       |"emailAddress":
-      |"$TestEmail"
+      |"test@test.org"
       |}
       |}
       |}
       |}""".stripMargin
 
   val withIDOrganisationResponse: String =
-    s"""
+    """
       |{
       |"registerWithIDResponse": {
       |"responseCommon": {
@@ -150,15 +147,15 @@ object JsonFixtures extends TestValues {
       |]
       |},
       |"responseDetail": {
-      |"SAFEID": "${safeId.value}",
+      |"SAFEID": "XE0000123456789",
       |"ARN": "WARN8764123",
       |"isEditable": true,
       |"isAnAgent": false,
       |"isAnIndividual": true,
       |"organisation": {
-      |"organisationName": "$OrgName",
+      |"organisationName": "name",
       |"isAGroup": false,
-      |"organisationType": "${Partnership.code}"
+      |"organisationType": "0001"
       |},
       |"address": {
       |"addressLine1": "100 Parliament Street",
@@ -174,14 +171,14 @@ object JsonFixtures extends TestValues {
       |"faxNumber":
       |"1111111",
       |"emailAddress":
-      |"$TestEmail"
+      |"test@test.org"
       |}
       |}
       |}
       |}""".stripMargin
 
   val withoutIDResponse: String =
-    s"""{
+    """{
       |"registerWithoutIDResponse": {
       |"responseCommon":{
       |"status": "OK",
@@ -197,7 +194,7 @@ object JsonFixtures extends TestValues {
       |]
       |},
       |"responseDetail":{
-      |"SAFEID": "${safeId.value}",
+      |"SAFEID": "XE0000123456789",
       |"ARN": "WARN8764123"
       |}
       |}
@@ -217,7 +214,7 @@ object JsonFixtures extends TestValues {
         )
       ),
       "responseDetail" -> Json.obj(
-        "SAFEID"         -> safeId.value,
+        "SAFEID"         -> "XE0000123456789",
         "ARN"            -> "WARN8764123",
         "isEditable"     -> true,
         "isAnAgent"      -> false,
@@ -239,7 +236,7 @@ object JsonFixtures extends TestValues {
           "phoneNumber"  -> "1111111",
           "mobileNumber" -> "2222222",
           "faxNumber"    -> "1111111",
-          "emailAddress" -> TestEmail
+          "emailAddress" -> "test@test.org"
         )
       )
     )
@@ -563,7 +560,7 @@ object JsonFixtures extends TestValues {
   //// Without ID
 
   val registerWithoutIDPayloadJson: String =
-    s"""
+    """
       |{
       |"registerWithoutIDRequest": {
       |"requestCommon": {
@@ -579,9 +576,9 @@ object JsonFixtures extends TestValues {
       |},
       |"requestDetail": {
       |"individual": {
-      |"firstName": "${name.firstName}",
-      |"lastName": "${name.lastName}",
-      |"dateOfBirth": "$TestDate"
+      |"firstName": "Fred",
+      |"lastName": "Flint",
+      |"dateOfBirth": "1999-12-20"
       |},
       |"address": {
       |"addressLine1": "line 1",
@@ -595,7 +592,7 @@ object JsonFixtures extends TestValues {
       |"phoneNumber": "111111",
       |"mobileNumber": "222222",
       |"faxNumber": "333333",
-      |"emailAddress": "$TestEmail"
+      |"emailAddress": "test@test.org"
       |},
       |"identification": {
       |"idNumber": "",
@@ -621,9 +618,9 @@ object JsonFixtures extends TestValues {
       ),
       "requestDetail" -> Json.obj(
         "individual" -> Json.obj(
-          "firstName"   -> name.firstName,
-          "lastName"    -> name.lastName,
-          "dateOfBirth" -> TestDate
+          "firstName"   -> "Fred",
+          "lastName"    -> "Flint",
+          "dateOfBirth" -> "1999-12-20"
         ),
         "address" -> Json.obj(
           "addressLine1" -> "line 1",
@@ -637,7 +634,7 @@ object JsonFixtures extends TestValues {
           "phoneNumber"  -> "111111",
           "mobileNumber" -> "222222",
           "faxNumber"    -> "333333",
-          "emailAddress" -> TestEmail
+          "emailAddress" -> "test@test.org"
         ),
         "identification" -> Json.obj(
           "idNumber"           -> "",
@@ -649,7 +646,7 @@ object JsonFixtures extends TestValues {
   )
 
   val registerWithoutIDResponse: String =
-    s"""
+    """
       |{
       |  "registerWithoutIDResponse": {
       |    "responseCommon": {
@@ -658,7 +655,7 @@ object JsonFixtures extends TestValues {
       |      "processingDate": "2020-09-01T01:00:00Z"
       |    },
       |    "responseDetail": {
-      |      "SAFEID": "${safeId.value}"
+      |      "SAFEID": "XE0000123456789"
       |    }
       |  }
       |}
@@ -672,7 +669,7 @@ object JsonFixtures extends TestValues {
         "processingDate" -> "2020-09-01T01:00:00Z"
       ),
       "responseDetail" -> Json.obj(
-        "SAFEID" -> safeId.value
+        "SAFEID" -> "XE0000123456789"
       )
     )
   )

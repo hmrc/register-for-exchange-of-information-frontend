@@ -17,17 +17,17 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import models.ReporterTypeText.LimitedLiabilityPartnership
 import play.api.data.FormError
 
 class BusinessNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "businessName.error.required.llp"
-  val lengthKey   = "businessName.error.length.llp"
-  val invalidKey  = "businessName.error.invalid"
-  val maxLength   = 105
+  val selectedReporterType = "llp"
+  val requiredKey          = "businessName.error.required.llp"
+  val lengthKey            = "businessName.error.length.llp"
+  val invalidKey           = "businessName.error.invalid"
+  val maxLength            = 105
 
-  val form = new BusinessNameFormProvider()(LimitedLiabilityPartnership)
+  val form = new BusinessNameFormProvider()(selectedReporterType)
 
   ".value" - {
 

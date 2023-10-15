@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.BusinessHaveDifferentNamePage
 import play.api.test.FakeRequest
@@ -50,7 +50,7 @@ class BusinessHaveDifferentNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(BusinessHaveDifferentNamePage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId).set(BusinessHaveDifferentNamePage, true).success.value
       retrieveUserAnswersData(userAnswers)
 
       val application = guiceApplicationBuilder().build()

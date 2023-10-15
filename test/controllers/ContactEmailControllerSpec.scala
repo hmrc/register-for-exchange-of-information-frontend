@@ -17,7 +17,7 @@
 package controllers
 
 import base.ControllerSpecBase
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import pages.{ContactEmailPage, ContactNamePage}
 import play.api.test.FakeRequest
@@ -33,9 +33,9 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
   private def form = new forms.ContactEmailFormProvider().apply()
 
-  val contactName = name.fullName
+  val contactName = "Name"
 
-  val userAnswers = emptyUserAnswers
+  val userAnswers = UserAnswers(userAnswersId)
     .set(ContactNamePage, contactName)
     .success
     .value
@@ -65,7 +65,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
 
       val userAnswers2 =
         userAnswers
-          .set(ContactEmailPage, TestEmail)
+          .set(ContactEmailPage, "some@email.com")
           .success
           .value
 
@@ -81,7 +81,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[ContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(TestEmail), NormalMode, name.fullName).toString()
+        contentAsString(result) mustEqual view(form.fill("some@email.com"), NormalMode, "Name").toString()
       }
     }
 
@@ -92,7 +92,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
       retrieveUserAnswersData(emptyUserAnswers)
       val request =
         FakeRequest(POST, submitRoute)
-          .withFormUrlEncodedBody(("value", TestEmail))
+          .withFormUrlEncodedBody(("value", "some@email.com"))
 
       val result = route(app, request).value
 
@@ -115,7 +115,7 @@ class ContactEmailControllerSpec extends ControllerSpecBase {
         val view = application.injector.instanceOf[ContactEmailView]
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, name.fullName).toString()
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "Name").toString()
       }
     }
   }

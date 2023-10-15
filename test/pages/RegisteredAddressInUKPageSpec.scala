@@ -16,9 +16,9 @@
 
 package pages
 
-import models.matching.OrgRegistrationInfo
+import models.matching.{OrgRegistrationInfo, SafeId}
 import models.register.response.details.AddressResponse
-import models.{Address, AddressLookup, Country, UserAnswers}
+import models.{Address, AddressLookup, Country, Name, NonUkName, UserAnswers}
 import org.scalacheck.Arbitrary.arbitrary
 import pages.behaviours.PageBehaviours
 import uk.gov.hmrc.domain.Nino
@@ -51,10 +51,10 @@ class RegisteredAddressInUKPageSpec extends PageBehaviours {
             .set(DoYouHaveNINPage, true)
             .success
             .value
-            .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
+            .set(WhatIsYourNationalInsuranceNumberPage, Nino("AA000000A"))
             .success
             .value
-            .set(WhatIsYourNamePage, name)
+            .set(WhatIsYourNamePage, Name("first", "last"))
             .success
             .value
             .set(WhatIsYourDateOfBirthPage, LocalDate.now())
@@ -63,13 +63,13 @@ class RegisteredAddressInUKPageSpec extends PageBehaviours {
             .set(DateOfBirthWithoutIdPage, LocalDate.now())
             .success
             .value
-            .set(NonUkNamePage, nonUkName)
+            .set(NonUkNamePage, NonUkName("first", "last"))
             .success
             .value
             .set(DoYouLiveInTheUKPage, true)
             .success
             .value
-            .set(WhatIsYourPostcodePage, TestPostCode)
+            .set(WhatIsYourPostcodePage, "postcode")
             .success
             .value
             .set(IndividualAddressWithoutIdPage, address)
@@ -87,16 +87,16 @@ class RegisteredAddressInUKPageSpec extends PageBehaviours {
             .set(AddressUKPage, address)
             .success
             .value
-            .set(BusinessWithoutIDNamePage, OrgName)
+            .set(BusinessWithoutIDNamePage, "Name")
             .success
             .value
             .set(BusinessHaveDifferentNamePage, true)
             .success
             .value
-            .set(WhatIsTradingNamePage, OrgName)
+            .set(WhatIsTradingNamePage, "trading name")
             .success
             .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
+            .set(RegistrationInfoPage, OrgRegistrationInfo(SafeId("safeId"), "Organisation", AddressResponse("Address", None, None, None, None, "GB")))
             .success
             .value
             .set(BusinessAddressWithoutIdPage, address)

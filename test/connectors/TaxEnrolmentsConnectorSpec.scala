@@ -22,7 +22,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, put, urlEqual
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import generators.Generators
 import helpers.WireMockServerHandler
-import models.IdentifierType._
 import models.enrolment.{SubscriptionInfo, Verifier}
 import models.error.ApiError
 import models.error.ApiError.{ServiceUnavailableError, UnableToCreateEnrolmentError}
@@ -90,7 +89,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
           (safeID, subID, nino) =>
             val enrolmentInfo = SubscriptionInfo(safeID = safeID, nino = Some(nino), mdrId = subID)
 
-            val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(NINO, enrolmentInfo.nino.get))
+            val expectedVerifiers = Seq(Verifier("SAFEID", enrolmentInfo.safeID), Verifier("NINO", enrolmentInfo.nino.get))
 
             enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
 
@@ -102,7 +101,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
           (safeID, subID, utr) =>
             val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
 
-            val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(SAUTR, enrolmentInfo.saUtr.get))
+            val expectedVerifiers = Seq(Verifier("SAFEID", enrolmentInfo.safeID), Verifier("SAUTR", enrolmentInfo.saUtr.get))
 
             enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
         }
@@ -114,7 +113,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
           (safeID, subID, utr) =>
             val enrolmentInfo = SubscriptionInfo(safeID = safeID, ctUtr = Some(utr), mdrId = subID)
 
-            val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(CTUTR, enrolmentInfo.ctUtr.get))
+            val expectedVerifiers = Seq(Verifier("SAFEID", enrolmentInfo.safeID), Verifier("CTUTR", enrolmentInfo.ctUtr.get))
 
             enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
         }

@@ -16,7 +16,8 @@
 
 package base
 
-import models.{UUIDGen, UUIDGenImpl, UserAnswers}
+import models.matching.SafeId
+import models.{UUIDGen, UUIDGenImpl, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.MockitoSugar
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -28,7 +29,6 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.format.DateTimeFormatter
 import java.time.{Clock, Instant, ZoneId}
 
 trait SpecBase
@@ -39,18 +39,19 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience
     with MockitoSugar
-    with BeforeAndAfterEach
-    with TestValues {
+    with BeforeAndAfterEach {
 
-  def emptyUserAnswers = UserAnswers(UserAnswersId, Json.obj(), Instant.now(fixedClock))
+  val userAnswersId = "id"
 
-  implicit val hc: HeaderCarrier      = HeaderCarrier()
+  def emptyUserAnswers = UserAnswers(userAnswersId, Json.obj(), Instant.now(fixedClock))
+
+  implicit val hc: HeaderCarrier   = HeaderCarrier()
+  val utr: UniqueTaxpayerReference = UniqueTaxpayerReference("UTR")
+  val safeId: SafeId               = SafeId("SAFEID")
+
   implicit val uuidGenerator: UUIDGen = new UUIDGenImpl
 
-  private val UtcZoneId          = "UTC"
-  implicit val fixedClock: Clock = Clock.fixed(Instant.now(), ZoneId.of(UtcZoneId))
-
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+  implicit val fixedClock: Clock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
