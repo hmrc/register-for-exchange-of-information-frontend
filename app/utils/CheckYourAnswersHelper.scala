@@ -56,7 +56,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
           href = if (userAnswers.get(AutoMatchedUTRPage).isEmpty) {
             routes.ReporterTypeController.onPageLoad(CheckMode).url
           } else {
-            routes.IsThisYourBusinessController.onPageLoad(CheckMode).url
+            routes.UnableToChangeBusinessController.onPageLoad().url
           }
         )
       case _ => None
