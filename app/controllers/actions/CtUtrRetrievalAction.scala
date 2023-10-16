@@ -17,9 +17,12 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import models.{IdentifierType, UniqueTaxpayerReference}
 import models.requests.IdentifierRequest
-import play.api.mvc.ActionTransformer
+import models.{IdentifierType, UniqueTaxpayerReference}
+import play.api.Logging
+import play.api.mvc.Results.Redirect
+import play.api.mvc.{ActionFunction, Result}
+import uk.gov.hmrc.auth.core.AffinityGroup
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,26 +32,36 @@ class CtUtrRetrievalActionImpl @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends CtUtrRetrievalAction {
 
-  override def apply(): ActionTransformer[IdentifierRequest, IdentifierRequest] =
+  override def apply(): ActionFunction[IdentifierRequest, IdentifierRequest] =
     new CtUtrRetrievalActionProvider(config)
 }
 
 class CtUtrRetrievalActionProvider @Inject() (
   val config: FrontendAppConfig
 )(implicit val executionContext: ExecutionContext)
-    extends ActionTransformer[IdentifierRequest, IdentifierRequest] {
+    extends ActionFunction[IdentifierRequest, IdentifierRequest]
+    with Logging {
 
-  override protected def transform[A](request: IdentifierRequest[A]): Future[IdentifierRequest[A]] = {
+  override def invokeBlock[A](request: IdentifierRequest[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+
     val ctUtr = request.enrolments
       .find(_.key == config.ctEnrolmentKey)
       .flatMap(_.identifiers.collectFirst {
         case i if i.key == IdentifierType.UTR => UniqueTaxpayerReference(i.value)
       })
 
-    Future.successful(request.copy(utr = ctUtr))
+    (request.affinityGroup, ctUtr) match {
+      case (AffinityGroup.Organisation, Some(_)) =>
+        block(request.copy(utr = ctUtr))
+      case (_, Some(_)) =>
+        logger.error("IR-CT UTR is only allowed for affinity group Organisation")
+        Future.successful(Redirect(controllers.routes.ThereIsAProblemController.onPageLoad()))
+      case _ =>
+        block(request)
+    }
   }
 }
 
 trait CtUtrRetrievalAction {
-  def apply(): ActionTransformer[IdentifierRequest, IdentifierRequest]
+  def apply(): ActionFunction[IdentifierRequest, IdentifierRequest]
 }
