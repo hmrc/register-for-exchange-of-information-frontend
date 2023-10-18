@@ -18,7 +18,7 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import models.requests.IdentifierRequest
-import models.{IdentifierType, UniqueTaxpayerReference}
+import models.{IdentifierType, NormalMode, UniqueTaxpayerReference}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFunction, Result}
@@ -54,8 +54,8 @@ class CtUtrRetrievalActionProvider @Inject() (
       case (AffinityGroup.Organisation, Some(_)) =>
         block(request.copy(utr = ctUtr))
       case (_, Some(_)) =>
-        logger.error("IR-CT UTR is only allowed for affinity group Organisation")
-        Future.successful(Redirect(controllers.routes.ThereIsAProblemController.onPageLoad()))
+        logger.warn("IR-CT UTR found for affinity group other than Organisation")
+        Future.successful(Redirect(controllers.routes.ReporterTypeController.onPageLoad(NormalMode)))
       case _ =>
         block(request)
     }

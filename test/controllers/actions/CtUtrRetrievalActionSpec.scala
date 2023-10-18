@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.IdentifierType
+import models.{IdentifierType, NormalMode}
 import models.requests.IdentifierRequest
 import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -76,13 +76,13 @@ class CtUtrRetrievalActionSpec extends SpecBase with TableDrivenPropertyChecks {
       affinityGroup =>
         s"when the affinity group is $affinityGroup" - {
 
-          "must redirect to ThereIsAProblemPage when CT-UTR enrolment exists" in {
+          "must redirect to ReporterTypePage when CT-UTR enrolment exists" in {
             val ctUtrEnrolment    = Enrolment(config.ctEnrolmentKey, Seq(ctUtrEnrolmentIdentifier), state = "")
             val identifierRequest = IdentifierRequest(fakeRequest, UserAnswersId, affinityGroup, enrolments = Set(ctUtrEnrolment))
 
             val result = action.invokeBlock(identifierRequest, block)
 
-            result.futureValue mustBe Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())
+            result.futureValue mustBe Redirect(controllers.routes.ReporterTypeController.onPageLoad(NormalMode))
           }
 
           "must execute request block when CT-UTR enrolment does not exists" in {
