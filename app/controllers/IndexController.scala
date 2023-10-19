@@ -42,7 +42,7 @@ class IndexController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheck().async {
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheckAndCtUtrRetrieval().async {
     implicit request =>
       request.utr match {
         case Some(utr) =>
