@@ -26,16 +26,16 @@ class FakeCtUtrRetrievalActionProvider(
   utr: Option[UniqueTaxpayerReference] = None
 ) extends CtUtrRetrievalAction {
 
-  def apply(): ActionTransformer[IdentifierRequest, IdentifierRequest] =
+  def apply(): ActionFunction[IdentifierRequest, IdentifierRequest] =
     new FakeCtUtrRetrievalAction(utr)
 }
 
 class FakeCtUtrRetrievalAction(
   utr: Option[UniqueTaxpayerReference] = None
-) extends ActionTransformer[IdentifierRequest, IdentifierRequest] {
+) extends ActionFunction[IdentifierRequest, IdentifierRequest] {
 
-  override protected def transform[A](request: IdentifierRequest[A]): Future[IdentifierRequest[A]] =
-    Future.successful(request.copy(utr = utr))
+  override def invokeBlock[A](request: IdentifierRequest[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
+    block(request.copy(utr = utr))
 
   implicit override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

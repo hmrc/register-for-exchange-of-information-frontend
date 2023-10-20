@@ -32,8 +32,11 @@ class StandardActionSets @Inject() (identify: IdentifierAction,
                                     dependantAnswer: DependantAnswerProvider
 ) {
 
-  def identifiedUserWithEnrolmentCheck(): ActionBuilder[IdentifierRequest, AnyContent] =
+  def identifiedUserWithEnrolmentCheckAndCtUtrRetrieval(): ActionBuilder[IdentifierRequest, AnyContent] =
     identify() andThen checkEnrolment() andThen retrieveCtUTR()
+
+  def identifiedUserWithEnrolmentCheck(): ActionBuilder[IdentifierRequest, AnyContent] =
+    identify() andThen checkEnrolment()
 
   def identifiedUserWithInitializedData(): ActionBuilder[DataRequest, AnyContent] =
     identifiedUserWithEnrolmentCheck() andThen getData() andThen initializeData()
