@@ -18,7 +18,7 @@ package models.email
 
 import base.SpecBase
 import models.ReporterType
-import models.ReporterType.{Sole, Individual}
+import models.ReporterType.{Individual, Sole}
 import org.scalacheck.Gen
 import org.scalacheck.rng.Seed
 import pages.{AutoMatchedUTRPage, DoYouHaveUniqueTaxPayerReferencePage, ReporterTypePage}
