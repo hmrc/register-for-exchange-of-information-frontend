@@ -18,7 +18,7 @@ package models.email
 
 import base.SpecBase
 import models.ReporterType
-import models.ReporterType.{Individual, Sole}
+import models.ReporterType.Sole
 import org.scalacheck.Gen
 import org.scalacheck.rng.Seed
 import pages.{AutoMatchedUTRPage, DoYouHaveUniqueTaxPayerReferencePage, ReporterTypePage}
@@ -48,7 +48,7 @@ class EmailUserTypeSpec extends SpecBase {
 
       "must return Individual when UserAnswers has ReporterType containing Individual " in {
         val userAnswers = emptyUserAnswers
-          .set(ReporterTypePage, Individual)
+          .set(ReporterTypePage, ReporterType.Individual)
           .success
           .value
 
@@ -58,7 +58,7 @@ class EmailUserTypeSpec extends SpecBase {
         val reporterType = Gen
           .oneOf(ReporterType.values)
           .filterNot(
-            reporter => reporter == Sole || reporter == Individual
+            reporter => reporter == Sole || reporter == ReporterType.Individual
           )
           .pureApply(Gen.Parameters.default, Seed.random())
         val userAnswers = emptyUserAnswers
