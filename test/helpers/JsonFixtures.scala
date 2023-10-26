@@ -17,7 +17,7 @@
 package helpers
 
 import base.TestValues
-import models.IdentifierType.NINO
+import models.IdentifierType._
 import models.ReporterType.Partnership
 import play.api.libs.json.{JsNull, JsObject, JsString, Json}
 
@@ -43,7 +43,7 @@ object JsonFixtures extends TestValues {
       |"IDNumber": "$TestNiNumber",
       |"requiresNameMatch": true,
       |"isAnAgent": false,
-      |"individual": {
+      |"$IndividualKey": {
       |"firstName": "${name.firstName}",
       |"middleName": "$MiddleName",
       |"lastName": "${name.lastName}",
@@ -71,7 +71,7 @@ object JsonFixtures extends TestValues {
         "IDNumber"          -> TestNiNumber,
         "requiresNameMatch" -> true,
         "isAnAgent"         -> false,
-        "individual" -> Json.obj(
+        IndividualKey -> Json.obj(
           "firstName"   -> name.firstName,
           "middleName"  -> MiddleName,
           "lastName"    -> name.lastName,
@@ -104,7 +104,7 @@ object JsonFixtures extends TestValues {
       |"isEditable": true,
       |"isAnAgent": false,
       |"isAnIndividual": true,
-      |"individual": {
+      |"$IndividualKey": {
       |"firstName": "Ron",
       |"middleName":
       |"Madisson",
@@ -155,7 +155,7 @@ object JsonFixtures extends TestValues {
       |"isEditable": true,
       |"isAnAgent": false,
       |"isAnIndividual": true,
-      |"organisation": {
+      |"$OrganisationKey": {
       |"organisationName": "$OrgName",
       |"isAGroup": false,
       |"organisationType": "${Partnership.code}"
@@ -223,7 +223,7 @@ object JsonFixtures extends TestValues {
         "isAnAgent"      -> false,
         "isAnIndividual" -> true,
         "isAnASAgent"    -> JsNull,
-        "individual" -> Json.obj(
+        IndividualKey -> Json.obj(
           "firstName"   -> "Ron",
           "middleName"  -> "Madisson",
           "lastName"    -> "Burgundy",
@@ -301,7 +301,7 @@ object JsonFixtures extends TestValues {
        |      "IDNumber": "idNumber",
        |      "isGBUser": true,
        |      "primaryContact": {
-       |        "individual": {
+       |        "$IndividualKey": {
        |          "firstName": $firstName,
        |          "lastName": $lastName
        |        },
@@ -331,7 +331,7 @@ object JsonFixtures extends TestValues {
       |      "IDNumber": "idNumber",
       |      "isGBUser": true,
       |      "primaryContact": {
-      |        "organisation": {
+      |        "$OrganisationKey": {
       |          "organisationName": $organisationName
       |        },
       |        "email": $primaryEmail,
@@ -364,14 +364,14 @@ object JsonFixtures extends TestValues {
        |      "IDNumber": "idNumber",
        |      "isGBUser": true,
        |      "primaryContact": {
-       |        "individual": {
+       |        "$IndividualKey": {
        |          "firstName": $firstName,
        |          "lastName": $lastName
        |        },
        |        "email": $primaryEmail
        |      },
        |      "secondaryContact": {
-       |        "organisation": {
+       |        "$OrganisationKey": {
        |          "organisationName": $organisationName
        |        },
        |        "email": $secondaryEmail,
@@ -404,7 +404,7 @@ object JsonFixtures extends TestValues {
        |      "IDNumber": "idNumber",
        |      "isGBUser": true,
        |      "primaryContact": {
-       |        "organisation": {
+       |        "$OrganisationKey": {
        |          "organisationName": $organisationName
        |        },
        |        "email": $primaryEmail,
@@ -412,7 +412,7 @@ object JsonFixtures extends TestValues {
        |        "mobile": $phone
        |      },
        |      "secondaryContact": {
-       |        "individual": {
+       |        "$IndividualKey": {
        |          "firstName": $firstName,
        |          "lastName": $lastName
        |        },
@@ -443,7 +443,7 @@ object JsonFixtures extends TestValues {
           "IDNumber" -> "idNumber",
           "isGBUser" -> true,
           "primaryContact" -> Json.obj(
-            "individual" -> Json.obj(
+            IndividualKey -> Json.obj(
               "firstName" -> firstName,
               "lastName"  -> lastName
             ),
@@ -473,7 +473,7 @@ object JsonFixtures extends TestValues {
           "IDNumber" -> "idNumber",
           "isGBUser" -> true,
           "primaryContact" -> Json.obj(
-            "organisation" -> Json.obj(
+            OrganisationKey -> Json.obj(
               "organisationName" -> organisationName
             ),
             "email"  -> primaryEmail,
@@ -504,14 +504,14 @@ object JsonFixtures extends TestValues {
           "IDNumber" -> "idNumber",
           "isGBUser" -> true,
           "primaryContact" -> Json.obj(
-            "individual" -> Json.obj(
+            IndividualKey -> Json.obj(
               "firstName" -> firstName,
               "lastName"  -> lastName
             ),
             "email" -> primaryEmail
           ),
           "secondaryContact" -> Json.obj(
-            "organisation" -> Json.obj(
+            OrganisationKey -> Json.obj(
               "organisationName" -> organisationName
             ),
             "email"  -> secondaryEmail,
@@ -542,7 +542,7 @@ object JsonFixtures extends TestValues {
           "IDNumber" -> "idNumber",
           "isGBUser" -> true,
           "primaryContact" -> Json.obj(
-            "organisation" -> Json.obj(
+            OrganisationKey -> Json.obj(
               "organisationName" -> organisationName
             ),
             "email"  -> primaryEmail,
@@ -550,7 +550,7 @@ object JsonFixtures extends TestValues {
             "mobile" -> phone
           ),
           "secondaryContact" -> Json.obj(
-            "individual" -> Json.obj(
+            IndividualKey -> Json.obj(
               "firstName" -> firstName,
               "lastName"  -> lastName
             ),
@@ -578,7 +578,7 @@ object JsonFixtures extends TestValues {
       |]
       |},
       |"requestDetail": {
-      |"individual": {
+      |"$IndividualKey": {
       |"firstName": "${name.firstName}",
       |"lastName": "${name.lastName}",
       |"dateOfBirth": "$TestDate"
@@ -620,7 +620,7 @@ object JsonFixtures extends TestValues {
         )
       ),
       "requestDetail" -> Json.obj(
-        "individual" -> Json.obj(
+        IndividualKey -> Json.obj(
           "firstName"   -> name.firstName,
           "lastName"    -> name.lastName,
           "dateOfBirth" -> TestDate

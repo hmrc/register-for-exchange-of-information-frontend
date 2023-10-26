@@ -467,7 +467,7 @@ class NormalModeMDRNavigatorSpec extends SpecBase with ScalaCheckPropertyChecks 
                   .set(UTRPage, utr)
                   .success
                   .value
-                  .set(ReporterTypePage, ReporterType.Sole)
+                  .set(ReporterTypePage, Sole)
                   .success
                   .value
 

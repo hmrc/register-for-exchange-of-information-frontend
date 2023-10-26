@@ -52,7 +52,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
           |   "tradingName": "Tools for Traders Limited",
           |   "isGBUser": true,
           |   "primaryContact": {
-          |    "individual": {
+          |    "$IndividualKey": {
           |     "firstName": "John",
           |     "lastName": "Smith"
           |    },

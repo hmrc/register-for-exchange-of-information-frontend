@@ -34,12 +34,15 @@ trait TestValues {
   val TestPostCode          = "ZZ1 1ZZ"
   val TestDate              = "1999-12-20"
 
-  private val FirstName = "Fred"
-  private val LastName  = "Flintstone"
-  val MiddleName        = "Flint"
+  val FirstName  = "Fred"
+  val LastName   = "Flintstone"
+  val MiddleName = "Flint"
 
   private val NonUkFirstName = "John"
   private val NonUkLastName  = "Smith"
+
+  val IndividualKey   = "individual"
+  val OrganisationKey = "organisation"
 
   val utr: UniqueTaxpayerReference = UniqueTaxpayerReference(UtrValue)
   val safeId: SafeId               = SafeId(SafeIdValue)

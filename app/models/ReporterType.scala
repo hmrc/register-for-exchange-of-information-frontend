@@ -26,27 +26,34 @@ sealed trait ReporterType {
 
 object ReporterType extends Enumerable.Implicits {
 
-  case object Sole extends WithName("sole") with ReporterType {
+  val SoleName                      = "sole"
+  val PartnershipName               = "partnership"
+  val LimitedPartnershipName        = "limitedPartnership"
+  val LimitedName                   = "limited"
+  val UnincorporatedAssociationName = "unincorporatedAssociation"
+  val IndividualName                = "individual"
+
+  case object Sole extends WithName(SoleName) with ReporterType {
     val code = "0000"
   }
 
-  case object Partnership extends WithName("partnership") with ReporterType {
+  case object Partnership extends WithName(PartnershipName) with ReporterType {
     val code = "0001"
   }
 
-  case object LimitedPartnership extends WithName("limitedPartnership") with ReporterType {
+  case object LimitedPartnership extends WithName(LimitedPartnershipName) with ReporterType {
     val code = "0002"
   }
 
-  case object LimitedCompany extends WithName("limited") with ReporterType {
+  case object LimitedCompany extends WithName(LimitedName) with ReporterType {
     val code = "0003"
   }
 
-  case object UnincorporatedAssociation extends WithName("unincorporatedAssociation") with ReporterType {
+  case object UnincorporatedAssociation extends WithName(UnincorporatedAssociationName) with ReporterType {
     val code = "0004"
   }
 
-  case object Individual extends WithName("individual") with ReporterType {
+  case object Individual extends WithName(IndividualName) with ReporterType {
     val code = "N/A"
   }
 

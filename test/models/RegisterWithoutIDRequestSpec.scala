@@ -76,7 +76,7 @@ class RegisterWithoutIDRequestSpec extends SpecBase {
       val ackRefLength = requestCommon.acknowledgementReference.length
       ackRefLength >= 1 && ackRefLength <= 32 mustBe true
 
-      requestCommon.regime mustBe "MDR"
+      requestCommon.regime mustBe MDR.toString
 
       val date: Regex = raw"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z".r
       date.findAllIn(requestCommon.receiptDate).toList.nonEmpty mustBe true
