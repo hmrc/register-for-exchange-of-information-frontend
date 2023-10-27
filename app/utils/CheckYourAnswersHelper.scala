@@ -281,7 +281,7 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
     _ =>
       val value = userAnswers.get(SndContactPhonePage).getOrElse("None")
       toRow(
-        msgKey = SndConHavePhonePage.toString,
+        msgKey = SndContactPhonePage.toString,
         value = Text(value),
         href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
