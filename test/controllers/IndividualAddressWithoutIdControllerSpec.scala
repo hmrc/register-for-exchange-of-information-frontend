@@ -52,7 +52,7 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
 
   "IndividualAddressWithoutId Controller" - {
 
-    val IndividualKey = "individual"
+    val viewKey = "individual"
 
     "must return OK and the correct view for a GET" in {
 
@@ -76,7 +76,7 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          IndividualKey,
+          viewKey,
           NormalMode
         ).toString
       }
@@ -104,7 +104,7 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form.fill(address),
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          IndividualKey,
+          viewKey,
           NormalMode
         ).toString
       }
@@ -166,7 +166,7 @@ class IndividualAddressWithoutIdControllerSpec extends ControllerSpecBase {
           boundForm,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          IndividualKey,
+          viewKey,
           NormalMode
         ).toString
       }

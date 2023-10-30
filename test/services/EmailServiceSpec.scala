@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import connectors.EmailConnector
 import generators.Generators
-import models.ReporterType.Sole
+import models.ReporterType.LimitedCompany
 import models.{ReporterType, SubscriptionID}
 import org.mockito.ArgumentMatchers.any
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -56,7 +56,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
     "sendAnLogEmail" - {
       "must submit to the email connector with valid business details Organisation and return Some(Accepted)" in {
         val userAnswers = emptyUserAnswers
-          .set(ReporterTypePage, ReporterType.LimitedCompany)
+          .set(ReporterTypePage, LimitedCompany)
           .success
           .value
           .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -230,7 +230,7 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value
-          .set(ReporterTypePage, Sole)
+          .set(ReporterTypePage, ReporterType.Sole)
           .success
           .value
           .set(SoleNamePage, name)

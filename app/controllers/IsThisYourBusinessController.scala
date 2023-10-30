@@ -19,8 +19,8 @@ package controllers
 import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
 import models.IdentifierType.UTR
-import models.{Mode, UUIDGen, UniqueTaxpayerReference}
 import models.ReporterType.Sole
+import models.{Mode, UUIDGen, UniqueTaxpayerReference}
 import models.error.ApiError.NotFoundError
 import models.matching.{AutoMatchedRegistrationRequest, OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID

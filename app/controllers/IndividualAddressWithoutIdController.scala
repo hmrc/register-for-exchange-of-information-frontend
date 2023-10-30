@@ -46,6 +46,8 @@ class IndividualAddressWithoutIdController @Inject() (
     with I18nSupport
     with Logging {
 
+  private val viewKey = "individual"
+
   val countriesList: Option[Seq[Country]] = countryListFactory.countryListWithoutGB
 
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
@@ -63,7 +65,7 @@ class IndividualAddressWithoutIdController @Inject() (
               preparedForm,
               countryListFactory.countrySelectList(form.data, countries),
               routes.IndividualAddressWithoutIdController.onSubmit(mode),
-              "individual",
+              viewKey,
               mode
             )
           )
@@ -88,7 +90,7 @@ class IndividualAddressWithoutIdController @Inject() (
                       formWithErrors,
                       countryListFactory.countrySelectList(form.data, countries),
                       routes.IndividualAddressWithoutIdController.onSubmit(mode),
-                      "individual",
+                      viewKey,
                       mode
                     )
                   )

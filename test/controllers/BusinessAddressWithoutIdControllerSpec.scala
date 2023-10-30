@@ -52,6 +52,8 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
 
   "BusinessAddressWithoutId Controller" - {
 
+    val viewKey = "business"
+
     "must return OK and the correct view for a GET" in {
 
       retrieveUserAnswersData(emptyUserAnswers)
@@ -74,7 +76,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "business",
+          viewKey,
           NormalMode
         ).toString
       }
@@ -102,7 +104,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
           form.fill(address),
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "business",
+          viewKey,
           NormalMode
         ).toString
       }
@@ -164,7 +166,7 @@ class BusinessAddressWithoutIdControllerSpec extends ControllerSpecBase {
           boundForm,
           countryListFactory.countrySelectList(form.data, testCountryList),
           Call(POST, submitRoute),
-          "business",
+          viewKey,
           NormalMode
         ).toString
       }

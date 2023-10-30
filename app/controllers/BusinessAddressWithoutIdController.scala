@@ -48,6 +48,8 @@ class BusinessAddressWithoutIdController @Inject() (
 
   val countriesList: Option[Seq[Country]] = countryListFactory.countryListWithoutGB
 
+  val viewKey = "business"
+
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
       countriesList match {
@@ -63,7 +65,7 @@ class BusinessAddressWithoutIdController @Inject() (
               preparedForm,
               countryListFactory.countrySelectList(form.data, countries),
               routes.BusinessAddressWithoutIdController.onSubmit(mode),
-              "business",
+              viewKey,
               mode
             )
           )
@@ -88,7 +90,7 @@ class BusinessAddressWithoutIdController @Inject() (
                       formWithErrors,
                       countryListFactory.countrySelectList(form.data, countries),
                       routes.BusinessAddressWithoutIdController.onSubmit(mode),
-                      "business",
+                      viewKey,
                       mode
                     )
                   )

@@ -17,7 +17,7 @@
 package utils
 
 import config.FrontendAppConfig
-import models.Country
+import models.{Address, Country}
 import play.api.Environment
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.SelectItem
@@ -47,7 +47,7 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
 
   lazy val countryListWithoutGB: Option[Seq[Country]] = countryList.map {
     _.filter(
-      x => x.code != "GB"
+      x => x.code != Address.GBCountryCode
     )
   }
 

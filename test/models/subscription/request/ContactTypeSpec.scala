@@ -39,7 +39,7 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     }
 
     "must serialise and de-serialise SecondaryContact" in {
-      val json: JsValue = Json.parse(s"""{"individual":{"firstName":"${name.firstName}","lastName":"${name.lastName}"},"email":"$TestEmail"}""".stripMargin)
+      val json: JsValue = Json.parse(s"""{"$IndividualKey":{"firstName":"${name.firstName}","lastName":"${name.lastName}"},"email":"$TestEmail"}""".stripMargin)
 
       val secondaryContact = ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, None, None)
       Json.toJson(secondaryContact) mustBe json
