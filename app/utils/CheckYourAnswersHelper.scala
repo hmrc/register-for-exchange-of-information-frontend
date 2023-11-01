@@ -97,30 +97,12 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
-  def whatIsYourPostcode: Option[SummaryListRow] = userAnswers.get(pages.WhatIsYourPostcodePage) map {
-    _ =>
-      toRow(
-        msgKey = WhatIsYourPostcodePage.toString,
-        value = Text(messages("site.edit")),
-        href = routes.WhatIsYourPostcodeController.onPageLoad(CheckMode).url
-      )
-  }
-
   def nonUkName: Option[SummaryListRow] = userAnswers.get(pages.NonUkNamePage) map {
     answer =>
       toRow(
         msgKey = NonUkNamePage.toString,
         value = Text(s"${answer.givenName} ${answer.familyName}"),
         href = routes.NonUkNameController.onPageLoad(CheckMode).url
-      )
-  }
-
-  def soleName: Option[SummaryListRow] = userAnswers.get(pages.SoleNamePage) map {
-    _ =>
-      toRow(
-        msgKey = SoleNamePage.toString,
-        value = Text(messages("site.edit")),
-        href = routes.SoleNameController.onPageLoad(CheckMode).url
       )
   }
 
@@ -223,15 +205,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
       )
   }
 
-  def uTR: Option[SummaryListRow] = userAnswers.get(pages.UTRPage) map {
-    _ =>
-      toRow(
-        msgKey = UTRPage.toString,
-        value = Text(messages("site.edit")),
-        href = routes.UTRController.onPageLoad(CheckMode).url
-      )
-  }
-
   def reporterType: Option[SummaryListRow] = userAnswers.get(pages.ReporterTypePage) map {
     value =>
       toRow(
@@ -265,15 +238,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         msgKey = DoYouHaveNINPage.toString,
         value = yesOrNo(answer),
         href = routes.DoYouHaveNINController.onPageLoad(CheckMode).url
-      )
-  }
-
-  def sndConHavePhone: Option[SummaryListRow] = userAnswers.get(pages.SndConHavePhonePage) map {
-    answer =>
-      toRow(
-        msgKey = SndConHavePhonePage.toString,
-        value = yesOrNo(answer),
-        href = routes.SndConHavePhoneController.onPageLoad(CheckMode).url
       )
   }
 
@@ -327,15 +291,6 @@ class CheckYourAnswersHelper(val userAnswers: UserAnswers, val maxVisibleChars: 
         href = routes.ContactHavePhoneController.onPageLoad(CheckMode).url
       )
     )
-
-  def contactHavePhone: Option[SummaryListRow] = userAnswers.get(pages.ContactHavePhonePage) map {
-    answer =>
-      toRow(
-        msgKey = ContactHavePhonePage.toString,
-        value = yesOrNo(answer),
-        href = routes.ContactHavePhoneController.onPageLoad(CheckMode).url
-      )
-  }
 
   def contactName: Option[SummaryListRow] = userAnswers.get(pages.ContactNamePage) map {
     answer =>

@@ -44,23 +44,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def loginContinueUrl: String = s"${configuration.get[String]("urls.loginContinue")}"
   val signOutUrl: String       = configuration.get[String]("urls.signOut")
 
-  private val exitSurveyBaseUrl: String = configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
-  val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/register-for-mdr"
-
-  def languageMap: Map[String, Lang] = Map(
-    "en" -> Lang("en")
-  )
-
   val timeoutSeconds: Int   = configuration.get[Int]("session.timeoutSeconds")
   val countdownSeconds: Int = configuration.get[Int]("session.countdownSeconds")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
 
-  val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  val reportAProblemNonJSUrl   = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-
-  lazy val betaFeedbackUrl                = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUnauthenticatedUrl = s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
+  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
 
   lazy val businessMatchingUrl: String =
     s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"
