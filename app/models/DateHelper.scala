@@ -16,31 +16,14 @@
 
 package models
 
-import java.time.format.{DateTimeFormatter, TextStyle}
-import java.time.{LocalDate, LocalDateTime, ZonedDateTime}
-import java.util.Locale;
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter;
 
 object DateHelper {
 
-  def today: LocalDate             = LocalDate.now()
-  def yesterday: LocalDate         = LocalDate.now().minusDays(1)
-  def todayDateTime: LocalDateTime = LocalDateTime.now()
-
-  val dateFormatterNumericDMY: DateTimeFormatter = DateTimeFormatter.ofPattern("d M yyyy")
+  def today: LocalDate = LocalDate.now()
 
   val dateFormatterDMY: DateTimeFormatter         = DateTimeFormatter.ofPattern("d MMMM yyyy")
   def formatDateToString(date: LocalDate): String = date.format(dateFormatterDMY)
 
-  val dateFormatterForXML: DateTimeFormatter          = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss")
-  def formatXMLTimeStamp(date: LocalDateTime): String = date.format(dateFormatterForXML)
-
-  private def summaryTimestampFormatter(dayOfWeek: String): DateTimeFormatter =
-    DateTimeFormatter.ofPattern(s"h:mma 'on' '$dayOfWeek' d MMMM yyyy", Locale.UK)
-
-  def getSummaryTimestamp(dateTime: ZonedDateTime): String = {
-    val str    = summaryTimestampFormatter(dateTime.getDayOfWeek.getDisplayName(TextStyle.FULL, Locale.UK)).format(dateTime)
-    val suffix = str.takeRight(2)
-    val prefix = str.take(str.length - 2)
-    prefix + suffix
-  }
 }
