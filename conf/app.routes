@@ -179,7 +179,8 @@ GET        /problem/sign-in-problem                      controllers.Unauthorise
 
 GET        /problem/information-sent                     controllers.InformationSentController.onPageLoad()
 
-GET        /register/business-not-identified                    controllers.BusinessNotIdentifiedController.onPageLoad()
+GET        /register/business-not-identified             controllers.BusinessNotIdentifiedController.onPageLoad()
+GET        /register/sole-trader-not-identified          controllers.SoleTraderNotIdentifiedController.onPageLoad()
 
 GET        /register/confirm-registration           controllers.RegistrationConfirmationController.onPageLoad()
 

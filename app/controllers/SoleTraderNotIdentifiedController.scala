@@ -18,22 +18,22 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.ReporterType.{LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation}
+import models.ReporterType.Sole
 import pages.ReporterTypePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.BusinessNotIdentifiedView
+import views.html.SoleTraderNotIdentifiedView
 
 import javax.inject.Inject
 
-class BusinessNotIdentifiedController @Inject() (
+class SoleTraderNotIdentifiedController @Inject() (
   override val messagesApi: MessagesApi,
   standardActionSets: StandardActionSets,
   val controllerComponents: MessagesControllerComponents,
   appConfig: FrontendAppConfig,
-  view: BusinessNotIdentifiedView
+  view: SoleTraderNotIdentifiedView
 ) extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -43,14 +43,9 @@ class BusinessNotIdentifiedController @Inject() (
       val startUrl = routes.IndexController.onPageLoad().url
 
       request.userAnswers.get(ReporterTypePage) match {
-        case Some(reporterType) if reporterType == LimitedCompany | reporterType == UnincorporatedAssociation =>
-          val contactLink = appConfig.corporationTaxEnquiriesLink
-          Ok(view(contactLink, startUrl, reporterType))
-        case Some(reporterType) if reporterType == Partnership | reporterType == LimitedPartnership =>
-          val contactLink = appConfig.selfAssessmentEnquiriesLink
-          Ok(view(contactLink, startUrl, reporterType))
+        case Some(Sole) => Ok(view(appConfig.selfAssessmentEnquiriesLink, startUrl))
         case reporterType =>
-          logger.error(s"$reporterType reporter type is not eligible to view BusinessNotIdentifiedPage")
+          logger.error(s"$reporterType reporter type is not eligible to view SoleTraderNotIdentifiedPage")
           Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())
       }
   }
