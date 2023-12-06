@@ -23,7 +23,7 @@
         appConfig: FrontendAppConfig
 )
 
-@(contactLink: String, startUrl: String)(implicit request: Request[_], messages: Messages)
+@(contactLink: String, startUrl: String, reporterType: ReporterType)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("businessNotIdentified.title")), showBackLink = true) {
 
@@ -34,19 +34,27 @@
     <p class="govuk-body">@messages("businessNotIdentified.p2") @link(appConfig.lostUTRUrl, "businessNotIdentified.p2.link").</p>
 
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading2")</h2>
-    <p class="govuk-body">@messages("businessNotIdentified.p3")</p>
+    @if(reporterType.toString == "limited" || reporterType.toString == "unincorporatedAssociation") {
+        <p class="govuk-body">@messages("businessNotIdentified.p3") @messages(s"businessNotIdentified.${reporterType}.p3b")</p>
+    } else {
+        <p class="govuk-body">@messages("businessNotIdentified.p3")</p>
+    }
+
+    <p class="govuk-body">@messages("businessNotIdentified.p4")</p>
     <ul class="govuk-list govuk-list--bullet" style="padding-left:20px;list-style-type:disc">
         <li>@messages("businessNotIdentified.bullet1")</li>
         <li>@messages("businessNotIdentified.bullet2")</li>
-        <li>@messages("businessNotIdentified.bullet3")</li>
     </ul>
-    <p class="govuk-body">@messages("businessNotIdentified.p4") @link(contactLink, "businessNotIdentified.p4.link", openInNewWindow = true).</p>
+
+    @if(reporterType.toString != "unincorporatedAssociation") {
+        <p class="govuk-body">@messages(s"businessNotIdentified.${reporterType}.p5") @link(contactLink, s"businessNotIdentified.${reporterType}.p5.link", openInNewWindow = true).</p>
+    }
 
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading3")</h2>
 
-    <p class="bottom-margin govuk-body">@messages("businessNotIdentified.p5")
+    <p class="bottom-margin govuk-body">@messages("businessNotIdentified.p6")
         <a href="mailto:@appConfig.emailEnquiries" class="govuk-link">@messages("enquiries.emailAddress")</a>
-        @messages("businessNotIdentified.p5b")
+        @messages("businessNotIdentified.p6b")
     </p>
 
     @govukButton(

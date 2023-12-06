@@ -191,7 +191,8 @@ class MDRNavigator @Inject() () extends Navigator {
         checkNextPageForValueThenRoute(mode, ua, ContactNamePage, routes.YourContactDetailsController.onPageLoad(mode))
       case (Some(false), _, true)    =>
         Some(routes.DifferentBusinessController.onPageLoad())
-      case _                        => Some(routes.BusinessNotIdentifiedController.onPageLoad())
+      case (Some(false), Some(Sole), _)    => Some(routes.SoleTraderNotIdentifiedController.onPageLoad())
+      case _                               => Some(routes.BusinessNotIdentifiedController.onPageLoad())
     }
 }
 
