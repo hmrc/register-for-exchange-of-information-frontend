@@ -20,11 +20,11 @@ import controllers.actions._
 import forms.IsThisYourBusinessFormProvider
 import models.IdentifierType.UTR
 import models.ReporterType.Sole
-import models.{Mode, UUIDGen, UniqueTaxpayerReference}
 import models.error.ApiError.NotFoundError
 import models.matching.{AutoMatchedRegistrationRequest, OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
 import models.requests.DataRequest
+import models.{Mode, ReporterType, UUIDGen, UniqueTaxpayerReference}
 import navigation.MDRNavigator
 import pages._
 import play.api.Logging
@@ -82,13 +82,14 @@ class IsThisYourBusinessController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
     implicit request =>
       val autoMatchedUtr = request.userAnswers.get(AutoMatchedUTRPage)
+      val reporterType   = request.userAnswers.get(ReporterTypePage)
       buildRegisterWithId(autoMatchedUtr) match {
         case Some(registerWithID) =>
           matchingService.sendBusinessRegistrationInformation(registerWithID).flatMap {
             case Right(response) =>
               handleRegistrationFound(mode, autoMatchedUtr, response)
             case Left(NotFoundError) =>
-              handleRegistrationNotFound(mode, autoMatchedUtr)
+              handleRegistrationNotFound(mode, autoMatchedUtr, reporterType)
             case _ =>
               Future.successful(InternalServerError(errorView()))
           }
@@ -117,12 +118,21 @@ class IsThisYourBusinessController @Inject() (
 
   private def handleRegistrationNotFound(
     mode: Mode,
-    autoMatchedUtr: Option[UniqueTaxpayerReference]
+    autoMatchedUtr: Option[UniqueTaxpayerReference],
+    reporterType: Option[ReporterType]
   )(implicit request: DataRequest[AnyContent]): Future[Result] =
     if (autoMatchedUtr.nonEmpty) {
       resultWithAutoMatchedFieldCleared(mode)
     } else {
-      Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad()))
+      reporterType match {
+        case Some(ReporterType.Sole) =>
+          Future.successful(Redirect(routes.SoleTraderNotIdentifiedController.onPageLoad()))
+        case Some(ReporterType.Individual) =>
+          logger.error("Individual reporter type not allowed on IsThisYourBusinessPage")
+          Future.successful(InternalServerError(errorView()))
+        case _ =>
+          Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad()))
+      }
     }
 
   private def resultWithAutoMatchedFieldCleared(mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =

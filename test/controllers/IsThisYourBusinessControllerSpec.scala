@@ -18,7 +18,7 @@ package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
 import models.IdentifierType.UTR
-import models.ReporterType.{LimitedCompany, Sole}
+import models.ReporterType.{Individual, LimitedCompany, Sole}
 import models.error.ApiError.{BadRequestError, NotFoundError, ServiceUnavailableError}
 import models.matching.{AutoMatchedRegistrationRequest, OrgRegistrationInfo, RegistrationRequest}
 import models.register.request.RegisterWithID
@@ -165,6 +165,60 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual routes.BusinessNotIdentifiedController.onPageLoad().url
+    }
+
+    "must redirect to SoleTraderNotIdentifiedPage for a GET when there is no CT UTR and reporter type is Sole trader" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
+        .thenReturn(Future.successful(Left(NotFoundError)))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
+      val userAnswersForSoleTrader = validUserAnswers
+        .set(ReporterTypePage, Sole)
+        .success
+        .value
+        .set(SoleNamePage, name)
+        .success
+        .value
+      retrieveUserAnswersData(userAnswersForSoleTrader)
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual routes.SoleTraderNotIdentifiedController.onPageLoad().url
+    }
+
+    "must return ThereIsAProblemPage for a GET when there is no CT UTR and reporter type is Individual" in {
+
+      val mockedApp = guiceApplicationBuilder()
+        .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
+        .build()
+
+      when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
+        .thenReturn(Future.successful(Left(NotFoundError)))
+
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
+      retrieveUserAnswersData(validUserAnswers.set(ReporterTypePage, Individual).success.value)
+
+      implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, loadRoute)
+
+      val result = route(mockedApp, request).value
+
+      status(result) mustEqual INTERNAL_SERVER_ERROR
+
+      val view = app.injector.instanceOf[ThereIsAProblemView]
+
+      contentAsString(result) mustEqual view()(request, messages).toString
     }
 
     "must return OK and the correct view for a GET when there is a CT UTR" in {
