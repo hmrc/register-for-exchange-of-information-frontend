@@ -66,6 +66,13 @@ object ReporterType extends Enumerable.Implicits {
     Individual
   )
 
+  val organisationReporterTypes: Seq[ReporterType] = Seq(
+    LimitedCompany,
+    UnincorporatedAssociation,
+    Partnership,
+    LimitedPartnership
+  )
+
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (value, index) =>
       RadioItem(

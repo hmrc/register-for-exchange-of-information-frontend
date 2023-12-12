@@ -29,11 +29,9 @@ class SoleTraderNotIdentifiedControllerSpec extends SpecBase with ControllerMock
 
   "SoleTraderNotIdentified Controller" - {
 
-    lazy val selfAssessmentEnquiriesLink: String = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
-
     val indexUrl = routes.IndexController.onPageLoad().url
 
-    "return OK and the correct view with link for self assessment enquiries for a GET as a Sole reporterType" in {
+    "return OK and the correct view for a GET as a Sole reporterType" in {
 
       val userAnswers = emptyUserAnswers.set(ReporterTypePage, Sole).success.value
       retrieveUserAnswersData(userAnswers)
@@ -47,7 +45,7 @@ class SoleTraderNotIdentifiedControllerSpec extends SpecBase with ControllerMock
         val view = application.injector.instanceOf[SoleTraderNotIdentifiedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(selfAssessmentEnquiriesLink, indexUrl)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(indexUrl)(request, messages(application)).toString
 
       }
     }

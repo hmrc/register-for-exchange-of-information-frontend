@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.ReporterType.{LimitedCompany, LimitedPartnership, Partnership, UnincorporatedAssociation}
+import models.ReporterType.organisationReporterTypes
 import pages.ReporterTypePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -41,14 +41,9 @@ class BusinessNotIdentifiedController @Inject() (
   def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
     implicit request =>
       val startUrl = routes.IndexController.onPageLoad().url
-
       request.userAnswers.get(ReporterTypePage) match {
-        case Some(reporterType) if reporterType == LimitedCompany | reporterType == UnincorporatedAssociation =>
-          val contactLink = appConfig.corporationTaxEnquiriesLink
-          Ok(view(contactLink, startUrl, reporterType))
-        case Some(reporterType) if reporterType == Partnership | reporterType == LimitedPartnership =>
-          val contactLink = appConfig.selfAssessmentEnquiriesLink
-          Ok(view(contactLink, startUrl, reporterType))
+        case Some(reporterType) if organisationReporterTypes.contains(reporterType) =>
+          Ok(view(appConfig.findAndUpdateCompanyInfoLink, startUrl, reporterType))
         case reporterType =>
           logger.error(s"$reporterType reporter type is not eligible to view BusinessNotIdentifiedPage")
           Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())

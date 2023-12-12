@@ -43,7 +43,7 @@ class SoleTraderNotIdentifiedController @Inject() (
       val startUrl = routes.IndexController.onPageLoad().url
 
       request.userAnswers.get(ReporterTypePage) match {
-        case Some(Sole) => Ok(view(appConfig.selfAssessmentEnquiriesLink, startUrl))
+        case Some(Sole) => Ok(view(startUrl))
         case reporterType =>
           logger.error(s"$reporterType reporter type is not eligible to view SoleTraderNotIdentifiedPage")
           Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())

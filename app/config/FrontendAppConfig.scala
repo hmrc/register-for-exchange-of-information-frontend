@@ -18,7 +18,6 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
-import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 
@@ -65,8 +64,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val lostUTRUrl: String              = configuration.get[String]("urls.lostUTR")
 
   lazy val businessTaxAccountLink: String              = configuration.get[String]("urls.businessTaxAccount")
-  lazy val corporationTaxEnquiriesLink: String         = configuration.get[String]("urls.corporationTaxEnquiries")
-  lazy val selfAssessmentEnquiriesLink: String         = configuration.get[String]("urls.selfAssessmentEnquiries")
+  lazy val findAndUpdateCompanyInfoLink: String        = configuration.get[String]("urls.findAndUpdateCompanyInfo")
   lazy val emailEnquiries: String                      = configuration.get[String]("urls.emailEnquiries")
   lazy val countryCodeJson: String                     = configuration.get[String]("json.countries")
   val enrolmentKey: String                             = configuration.get[String](s"keys.enrolmentKey.mdr")
