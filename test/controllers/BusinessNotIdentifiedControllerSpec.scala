@@ -17,7 +17,8 @@
 package controllers
 
 import base.{ControllerMockFixtures, SpecBase}
-import models.ReporterType.{Individual, LimitedCompany, LimitedPartnership, Partnership, Sole, UnincorporatedAssociation}
+import models.ReporterType
+import models.ReporterType.{Individual, Sole}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import pages.ReporterTypePage
 import play.api.test.FakeRequest
@@ -28,20 +29,18 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
 
   "BusinessNotIdentified Controller" - {
 
-    lazy val corporationTaxEnquiriesLink: String = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/corporation-tax-enquiries"
-    lazy val selfAssessmentEnquiriesLink: String = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
+    lazy val findAndUpdateCompanyInfoLink: String = "https://find-and-update.company-information.service.gov.uk/"
 
     val indexUrl = routes.IndexController.onPageLoad().url
 
-    val limitedAndUnincorporatedReporterTypes = Table(
-      "limitedAndUnincorporatedReporterType",
-      LimitedCompany,
-      UnincorporatedAssociation
+    val organisationReporterTypes = Table(
+      "organisationReporterType",
+      ReporterType.organisationReporterTypes: _*
     )
 
-    forAll(limitedAndUnincorporatedReporterTypes) {
+    forAll(organisationReporterTypes) {
       reporterType =>
-        s"return OK and the correct view with link for corporation tax enquiries for a GET as a $reporterType reporterType" in {
+        s"return OK and the correct view with link to find and update company info for a GET as a $reporterType reporterType" in {
 
           val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
           retrieveUserAnswersData(userAnswers)
@@ -55,40 +54,7 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
             val view = application.injector.instanceOf[BusinessNotIdentifiedView]
 
             status(result) mustEqual OK
-            contentAsString(result) mustEqual view(corporationTaxEnquiriesLink, indexUrl, reporterType)(request, messages(application)).toString
-
-          }
-        }
-    }
-
-    val partnershipReporterTypes = Table(
-      "partnershipReporterType",
-      LimitedPartnership,
-      Partnership
-    )
-
-    forAll(partnershipReporterTypes) {
-      reporterType =>
-        s"return OK and the correct view with link for self assessment enquiries for a GET as a $reporterType reporterType" in {
-
-          val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
-          retrieveUserAnswersData(userAnswers)
-          val application = guiceApplicationBuilder().build()
-
-          running(application) {
-            val request = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
-
-            val result = route(application, request).value
-
-            val view = application.injector.instanceOf[BusinessNotIdentifiedView]
-
-            status(result) mustEqual OK
-
-            contentAsString(result) mustEqual view(
-              selfAssessmentEnquiriesLink,
-              indexUrl,
-              reporterType
-            )(request, messages(application)).toString
+            contentAsString(result) mustEqual view(findAndUpdateCompanyInfoLink, indexUrl, reporterType)(request, messages(application)).toString
 
           }
         }

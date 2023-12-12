@@ -23,7 +23,7 @@
         appConfig: FrontendAppConfig
 )
 
-@(contactLink: String, startUrl: String, reporterType: ReporterType)(implicit request: Request[_], messages: Messages)
+@(findAndUpdateCompanyInfoLink: String, startUrl: String, reporterType: ReporterType)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("businessNotIdentified.title")), showBackLink = true) {
 
@@ -47,7 +47,7 @@
     </ul>
 
     @if(reporterType.toString != "unincorporatedAssociation") {
-        <p class="govuk-body">@messages(s"businessNotIdentified.${reporterType}.p5") @link(contactLink, s"businessNotIdentified.${reporterType}.p5.link", openInNewWindow = true).</p>
+        <p class="govuk-body">@messages(s"businessNotIdentified.${reporterType}.p5") @link(findAndUpdateCompanyInfoLink, s"businessNotIdentified.${reporterType}.p5.link", openInNewWindow = true).</p>
     }
 
     <h2 class="govuk-heading-m">@messages("businessNotIdentified.subheading3")</h2>

@@ -23,7 +23,7 @@
         appConfig: FrontendAppConfig
 )
 
-@(contactLink: String, startUrl: String)(implicit request: Request[_], messages: Messages)
+@(startUrl: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("soleTraderNotIdentified.title")), showBackLink = true) {
 
