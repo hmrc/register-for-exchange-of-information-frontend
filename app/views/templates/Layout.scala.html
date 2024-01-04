@@ -15,7 +15,6 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcAccessibleAutocompleteCss, HmrcAccessibleAutocompleteJavascript, HmrcStandardPage}
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import views.html.helper.CSPNonce
@@ -25,7 +24,6 @@
     hmrcStandardPage: HmrcStandardPage,
     hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-    betaBanner: StandardBetaBanner,
     autocompleteCss: HmrcAccessibleAutocompleteCss,
     autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
 )
@@ -68,9 +66,6 @@
         serviceURLs = ServiceURLs(
             serviceUrl = Some(routes.IndexController.onPageLoad.url),
             signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
-        ),
-        banners = Banners(
-            phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
         ),
         pageTitle = Some(pageTitle),
         templateOverrides = TemplateOverrides(
