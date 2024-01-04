@@ -44,9 +44,12 @@
 
     <p class="govuk-body">@messages("registrationConfirmation.p2")</p>
 
-
     <p class="govuk-body">@Html(messages("registrationConfirmation.p3", link(appConfig.mandatoryDisclosureRulesFrontendUrl, "registrationConfirmation.p3.link")))</p>
 
-    <p class="govuk-body">@link(appConfig.betaFeedbackUrl, "registrationConfirmation.survey.link", id = Some("feedback-link"), openInNewWindow = true)</p>
+   <h2 class="govuk-heading-m govuk-!-padding-top-2">@messages("registrationConfirmation.heading.a")</h2>
+
+   <p class="govuk-body">@messages("registrationConfirmation.p1.a")</p>
+
+   <p class="govuk-body">@Html(messages("registrationConfirmation.p2.a", link(appConfig.registrationConfirmationUrl, "registrationConfirmation.p2.a.link")))</p>
 
 }

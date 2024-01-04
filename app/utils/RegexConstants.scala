@@ -30,7 +30,7 @@ trait RegexConstants {
   final val emailRegex = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
     "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"
   final val digitsAndWhiteSpaceOnly = """^\+?[\d\s]+$"""
-  final val regexPostcode           = """^[A-Za-z]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
+  final val regexPostcode           = """^[A-Za-z0-9]{1,2}[0-9Rr][0-9A-Za-z]?\s?[0-9][ABD-HJLNP-UW-Zabd-hjlnp-uw-z]{2}$"""
   final val postCodeAllowedChars    = """^[A-Za-Z 0-9]*$"""
 
   final val ninoFormatRegex = """^[A-Z]{2}[0-9]{6}[A-Z]{1}$"""
