@@ -36,9 +36,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
     .get[String]("microservice.services.tax-enrolments.url1")}"
   val taxEnrolmentsUrl2: String = s"${configuration.get[String]("microservice.services.tax-enrolments.url2")}"
 
-  def feedbackUrl(implicit request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
-
   val loginUrl: String         = configuration.get[String]("urls.login")
   def loginContinueUrl: String = s"${configuration.get[String]("urls.loginContinue")}"
   val signOutUrl: String       = configuration.get[String]("urls.signOut")
@@ -47,8 +44,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val countdownSeconds: Int = configuration.get[Int]("session.countdownSeconds")
 
   val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
-
-  lazy val betaFeedbackUrl = s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier"
 
   lazy val businessMatchingUrl: String =
     s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"
