@@ -38,13 +38,18 @@
         )
     ))
 
-    <h2 class="govuk-heading-m govuk-!-padding-top-2">@messages("registrationConfirmation.heading")</h2>
+  <h2 class="govuk-heading-m govuk-!-padding-top-2">@messages("registrationConfirmation.heading")</h2>
 
     <p class="govuk-body">@messages("registrationConfirmation.p1")</p>
 
     <p class="govuk-body">@messages("registrationConfirmation.p2")</p>
 
-
     <p class="govuk-body">@Html(messages("registrationConfirmation.p3", link(appConfig.mandatoryDisclosureRulesFrontendUrl, "registrationConfirmation.p3.link")))</p>
+
+   <h2 class="govuk-heading-m govuk-!-padding-top-2">@messages("registrationConfirmation.heading.a")</h2>
+
+   <p class="govuk-body">@messages("registrationConfirmation.p1.a")</p>
+
+   <p class="govuk-body">@Html(messages("registrationConfirmation.p2.a", link(appConfig.signOutUrl, "registrationConfirmation.p2.a.link")))</p>
 
 }
