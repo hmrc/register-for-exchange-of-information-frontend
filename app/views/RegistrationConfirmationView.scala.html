@@ -38,7 +38,7 @@
         )
     ))
 
-  <h2 class="govuk-heading-m govuk-!-padding-top-2">@messages("registrationConfirmation.heading")</h2>
+    <h2 class="govuk-heading-m govuk-!-padding-top-2">@messages("registrationConfirmation.heading")</h2>
 
     <p class="govuk-body">@messages("registrationConfirmation.p1")</p>
 
@@ -50,6 +50,6 @@
 
    <p class="govuk-body">@messages("registrationConfirmation.p1.a")</p>
 
-   <p class="govuk-body">@Html(messages("registrationConfirmation.p2.a", link(appConfig.signOutUrl, "registrationConfirmation.p2.a.link")))</p>
+   <p class="govuk-body">@Html(messages("registrationConfirmation.p2.a", link(appConfig.signOutUrl, "registrationConfirmation.p2.a.link", id = Some("feedback-link"), openInNewWindow = true)))</p>
 
 }

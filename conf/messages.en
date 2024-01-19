@@ -501,8 +501,8 @@ registrationConfirmation.p3 = You can now {0}.
 registrationConfirmation.p3.link = report cross-border arrangements for Mandatory Disclosure Rules (MDR)
 registrationConfirmation.heading.a = Before you go
 registrationConfirmation.p1.a = Your feedback helps us make our service better.
-registrationConfirmation.p2.a.link = Take our survey
-registrationConfirmation.p2.a = {0} to share your feedback on this service. It takes about 1 minute to complete.
+registrationConfirmation.p2.a.link = Take a short survey
+registrationConfirmation.p2.a = {0} to share your feedback on this service.
 
 pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
