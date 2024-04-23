@@ -27,12 +27,21 @@ import java.io.ByteArrayInputStream
 
 class CountryListFactorySpec extends SpecBase {
   "Factory  must " - {
-    "return option of country sequence when given a valid json file" in {
+    "return countries ordered by description when given a valid json file" in {
 
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
       val env                     = mock[Environment]
 
-      val countries = Json.arr(Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Somewhere"))
+      val countries = Json.arr(
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "US Minor Outlying Islands"),
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Uruguay"),
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Andorra"),
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "United Arab Emirates"),
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Åland Islands"),
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Bonaire, Saint Eustatius and Saba"),
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Zimbabwe"),
+        Json.obj("state" -> "valid", "code" -> "XX", "description" -> "Yemen")
+      )
 
       when(conf.countryCodeJson).thenReturn("countries.json")
 
@@ -41,7 +50,16 @@ class CountryListFactorySpec extends SpecBase {
 
       val factory = sut(env, conf)
 
-      factory.countryList mustBe Some(Seq(Country("valid", "XX", "Somewhere")))
+      factory.countryList.value must contain theSameElementsInOrderAs Seq(
+        Country("valid", "XX", "Andorra"),
+        Country("valid", "XX", "Bonaire, Saint Eustatius and Saba"),
+        Country("valid", "XX", "United Arab Emirates"),
+        Country("valid", "XX", "Uruguay"),
+        Country("valid", "XX", "US Minor Outlying Islands"),
+        Country("valid", "XX", "Yemen"),
+        Country("valid", "XX", "Zimbabwe"),
+        Country("valid", "XX", "Åland Islands")
+      )
     }
 
     "return option of country sequence without GB when given a valid json file" in {
