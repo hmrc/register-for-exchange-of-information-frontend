@@ -35,7 +35,7 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
 
   private def getCountryList: Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
     _.as[Seq[Country]].sortWith(
-      (country, country2) => country.description < country2.description
+      (country, country2) => country.description.toLowerCase < country2.description.toLowerCase
     )
   }
 
@@ -62,6 +62,6 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
       country =>
         SelectItem(Some(country.code), country.description, containsCountry(country))
     }
-    SelectItem(None, "&nbsp") +: countryJsonList
+    SelectItem(None, "") +: countryJsonList
   }
 }
