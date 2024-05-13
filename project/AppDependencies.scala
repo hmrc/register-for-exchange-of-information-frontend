@@ -1,7 +1,6 @@
 import sbt._
 
 object AppDependencies {
-  import play.core.PlayVersion
 
   private val bootstrapVersion = "8.5.0"
 
@@ -18,8 +17,6 @@ object AppDependencies {
   val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"            %% "bootstrap-test-play-30"    % bootstrapVersion,
     "org.scalatestplus"      %% "scalacheck-1-15"           % "3.2.11.0",
-    "org.pegdown"             % "pegdown"                   % "1.6.0",
-    "org.jsoup"               % "jsoup"                     % "1.17.2",
     "org.mockito"            %% "mockito-scala"             % "1.17.31",
     "wolfendale"             %% "scalacheck-gen-regexp"     % "0.1.2",
     "com.vladsch.flexmark"    % "flexmark-all"              % "0.64.8"
