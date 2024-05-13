@@ -39,6 +39,7 @@ class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers)
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 
-  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] = this
+  override def apply(): ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest] =
+    this
 
 }

@@ -30,17 +30,29 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
   "SubscriptionAudit" - {
     "convert to SubscriptionAudit" in {
 
-      val requestDtls = CreateRequestDetail(
+      val requestDtls   = CreateRequestDetail(
         SAFE,
         "AB123456Z",
         Some("Tools for Traders Limited"),
         true,
-        ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, Some(TestPhoneNumber), Some(TestMobilePhoneNumber)),
-        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some(TestPhoneNumber), None))
+        ContactInformation(
+          IndividualDetails(name.firstName, None, name.lastName),
+          TestEmail,
+          Some(TestPhoneNumber),
+          Some(TestMobilePhoneNumber)
+        ),
+        Some(
+          ContactInformation(
+            OrganisationDetails("Tools for Traders"),
+            "contact@toolsfortraders.com",
+            Some(TestPhoneNumber),
+            None
+          )
+        )
       )
       val auditResponse = AuditResponse("Success", 200, Some("sub"), None)
       val address       = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
-      val userAnswers = UserAnswers("")
+      val userAnswers   = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
@@ -62,7 +74,7 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
         .set(IndividualAddressWithoutIdPage, address)
         .success
         .value
-      val result = SubscriptionAudit.apply(userAnswers = userAnswers, requestDtls, auditResponse = auditResponse)
+      val result        = SubscriptionAudit.apply(userAnswers = userAnswers, requestDtls, auditResponse = auditResponse)
 
       result mustBe SubscriptionAudit(
         SAFEID = "AB123456Z",
@@ -72,9 +84,20 @@ class SubscriptionAuditSpec extends SpecBase with Generators with ScalaCheckProp
         isBusiness = false,
         tradingName = Some("Tools for Traders Limited"),
         isGBUser = true,
-        primaryContact =
-          ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, Some(TestPhoneNumber), Some(TestMobilePhoneNumber)),
-        secondaryContact = Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some(TestPhoneNumber), None)),
+        primaryContact = ContactInformation(
+          IndividualDetails(name.firstName, None, name.lastName),
+          TestEmail,
+          Some(TestPhoneNumber),
+          Some(TestMobilePhoneNumber)
+        ),
+        secondaryContact = Some(
+          ContactInformation(
+            OrganisationDetails("Tools for Traders"),
+            "contact@toolsfortraders.com",
+            Some(TestPhoneNumber),
+            None
+          )
+        ),
         response = AuditResponse("Success", 200, Some("sub"), None)
       )
 

@@ -25,15 +25,23 @@ import models.shared.{ContactDetails, Parameters, ResponseCommon}
 
 object RegisterHelper extends TestValues {
 
-  val addressRequest: AddressRequest = AddressRequest("100 Parliament Street", None, "", Some("London"), Some("SW1A 2BQ"), "GB")
+  val addressRequest: AddressRequest =
+    AddressRequest("100 Parliament Street", None, "", Some("London"), Some("SW1A 2BQ"), "GB")
 
-  val addressResponse: AddressResponse = AddressResponse("100 Parliament Street", None, None, Some("London"), Some("SW1A 2BQ"), "GB")
+  val addressResponse: AddressResponse =
+    AddressResponse("100 Parliament Street", None, None, Some("London"), Some("SW1A 2BQ"), "GB")
 
-  val contactDetails: ContactDetails = ContactDetails(Some("1111111"), Some("2222222"), Some("1111111"), Some(TestEmail))
+  val contactDetails: ContactDetails =
+    ContactDetails(Some("1111111"), Some("2222222"), Some("1111111"), Some(TestEmail))
 
   val registrationWithIDIndividualResponse: RegistrationWithIDResponse = RegistrationWithIDResponse(
     RegisterWithIDResponse(
-      ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
+      ResponseCommon(
+        "OK",
+        Some("Sample status text"),
+        "2016-08-16T15:55:30Z",
+        Some(Vector(Parameters("SAP_NUMBER", "0123456789")))
+      ),
       Some(
         RegisterWithIDResponseDetail(
           safeId,
@@ -52,7 +60,12 @@ object RegisterHelper extends TestValues {
 
   val registrationWithIDOrganisationResponse: RegistrationWithIDResponse = RegistrationWithIDResponse(
     RegisterWithIDResponse(
-      ResponseCommon("OK", Some("Sample status text"), "2016-08-16T15:55:30Z", Some(Vector(Parameters("SAP_NUMBER", "0123456789")))),
+      ResponseCommon(
+        "OK",
+        Some("Sample status text"),
+        "2016-08-16T15:55:30Z",
+        Some(Vector(Parameters("SAP_NUMBER", "0123456789")))
+      ),
       Some(
         RegisterWithIDResponseDetail(
           safeId,
@@ -61,7 +74,8 @@ object RegisterHelper extends TestValues {
           isAnAgent = false,
           isAnASAgent = None,
           isAnIndividual = true,
-          partnerDetails = OrganisationResponse(OrgName, isAGroup = false, organisationType = Some(Partnership.code), code = None),
+          partnerDetails =
+            OrganisationResponse(OrgName, isAGroup = false, organisationType = Some(Partnership.code), code = None),
           address = addressResponse,
           contactDetails = contactDetails
         )

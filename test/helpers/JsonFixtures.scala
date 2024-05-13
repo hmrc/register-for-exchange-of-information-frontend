@@ -59,7 +59,7 @@ object JsonFixtures extends TestValues {
         "regime"                   -> "MDR",
         "receiptDate"              -> "2016-08-16T15:55:30Z",
         "acknowledgementReference" -> "ec031b045855445e96f98a569ds56cd2",
-        "requestParameters" -> Json.arr(
+        "requestParameters"        -> Json.arr(
           Json.obj(
             "paramName"  -> "REGIME",
             "paramValue" -> "MDR"
@@ -71,7 +71,7 @@ object JsonFixtures extends TestValues {
         "IDNumber"          -> TestNiNumber,
         "requiresNameMatch" -> true,
         "isAnAgent"         -> false,
-        IndividualKey -> Json.obj(
+        IndividualKey       -> Json.obj(
           "firstName"   -> name.firstName,
           "middleName"  -> MiddleName,
           "lastName"    -> name.lastName,
@@ -206,9 +206,9 @@ object JsonFixtures extends TestValues {
   val withIDResponseJson: JsObject = Json.obj(
     "registerWithIDResponse" -> Json.obj(
       "responseCommon" -> Json.obj(
-        "status"         -> "OK",
-        "statusText"     -> "Sample status text",
-        "processingDate" -> "2016-08-16T15:55:30Z",
+        "status"           -> "OK",
+        "statusText"       -> "Sample status text",
+        "processingDate"   -> "2016-08-16T15:55:30Z",
         "returnParameters" -> Json.arr(
           Json.obj(
             "paramName"  -> "SAP_NUMBER",
@@ -223,13 +223,13 @@ object JsonFixtures extends TestValues {
         "isAnAgent"      -> false,
         "isAnIndividual" -> true,
         "isAnASAgent"    -> JsNull,
-        IndividualKey -> Json.obj(
+        IndividualKey    -> Json.obj(
           "firstName"   -> "Ron",
           "middleName"  -> "Madisson",
           "lastName"    -> "Burgundy",
           "dateOfBirth" -> "1980-12-12"
         ),
-        "address" -> Json.obj(
+        "address"        -> Json.obj(
           "addressLine1" -> "100 Parliament Street",
           "addressLine4" -> "London",
           "postalCode"   -> "SW1A 2BQ",
@@ -343,12 +343,13 @@ object JsonFixtures extends TestValues {
       |}
       |""".stripMargin
 
-  def jsonPayloadForIndWithSecondaryContact(firstName: JsString,
-                                            lastName: JsString,
-                                            organisationName: JsString,
-                                            primaryEmail: JsString,
-                                            secondaryEmail: JsString,
-                                            phone: JsString
+  def jsonPayloadForIndWithSecondaryContact(
+    firstName: JsString,
+    lastName: JsString,
+    organisationName: JsString,
+    primaryEmail: JsString,
+    secondaryEmail: JsString,
+    phone: JsString
   ): String =
     s"""
        |{
@@ -383,12 +384,13 @@ object JsonFixtures extends TestValues {
        |}
        |""".stripMargin
 
-  def jsonPayloadForOrgWithSecondaryContact(firstName: JsString,
-                                            lastName: JsString,
-                                            organisationName: JsString,
-                                            primaryEmail: JsString,
-                                            secondaryEmail: JsString,
-                                            phone: JsString
+  def jsonPayloadForOrgWithSecondaryContact(
+    firstName: JsString,
+    lastName: JsString,
+    organisationName: JsString,
+    primaryEmail: JsString,
+    secondaryEmail: JsString,
+    phone: JsString
   ): String =
     s"""
        |{
@@ -431,7 +433,7 @@ object JsonFixtures extends TestValues {
           "receiptDate"              -> "2020-09-23T16:12:11Z",
           "acknowledgementReference" -> "AB123c",
           "originatingSystem"        -> "MDTP",
-          "requestParameters" -> Json.arr(
+          "requestParameters"        -> Json.arr(
             Json.obj(
               "paramName"  -> "Name",
               "paramValue" -> "Value"
@@ -439,15 +441,15 @@ object JsonFixtures extends TestValues {
           )
         ),
         "requestDetail" -> Json.obj(
-          "IDType"   -> "idType",
-          "IDNumber" -> "idNumber",
-          "isGBUser" -> true,
+          "IDType"         -> "idType",
+          "IDNumber"       -> "idNumber",
+          "isGBUser"       -> true,
           "primaryContact" -> Json.obj(
             IndividualKey -> Json.obj(
               "firstName" -> firstName,
               "lastName"  -> lastName
             ),
-            "email" -> primaryEmail
+            "email"       -> primaryEmail
           )
         )
       )
@@ -461,7 +463,7 @@ object JsonFixtures extends TestValues {
           "receiptDate"              -> "2020-09-23T16:12:11Z",
           "acknowledgementReference" -> "AB123c",
           "originatingSystem"        -> "MDTP",
-          "requestParameters" -> Json.arr(
+          "requestParameters"        -> Json.arr(
             Json.obj(
               "paramName"  -> "Name",
               "paramValue" -> "Value"
@@ -469,27 +471,28 @@ object JsonFixtures extends TestValues {
           )
         ),
         "requestDetail" -> Json.obj(
-          "IDType"   -> "idType",
-          "IDNumber" -> "idNumber",
-          "isGBUser" -> true,
+          "IDType"         -> "idType",
+          "IDNumber"       -> "idNumber",
+          "isGBUser"       -> true,
           "primaryContact" -> Json.obj(
             OrganisationKey -> Json.obj(
               "organisationName" -> organisationName
             ),
-            "email"  -> primaryEmail,
-            "phone"  -> phone,
-            "mobile" -> phone
+            "email"         -> primaryEmail,
+            "phone"         -> phone,
+            "mobile"        -> phone
           )
         )
       )
     )
 
-  def indWithSecondaryContactJson(firstName: String,
-                                  lastName: String,
-                                  organisationName: String,
-                                  primaryEmail: String,
-                                  secondaryEmail: String,
-                                  phone: String
+  def indWithSecondaryContactJson(
+    firstName: String,
+    lastName: String,
+    organisationName: String,
+    primaryEmail: String,
+    secondaryEmail: String,
+    phone: String
   ): JsObject =
     Json.obj(
       "createSubscriptionForMDRRequest" -> Json.obj(
@@ -500,34 +503,35 @@ object JsonFixtures extends TestValues {
           "originatingSystem"        -> "MDTP"
         ),
         "requestDetail" -> Json.obj(
-          "IDType"   -> "idType",
-          "IDNumber" -> "idNumber",
-          "isGBUser" -> true,
-          "primaryContact" -> Json.obj(
+          "IDType"           -> "idType",
+          "IDNumber"         -> "idNumber",
+          "isGBUser"         -> true,
+          "primaryContact"   -> Json.obj(
             IndividualKey -> Json.obj(
               "firstName" -> firstName,
               "lastName"  -> lastName
             ),
-            "email" -> primaryEmail
+            "email"       -> primaryEmail
           ),
           "secondaryContact" -> Json.obj(
             OrganisationKey -> Json.obj(
               "organisationName" -> organisationName
             ),
-            "email"  -> secondaryEmail,
-            "phone"  -> phone,
-            "mobile" -> phone
+            "email"         -> secondaryEmail,
+            "phone"         -> phone,
+            "mobile"        -> phone
           )
         )
       )
     )
 
-  def orgWithSecondaryContactJson(firstName: String,
-                                  lastName: String,
-                                  organisationName: String,
-                                  primaryEmail: String,
-                                  secondaryEmail: String,
-                                  phone: String
+  def orgWithSecondaryContactJson(
+    firstName: String,
+    lastName: String,
+    organisationName: String,
+    primaryEmail: String,
+    secondaryEmail: String,
+    phone: String
   ): JsObject =
     Json.obj(
       "createSubscriptionForMDRRequest" -> Json.obj(
@@ -538,23 +542,23 @@ object JsonFixtures extends TestValues {
           "originatingSystem"        -> "MDTP"
         ),
         "requestDetail" -> Json.obj(
-          "IDType"   -> "idType",
-          "IDNumber" -> "idNumber",
-          "isGBUser" -> true,
-          "primaryContact" -> Json.obj(
+          "IDType"           -> "idType",
+          "IDNumber"         -> "idNumber",
+          "isGBUser"         -> true,
+          "primaryContact"   -> Json.obj(
             OrganisationKey -> Json.obj(
               "organisationName" -> organisationName
             ),
-            "email"  -> primaryEmail,
-            "phone"  -> phone,
-            "mobile" -> phone
+            "email"         -> primaryEmail,
+            "phone"         -> phone,
+            "mobile"        -> phone
           ),
           "secondaryContact" -> Json.obj(
             IndividualKey -> Json.obj(
               "firstName" -> firstName,
               "lastName"  -> lastName
             ),
-            "email" -> secondaryEmail
+            "email"       -> secondaryEmail
           )
         )
       )
@@ -612,7 +616,7 @@ object JsonFixtures extends TestValues {
         "regime"                   -> "MDR",
         "receiptDate"              -> "2016-08-16T15:55:30Z",
         "acknowledgementReference" -> "ec031b045855445e96f98a569ds56cd2",
-        "requestParameters" -> Json.arr(
+        "requestParameters"        -> Json.arr(
           Json.obj(
             "paramName"  -> "REGIME",
             "paramValue" -> "MDR"
@@ -620,12 +624,12 @@ object JsonFixtures extends TestValues {
         )
       ),
       "requestDetail" -> Json.obj(
-        IndividualKey -> Json.obj(
+        IndividualKey    -> Json.obj(
           "firstName"   -> name.firstName,
           "lastName"    -> name.lastName,
           "dateOfBirth" -> TestDate
         ),
-        "address" -> Json.obj(
+        "address"        -> Json.obj(
           "addressLine1" -> "line 1",
           "addressLine2" -> "line 2",
           "addressLine3" -> "line 3",

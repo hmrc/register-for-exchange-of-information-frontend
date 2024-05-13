@@ -24,7 +24,14 @@ import scala.util.Try
 case object IsThisYourBusinessPage extends QuestionPage[Boolean] {
 
   private val addressPages =
-    List(WhatIsYourPostcodePage, SelectAddressPage, AddressUKPage, SelectedAddressLookupPage, AddressLookupPage, BusinessAddressWithoutIdPage)
+    List(
+      WhatIsYourPostcodePage,
+      SelectAddressPage,
+      AddressUKPage,
+      SelectedAddressLookupPage,
+      AddressLookupPage,
+      BusinessAddressWithoutIdPage
+    )
 
   override def path: JsPath = JsPath \ toString
 

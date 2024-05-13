@@ -52,9 +52,15 @@ class SndConHavePhoneControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers2 = emptyUserAnswers.set(SndContactNamePage, name.fullName).success.value.set(SndConHavePhonePage, true).success.value
+      val userAnswers2 = emptyUserAnswers
+        .set(SndContactNamePage, name.fullName)
+        .success
+        .value
+        .set(SndConHavePhonePage, true)
+        .success
+        .value
       retrieveUserAnswersData(userAnswers2)
-      val request = FakeRequest(GET, loadRoute)
+      val request      = FakeRequest(GET, loadRoute)
 
       val view = app.injector.instanceOf[SndConHavePhoneView]
 

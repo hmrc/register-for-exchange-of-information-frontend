@@ -33,158 +33,162 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
     "in Normal mode" - {
 
       "must go from Contact Name page to Contact Email page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(ContactNamePage, NormalMode, answers)
-              .mustBe(routes.ContactEmailController.onPageLoad(NormalMode))
+        forAll(arbitrary[UserAnswers]) { answers =>
+          navigator
+            .nextPage(ContactNamePage, NormalMode, answers)
+            .mustBe(routes.ContactEmailController.onPageLoad(NormalMode))
         }
       }
 
       "must go from Contact Email page to ContactHavePhone page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(ContactEmailPage, NormalMode, answers)
-              .mustBe(routes.ContactHavePhoneController.onPageLoad(NormalMode))
+        forAll(arbitrary[UserAnswers]) { answers =>
+          navigator
+            .nextPage(ContactEmailPage, NormalMode, answers)
+            .mustBe(routes.ContactHavePhoneController.onPageLoad(NormalMode))
         }
       }
 
       "must go from second Contact Phone page to CheckYourAnswers page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(SndContactPhonePage, NormalMode, answers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+        forAll(arbitrary[UserAnswers]) { answers =>
+          navigator
+            .nextPage(SndContactPhonePage, NormalMode, answers)
+            .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
       "must go from Individual Contact Email page to IndividualHaveContactTelephone page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(IndividualContactEmailPage, NormalMode, answers)
-              .mustBe(routes.IndividualHaveContactTelephoneController.onPageLoad(NormalMode))
+        forAll(arbitrary[UserAnswers]) { answers =>
+          navigator
+            .nextPage(IndividualContactEmailPage, NormalMode, answers)
+            .mustBe(routes.IndividualHaveContactTelephoneController.onPageLoad(NormalMode))
         }
       }
 
       "must go from ContactHavePhone page to Contact Phone page if YES is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(ContactHavePhonePage, true)
-                .success
-                .value
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(ContactHavePhonePage, true)
+              .success
+              .value
 
-            navigator
-              .nextPage(ContactHavePhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.ContactPhoneController.onPageLoad(NormalMode))
+          navigator
+            .nextPage(ContactHavePhonePage, NormalMode, updatedAnswers)
+            .mustBe(routes.ContactPhoneController.onPageLoad(NormalMode))
         }
       }
 
       "must go from ContactHavePhone page to Second Contact Phone page if NO is selected and they are a business" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-                .success
-                .value
-                .set(ReporterTypePage, LimitedCompany)
-                .success
-                .value
-                .set(ContactHavePhonePage, false)
-                .success
-                .value
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+              .success
+              .value
+              .set(ReporterTypePage, LimitedCompany)
+              .success
+              .value
+              .set(ContactHavePhonePage, false)
+              .success
+              .value
 
-            navigator
-              .nextPage(ContactHavePhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
+          navigator
+            .nextPage(ContactHavePhonePage, NormalMode, updatedAnswers)
+            .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
         }
       }
 
       "must go from 'Can we contact you by telephone?' page to to the 'check your answers' page " +
         "if NO is selected and they are an individual" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                  .success
-                  .value
-                  .set(IndividualHaveContactTelephonePage, false)
-                  .success
-                  .value
+          forAll(arbitrary[UserAnswers]) { answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+                .success
+                .value
+                .set(IndividualHaveContactTelephonePage, false)
+                .success
+                .value
 
-              navigator
-                .nextPage(IndividualHaveContactTelephonePage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad())
+            navigator
+              .nextPage(IndividualHaveContactTelephonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
       "must go from 'Can we contact you by telephone?' page to to the 'check your answers' page " +
         "if NO is selected and they are a sole proprietor" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-                  .success
-                  .value
-                  .set(ReporterTypePage, Sole)
-                  .success
-                  .value
-                  .set(IndividualHaveContactTelephonePage, false)
-                  .success
-                  .value
-
-              navigator
-                .nextPage(IndividualHaveContactTelephonePage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad())
-          }
-        }
-
-      "must go from telephone number page to second contact name page if they have a UTR and are not a sole proprietor" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+          forAll(arbitrary[UserAnswers]) { answers =>
             val updatedAnswers =
               answers
                 .set(DoYouHaveUniqueTaxPayerReferencePage, true)
                 .success
                 .value
-                .set(ReporterTypePage, LimitedCompany)
+                .set(ReporterTypePage, Sole)
+                .success
+                .value
+                .set(IndividualHaveContactTelephonePage, false)
                 .success
                 .value
 
             navigator
-              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
+              .nextPage(IndividualHaveContactTelephonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+          }
+        }
+
+      "must go from telephone number page to second contact name page if they have a UTR and are not a sole proprietor" in {
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+              .success
+              .value
+              .set(ReporterTypePage, LimitedCompany)
+              .success
+              .value
+
+          navigator
+            .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+            .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
         }
       }
 
       "must go from 'What is your telephone number?' page to the 'check your answers' page " +
         "if they have a UTR and they are a sole proprietor" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-                  .success
-                  .value
-                  .set(ReporterTypePage, Sole)
-                  .success
-                  .value
+          forAll(arbitrary[UserAnswers]) { answers =>
+            val updatedAnswers =
+              answers
+                .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+                .success
+                .value
+                .set(ReporterTypePage, Sole)
+                .success
+                .value
 
-              navigator
-                .nextPage(IndividualContactPhonePage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad())
+            navigator
+              .nextPage(IndividualContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
       "must go from telephone number page to second contact name page if they do not have a UTR and are registering as a business" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+              .success
+              .value
+
+          navigator
+            .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
+            .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
+        }
+      }
+
+      "must go from 'What is your telephone number?' page to the 'Check your answers' page " +
+        "if they do not have a UTR and are registering as an individual" in {
+          forAll(arbitrary[UserAnswers]) { answers =>
             val updatedAnswers =
               answers
                 .set(DoYouHaveUniqueTaxPayerReferencePage, false)
@@ -192,102 +196,80 @@ class NormalModeContactDetailsNavigatorSpec extends SpecBase with ScalaCheckProp
                 .value
 
             navigator
-              .nextPage(ContactPhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.SecondContactController.onPageLoad(NormalMode))
-        }
-      }
-
-      "must go from 'What is your telephone number?' page to the 'Check your answers' page " +
-        "if they do not have a UTR and are registering as an individual" in {
-          forAll(arbitrary[UserAnswers]) {
-            answers =>
-              val updatedAnswers =
-                answers
-                  .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-                  .success
-                  .value
-
-              navigator
-                .nextPage(IndividualContactPhonePage, NormalMode, updatedAnswers)
-                .mustBe(routes.CheckYourAnswersController.onPageLoad())
+              .nextPage(IndividualContactPhonePage, NormalMode, updatedAnswers)
+              .mustBe(routes.CheckYourAnswersController.onPageLoad())
           }
         }
 
       "must go from Second Contact page to Second Contact Name page if YES is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(SecondContactPage, true)
-                .success
-                .value
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(SecondContactPage, true)
+              .success
+              .value
 
-            navigator
-              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
-              .mustBe(routes.SndContactNameController.onPageLoad(NormalMode))
+          navigator
+            .nextPage(SecondContactPage, NormalMode, updatedAnswers)
+            .mustBe(routes.SndContactNameController.onPageLoad(NormalMode))
         }
       }
 
       "must go from Second Contact page to CheckYourAnswers page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(SecondContactPage, false)
-                .success
-                .value
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(SecondContactPage, false)
+              .success
+              .value
 
-            navigator
-              .nextPage(SecondContactPage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+          navigator
+            .nextPage(SecondContactPage, NormalMode, updatedAnswers)
+            .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
 
       "must go from Second Contact Name page to Second Contact Email page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(SndContactNamePage, NormalMode, answers)
-              .mustBe(routes.SndContactEmailController.onPageLoad(NormalMode))
+        forAll(arbitrary[UserAnswers]) { answers =>
+          navigator
+            .nextPage(SndContactNamePage, NormalMode, answers)
+            .mustBe(routes.SndContactEmailController.onPageLoad(NormalMode))
         }
       }
 
       "must go from Second Contact Email page to Second Contact Have Phone page" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            navigator
-              .nextPage(SndContactEmailPage, NormalMode, answers)
-              .mustBe(routes.SndConHavePhoneController.onPageLoad(NormalMode))
+        forAll(arbitrary[UserAnswers]) { answers =>
+          navigator
+            .nextPage(SndContactEmailPage, NormalMode, answers)
+            .mustBe(routes.SndConHavePhoneController.onPageLoad(NormalMode))
         }
       }
 
       "must go from Second Contact Have Phone page to Second Contact Phone page if YES is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(SndConHavePhonePage, true)
-                .success
-                .value
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(SndConHavePhonePage, true)
+              .success
+              .value
 
-            navigator
-              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.SndContactPhoneController.onPageLoad(NormalMode))
+          navigator
+            .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
+            .mustBe(routes.SndContactPhoneController.onPageLoad(NormalMode))
         }
       }
 
       "must go from Second Contact Have Phone page to CheckYourAnswers page if NO is selected" in {
-        forAll(arbitrary[UserAnswers]) {
-          answers =>
-            val updatedAnswers =
-              answers
-                .set(SndConHavePhonePage, false)
-                .success
-                .value
+        forAll(arbitrary[UserAnswers]) { answers =>
+          val updatedAnswers =
+            answers
+              .set(SndConHavePhonePage, false)
+              .success
+              .value
 
-            navigator
-              .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
-              .mustBe(routes.CheckYourAnswersController.onPageLoad())
+          navigator
+            .nextPage(SndConHavePhonePage, NormalMode, updatedAnswers)
+            .mustBe(routes.CheckYourAnswersController.onPageLoad())
         }
       }
     }

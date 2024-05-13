@@ -39,9 +39,12 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
     }
 
     "must serialise and de-serialise SecondaryContact" in {
-      val json: JsValue = Json.parse(s"""{"$IndividualKey":{"firstName":"${name.firstName}","lastName":"${name.lastName}"},"email":"$TestEmail"}""".stripMargin)
+      val json: JsValue = Json.parse(
+        s"""{"$IndividualKey":{"firstName":"${name.firstName}","lastName":"${name.lastName}"},"email":"$TestEmail"}""".stripMargin
+      )
 
-      val secondaryContact = ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, None, None)
+      val secondaryContact =
+        ContactInformation(IndividualDetails(name.firstName, None, name.lastName), TestEmail, None, None)
       Json.toJson(secondaryContact) mustBe json
       json.as[ContactInformation] mustBe secondaryContact
     }
@@ -58,7 +61,12 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
         .success
         .value
 
-      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(OrganisationDetails(name.fullName), TestEmail, None, None)
+      ContactInformation.convertToPrimary(userAnswers).value mustBe ContactInformation(
+        OrganisationDetails(name.fullName),
+        TestEmail,
+        None,
+        None
+      )
     }
 
     "must return PrimaryContact for the input 'Individual with Id UserAnswers' " in {
@@ -107,7 +115,12 @@ class ContactTypeSpec extends SpecBase with Generators with ScalaCheckPropertyCh
 
       ContactInformation
         .convertToPrimary(userAnswers)
-        .value mustBe ContactInformation(IndividualDetails(nonUkName.givenName, None, nonUkName.familyName), TestEmail, None, None)
+        .value mustBe ContactInformation(
+        IndividualDetails(nonUkName.givenName, None, nonUkName.familyName),
+        TestEmail,
+        None,
+        None
+      )
     }
 
     "must return PrimaryContact for the input 'UserAnswers with ReporterType as Sole trader'" in {

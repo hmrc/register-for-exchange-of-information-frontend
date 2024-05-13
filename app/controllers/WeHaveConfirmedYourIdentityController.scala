@@ -57,29 +57,29 @@ class WeHaveConfirmedYourIdentityController @Inject() (
   implicit private val implicitClock: Clock   = clock
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        buildRegisterWithID() match {
-          case Some(registrationRequest) =>
-            matchingService
-              .sendIndividualRegistrationInformation(registrationRequest)
-              .flatMap {
-                case Right(info) =>
-                  request.userAnswers.set(RegistrationInfoPage, info).map(sessionRepository.set)
-                  subscriptionService.getDisplaySubscriptionId(info.safeId) flatMap {
-                    case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId)
-                    case _ =>
-                      val action = navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
-                      Future.successful(Ok(view(action, mode)))
-                  }
-                case Left(NotFoundError) =>
-                  Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
-                case _ =>
-                  Future.successful(InternalServerError(errorView()))
-              }
-          case _ =>
-            Future.successful(InternalServerError(errorView()))
-        }
+    standardActionSets.identifiedUserWithData().async { implicit request =>
+      buildRegisterWithID() match {
+        case Some(registrationRequest) =>
+          matchingService
+            .sendIndividualRegistrationInformation(registrationRequest)
+            .flatMap {
+              case Right(info)         =>
+                request.userAnswers.set(RegistrationInfoPage, info).map(sessionRepository.set)
+                subscriptionService.getDisplaySubscriptionId(info.safeId) flatMap {
+                  case Some(subscriptionId) =>
+                    controllerHelper.updateSubscriptionIdAndCreateEnrolment(info.safeId, subscriptionId)
+                  case _                    =>
+                    val action = navigator.nextPage(RegistrationInfoPage, mode, request.userAnswers).url
+                    Future.successful(Ok(view(action, mode)))
+                }
+              case Left(NotFoundError) =>
+                Future.successful(Redirect(routes.WeCouldNotConfirmController.onPageLoad("identity")))
+              case _                   =>
+                Future.successful(InternalServerError(errorView()))
+            }
+        case _                         =>
+          Future.successful(InternalServerError(errorView()))
+      }
     }
 
   private def buildRegisterWithID()(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =

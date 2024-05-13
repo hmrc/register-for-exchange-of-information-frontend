@@ -42,17 +42,16 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedWithoutEnrolmentCheck().async {
-    implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    standardActionSets.identifiedWithoutEnrolmentCheck().async { implicit request =>
       request.userAnswers.get(SubscriptionIDPage) match {
         case Some(id) =>
-          sessionRepository.reset(request.userId) map {
-            _ =>
-              Ok(view(id.value))
+          sessionRepository.reset(request.userId) map { _ =>
+            Ok(view(id.value))
           }
-        case None =>
+        case None     =>
           logger.warn("SubscriptionIDPage: Subscription Id is missing")
           Future.successful(InternalServerError(errorView()))
       }
-  }
+    }
 }

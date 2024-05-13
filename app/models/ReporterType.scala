@@ -73,19 +73,16 @@ object ReporterType extends Enumerable.Implicits {
     LimitedPartnership
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
-    case (value, index) =>
-      RadioItem(
-        content = Text(messages(s"reporterType.${value.toString}")),
-        value = Some(value.toString),
-        id = if (index == 0) Some(s"value") else Some(s"value_$index")
-      )
+  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+    RadioItem(
+      content = Text(messages(s"reporterType.${value.toString}")),
+      value = Some(value.toString),
+      id = if (index == 0) Some(s"value") else Some(s"value_$index")
+    )
   }
 
   implicit val enumerable: Enumerable[ReporterType] =
     Enumerable(
-      values.map(
-        v => v.toString -> v
-      ): _*
+      values.map(v => v.toString -> v): _*
     )
 }

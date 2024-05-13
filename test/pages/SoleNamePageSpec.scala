@@ -34,17 +34,16 @@ class SoleNamePageSpec extends PageBehaviours {
   "cleanup" - {
 
     "must remove business name when user enters a sole trader name" in {
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers
-            .set(BusinessNamePage, OrgName)
-            .success
-            .value
-            .set(SoleNamePage, name)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+        val result = userAnswers
+          .set(BusinessNamePage, OrgName)
+          .success
+          .value
+          .set(SoleNamePage, name)
+          .success
+          .value
 
-          result.get(BusinessNamePage) must not be defined
+        result.get(BusinessNamePage) must not be defined
       }
     }
   }

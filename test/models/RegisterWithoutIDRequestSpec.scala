@@ -31,12 +31,13 @@ class RegisterWithoutIDRequestSpec extends SpecBase {
 
   val individual = Individual(name = name, dateOfBirth = LocalDate.parse(TestDate))
 
-  val aaddress = AddressRequest(addressLine1 = "line 1",
-                                addressLine2 = Some("line 2"),
-                                addressLine3 = "line 3",
-                                addressLine4 = Some("line 4"),
-                                postalCode = Some("SW1A 2BQ"),
-                                countryCode = "GB"
+  val aaddress = AddressRequest(
+    addressLine1 = "line 1",
+    addressLine2 = Some("line 2"),
+    addressLine3 = "line 3",
+    addressLine4 = Some("line 4"),
+    postalCode = Some("SW1A 2BQ"),
+    countryCode = "GB"
   )
 
   val contactDetails = ContactDetails(
@@ -50,7 +51,12 @@ class RegisterWithoutIDRequestSpec extends SpecBase {
 
   val registerWithoutIDPayload: RegisterWithoutID = RegisterWithoutID(
     RegisterWithoutIDRequest(
-      RequestCommon("2016-08-16T15:55:30Z", MDR.toString, "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", MDR.toString)))),
+      RequestCommon(
+        "2016-08-16T15:55:30Z",
+        MDR.toString,
+        "ec031b045855445e96f98a569ds56cd2",
+        Some(Seq(Parameters("REGIME", MDR.toString)))
+      ),
       RequestWithoutIDDetails(
         individual = Some(individual),
         organisation = None,

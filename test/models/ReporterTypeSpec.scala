@@ -25,7 +25,12 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
 import play.api.libs.json.{JsError, JsString, Json}
 
-class ReporterTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class ReporterTypeSpec
+    extends AnyFreeSpec
+    with Matchers
+    with ScalaCheckPropertyChecks
+    with OptionValues
+    with ModelGenerators {
 
   "ReporterType" - {
 
@@ -33,9 +38,8 @@ class ReporterTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
       val gen = Gen.oneOf(ReporterType.values)
 
-      forAll(gen) {
-        reporterType =>
-          JsString(reporterType.toString).validate[ReporterType].asOpt.value mustEqual reporterType
+      forAll(gen) { reporterType =>
+        JsString(reporterType.toString).validate[ReporterType].asOpt.value mustEqual reporterType
       }
     }
 
@@ -43,9 +47,8 @@ class ReporterTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
       val gen = arbitrary[String] suchThat (!ReporterType.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-          JsString(invalidValue).validate[ReporterType] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[ReporterType] mustEqual JsError("error.invalid")
       }
     }
 
@@ -53,9 +56,8 @@ class ReporterTypeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
       val gen = Gen.oneOf(ReporterType.values)
 
-      forAll(gen) {
-        reporterType =>
-          Json.toJson(reporterType) mustEqual JsString(reporterType.toString)
+      forAll(gen) { reporterType =>
+        Json.toJson(reporterType) mustEqual JsString(reporterType.toString)
       }
     }
   }

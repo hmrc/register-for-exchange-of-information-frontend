@@ -62,7 +62,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
       when(mockAuditService.sendAuditEvent(any(), any())(any())).thenReturn(Future.successful(Success))
 
-      val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
+      val address     = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(ReporterTypePage, ReporterType.Individual)
         .success
@@ -98,7 +98,7 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
       when(mockAuditService.sendAuditEvent(any(), any())(any())).thenReturn(Future.successful(Success))
 
-      val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
+      val address     = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = UserAnswers("")
         .set(ReporterTypePage, ReporterType.Individual)
         .success
@@ -135,14 +135,16 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
     "must return 'SubscriptionID' when there is already a subscription exists" in {
       val subscriptionID = SubscriptionID("id")
 
-      when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(subscriptionID)))
+      when(mockSubscriptionConnector.readSubscription(any())(any(), any()))
+        .thenReturn(Future.successful(Some(subscriptionID)))
 
       val result = service.checkAndCreateSubscription(safeId, emptyUserAnswers)
       result.futureValue mustBe Right(subscriptionID)
     }
 
     "must return MandatoryInformationMissingError when UserAnswers is empty" in {
-      val response: EitherT[Future, ApiError, SubscriptionID] = EitherT.fromEither[Future](Left(MandatoryInformationMissingError()))
+      val response: EitherT[Future, ApiError, SubscriptionID] =
+        EitherT.fromEither[Future](Left(MandatoryInformationMissingError()))
 
       when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(None))
       when(mockSubscriptionConnector.createSubscription(any())(any(), any())).thenReturn(response)
@@ -185,7 +187,8 @@ class SubscriptionServiceSpec extends SpecBase with MockServiceApp with MockitoS
     "getDisplaySubscriptionId" - {
 
       "must return 'SubscriptionID' for valid input" in {
-        when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
+        when(mockSubscriptionConnector.readSubscription(any())(any(), any()))
+          .thenReturn(Future.successful(Some(SubscriptionID("id"))))
         val result = service.getDisplaySubscriptionId(safeId)
         result.futureValue mustBe Some(SubscriptionID("id"))
       }

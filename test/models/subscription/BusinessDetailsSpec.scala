@@ -22,7 +22,8 @@ import play.api.libs.json.{JsValue, Json}
 
 class BusinessDetailsSpec extends SpecBase {
 
-  val businessAddress: BusinessAddress = BusinessAddress("100 Parliament Street", None, None, Some("London"), "SW1A 2BQ", "GB")
+  val businessAddress: BusinessAddress =
+    BusinessAddress("100 Parliament Street", None, None, Some("London"), "SW1A 2BQ", "GB")
 
   val businessDetails: BusinessDetails = BusinessDetails(
     OrgName,

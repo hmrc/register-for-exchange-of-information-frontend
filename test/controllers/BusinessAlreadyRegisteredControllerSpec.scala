@@ -33,7 +33,8 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url)
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] =
+          FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithId().url)
 
         val result = route(application, request).value
 
@@ -51,7 +52,8 @@ class BusinessAlreadyRegisteredControllerSpec extends SpecBase with ControllerMo
       val application = guiceApplicationBuilder().build()
 
       running(application) {
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url)
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] =
+          FakeRequest(GET, routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId().url)
 
         val result = route(application, request).value
 

@@ -42,7 +42,7 @@ private[mappings] class LocalDateFormatter(
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>
         Right(date)
-      case Failure(_) =>
+      case Failure(_)    =>
         Left(Seq(FormError(returnKey(key, "day"), invalidKey, args)))
     }
 
@@ -96,8 +96,8 @@ private[mappings] class LocalDateFormatter(
         case 1 => requiredKey
       }
 
-    val missingFields = fieldKeys flatMap {
-      field => if (!data.contains(s"$key.$field") || data(s"$key.$field").isEmpty) Some(field) else None
+    val missingFields = fieldKeys flatMap { field =>
+      if (!data.contains(s"$key.$field") || data(s"$key.$field").isEmpty) Some(field) else None
     }
 
     if (missingFields.isEmpty) {
@@ -106,7 +106,9 @@ private[mappings] class LocalDateFormatter(
       if (fieldKeys.size == missingFields.size) {
         Left(Seq(FormError(returnKey(key, missingFields.head), messageNeeded(missingFields.size), args)))
       } else {
-        Left(Seq(FormError(returnKey(key, missingFields.head), messageNeeded(missingFields.size), missingFields ++ args)))
+        Left(
+          Seq(FormError(returnKey(key, missingFields.head), messageNeeded(missingFields.size), missingFields ++ args))
+        )
       }
     }
   }
@@ -114,21 +116,20 @@ private[mappings] class LocalDateFormatter(
   private def validNumbers(key: String, data: Map[String, String]): Either[Seq[FormError], Map[String, String]] =
     data.toList
       .filter(_._1 != "csrfToken")
-      .flatMap(
-        (dateField: (String, String)) => validateDateField(dateField._1, dateField._2)
-      ) match {
+      .flatMap((dateField: (String, String)) => validateDateField(dateField._1, dateField._2)) match {
       case Nil                      => Right(data)
       case items if items.size == 1 => Left(Seq(FormError(returnKey(key, items.head), invalidKey, items ++ args)))
       case _                        => Left(Seq(FormError(returnKey(key, "day"), invalidKey, args)))
     }
 
-  private def datePredicate(key: String, date: LocalDate, testDate: LocalDate, message: String)(f: LocalDate => Boolean): Either[Seq[FormError], LocalDate] =
-    if (f(date)) Left(Seq(FormError(returnKey(key, "day"), message, List(formatDateToString(testDate)) ++ args))) else Right(date)
+  private def datePredicate(key: String, date: LocalDate, testDate: LocalDate, message: String)(
+    f: LocalDate => Boolean
+  ): Either[Seq[FormError], LocalDate] =
+    if (f(date)) Left(Seq(FormError(returnKey(key, "day"), message, List(formatDateToString(testDate)) ++ args)))
+    else Right(date)
 
   private def trimMap(data: Map[String, String]) =
-    data.foldLeft(Map.empty[String, String])(
-      (accum, values) => accum + (values._1 -> values._2.trim)
-    )
+    data.foldLeft(Map.empty[String, String])((accum, values) => accum + (values._1 -> values._2.trim))
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] =
     for {

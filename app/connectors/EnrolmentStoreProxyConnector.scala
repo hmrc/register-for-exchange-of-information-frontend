@@ -46,19 +46,18 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
         )(rds = readRaw, hc = hc, ec = ec)
         .map {
           case response if response.status == NO_CONTENT => Right(())
-          case response if is2xx(response.status) =>
+          case response if is2xx(response.status)        =>
             response.json
               .asOpt[GroupIds]
-              .map(
-                groupIds =>
-                  if (groupIds.principalGroupIds.nonEmpty) {
-                    Left(EnrolmentExistsError(groupIds))
-                  } else {
-                    Right(())
-                  }
+              .map(groupIds =>
+                if (groupIds.principalGroupIds.nonEmpty) {
+                  Left(EnrolmentExistsError(groupIds))
+                } else {
+                  Right(())
+                }
               )
               .getOrElse(Right(()))
-          case response =>
+          case response                                  =>
             logger.warn(s"Enrolment response not formed. ${response.status} response status")
             Left(MalformedError(response.status))
         }

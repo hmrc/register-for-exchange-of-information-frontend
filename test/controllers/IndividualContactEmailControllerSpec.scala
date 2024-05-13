@@ -95,7 +95,8 @@ class IndividualContactEmailControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", "invalid value"))
       val boundForm                                                 = form.bind(Map("value" -> "invalid value"))
 
       val result = route(app, request).value

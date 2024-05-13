@@ -34,7 +34,8 @@ class IndividualAlreadyRegisteredControllerSpec extends SpecBase with Controller
 
       running(application) {
 
-        implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad().url)
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] =
+          FakeRequest(GET, routes.IndividualAlreadyRegisteredController.onPageLoad().url)
 
         val result = route(app, request).value
 

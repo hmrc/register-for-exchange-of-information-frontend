@@ -30,7 +30,7 @@ class NonUkNameFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(): Form[NonUkName] = Form(
     mapping(
-      "givenName" -> validatedText(
+      "givenName"  -> validatedText(
         "nonUkName.error.givenName.required",
         "nonUkName.error.givenName.invalid",
         "nonUkName.error.givenName.length",

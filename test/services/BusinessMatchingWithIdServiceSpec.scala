@@ -64,7 +64,8 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
       "must return matching information when both safeId and subscriptionId can be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Right(registrationWithIDIndividualResponse))
+        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] =
+          EitherT.fromEither[Future](Right(registrationWithIDIndividualResponse))
 
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
@@ -76,7 +77,8 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
+        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] =
+          EitherT.fromEither[Future](Left(NotFoundError))
 
         when(mockRegistrationConnector.withIndividualNino(any())(any(), any())).thenReturn(response)
 
@@ -91,7 +93,8 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
       "must return matching information when both safeId and subscriptionId can be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Right(registrationWithIDOrganisationResponse))
+        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] =
+          EitherT.fromEither[Future](Right(registrationWithIDOrganisationResponse))
 
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
@@ -107,11 +110,12 @@ class BusinessMatchingWithIdServiceSpec extends SpecBase with MockServiceApp wit
 
       "must return an error when when safeId or subscriptionId can't be recovered" in {
 
-        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] = EitherT.fromEither[Future](Left(NotFoundError))
+        val response: EitherT[Future, ApiError, RegistrationWithIDResponse] =
+          EitherT.fromEither[Future](Left(NotFoundError))
 
         when(mockRegistrationConnector.withOrganisationUtr(any())(any(), any())).thenReturn(response)
 
-        val registerWithID =
+        val registerWithID                                     =
           RegisterWithID(RegistrationRequest(UTR, utr.uniqueTaxPayerReference, OrgName, Some(LimitedCompany)))
         val result: Future[Either[ApiError, RegistrationInfo]] =
           service.sendBusinessRegistrationInformation(registerWithID)

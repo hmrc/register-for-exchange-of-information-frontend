@@ -47,14 +47,13 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           responseMessage.json
             .asOpt[DisplaySubscriptionForMDRResponse]
             .map(_.subscriptionID)
-        case errorStatus =>
+        case errorStatus                                      =>
           logger.warn(s"Status $errorStatus has been thrown when display subscription was called")
           None
       }
-      .recover {
-        case e: Exception =>
-          logger.warn(s"S${e.getMessage} has been thrown when display subscription was called")
-          None
+      .recover { case e: Exception =>
+        logger.warn(s"S${e.getMessage} has been thrown when display subscription was called")
+        None
       }
   }
 
@@ -70,17 +69,15 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           createSubscriptionForMDRRequest
         )(wts = CreateSubscriptionForMDRRequest.writes, rds = readRaw, hc = hc, ec = ec)
         .map {
-          case response if is2xx(response.status) =>
+          case response if is2xx(response.status)          =>
             response.json
               .asOpt[CreateSubscriptionForMDRResponse]
-              .map(
-                r => Right(SubscriptionID(r.createSubscriptionForMDRResponse.subscriptionID))
-              )
+              .map(r => Right(SubscriptionID(r.createSubscriptionForMDRResponse.subscriptionID)))
               .getOrElse(Left(UnableToCreateEMTPSubscriptionError))
           case response if response.status equals CONFLICT =>
             logger.warn(s"Duplicate submission to ETMP. ${response.status} response status")
             Left(DuplicateSubmissionError)
-          case response =>
+          case response                                    =>
             logger.warn(s"Unable to create a subscription to ETMP. ${response.status} response status")
             handleError(response)
         }
@@ -89,13 +86,13 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def handleError[A](responseMessage: HttpResponse): Either[ApiError, A] =
     responseMessage.status match {
-      case NOT_FOUND =>
+      case NOT_FOUND           =>
         Left(NotFoundError)
-      case BAD_REQUEST =>
+      case BAD_REQUEST         =>
         Left(BadRequestError)
       case SERVICE_UNAVAILABLE =>
         Left(ServiceUnavailableError)
-      case _ =>
+      case _                   =>
         Left(UnableToCreateEMTPSubscriptionError)
     }
 }

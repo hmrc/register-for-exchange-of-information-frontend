@@ -35,13 +35,12 @@ class BusinessMatchingWithIdService @Inject() (registrationConnector: Registrati
   ): Future[Either[ApiError, OrgRegistrationInfo]] =
     registrationConnector
       .withOrganisationUtr(registerWithID)
-      .subflatMap {
-        response =>
-          (for {
-            safeId  <- response.safeId
-            name    <- response.name
-            address <- response.address
-          } yield OrgRegistrationInfo(safeId, name, address)).toRight(MandatoryInformationMissingError())
+      .subflatMap { response =>
+        (for {
+          safeId  <- response.safeId
+          name    <- response.name
+          address <- response.address
+        } yield OrgRegistrationInfo(safeId, name, address)).toRight(MandatoryInformationMissingError())
       }
       .value
 
@@ -51,13 +50,12 @@ class BusinessMatchingWithIdService @Inject() (registrationConnector: Registrati
   ): Future[Either[ApiError, IndRegistrationInfo]] =
     registrationConnector
       .withIndividualNino(registerWithID)
-      .subflatMap {
-        response =>
-          response.safeId
-            .map {
-              safeId => IndRegistrationInfo(safeId)
-            }
-            .toRight(MandatoryInformationMissingError())
+      .subflatMap { response =>
+        response.safeId
+          .map { safeId =>
+            IndRegistrationInfo(safeId)
+          }
+          .toRight(MandatoryInformationMissingError())
       }
       .value
 }

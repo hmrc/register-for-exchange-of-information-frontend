@@ -23,12 +23,14 @@ class SubscriptionIDResponseSpec extends SpecBase {
 
   "SubscriptionIDResponseSpec" - {
     "must read CreateSubscriptionForMDRResponse" in {
-      val json = Json.parse("""{"createSubscriptionForMDRResponse": {"responseDetail":{"subscriptionID": "id"}}}""".stripMargin)
+      val json =
+        Json.parse("""{"createSubscriptionForMDRResponse": {"responseDetail":{"subscriptionID": "id"}}}""".stripMargin)
       json.as[CreateSubscriptionForMDRResponse] mustBe CreateSubscriptionForMDRResponse(SubscriptionIDResponse("id"))
     }
 
     "must read DisplaySubscriptionForMDRResponse" in {
-      val json = Json.parse("""{"displaySubscriptionForMDRResponse": {"responseDetail":{"subscriptionID": "id"}}}""".stripMargin)
+      val json =
+        Json.parse("""{"displaySubscriptionForMDRResponse": {"responseDetail":{"subscriptionID": "id"}}}""".stripMargin)
       json.as[DisplaySubscriptionForMDRResponse] mustBe DisplaySubscriptionForMDRResponse(SubscriptionIDResponse("id"))
     }
   }

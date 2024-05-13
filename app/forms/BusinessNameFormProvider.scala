@@ -28,6 +28,10 @@ class BusinessNameFormProvider @Inject() extends Mappings with RegexConstants {
 
   def apply(key: String): Form[String] =
     Form(
-      "value" -> validatedTextMaxLength(s"businessName.error.required.$key", s"businessName.error.length.$key", maxLength)
+      "value" -> validatedTextMaxLength(
+        s"businessName.error.required.$key",
+        s"businessName.error.length.$key",
+        maxLength
+      )
     )
 }

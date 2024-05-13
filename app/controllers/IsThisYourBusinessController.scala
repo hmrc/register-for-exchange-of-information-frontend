@@ -70,8 +70,9 @@ class IsThisYourBusinessController @Inject() (
     request: DataRequest[AnyContent]
   ): Future[Result] =
     subscriptionService.getDisplaySubscriptionId(registrationInfo.safeId) flatMap {
-      case Some(subscriptionId) => controllerHelper.updateSubscriptionIdAndCreateEnrolment(registrationInfo.safeId, subscriptionId)
-      case _ =>
+      case Some(subscriptionId) =>
+        controllerHelper.updateSubscriptionIdAndCreateEnrolment(registrationInfo.safeId, subscriptionId)
+      case _                    =>
         val preparedForm = request.userAnswers.get(IsThisYourBusinessPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -79,40 +80,43 @@ class IsThisYourBusinessController @Inject() (
         Future.successful(Ok(view(preparedForm, registrationInfo, mode)))
     }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithData().async { implicit request =>
       val autoMatchedUtr = request.userAnswers.get(AutoMatchedUTRPage)
       val reporterType   = request.userAnswers.get(ReporterTypePage)
       buildRegisterWithId(autoMatchedUtr) match {
         case Some(registerWithID) =>
           matchingService.sendBusinessRegistrationInformation(registerWithID).flatMap {
-            case Right(response) =>
+            case Right(response)     =>
               handleRegistrationFound(mode, autoMatchedUtr, response)
             case Left(NotFoundError) =>
               handleRegistrationNotFound(mode, autoMatchedUtr, reporterType)
-            case _ =>
+            case _                   =>
               Future.successful(InternalServerError(errorView()))
           }
-        case _ =>
+        case _                    =>
           Future.successful(InternalServerError(errorView()))
       }
-  }
+    }
 
   private def handleRegistrationFound(
     mode: Mode,
     autoMatchedUtr: Option[UniqueTaxpayerReference],
     registrationInfo: OrgRegistrationInfo
   )(implicit request: DataRequest[AnyContent]): Future[Result] = {
-    val updatedAnswersWithUtrPage = autoMatchedUtr.map(request.userAnswers.set(UTRPage, _)).getOrElse(Success(request.userAnswers))
+    val updatedAnswersWithUtrPage =
+      autoMatchedUtr.map(request.userAnswers.set(UTRPage, _)).getOrElse(Success(request.userAnswers))
     for {
       updatedAnswers <- Future.fromTry(updatedAnswersWithUtrPage.flatMap(_.set(RegistrationInfoPage, registrationInfo)))
-      updatedRequest = DataRequest(request.request, request.userId, request.affinityGroup, updatedAnswers)
-      result <- sessionRepository.set(updatedAnswers).flatMap {
-        case true => result(mode, form, registrationInfo)(ec, updatedRequest)
-        case false =>
-          logger.error(s"Failed to update user answers after registration was found for userId: [${request.userId}]")
-          Future.successful(InternalServerError(errorView()))
-      }
+      updatedRequest  = DataRequest(request.request, request.userId, request.affinityGroup, updatedAnswers)
+      result         <- sessionRepository.set(updatedAnswers).flatMap {
+                          case true  => result(mode, form, registrationInfo)(ec, updatedRequest)
+                          case false =>
+                            logger.error(
+                              s"Failed to update user answers after registration was found for userId: [${request.userId}]"
+                            )
+                            Future.successful(InternalServerError(errorView()))
+                        }
     } yield result
   }
 
@@ -125,12 +129,12 @@ class IsThisYourBusinessController @Inject() (
       resultWithAutoMatchedFieldCleared(mode)
     } else {
       reporterType match {
-        case Some(ReporterType.Sole) =>
+        case Some(ReporterType.Sole)       =>
           Future.successful(Redirect(routes.SoleTraderNotIdentifiedController.onPageLoad()))
         case Some(ReporterType.Individual) =>
           logger.error("Individual reporter type not allowed on IsThisYourBusinessPage")
           Future.successful(InternalServerError(errorView()))
-        case _ =>
+        case _                             =>
           Future.successful(Redirect(routes.BusinessNotIdentifiedController.onPageLoad()))
       }
     }
@@ -138,40 +142,43 @@ class IsThisYourBusinessController @Inject() (
   private def resultWithAutoMatchedFieldCleared(mode: Mode)(implicit request: DataRequest[AnyContent]): Future[Result] =
     for {
       autoMatchedUtrRemoved <- Future.fromTry(request.userAnswers.remove(AutoMatchedUTRPage))
-      result <- sessionRepository.set(autoMatchedUtrRemoved) flatMap {
-        case true => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(mode)))
-        case false =>
-          logger.error(s"Failed to clear autoMatchedUTR field from user answers for userId: [${request.userId}]")
-          Future.successful(InternalServerError(errorView()))
-      }
+      result                <- sessionRepository.set(autoMatchedUtrRemoved) flatMap {
+                                 case true  => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(mode)))
+                                 case false =>
+                                   logger.error(
+                                     s"Failed to clear autoMatchedUTR field from user answers for userId: [${request.userId}]"
+                                   )
+                                   Future.successful(InternalServerError(errorView()))
+                               }
     } yield result
 
-  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
-    implicit request =>
-      val thereIsAProblem = Future.successful(InternalServerError(errorView()))
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            request.userAnswers
-              .get(RegistrationInfoPage)
-              .fold(thereIsAProblem) {
-                case registrationInfo: OrgRegistrationInfo =>
-                  Future.successful(BadRequest(view(formWithErrors, registrationInfo, mode)))
-                case _ => thereIsAProblem
-              },
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, mode, updatedAnswers))
-        )
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async { implicit request =>
+    val thereIsAProblem = Future.successful(InternalServerError(errorView()))
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors =>
+          request.userAnswers
+            .get(RegistrationInfoPage)
+            .fold(thereIsAProblem) {
+              case registrationInfo: OrgRegistrationInfo =>
+                Future.successful(BadRequest(view(formWithErrors, registrationInfo, mode)))
+              case _                                     => thereIsAProblem
+            },
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsThisYourBusinessPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(IsThisYourBusinessPage, mode, updatedAnswers))
+      )
   }
 
-  private def buildRegisterWithId(autoMatchedUtr: Option[UniqueTaxpayerReference])(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
+  private def buildRegisterWithId(
+    autoMatchedUtr: Option[UniqueTaxpayerReference]
+  )(implicit request: DataRequest[AnyContent]): Option[RegisterWithID] =
     request.userAnswers.get(ReporterTypePage) match {
       case Some(Sole) => buildIndividualRegistrationRequest()
-      case _ =>
+      case _          =>
         autoMatchedUtr match {
           case Some(utr) => buildAutoMatchedBusinessRegistrationRequest(utr)
           case None      => buildBusinessRegistrationRequest()
@@ -182,7 +189,7 @@ class IsThisYourBusinessController @Inject() (
     for {
       utr          <- request.userAnswers.get(UTRPage)
       businessName <- request.userAnswers.get(BusinessNamePage)
-      businessType = request.userAnswers.get(ReporterTypePage)
+      businessType  = request.userAnswers.get(ReporterTypePage)
     } yield RegisterWithID(RegistrationRequest(UTR, utr.uniqueTaxPayerReference, businessName, businessType, None))
 
   def buildAutoMatchedBusinessRegistrationRequest(utr: UniqueTaxpayerReference): Option[RegisterWithID] =

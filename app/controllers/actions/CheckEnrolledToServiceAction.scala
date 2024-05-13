@@ -26,8 +26,9 @@ import javax.inject.Inject
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckEnrolledToServiceAction @Inject() (config: FrontendAppConfig)(implicit val executionContext: ExecutionContext)
-    extends ActionFilter[IdentifierRequest]
+class CheckEnrolledToServiceAction @Inject() (config: FrontendAppConfig)(implicit
+  val executionContext: ExecutionContext
+) extends ActionFilter[IdentifierRequest]
     with Logging {
 
   override protected def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] =

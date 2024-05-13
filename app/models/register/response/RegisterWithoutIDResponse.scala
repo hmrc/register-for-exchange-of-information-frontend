@@ -20,7 +20,10 @@ import models.matching.SafeId
 import models.shared.ResponseCommon
 import play.api.libs.json.{Json, OFormat}
 
-case class RegisterWithoutIDResponse(responseCommon: ResponseCommon, responseDetail: Option[RegisterWithoutIDResponseDetail]) {
+case class RegisterWithoutIDResponse(
+  responseCommon: ResponseCommon,
+  responseDetail: Option[RegisterWithoutIDResponseDetail]
+) {
 
   val safeId: Option[SafeId] = responseDetail.map(_.SAFEID)
 }

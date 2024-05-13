@@ -20,7 +20,7 @@ import models.Name
 import models.matching.{AutoMatchedRegistrationRequest, RegistrationRequest}
 import models.register.request
 import models.register.request.details.{PartnerDetails, WithIDIndividual, WithIDOrganisation}
-import play.api.libs.json.{__, Json, OWrites, Reads}
+import play.api.libs.json.{Json, OWrites, Reads, __}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -45,19 +45,25 @@ object RequestWithIDDetails {
         (__ \ "isAnAgent").read[Boolean] and
         (__ \ "individual").readNullable[WithIDIndividual] and
         (__ \ "organisation").readNullable[WithIDOrganisation]
-    )(
-      (idType, idNumber, requiresNameMatch, isAnAgent, individual, organisation) =>
-        (individual, organisation) match {
-          case (Some(_), Some(_)) => throw new Exception("Request details cannot have both and organisation or individual element")
-          case (Some(ind), _)     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Option(ind))
-          case (_, Some(org))     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Option(org))
-          case (None, None)       => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent)
-        }
+    )((idType, idNumber, requiresNameMatch, isAnAgent, individual, organisation) =>
+      (individual, organisation) match {
+        case (Some(_), Some(_)) =>
+          throw new Exception("Request details cannot have both and organisation or individual element")
+        case (Some(ind), _)     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Option(ind))
+        case (_, Some(org))     => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Option(org))
+        case (None, None)       => request.RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent)
+      }
     )
   }
 
   implicit lazy val requestWithIDDetailsWrites: OWrites[RequestWithIDDetails] = OWrites[RequestWithIDDetails] {
-    case RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Some(individual @ WithIDIndividual(_, _, _, _))) =>
+    case RequestWithIDDetails(
+          idType,
+          idNumber,
+          requiresNameMatch,
+          isAnAgent,
+          Some(individual @ WithIDIndividual(_, _, _, _))
+        ) =>
       Json.obj(
         "IDType"            -> idType,
         "IDNumber"          -> idNumber,
@@ -65,7 +71,13 @@ object RequestWithIDDetails {
         "isAnAgent"         -> isAnAgent,
         "individual"        -> individual
       )
-    case RequestWithIDDetails(idType, idNumber, requiresNameMatch, isAnAgent, Some(organisation @ WithIDOrganisation(_, _))) =>
+    case RequestWithIDDetails(
+          idType,
+          idNumber,
+          requiresNameMatch,
+          isAnAgent,
+          Some(organisation @ WithIDOrganisation(_, _))
+        ) =>
       Json.obj(
         "IDType"            -> idType,
         "IDNumber"          -> idNumber,

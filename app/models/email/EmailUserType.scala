@@ -25,10 +25,10 @@ class EmailUserType @Inject() ()() {
 
   def getUserTypeFromUa(userAnswers: UserAnswers): UserType =
     userAnswers.get(ReporterTypePage) match {
-      case Some(ReporterType.Sole)       => SoleTrader
-      case Some(ReporterType.Individual) => Individual
+      case Some(ReporterType.Sole)                             => SoleTrader
+      case Some(ReporterType.Individual)                       => Individual
       case None if userAnswers.get(AutoMatchedUTRPage).isEmpty =>
         throw new RuntimeException("Cannot determine whether the registration should be Organisation or Individual")
-      case _ => Organisation
+      case _                                                   => Organisation
     }
 }

@@ -16,7 +16,7 @@
 
 package forms
 
-import models.{ReporterType}
+import models.ReporterType
 import play.api.data.FormError
 import forms.behaviours.OptionFieldBehaviours
 

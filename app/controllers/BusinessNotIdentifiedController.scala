@@ -38,15 +38,14 @@ class BusinessNotIdentifiedController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
-    implicit request =>
-      val startUrl = routes.IndexController.onPageLoad().url
-      request.userAnswers.get(ReporterTypePage) match {
-        case Some(reporterType) if organisationReporterTypes.contains(reporterType) =>
-          Ok(view(appConfig.findAndUpdateCompanyInfoLink, startUrl, reporterType))
-        case reporterType =>
-          logger.error(s"$reporterType reporter type is not eligible to view BusinessNotIdentifiedPage")
-          Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())
-      }
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() { implicit request =>
+    val startUrl = routes.IndexController.onPageLoad().url
+    request.userAnswers.get(ReporterTypePage) match {
+      case Some(reporterType) if organisationReporterTypes.contains(reporterType) =>
+        Ok(view(appConfig.findAndUpdateCompanyInfoLink, startUrl, reporterType))
+      case reporterType                                                           =>
+        logger.error(s"$reporterType reporter type is not eligible to view BusinessNotIdentifiedPage")
+        Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())
+    }
   }
 }

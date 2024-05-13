@@ -38,69 +38,67 @@ class DoYouHaveNINPageSpec extends PageBehaviours {
 
     "must remove with NINO journey when 'No' is selected" in {
 
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers
-            .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
-            .success
-            .value
-            .set(WhatIsYourNamePage, name)
-            .success
-            .value
-            .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-            .success
-            .value
-            .set(DoYouHaveNINPage, false)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+        val result = userAnswers
+          .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
+          .success
+          .value
+          .set(WhatIsYourNamePage, name)
+          .success
+          .value
+          .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+          .success
+          .value
+          .set(DoYouHaveNINPage, false)
+          .success
+          .value
 
-          result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
-          result.get(WhatIsYourNamePage) must not be defined
-          result.get(WhatIsYourDateOfBirthPage) must not be defined
+        result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
+        result.get(WhatIsYourNamePage)                    must not be defined
+        result.get(WhatIsYourDateOfBirthPage)             must not be defined
       }
     }
 
     "must remove without NINO journey when 'Yes' is selected" in {
 
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers
-            .set(NonUkNamePage, nonUkName)
-            .success
-            .value
-            .set(DateOfBirthWithoutIdPage, LocalDate.now())
-            .success
-            .value
-            .set(DoYouLiveInTheUKPage, true)
-            .success
-            .value
-            .set(WhatIsYourPostcodePage, "NE11QZ")
-            .success
-            .value
-            .set(AddressUKPage, Address("", None, "", None, None, Country("", "", "")))
-            .success
-            .value
-            .set(IndividualAddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
-            .success
-            .value
-            .set(SelectAddressPage, "SomeAddress")
-            .success
-            .value
-            .set(SelectedAddressLookupPage, AddressLookup(None, None, None, None, "", None, ""))
-            .success
-            .value
-            .set(DoYouHaveNINPage, true)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+        val result = userAnswers
+          .set(NonUkNamePage, nonUkName)
+          .success
+          .value
+          .set(DateOfBirthWithoutIdPage, LocalDate.now())
+          .success
+          .value
+          .set(DoYouLiveInTheUKPage, true)
+          .success
+          .value
+          .set(WhatIsYourPostcodePage, "NE11QZ")
+          .success
+          .value
+          .set(AddressUKPage, Address("", None, "", None, None, Country("", "", "")))
+          .success
+          .value
+          .set(IndividualAddressWithoutIdPage, Address("", None, "", None, None, Country("", "", "")))
+          .success
+          .value
+          .set(SelectAddressPage, "SomeAddress")
+          .success
+          .value
+          .set(SelectedAddressLookupPage, AddressLookup(None, None, None, None, "", None, ""))
+          .success
+          .value
+          .set(DoYouHaveNINPage, true)
+          .success
+          .value
 
-          result.get(NonUkNamePage) must not be defined
-          result.get(DateOfBirthWithoutIdPage) must not be defined
-          result.get(DoYouLiveInTheUKPage) must not be defined
-          result.get(WhatIsYourPostcodePage) must not be defined
-          result.get(AddressUKPage) must not be defined
-          result.get(IndividualAddressWithoutIdPage) must not be defined
-          result.get(SelectAddressPage) must not be defined
-          result.get(SelectedAddressLookupPage) must not be defined
+        result.get(NonUkNamePage)                  must not be defined
+        result.get(DateOfBirthWithoutIdPage)       must not be defined
+        result.get(DoYouLiveInTheUKPage)           must not be defined
+        result.get(WhatIsYourPostcodePage)         must not be defined
+        result.get(AddressUKPage)                  must not be defined
+        result.get(IndividualAddressWithoutIdPage) must not be defined
+        result.get(SelectAddressPage)              must not be defined
+        result.get(SelectedAddressLookupPage)      must not be defined
       }
     }
   }

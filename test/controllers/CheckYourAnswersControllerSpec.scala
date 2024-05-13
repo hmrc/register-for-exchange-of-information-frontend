@@ -341,7 +341,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
         when(mockTaxEnrolmentsService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UnableToCreateEnrolmentError)))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any())).thenReturn(Future.successful(Right(SubscriptionID("id"))))
+        when(mockSubscriptionService.checkAndCreateSubscription(any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(SubscriptionID("id"))))
         val userAnswers = emptyUserAnswers
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
@@ -592,7 +593,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
           .thenReturn(Future.successful(Left(UnableToCreateEMTPSubscriptionError)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockRegistrationService.registerWithoutId()(any(), any())).thenReturn(Future.successful(Left(MandatoryInformationMissingError())))
+        when(mockRegistrationService.registerWithoutId()(any(), any()))
+          .thenReturn(Future.successful(Left(MandatoryInformationMissingError())))
 
         retrieveUserAnswersData(emptyUserAnswers)
         val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit().url)

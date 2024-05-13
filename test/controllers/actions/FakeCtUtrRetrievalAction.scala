@@ -34,7 +34,10 @@ class FakeCtUtrRetrievalAction(
   utr: Option[UniqueTaxpayerReference] = None
 ) extends ActionFunction[IdentifierRequest, IdentifierRequest] {
 
-  override def invokeBlock[A](request: IdentifierRequest[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
+  override def invokeBlock[A](
+    request: IdentifierRequest[A],
+    block: IdentifierRequest[A] => Future[Result]
+  ): Future[Result] =
     block(request.copy(utr = utr))
 
   implicit override protected val executionContext: ExecutionContext =

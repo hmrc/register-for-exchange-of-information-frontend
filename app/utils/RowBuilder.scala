@@ -37,11 +37,16 @@ trait RowBuilder {
       Text(messages("site.no"))
     }
 
-  private[utils] def toRow(msgKey: String, value: Content, href: String, columnWidth: String = "govuk-!-width-one-half")(implicit
+  private[utils] def toRow(
+    msgKey: String,
+    value: Content,
+    href: String,
+    columnWidth: String = "govuk-!-width-one-half"
+  )(implicit
     messages: Messages
   ): SummaryListRow = {
-    val message = messages(s"$msgKey.checkYourAnswersLabel")
-    val hiddenText = if (messages.isDefinedAt(s"$msgKey.checkYourAnswersLabel.hiddenText")) {
+    val message         = messages(s"$msgKey.checkYourAnswersLabel")
+    val hiddenText      = if (messages.isDefinedAt(s"$msgKey.checkYourAnswersLabel.hiddenText")) {
       messages(s"$msgKey.checkYourAnswersLabel.hiddenText")
     } else {
       message
@@ -68,16 +73,10 @@ trait RowBuilder {
   private[utils] def formatAddress(answer: Address): HtmlContent =
     HtmlContent(s"""
         ${answer.addressLine1}<br>
-        ${answer.addressLine2.fold("")(
-      address => s"$address<br>"
-    )}
+        ${answer.addressLine2.fold("")(address => s"$address<br>")}
         ${answer.addressLine3}<br>
-        ${answer.addressLine4.fold("")(
-      address => s"$address<br>"
-    )}
-        ${answer.postCode.fold("")(
-      postcode => s"$postcode<br>"
-    )}
+        ${answer.addressLine4.fold("")(address => s"$address<br>")}
+        ${answer.postCode.fold("")(postcode => s"$postcode<br>")}
         ${answer.country.description}
      """)
 

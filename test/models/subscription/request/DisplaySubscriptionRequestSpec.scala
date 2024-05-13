@@ -22,13 +22,15 @@ import play.api.libs.json.Json
 class DisplaySubscriptionRequestSpec extends SpecBase {
   val params: Option[Seq[RequestParameter]]            = Some(Seq(RequestParameter("name", "value")))
   val requestDetail: RequestDetail                     = RequestDetail("id", "number")
-  val requestCommon: SubscriptionRequestCommon         = SubscriptionRequestCommon("regime", "date", "ref", "MDTP", params, Some("uuid"))
+  val requestCommon: SubscriptionRequestCommon         =
+    SubscriptionRequestCommon("regime", "date", "ref", "MDTP", params, Some("uuid"))
   val readSubscriptionRequest: ReadSubscriptionRequest = ReadSubscriptionRequest(requestCommon, requestDetail)
 
   "DisplaySubscriptionRequest" - {
     "must write MDR request" in {
-      val displaySubscriptionRequest: DisplaySubscriptionRequest = DisplaySubscriptionForMDRRequest(readSubscriptionRequest)
-      val expectedJson = Json.parse(
+      val displaySubscriptionRequest: DisplaySubscriptionRequest =
+        DisplaySubscriptionForMDRRequest(readSubscriptionRequest)
+      val expectedJson                                           = Json.parse(
         """
           |{
           |  "displaySubscriptionForMDRRequest": {

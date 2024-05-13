@@ -31,7 +31,10 @@ class DifferentBusinessControllerSpec extends SpecBase with ControllerMockFixtur
 
   val userAnswers: UserAnswers =
     emptyUserAnswers
-      .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("line1", None, None, None, None, "")))
+      .set(
+        RegistrationInfoPage,
+        OrgRegistrationInfo(safeId, OrgName, AddressResponse("line1", None, None, None, None, ""))
+      )
       .success
       .value
 

@@ -29,7 +29,14 @@ import java.time.LocalDate
 class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
 
   private val address =
-    Address("He lives in a house", Some("a very big house"), "In the country", Some("blur 1995"), Some("BritPop"), Country("", "GB", "Great Britain"))
+    Address(
+      "He lives in a house",
+      Some("a very big house"),
+      "In the country",
+      Some("blur 1995"),
+      Some("BritPop"),
+      Country("", "GB", "Great Britain")
+    )
 
   private val addressLookup = AddressLookup(
     Some("Your house was very small"),
@@ -53,134 +60,140 @@ class DoYouHaveUniqueTaxPayerReferencePageSpec extends PageBehaviours {
   "cleanup" - {
 
     "must remove business with ID pages when user selects no to do you have a utr?" in {
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers
-            .set(ReporterTypePage, LimitedCompany)
-            .success
-            .value
-            .set(UTRPage, utr)
-            .success
-            .value
-            .set(BusinessNamePage, OrgName)
-            .success
-            .value
-            .set(IsThisYourBusinessPage, true)
-            .success
-            .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
-            .success
-            .value
-            .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+        val result = userAnswers
+          .set(ReporterTypePage, LimitedCompany)
+          .success
+          .value
+          .set(UTRPage, utr)
+          .success
+          .value
+          .set(BusinessNamePage, OrgName)
+          .success
+          .value
+          .set(IsThisYourBusinessPage, true)
+          .success
+          .value
+          .set(
+            RegistrationInfoPage,
+            OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB"))
+          )
+          .success
+          .value
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .success
+          .value
 
-          result.get(UTRPage) must not be defined
-          result.get(BusinessNamePage) must not be defined
-          result.get(IsThisYourBusinessPage) must not be defined
-          result.get(RegistrationInfoPage) must not be defined
+        result.get(UTRPage)                must not be defined
+        result.get(BusinessNamePage)       must not be defined
+        result.get(IsThisYourBusinessPage) must not be defined
+        result.get(RegistrationInfoPage)   must not be defined
       }
     }
 
     "must remove individual pages when user selects YES to do you have a utr?" in {
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers
-            .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
-            .success
-            .value
-            .set(WhatIsYourNamePage, name)
-            .success
-            .value
-            .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-            .success
-            .value
-            .set(DateOfBirthWithoutIdPage, LocalDate.now())
-            .success
-            .value
-            .set(DoYouHaveNINPage, true)
-            .success
-            .value
-            .set(NonUkNamePage, nonUkName)
-            .success
-            .value
-            .set(DoYouLiveInTheUKPage, true)
-            .success
-            .value
-            .set(WhatIsYourPostcodePage, TestPostCode)
-            .success
-            .value
-            .set(IndividualAddressWithoutIdPage, address)
-            .success
-            .value
-            .set(AddressLookupPage, Seq(addressLookup))
-            .success
-            .value
-            .set(AddressUKPage, address)
-            .success
-            .value
-            .set(SelectAddressPage, "true")
-            .success
-            .value
-            .set(SelectedAddressLookupPage, addressLookup)
-            .success
-            .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
-            .success
-            .value
-            .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+        val result = userAnswers
+          .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
+          .success
+          .value
+          .set(WhatIsYourNamePage, name)
+          .success
+          .value
+          .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+          .success
+          .value
+          .set(DateOfBirthWithoutIdPage, LocalDate.now())
+          .success
+          .value
+          .set(DoYouHaveNINPage, true)
+          .success
+          .value
+          .set(NonUkNamePage, nonUkName)
+          .success
+          .value
+          .set(DoYouLiveInTheUKPage, true)
+          .success
+          .value
+          .set(WhatIsYourPostcodePage, TestPostCode)
+          .success
+          .value
+          .set(IndividualAddressWithoutIdPage, address)
+          .success
+          .value
+          .set(AddressLookupPage, Seq(addressLookup))
+          .success
+          .value
+          .set(AddressUKPage, address)
+          .success
+          .value
+          .set(SelectAddressPage, "true")
+          .success
+          .value
+          .set(SelectedAddressLookupPage, addressLookup)
+          .success
+          .value
+          .set(
+            RegistrationInfoPage,
+            OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB"))
+          )
+          .success
+          .value
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
 
-          result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
-          result.get(WhatIsYourNamePage) must not be defined
-          result.get(WhatIsYourDateOfBirthPage) must not be defined
-          result.get(DateOfBirthWithoutIdPage) must not be defined
-          result.get(DoYouHaveNINPage) must not be defined
-          result.get(NonUkNamePage) must not be defined
-          result.get(DoYouLiveInTheUKPage) must not be defined
-          result.get(WhatIsYourPostcodePage) must not be defined
-          result.get(IndividualAddressWithoutIdPage) must not be defined
-          result.get(AddressLookupPage) must not be defined
-          result.get(AddressUKPage) must not be defined
-          result.get(SelectAddressPage) must not be defined
-          result.get(SelectedAddressLookupPage) must not be defined
-          result.get(RegistrationInfoPage) must not be defined
+        result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
+        result.get(WhatIsYourNamePage)                    must not be defined
+        result.get(WhatIsYourDateOfBirthPage)             must not be defined
+        result.get(DateOfBirthWithoutIdPage)              must not be defined
+        result.get(DoYouHaveNINPage)                      must not be defined
+        result.get(NonUkNamePage)                         must not be defined
+        result.get(DoYouLiveInTheUKPage)                  must not be defined
+        result.get(WhatIsYourPostcodePage)                must not be defined
+        result.get(IndividualAddressWithoutIdPage)        must not be defined
+        result.get(AddressLookupPage)                     must not be defined
+        result.get(AddressUKPage)                         must not be defined
+        result.get(SelectAddressPage)                     must not be defined
+        result.get(SelectedAddressLookupPage)             must not be defined
+        result.get(RegistrationInfoPage)                  must not be defined
       }
     }
 
     "must remove business without ID pages when user selects YES to do you have a utr?" in {
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers
-            .set(BusinessWithoutIDNamePage, OrgName)
-            .success
-            .value
-            .set(BusinessHaveDifferentNamePage, true)
-            .success
-            .value
-            .set(WhatIsTradingNamePage, OrgName)
-            .success
-            .value
-            .set(DoYouLiveInTheUKPage, true)
-            .success
-            .value
-            .set(BusinessAddressWithoutIdPage, address)
-            .success
-            .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
-            .success
-            .value
-            .set(DoYouHaveUniqueTaxPayerReferencePage, true)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+        val result = userAnswers
+          .set(BusinessWithoutIDNamePage, OrgName)
+          .success
+          .value
+          .set(BusinessHaveDifferentNamePage, true)
+          .success
+          .value
+          .set(WhatIsTradingNamePage, OrgName)
+          .success
+          .value
+          .set(DoYouLiveInTheUKPage, true)
+          .success
+          .value
+          .set(BusinessAddressWithoutIdPage, address)
+          .success
+          .value
+          .set(
+            RegistrationInfoPage,
+            OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB"))
+          )
+          .success
+          .value
+          .set(DoYouHaveUniqueTaxPayerReferencePage, true)
+          .success
+          .value
 
-          result.get(BusinessWithoutIDNamePage) must not be defined
-          result.get(BusinessHaveDifferentNamePage) must not be defined
-          result.get(WhatIsTradingNamePage) must not be defined
-          result.get(DoYouLiveInTheUKPage) must not be defined
-          result.get(BusinessAddressWithoutIdPage) must not be defined
-          result.get(RegistrationInfoPage) must not be defined
+        result.get(BusinessWithoutIDNamePage)     must not be defined
+        result.get(BusinessHaveDifferentNamePage) must not be defined
+        result.get(WhatIsTradingNamePage)         must not be defined
+        result.get(DoYouLiveInTheUKPage)          must not be defined
+        result.get(BusinessAddressWithoutIdPage)  must not be defined
+        result.get(RegistrationInfoPage)          must not be defined
       }
     }
   }

@@ -29,7 +29,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class AddressLookupConnectorSpec
+    extends SpecBase
+    with WireMockServerHandler
+    with Generators
+    with ScalaCheckPropertyChecks {
 
   lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -87,7 +91,15 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
         stubResponse(addressLookupUrl, OK, addressJson)
 
         val addressLookupResult = Seq(
-          AddressLookup(Some("1 Address line 1 Road"), None, Some("Address line 2 Road"), None, "Town", Some("County"), postcode)
+          AddressLookup(
+            Some("1 Address line 1 Road"),
+            None,
+            Some("Address line 2 Road"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          )
         )
 
         val result = connector.addressLookupByPostcode(postcode)
@@ -922,26 +934,162 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
           AddressLookup(Some("4 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("5 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("6 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Flat 1"), Some("7 Other place"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Flat 2"), Some("7 Other place"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Flat 3"), Some("7 Other place"), Some("Some District"), None, "Town", Some("County"), postcode),
+          AddressLookup(
+            Some("Flat 1"),
+            Some("7 Other place"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Flat 2"),
+            Some("7 Other place"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Flat 3"),
+            Some("7 Other place"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
           AddressLookup(Some("8 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("9 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
           AddressLookup(Some("10 Other place"), None, Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Suite 1"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Unit 1"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Suite 2"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Unit 2"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Suite 3"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Apartment 301"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Apartment 302"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Apartment 400"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("99-99a"), Some("Back High Street"), Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
-          AddressLookup(Some("135 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
-          AddressLookup(Some("Efer House 137a"), Some("Back High Street"), Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
-          AddressLookup(Some("141 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
-          AddressLookup(Some("143 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode),
-          AddressLookup(Some("153 Back High Street"), None, Some("Gosforth"), None, "Newcastle upon Tyne", Some("County"), postcode)
+          AddressLookup(
+            Some("Suite 1"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Unit 1"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Suite 2"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Unit 2"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Suite 3"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Apartment 301"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Apartment 302"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Apartment 400"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("99-99a"),
+            Some("Back High Street"),
+            Some("Gosforth"),
+            None,
+            "Newcastle upon Tyne",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("135 Back High Street"),
+            None,
+            Some("Gosforth"),
+            None,
+            "Newcastle upon Tyne",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Efer House 137a"),
+            Some("Back High Street"),
+            Some("Gosforth"),
+            None,
+            "Newcastle upon Tyne",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("141 Back High Street"),
+            None,
+            Some("Gosforth"),
+            None,
+            "Newcastle upon Tyne",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("143 Back High Street"),
+            None,
+            Some("Gosforth"),
+            None,
+            "Newcastle upon Tyne",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("153 Back High Street"),
+            None,
+            Some("Gosforth"),
+            None,
+            "Newcastle upon Tyne",
+            Some("County"),
+            postcode
+          )
         )
 
         val result = connector.addressLookupByPostcode(postcode)
@@ -1204,14 +1352,78 @@ class AddressLookupConnectorSpec extends SpecBase with WireMockServerHandler wit
         stubResponse(addressLookupUrl, OK, addressesJsonv2)
 
         val addressLookupResult = Vector(
-          AddressLookup(Some("Suite 1"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Unit 1"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Suite 2"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Unit 2"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Suite 3"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Apartment 301"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Apartment 302"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode),
-          AddressLookup(Some("Apartment 400"), Some("11 Waterloo Street"), Some("Some District"), None, "Town", Some("County"), postcode)
+          AddressLookup(
+            Some("Suite 1"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Unit 1"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Suite 2"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Unit 2"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Suite 3"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Apartment 301"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Apartment 302"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          ),
+          AddressLookup(
+            Some("Apartment 400"),
+            Some("11 Waterloo Street"),
+            Some("Some District"),
+            None,
+            "Town",
+            Some("County"),
+            postcode
+          )
         )
 
         val result = connector.addressLookupByPostcode(postcode)

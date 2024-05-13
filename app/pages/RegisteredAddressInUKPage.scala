@@ -44,7 +44,7 @@ case object RegisteredAddressInUKPage extends QuestionPage[Boolean] {
     BusinessAddressWithoutIdPage,
     RegistrationInfoPage
   )
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath               = JsPath \ toString
 
   override def toString: String = "registeredAddressInUK"
 

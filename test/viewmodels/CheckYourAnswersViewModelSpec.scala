@@ -85,7 +85,8 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = true)
+      val result: Seq[Section] =
+        CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = true)
 
       result.size mustBe 3
       result.head.rows.size mustBe 1
@@ -100,7 +101,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must return required rows for 'business-without-id' flow" in {
       val businessAddress = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
-      val userAnswers = emptyUserAnswers
+      val userAnswers     = emptyUserAnswers
         .set(ReporterTypePage, ReporterType.LimitedCompany)
         .success
         .value
@@ -135,7 +136,8 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = true)
+      val result: Seq[Section] =
+        CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = true)
 
       result.size mustBe 3
       result.head.rows.size mustBe 6
@@ -172,7 +174,8 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = false)
+      val result: Seq[Section] =
+        CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = false)
 
       result.size mustBe 2
 
@@ -185,7 +188,7 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
     }
 
     "must return required rows for 'individual-without-id' flow" in {
-      val address = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
+      val address     = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val userAnswers = emptyUserAnswers
         .set(ReporterTypePage, ReporterType.Individual)
         .success
@@ -212,7 +215,8 @@ class CheckYourAnswersViewModelSpec extends SpecBase with GuiceOneAppPerSuite {
         .success
         .value
 
-      val result: Seq[Section] = CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = false)
+      val result: Seq[Section] =
+        CheckYourAnswersViewModel.buildPages(userAnswers, countryListFactory, isBusiness = false)
 
       result.size mustBe 2
 

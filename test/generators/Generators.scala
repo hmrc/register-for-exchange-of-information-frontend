@@ -24,7 +24,12 @@ import wolfendale.scalacheck.regexp.RegexpGen
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators with RegexConstants {
+trait Generators
+    extends UserAnswersGenerator
+    with PageGenerators
+    with ModelGenerators
+    with UserAnswersEntryGenerators
+    with RegexConstants {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
@@ -48,7 +53,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     } yield seq1.toSeq.zip(seq2).foldLeft("") {
       case (acc, (n, Some(v))) =>
         acc + n + v
-      case (acc, (n, _)) =>
+      case (acc, (n, _))       =>
         acc + n
     }
   }
@@ -89,9 +94,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     chars <- listOfN(ten, Gen.oneOf(listOfNumbers))
   } yield chars.mkString
 
-  def nonEmptyStringWithinMaxLengthByRegex(maxLength: Int, regex: String): Gen[String] = stringWithinMaxLengthByRegex(maxLength, regex) suchThat (_.nonEmpty)
+  def nonEmptyStringWithinMaxLengthByRegex(maxLength: Int, regex: String): Gen[String] =
+    stringWithinMaxLengthByRegex(maxLength, regex) suchThat (_.nonEmpty)
 
-  def validPersonalName(maxLength: Int): Gen[String] = RegexpGen.from(individualNameRegex) suchThat (_.length > maxLength)
+  def validPersonalName(maxLength: Int): Gen[String] =
+    RegexpGen.from(individualNameRegex) suchThat (_.length > maxLength)
 
   def validEmailAddress: Gen[String] = RegexpGen.from(emailRegex)
 
@@ -123,15 +130,11 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
       pt3alphaOpt <- Gen.option(Gen.alphaChar)
       pt3numOpt   <- Gen.option(Gen.choose(zero, nine))
-      pt3 = if (pt3alphaOpt.isEmpty) pt3numOpt.getOrElse("").toString else pt3alphaOpt.get.toString
+      pt3          = if (pt3alphaOpt.isEmpty) pt3numOpt.getOrElse("").toString else pt3alphaOpt.get.toString
 
-      pt4 <- Gen.choose(zero, nine)
-      pt5a <- Gen.alphaChar suchThat (
-        ch => !disallowed.contains(ch.toLower)
-      )
-      pt5b <- Gen.alphaChar suchThat (
-        ch => !disallowed.contains(ch.toLower)
-      )
+      pt4  <- Gen.choose(zero, nine)
+      pt5a <- Gen.alphaChar suchThat (ch => !disallowed.contains(ch.toLower))
+      pt5b <- Gen.alphaChar suchThat (ch => !disallowed.contains(ch.toLower))
     } yield s"$pt1$pt2$pt3 $pt4$pt5a$pt5b"
   }
 
@@ -141,14 +144,10 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   }
 
   def intsLargerThanMaxValue: Gen[BigInt] =
-    arbitrary[BigInt] suchThat (
-      x => x > Int.MaxValue
-    )
+    arbitrary[BigInt] suchThat (x => x > Int.MaxValue)
 
   def intsSmallerThanMinValue: Gen[BigInt] =
-    arbitrary[BigInt] suchThat (
-      x => x < Int.MinValue
-    )
+    arbitrary[BigInt] suchThat (x => x < Int.MinValue)
 
   def nonNumerics: Gen[String] =
     alphaStr suchThat (_.size > zero)
@@ -166,9 +165,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     arbitrary[Int] suchThat (_ > value)
 
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
-    arbitrary[Int] suchThat (
-      x => x < min || x > max
-    )
+    arbitrary[Int] suchThat (x => x < min || x > max)
 
   def nonBooleans: Gen[String] =
     arbitrary[String]
@@ -217,9 +214,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     def toMillis(date: LocalDate): Long =
       date.atStartOfDay.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
 
-    Gen.choose(toMillis(min), toMillis(max)).map {
-      millis =>
-        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
+    Gen.choose(toMillis(min), toMillis(max)).map { millis =>
+      Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
   }
 

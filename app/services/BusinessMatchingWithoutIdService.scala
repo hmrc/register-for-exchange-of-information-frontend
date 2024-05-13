@@ -32,12 +32,19 @@ import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BusinessMatchingWithoutIdService @Inject() (registrationConnector: RegistrationConnector, uuidGen: UUIDGen, clock: Clock)(implicit ec: ExecutionContext) {
+class BusinessMatchingWithoutIdService @Inject() (
+  registrationConnector: RegistrationConnector,
+  uuidGen: UUIDGen,
+  clock: Clock
+)(implicit ec: ExecutionContext) {
 
   implicit private val uuidGenerator: UUIDGen = uuidGen
   implicit private val implicitClock: Clock   = clock
 
-  def registerWithoutId()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  def registerWithoutId()(implicit
+    request: DataRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[Either[ApiError, SafeId]] =
     request.userAnswers.get(DoYouHaveNINPage) match {
       case Some(false) => individualRegistration()
       case _           => businessRegistration()
@@ -54,31 +61,39 @@ class BusinessMatchingWithoutIdService @Inject() (registrationConnector: Registr
       case Some(false) =>
         request.userAnswers.get(SelectedAddressLookupPage) match {
           case Some(lookup) => lookup.toAddress
-          case _ =>
+          case _            =>
             request.userAnswers
               .get(IndividualAddressWithoutIdPage) // orElse ?
               .fold(request.userAnswers.get(AddressUKPage))(Some.apply)
         }
-      case _ => request.userAnswers.get(AddressUKPage)
+      case _           => request.userAnswers.get(AddressUKPage)
     }
 
   private val registrationError = Future.successful(Left(MandatoryInformationMissingError()))
 
-  private def individualRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  private def individualRegistration()(implicit
+    request: DataRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[Either[ApiError, SafeId]] =
     (for {
-      name <- buildIndividualName
-      dob  <- request.userAnswers.get(WhatIsYourDateOfBirthPage).orElse(request.userAnswers.get(DateOfBirthWithoutIdPage))
+      name        <- buildIndividualName
+      dob         <-
+        request.userAnswers.get(WhatIsYourDateOfBirthPage).orElse(request.userAnswers.get(DateOfBirthWithoutIdPage))
       phoneNumber  = request.userAnswers.get(IndividualContactPhonePage)
       emailAddress = request.userAnswers.get(IndividualContactEmailPage)
-      address <- buildIndividualAddress
-    } yield sendIndividualRegistration(name, dob, address, ContactDetails(phoneNumber, emailAddress))).getOrElse(registrationError)
+      address     <- buildIndividualAddress
+    } yield sendIndividualRegistration(name, dob, address, ContactDetails(phoneNumber, emailAddress)))
+      .getOrElse(registrationError)
 
-  private def businessRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  private def businessRegistration()(implicit
+    request: DataRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[Either[ApiError, SafeId]] =
     (for {
       organisationName <- request.userAnswers.get(BusinessWithoutIDNamePage)
-      phoneNumber  = request.userAnswers.get(ContactPhonePage)
-      emailAddress = request.userAnswers.get(ContactEmailPage)
-      address <- request.userAnswers.get(BusinessAddressWithoutIdPage)
+      phoneNumber       = request.userAnswers.get(ContactPhonePage)
+      emailAddress      = request.userAnswers.get(ContactEmailPage)
+      address          <- request.userAnswers.get(BusinessAddressWithoutIdPage)
     } yield sendBusinessRegistration(organisationName, address, ContactDetails(phoneNumber, emailAddress)))
       .getOrElse(registrationError)
 

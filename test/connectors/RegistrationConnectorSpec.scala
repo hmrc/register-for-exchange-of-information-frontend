@@ -41,7 +41,11 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class RegistrationConnectorSpec
+    extends SpecBase
+    with WireMockServerHandler
+    with Generators
+    with ScalaCheckPropertyChecks {
 
   lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -53,7 +57,12 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
   val registrationUrl                       = "/register-for-exchange-of-information/registration"
 
   val requestCommon: RequestCommon =
-    RequestCommon("2016-08-16T15:55:30Z", MDR.toString, "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", MDR.toString))))
+    RequestCommon(
+      "2016-08-16T15:55:30Z",
+      MDR.toString,
+      "ec031b045855445e96f98a569ds56cd2",
+      Some(Seq(Parameters("REGIME", MDR.toString)))
+    )
 
   val registrationWithIndividualIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
@@ -91,7 +100,13 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
   val registrationWithoutIndividualIDPayload: RegisterWithoutID = RegisterWithoutID(
     RegisterWithoutIDRequest(
       requestCommon,
-      RequestWithoutIDDetails(None, Some(Individual(name, LocalDate.parse(TestDate, formatter))), addressRequest, contactDetails, None)
+      RequestWithoutIDDetails(
+        None,
+        Some(Individual(name, LocalDate.parse(TestDate, formatter))),
+        addressRequest,
+        contactDetails,
+        None
+      )
     )
   )
 
@@ -158,7 +173,8 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler with
 
         stubResponse("/individual/noId", OK, withoutIDResponse)
 
-        val result: Future[Either[ApiError, SafeId]] = connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
+        val result: Future[Either[ApiError, SafeId]] =
+          connector.withIndividualNoId(registrationWithoutIndividualIDPayload)
         result.futureValue mustBe Right(safeId)
       }
 

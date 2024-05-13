@@ -45,27 +45,26 @@ class WhatIsYourNationalInsuranceNumberController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage) match {
-        case None       => form
-        case Some(nino) => form.fill(nino.nino)
-      }
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() { implicit request =>
+    val preparedForm = request.userAnswers.get(WhatIsYourNationalInsuranceNumberPage) match {
+      case None       => form
+      case Some(nino) => form.fill(nino.nino)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
-    implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, updatedAnswers))
-        )
+  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData().async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        value =>
+          for {
+            updatedAnswers <-
+              Future.fromTry(request.userAnswers.set(WhatIsYourNationalInsuranceNumberPage, Nino(value)))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(WhatIsYourNationalInsuranceNumberPage, mode, updatedAnswers))
+      )
   }
 }

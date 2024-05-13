@@ -54,7 +54,7 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
       http.POST[RegisterWithID, HttpResponse](s"$submissionUrl$endpoint", registration) map {
         case responseMessage if is2xx(responseMessage.status) =>
           Right(responseMessage.json.as[RegistrationWithIDResponse])
-        case responseMessage => handleError(responseMessage, endpoint)
+        case responseMessage                                  => handleError(responseMessage, endpoint)
       }
     }
 
@@ -76,19 +76,19 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
       case responseMessage if is2xx(responseMessage.status) =>
         responseMessage.json.as[RegistrationWithoutIDResponse].registerWithoutIDResponse.safeId match {
           case Some(safeId) => Right(safeId)
-          case _ =>
+          case _            =>
             logger.warn(s"Error in registration with $endpoint: safeId is missing.")
             Left(NotFoundError)
         }
-      case responseMessage => handleError(responseMessage, endpoint)
+      case responseMessage                                  => handleError(responseMessage, endpoint)
     }
 
   def handleError[A](responseMessage: HttpResponse, endpoint: String): Either[ApiError, A] =
     responseMessage.status match {
-      case NOT_FOUND =>
+      case NOT_FOUND       =>
         logger.warn(s"Error in registration with $endpoint: not found.")
         Left(NotFoundError)
-      case BAD_REQUEST =>
+      case BAD_REQUEST     =>
         logger.warn(s"Error in registration with $endpoint: invalid.")
         Left(BadRequestError)
       case responseMessage =>

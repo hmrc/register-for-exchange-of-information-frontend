@@ -20,7 +20,8 @@ import play.api.libs.json._
 
 sealed trait DisplaySubscriptionRequest
 
-case class DisplaySubscriptionForMDRRequest(displaySubscriptionForMDRRequest: ReadSubscriptionRequest) extends DisplaySubscriptionRequest
+case class DisplaySubscriptionForMDRRequest(displaySubscriptionForMDRRequest: ReadSubscriptionRequest)
+    extends DisplaySubscriptionRequest
 
 object DisplaySubscriptionForMDRRequest {
   implicit lazy val writes: OWrites[DisplaySubscriptionForMDRRequest] = Json.writes[DisplaySubscriptionForMDRRequest]

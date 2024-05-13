@@ -37,14 +37,13 @@ class UnableToChangeBusinessController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = standardActionSets.identifiedUserWithData() {
-    implicit request =>
-      request.userAnswers.get(RegistrationInfoPage) match {
-        case Some(registrationInfo: OrgRegistrationInfo) =>
-          val (name, address) = (Some(registrationInfo.name), Some(registrationInfo.address.asList))
-          Ok(view(appConfig.loginUrl, name, address))
-        case _ => Ok(view(appConfig.loginUrl, None, None))
-      }
+  def onPageLoad: Action[AnyContent] = standardActionSets.identifiedUserWithData() { implicit request =>
+    request.userAnswers.get(RegistrationInfoPage) match {
+      case Some(registrationInfo: OrgRegistrationInfo) =>
+        val (name, address) = (Some(registrationInfo.name), Some(registrationInfo.address.asList))
+        Ok(view(appConfig.loginUrl, name, address))
+      case _                                           => Ok(view(appConfig.loginUrl, None, None))
+    }
 
   }
 }

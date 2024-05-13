@@ -76,11 +76,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result mustBe ACCEPTED
+        whenReady(result) { result =>
+          result mustBe ACCEPTED
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
       "must submit to the email connector with valid business details Individual and return Some(Accepted)" in {
@@ -102,11 +101,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result mustBe ACCEPTED
+        whenReady(result) { result =>
+          result mustBe ACCEPTED
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
       "must Internal_Server_Error when both Contact and Individual emails pages are missing" in {
@@ -128,11 +126,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result mustBe INTERNAL_SERVER_ERROR
+        whenReady(result) { result =>
+          result mustBe INTERNAL_SERVER_ERROR
 
-            verify(mockEmailConnector, times(0)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(0)).sendEmail(any())(any())
         }
       }
       "must submit to the email connector and return NOT_FOUND when the template is missing" in {
@@ -157,11 +154,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result mustBe NOT_FOUND
+        whenReady(result) { result =>
+          result mustBe NOT_FOUND
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
       "must submit to the email connector and return BAD_REQUEST email service rejects request" in {
@@ -186,11 +182,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendAnLogEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result mustBe BAD_REQUEST
+        whenReady(result) { result =>
+          result mustBe BAD_REQUEST
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
     }
@@ -217,11 +212,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result.map(_.status) mustBe Some(OK)
+        whenReady(result) { result =>
+          result.map(_.status) mustBe Some(OK)
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
 
@@ -247,11 +241,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result.map(_.status) mustBe Some(OK)
+        whenReady(result) { result =>
+          result.map(_.status) mustBe Some(OK)
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
 
@@ -274,11 +267,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result.map(_.status) mustBe Some(OK)
+        whenReady(result) { result =>
+          result.map(_.status) mustBe Some(OK)
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
 
@@ -301,11 +293,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result.map(_.status) mustBe Some(OK)
+        whenReady(result) { result =>
+          result.map(_.status) mustBe Some(OK)
 
-            verify(mockEmailConnector, times(1)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(1)).sendEmail(any())(any())
         }
       }
 
@@ -337,11 +328,10 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result.map(_.status) mustBe Some(OK)
+        whenReady(result) { result =>
+          result.map(_.status) mustBe Some(OK)
 
-            verify(mockEmailConnector, times(2)).sendEmail(any())(any())
+          verify(mockEmailConnector, times(2)).sendEmail(any())(any())
         }
       }
 
@@ -367,9 +357,8 @@ class EmailServiceSpec extends SpecBase with Generators with ScalaCheckPropertyC
 
         val result = emailService.sendEmail(userAnswers, subscriptionID)
 
-        whenReady(result) {
-          result =>
-            result.map(_.status) mustBe None
+        whenReady(result) { result =>
+          result.map(_.status) mustBe None
         }
       }
     }

@@ -50,10 +50,10 @@ case object DoYouHaveNINPage extends QuestionPage[Boolean] {
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
-      case Some(true) =>
+      case Some(true)  =>
         withoutNINOPages.foldLeft(Try(userAnswers))(PageLists.removePage)
       case Some(false) =>
         withNINOPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-      case _ => super.cleanup(value, userAnswers)
+      case _           => super.cleanup(value, userAnswers)
     }
 }

@@ -37,10 +37,11 @@ class AddressUKFormProvider @Inject() extends Mappings with RegexConstants {
         apiAddressRegex,
         addressLineLength
       ),
-      "addressLine2" -> validatedOptionalText("addressUK.error.addressLine2.invalid",
-                                              "addressUK.error.addressLine2.length",
-                                              apiAddressRegex,
-                                              addressLineLength
+      "addressLine2" -> validatedOptionalText(
+        "addressUK.error.addressLine2.invalid",
+        "addressUK.error.addressLine2.length",
+        apiAddressRegex,
+        addressLineLength
       ),
       "addressLine3" -> validatedText(
         "addressUK.error.addressLine3.required",
@@ -49,13 +50,18 @@ class AddressUKFormProvider @Inject() extends Mappings with RegexConstants {
         apiAddressRegex,
         addressLineLength
       ),
-      "addressLine4" -> validatedOptionalText("addressUK.error.addressLine4.invalid",
-                                              "addressUK.error.addressLine4.length",
-                                              apiAddressRegex,
-                                              addressLineLength
+      "addressLine4" -> validatedOptionalText(
+        "addressUK.error.addressLine4.invalid",
+        "addressUK.error.addressLine4.length",
+        apiAddressRegex,
+        addressLineLength
       ),
-      "postCode" -> addressPostcode("addressUK.error.postcode.invalid", regexPostcode, "addressUK.error.postcode.required"),
-      "country" -> text("addressUK.error.country.required")
+      "postCode"     -> addressPostcode(
+        "addressUK.error.postcode.invalid",
+        regexPostcode,
+        "addressUK.error.postcode.required"
+      ),
+      "country"      -> text("addressUK.error.country.required")
         .verifying("addressUK.error.country.required", value => countryList.exists(_.code == value))
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)

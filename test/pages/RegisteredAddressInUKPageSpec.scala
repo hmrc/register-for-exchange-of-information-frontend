@@ -42,88 +42,90 @@ class RegisteredAddressInUKPageSpec extends PageBehaviours {
       val address       = Address("line 1", None, "line 3", None, None, Country("state", "DE", "desc"))
       val addressLookup = AddressLookup(None, None, None, None, "town", None, "postcode")
 
-      forAll(arbitrary[UserAnswers]) {
-        userAnswers =>
-          val result = userAnswers
-            .set(DoYouHaveUniqueTaxPayerReferencePage, false)
-            .success
-            .value
-            .set(DoYouHaveNINPage, true)
-            .success
-            .value
-            .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
-            .success
-            .value
-            .set(WhatIsYourNamePage, name)
-            .success
-            .value
-            .set(WhatIsYourDateOfBirthPage, LocalDate.now())
-            .success
-            .value
-            .set(DateOfBirthWithoutIdPage, LocalDate.now())
-            .success
-            .value
-            .set(NonUkNamePage, nonUkName)
-            .success
-            .value
-            .set(DoYouLiveInTheUKPage, true)
-            .success
-            .value
-            .set(WhatIsYourPostcodePage, TestPostCode)
-            .success
-            .value
-            .set(IndividualAddressWithoutIdPage, address)
-            .success
-            .value
-            .set(SelectAddressPage, "address")
-            .success
-            .value
-            .set(SelectedAddressLookupPage, addressLookup)
-            .success
-            .value
-            .set(AddressLookupPage, Seq(addressLookup))
-            .success
-            .value
-            .set(AddressUKPage, address)
-            .success
-            .value
-            .set(BusinessWithoutIDNamePage, OrgName)
-            .success
-            .value
-            .set(BusinessHaveDifferentNamePage, true)
-            .success
-            .value
-            .set(WhatIsTradingNamePage, OrgName)
-            .success
-            .value
-            .set(RegistrationInfoPage, OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB")))
-            .success
-            .value
-            .set(BusinessAddressWithoutIdPage, address)
-            .success
-            .value
-            .set(RegisteredAddressInUKPage, true)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { userAnswers =>
+        val result = userAnswers
+          .set(DoYouHaveUniqueTaxPayerReferencePage, false)
+          .success
+          .value
+          .set(DoYouHaveNINPage, true)
+          .success
+          .value
+          .set(WhatIsYourNationalInsuranceNumberPage, Nino(TestNiNumber))
+          .success
+          .value
+          .set(WhatIsYourNamePage, name)
+          .success
+          .value
+          .set(WhatIsYourDateOfBirthPage, LocalDate.now())
+          .success
+          .value
+          .set(DateOfBirthWithoutIdPage, LocalDate.now())
+          .success
+          .value
+          .set(NonUkNamePage, nonUkName)
+          .success
+          .value
+          .set(DoYouLiveInTheUKPage, true)
+          .success
+          .value
+          .set(WhatIsYourPostcodePage, TestPostCode)
+          .success
+          .value
+          .set(IndividualAddressWithoutIdPage, address)
+          .success
+          .value
+          .set(SelectAddressPage, "address")
+          .success
+          .value
+          .set(SelectedAddressLookupPage, addressLookup)
+          .success
+          .value
+          .set(AddressLookupPage, Seq(addressLookup))
+          .success
+          .value
+          .set(AddressUKPage, address)
+          .success
+          .value
+          .set(BusinessWithoutIDNamePage, OrgName)
+          .success
+          .value
+          .set(BusinessHaveDifferentNamePage, true)
+          .success
+          .value
+          .set(WhatIsTradingNamePage, OrgName)
+          .success
+          .value
+          .set(
+            RegistrationInfoPage,
+            OrgRegistrationInfo(safeId, OrgName, AddressResponse("Address", None, None, None, None, "GB"))
+          )
+          .success
+          .value
+          .set(BusinessAddressWithoutIdPage, address)
+          .success
+          .value
+          .set(RegisteredAddressInUKPage, true)
+          .success
+          .value
 
-          result.get(DoYouHaveUniqueTaxPayerReferencePage) must not be defined
-          result.get(DoYouHaveNINPage) must not be defined
-          result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
-          result.get(WhatIsYourNamePage) must not be defined
-          result.get(WhatIsYourDateOfBirthPage) must not be defined
-          result.get(DateOfBirthWithoutIdPage) must not be defined
-          result.get(NonUkNamePage) must not be defined
-          result.get(DoYouLiveInTheUKPage) must not be defined
-          result.get(WhatIsYourPostcodePage) must not be defined
-          result.get(IndividualAddressWithoutIdPage) must not be defined
-          result.get(SelectAddressPage) must not be defined
-          result.get(SelectedAddressLookupPage) must not be defined
-          result.get(AddressLookupPage) must not be defined
-          result.get(AddressUKPage) must not be defined
-          result.get(BusinessWithoutIDNamePage) must not be defined
-          result.get(BusinessHaveDifferentNamePage) must not be defined
-          result.get(RegistrationInfoPage) must not be defined
-          result.get(BusinessAddressWithoutIdPage) must not be defined
+        result.get(DoYouHaveUniqueTaxPayerReferencePage)  must not be defined
+        result.get(DoYouHaveNINPage)                      must not be defined
+        result.get(WhatIsYourNationalInsuranceNumberPage) must not be defined
+        result.get(WhatIsYourNamePage)                    must not be defined
+        result.get(WhatIsYourDateOfBirthPage)             must not be defined
+        result.get(DateOfBirthWithoutIdPage)              must not be defined
+        result.get(NonUkNamePage)                         must not be defined
+        result.get(DoYouLiveInTheUKPage)                  must not be defined
+        result.get(WhatIsYourPostcodePage)                must not be defined
+        result.get(IndividualAddressWithoutIdPage)        must not be defined
+        result.get(SelectAddressPage)                     must not be defined
+        result.get(SelectedAddressLookupPage)             must not be defined
+        result.get(AddressLookupPage)                     must not be defined
+        result.get(AddressUKPage)                         must not be defined
+        result.get(BusinessWithoutIDNamePage)             must not be defined
+        result.get(BusinessHaveDifferentNamePage)         must not be defined
+        result.get(RegistrationInfoPage)                  must not be defined
+        result.get(BusinessAddressWithoutIdPage)          must not be defined
       }
     }
   }

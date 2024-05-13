@@ -45,9 +45,9 @@ class ErrorHandler @Inject() (
     statusCode match {
       case BAD_REQUEST =>
         Future.successful(BadRequest(badRequestView()))
-      case NOT_FOUND =>
+      case NOT_FOUND   =>
         Future.successful(NotFound(pageNotFoundView()))
-      case _ =>
+      case _           =>
         Future.successful(InternalServerError(thereIsAProblemView()))
     }
   }
@@ -59,7 +59,7 @@ class ErrorHandler @Inject() (
     exception match {
       case ApplicationException(result, _) =>
         Future.successful(result)
-      case _ =>
+      case _                               =>
         Future.successful(InternalServerError(thereIsAProblemView()))
     }
   }
@@ -69,12 +69,13 @@ class ErrorHandler @Inject() (
       """
         |
         |! %sInternal server error, for (%s) [%s] ->
-        | """.stripMargin.format(ex match {
-                                   case p: PlayException => "@" + p.id + " - "
-                                   case _                => ""
-                                 },
-                                 request.method,
-                                 request.uri
+        | """.stripMargin.format(
+        ex match {
+          case p: PlayException => "@" + p.id + " - "
+          case _                => ""
+        },
+        request.method,
+        request.uri
       ),
       ex
     )

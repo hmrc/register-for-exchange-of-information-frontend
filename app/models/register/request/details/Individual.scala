@@ -25,13 +25,12 @@ case class Individual(name: Name, dateOfBirth: LocalDate)
 
 object Individual {
 
-  implicit lazy val writes: OWrites[Individual] = OWrites[Individual] {
-    individual =>
-      Json.obj(
-        "firstName"   -> individual.name.firstName,
-        "lastName"    -> individual.name.lastName,
-        "dateOfBirth" -> individual.dateOfBirth.toString
-      )
+  implicit lazy val writes: OWrites[Individual] = OWrites[Individual] { individual =>
+    Json.obj(
+      "firstName"   -> individual.name.firstName,
+      "lastName"    -> individual.name.lastName,
+      "dateOfBirth" -> individual.dateOfBirth.toString
+    )
   }
 
   implicit lazy val reads: Reads[Individual] = {
@@ -40,8 +39,6 @@ object Individual {
       (__ \ "firstName").read[String] and
         (__ \ "lastName").read[String] and
         (__ \ "dateOfBirth").read[LocalDate]
-    )(
-      (firstName, secondName, dob) => Individual(Name(firstName, secondName), dob)
-    )
+    )((firstName, secondName, dob) => Individual(Name(firstName, secondName), dob))
   }
 }

@@ -36,7 +36,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class SubscriptionConnectorSpec
+    extends SpecBase
+    with WireMockServerHandler
+    with Generators
+    with ScalaCheckPropertyChecks {
 
   lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -248,13 +252,13 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler with
 
   def getApiError(status: Int): ApiError =
     status match {
-      case NOT_FOUND =>
+      case NOT_FOUND           =>
         NotFoundError
-      case BAD_REQUEST =>
+      case BAD_REQUEST         =>
         BadRequestError
       case SERVICE_UNAVAILABLE =>
         ServiceUnavailableError
-      case _ =>
+      case _                   =>
         UnableToCreateEMTPSubscriptionError
     }
 

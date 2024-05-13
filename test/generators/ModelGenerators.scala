@@ -100,7 +100,13 @@ trait ModelGenerators {
       acknowledgementReference <- arbitrary[String]
       originatingSystem        <- arbitrary[String]
       requestParameters        <- Gen.option(arbitrary[Seq[RequestParameter]])
-    } yield SubscriptionRequestCommon(regime, receiptDate, acknowledgementReference, originatingSystem, requestParameters)
+    } yield SubscriptionRequestCommon(
+      regime,
+      receiptDate,
+      acknowledgementReference,
+      originatingSystem,
+      requestParameters
+    )
   }
 
   implicit val arbitraryOrganisationDetails: Arbitrary[OrganisationDetails] = Arbitrary {

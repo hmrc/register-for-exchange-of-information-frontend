@@ -50,7 +50,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   private val autoMatchedUtr      = UniqueTaxpayerReference("SomeAutoMatchedUtr")
   private val address             = AddressResponse("line1", None, None, None, None, "GB")
-  private val registrationRequest = RegistrationRequest(UTR, utr.uniqueTaxPayerReference, businessName, Some(LimitedCompany))
+  private val registrationRequest =
+    RegistrationRequest(UTR, utr.uniqueTaxPayerReference, businessName, Some(LimitedCompany))
   private val registrationInfo    = OrgRegistrationInfo(safeId, businessName, address)
 
   val validUserAnswers: UserAnswers = emptyUserAnswers
@@ -103,7 +104,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       retrieveUserAnswersData(validUserAnswers)
@@ -129,7 +131,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
       retrieveUserAnswersData(validUserAnswers)
 
@@ -154,7 +157,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       retrieveUserAnswersData(validUserAnswers)
@@ -176,7 +180,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       val userAnswersForSoleTrader = validUserAnswers
@@ -205,7 +210,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       retrieveUserAnswersData(validUserAnswers.set(ReporterTypePage, Individual).success.value)
@@ -229,7 +235,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val registrationInfo              = OrgRegistrationInfo(safeId, businessName, address)
       val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value
-      val updatedUserAnswer = userAnswersWithAutoMatchedUtr
+      val updatedUserAnswer             = userAnswersWithAutoMatchedUtr
         .set(RegistrationInfoPage, registrationInfo)
         .success
         .value
@@ -237,13 +243,15 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .success
         .value
 
-      val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
+      val autoMatchedRequest =
+        AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
       val registerWithID     = RegisterWithID(autoMatchedRequest)
 
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(mockitoEq(updatedUserAnswer))) thenReturn Future.successful(true)
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       retrieveUserAnswersData(userAnswersWithAutoMatchedUtr)
@@ -264,15 +272,18 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
         .overrides(bind[UUIDGen].toInstance(mockUUIDGen), bind[Clock].toInstance(fixedClock))
         .build()
 
-      val userAnswersWithoutReporterType = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value.remove(ReporterTypePage).success.value
+      val userAnswersWithoutReporterType =
+        validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value.remove(ReporterTypePage).success.value
 
-      val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
+      val autoMatchedRequest =
+        AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
       val registerWithID     = RegisterWithID(autoMatchedRequest)
 
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, businessName, address))))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       retrieveUserAnswersData(userAnswersWithoutReporterType)
@@ -295,16 +306,21 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
       val userAnswersWithAutoMatchedUtr = validUserAnswers.set(AutoMatchedUTRPage, autoMatchedUtr).success.value
 
-      val autoMatchedRequest = AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
+      val autoMatchedRequest =
+        AutoMatchedRegistrationRequest(registrationRequest.identifierType, autoMatchedUtr.uniqueTaxPayerReference)
       val registerWithID     = RegisterWithID(autoMatchedRequest)
 
-      val userAnswersWithAutoMatchedFieldCleared = userAnswersWithAutoMatchedUtr.remove(AutoMatchedUTRPage).success.value
+      val userAnswersWithAutoMatchedFieldCleared =
+        userAnswersWithAutoMatchedUtr.remove(AutoMatchedUTRPage).success.value
 
       when(mockMatchingService.sendBusinessRegistrationInformation(mockitoEq(registerWithID))(any(), any()))
         .thenReturn(Future.successful(Left(NotFoundError)))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
-      when(mockSessionRepository.set(mockitoEq(userAnswersWithAutoMatchedFieldCleared))) thenReturn Future.successful(true)
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
+      when(mockSessionRepository.set(mockitoEq(userAnswersWithAutoMatchedFieldCleared))) thenReturn Future.successful(
+        true
+      )
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
       retrieveUserAnswersData(userAnswersWithAutoMatchedUtr)
 
@@ -321,7 +337,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))
@@ -353,8 +370,10 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
-      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any()))
+        .thenReturn(Future.successful(Some(SubscriptionID("Id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
@@ -372,8 +391,10 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
-      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("Id"))))
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any()))
+        .thenReturn(Future.successful(Some(SubscriptionID("Id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Left(BadRequestError)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(validUserAnswers)
@@ -392,7 +413,8 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
       when(mockMatchingService.sendBusinessRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(OrgRegistrationInfo(safeId, OrgName, address))))
 
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(None))

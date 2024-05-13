@@ -90,7 +90,8 @@ class IndividualContactPhoneControllerSpec extends ControllerSpecBase {
 
       retrieveUserAnswersData(emptyUserAnswers)
 
-      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
+      implicit val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, submitRoute).withFormUrlEncodedBody(("value", ""))
       val boundForm                                                 = form.bind(Map("value" -> ""))
 
       val result = route(app, request).value

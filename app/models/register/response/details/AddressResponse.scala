@@ -28,7 +28,14 @@ case class AddressResponse(
 ) {
 
   val asList: List[String] =
-    List(Option(addressLine1), addressLine2, addressLine3, addressLine4, postCodeFormatter(postalCode), Option(countryCode).filterNot(_ == "GB"))
+    List(
+      Option(addressLine1),
+      addressLine2,
+      addressLine3,
+      addressLine4,
+      postCodeFormatter(postalCode),
+      Option(countryCode).filterNot(_ == "GB")
+    )
       .filter(_.isDefined)
       .map(_.get)
 
@@ -38,7 +45,7 @@ case class AddressResponse(
         val tail = postcode.substring(postcode.length - 3)
         val head = postcode.substring(0, postcode.length - 3)
         Some(s"$head $tail".toUpperCase)
-      case _ => None
+      case _              => None
     }
 }
 

@@ -32,7 +32,10 @@ object RegisterWithoutID {
 
   implicit val format: OFormat[RegisterWithoutID] = Json.format[RegisterWithoutID]
 
-  def apply(name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails)(implicit uuidGen: UUIDGen, clock: Clock): RegisterWithoutID =
+  def apply(name: Name, dob: LocalDate, address: Address, contactDetails: ContactDetails)(implicit
+    uuidGen: UUIDGen,
+    clock: Clock
+  ): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
         RequestCommon(MDR.toString),
@@ -40,11 +43,20 @@ object RegisterWithoutID {
       )
     )
 
-  def apply(organisationName: String, address: Address, contactDetails: ContactDetails)(implicit uuidGen: UUIDGen, clock: Clock): RegisterWithoutID =
+  def apply(organisationName: String, address: Address, contactDetails: ContactDetails)(implicit
+    uuidGen: UUIDGen,
+    clock: Clock
+  ): RegisterWithoutID =
     RegisterWithoutID(
       RegisterWithoutIDRequest(
         RequestCommon(MDR.toString),
-        RequestWithoutIDDetails(Option(organisationName).map(NoIdOrganisation(_)), None, AddressRequest(address), contactDetails, None)
+        RequestWithoutIDDetails(
+          Option(organisationName).map(NoIdOrganisation(_)),
+          None,
+          AddressRequest(address),
+          contactDetails,
+          None
+        )
       )
     )
 }

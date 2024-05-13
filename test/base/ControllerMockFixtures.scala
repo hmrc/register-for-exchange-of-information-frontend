@@ -33,7 +33,12 @@ import play.api.mvc.{AnyContentAsEmpty, Call, PlayBodyParsers}
 import play.api.test.FakeRequest
 import repositories.SessionRepository
 
-trait ControllerMockFixtures extends Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach with JsonMatchers {
+trait ControllerMockFixtures
+    extends Matchers
+    with GuiceOneAppPerSuite
+    with MockitoSugar
+    with BeforeAndAfterEach
+    with JsonMatchers {
   self: SpecBase =>
 
   def onwardRoute: Call                                              = Call("GET", "/foo")

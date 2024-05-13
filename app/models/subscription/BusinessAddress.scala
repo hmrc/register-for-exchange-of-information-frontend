@@ -20,12 +20,13 @@ import models.register.response.details.AddressResponse
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
-case class BusinessAddress(addressLine1: String,
-                           addressLine2: Option[String],
-                           addressLine3: Option[String],
-                           addressLine4: Option[String],
-                           postCode: String,
-                           countryCode: String
+case class BusinessAddress(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postCode: String,
+  countryCode: String
 )
 
 object BusinessAddress {

@@ -20,11 +20,12 @@ import models.register.request.details.{AddressRequest, Identification, Individu
 import models.shared.ContactDetails
 import play.api.libs.json.Json
 
-case class RequestWithoutIDDetails(organisation: Option[NoIdOrganisation],
-                                   individual: Option[Individual],
-                                   address: AddressRequest,
-                                   contactDetails: ContactDetails,
-                                   identification: Option[Identification]
+case class RequestWithoutIDDetails(
+  organisation: Option[NoIdOrganisation],
+  individual: Option[Individual],
+  address: AddressRequest,
+  contactDetails: ContactDetails,
+  identification: Option[Identification]
 )
 
 object RequestWithoutIDDetails {

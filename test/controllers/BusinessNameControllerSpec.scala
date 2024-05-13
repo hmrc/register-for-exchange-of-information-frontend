@@ -90,7 +90,13 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        emptyUserAnswers.set(ReporterTypePage, ReporterType.LimitedCompany).success.value.set(BusinessNamePage, "answer").success.value
+        emptyUserAnswers
+          .set(ReporterTypePage, ReporterType.LimitedCompany)
+          .success
+          .value
+          .set(BusinessNamePage, "answer")
+          .success
+          .value
 
       retrieveUserAnswersData(userAnswers)
       val application = guiceApplicationBuilder().build()
@@ -121,7 +127,8 @@ class BusinessNameControllerSpec extends ControllerSpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, LimitedLiabilityPartnership)(request, messages).toString()
+        contentAsString(result) mustEqual view(boundForm, NormalMode, LimitedLiabilityPartnership)(request, messages)
+          .toString()
       }
     }
 
