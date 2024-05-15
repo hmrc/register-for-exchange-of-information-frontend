@@ -47,36 +47,34 @@ class WhatIsYourPostcodeController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(WhatIsYourPostcodePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithData() { implicit request =>
+    val preparedForm = request.userAnswers.get(WhatIsYourPostcodePage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        val formReturned = form.bindFromRequest()
+    standardActionSets.identifiedUserWithData().async { implicit request =>
+      val formReturned = form.bindFromRequest()
 
-        formReturned
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-            postCode =>
-              addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
-                case Nil =>
-                  val formError = formReturned.withError(FormError("postCode", List("whatIsYourPostcode.error.notFound")))
-                  Future.successful(BadRequest(view(formError, mode)))
+      formReturned
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          postCode =>
+            addressLookupConnector.addressLookupByPostcode(postCode).flatMap {
+              case Nil =>
+                val formError = formReturned.withError(FormError("postCode", List("whatIsYourPostcode.error.notFound")))
+                Future.successful(BadRequest(view(formError, mode)))
 
-                case addresses =>
-                  for {
-                    updatedAnswers            <- Future.fromTry(request.userAnswers.set(WhatIsYourPostcodePage, postCode))
-                    updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
-                    _                         <- sessionRepository.set(updatedAnswersWithAddress)
-                  } yield Redirect(navigator.nextPage(WhatIsYourPostcodePage, mode, updatedAnswersWithAddress))
-              }
-          )
+              case addresses =>
+                for {
+                  updatedAnswers            <- Future.fromTry(request.userAnswers.set(WhatIsYourPostcodePage, postCode))
+                  updatedAnswersWithAddress <- Future.fromTry(updatedAnswers.set(AddressLookupPage, addresses))
+                  _                         <- sessionRepository.set(updatedAnswersWithAddress)
+                } yield Redirect(navigator.nextPage(WhatIsYourPostcodePage, mode, updatedAnswersWithAddress))
+            }
+        )
     }
 }

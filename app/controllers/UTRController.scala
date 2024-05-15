@@ -45,8 +45,8 @@ class UTRController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async { implicit request =>
       val taxType = getTaxType(request.userAnswers)
       val form    = formProvider(taxType)
 
@@ -56,10 +56,10 @@ class UTRController @Inject() (
       }
 
       Future.successful(Ok(view(preparedForm, mode, taxType)))
-  }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
-    implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async { implicit request =>
       val taxType = getTaxType(request.userAnswers)
       val form    = formProvider(taxType)
 
@@ -73,7 +73,7 @@ class UTRController @Inject() (
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(UTRPage, mode, updatedAnswers))
         )
-  }
+    }
 
   private def getTaxType(userAnswers: UserAnswers)(implicit messages: Messages): String =
     userAnswers.get(ReporterTypePage) match {

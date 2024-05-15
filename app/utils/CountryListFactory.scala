@@ -33,22 +33,19 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
 
   lazy val countryList: Option[Seq[Country]] = getCountryList
 
-  private def getCountryList: Option[Seq[Country]] = environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
-    _.as[Seq[Country]].sortWith(
-      (country, country2) => country.description.toLowerCase < country2.description.toLowerCase
-    )
-  }
+  private def getCountryList: Option[Seq[Country]] =
+    environment.resourceAsStream(appConfig.countryCodeJson) map Json.parse map {
+      _.as[Seq[Country]].sortWith((country, country2) =>
+        country.description.toLowerCase < country2.description.toLowerCase
+      )
+    }
 
   def getDescriptionFromCode(code: String): Option[String] = countryList map {
-    _.filter(
-      (p: Country) => p.code == code
-    ).head.description
+    _.filter((p: Country) => p.code == code).head.description
   }
 
   lazy val countryListWithoutGB: Option[Seq[Country]] = countryList.map {
-    _.filter(
-      x => x.code != Address.GBCountryCode
-    )
+    _.filter(x => x.code != Address.GBCountryCode)
   }
 
   def countrySelectList(value: Map[String, String], countries: Seq[Country]): Seq[SelectItem] = {
@@ -58,9 +55,8 @@ class CountryListFactory @Inject() (environment: Environment, appConfig: Fronten
         case _                 => false
       }
 
-    val countryJsonList = countries.map {
-      country =>
-        SelectItem(Some(country.code), country.description, containsCountry(country))
+    val countryJsonList = countries.map { country =>
+      SelectItem(Some(country.code), country.description, containsCountry(country))
     }
     SelectItem(None, "") +: countryJsonList
   }

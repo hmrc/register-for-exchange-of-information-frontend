@@ -27,17 +27,16 @@ import viewmodels.implicits._
 object RegisteredAddressInUKSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RegisteredAddressInUKPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(RegisteredAddressInUKPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key = "registeredAddressInUK.checkYourAnswersLabel",
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.RegisteredAddressInUKController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("registeredAddressInUK.change.hidden"))
-          )
+      SummaryListRowViewModel(
+        key = "registeredAddressInUK.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel("site.change", routes.RegisteredAddressInUKController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("registeredAddressInUK.change.hidden"))
         )
+      )
     }
 }

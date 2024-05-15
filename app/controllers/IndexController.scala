@@ -42,22 +42,24 @@ class IndexController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithEnrolmentCheckAndCtUtrRetrieval().async {
-    implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    standardActionSets.identifiedUserWithEnrolmentCheckAndCtUtrRetrieval().async { implicit request =>
       request.utr match {
         case Some(utr) =>
           val userAnswers = UserAnswers(request.userId, lastUpdated = Instant.now(clock))
           for {
             autoMatchedUserAnswers <- Future.fromTry(userAnswers.set(AutoMatchedUTRPage, utr))
-            result <- sessionRepository.set(autoMatchedUserAnswers) map {
-              case true =>
-                Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
-              case false =>
-                logger.error(s"Failed to update user answers with autoMatchedUTR field for userId: [${request.userId}]")
-                InternalServerError(errorView())
-            }
+            result                 <- sessionRepository.set(autoMatchedUserAnswers) map {
+                                        case true  =>
+                                          Redirect(routes.IsThisYourBusinessController.onPageLoad(NormalMode))
+                                        case false =>
+                                          logger.error(
+                                            s"Failed to update user answers with autoMatchedUTR field for userId: [${request.userId}]"
+                                          )
+                                          InternalServerError(errorView())
+                                      }
           } yield result
-        case None => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(NormalMode)))
+        case None      => Future.successful(Redirect(routes.ReporterTypeController.onPageLoad(NormalMode)))
       }
-  }
+    }
 }

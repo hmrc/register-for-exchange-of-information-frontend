@@ -25,7 +25,8 @@ import play.api.mvc.{ActionRefiner, Result}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckForSubmissionActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends CheckForSubmissionAction {
+class CheckForSubmissionActionImpl @Inject() (implicit val executionContext: ExecutionContext)
+    extends CheckForSubmissionAction {
 
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     if (request.userAnswers.data == Json.obj()) {

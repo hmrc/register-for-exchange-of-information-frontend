@@ -24,12 +24,13 @@ import models.{SubscriptionID, UserAnswers}
 import pages._
 import play.api.libs.json.{Json, OFormat}
 
-case class SubscriptionInfo(safeID: String,
-                            saUtr: Option[String] = None,
-                            ctUtr: Option[String] = None,
-                            nino: Option[String] = None,
-                            nonUkPostcode: Option[String] = None,
-                            mdrId: String
+case class SubscriptionInfo(
+  safeID: String,
+  saUtr: Option[String] = None,
+  ctUtr: Option[String] = None,
+  nino: Option[String] = None,
+  nonUkPostcode: Option[String] = None,
+  mdrId: String
 ) {
 
   def convertToEnrolmentRequest: EnrolmentRequest =
@@ -49,9 +50,7 @@ case class SubscriptionInfo(safeID: String,
 
   def buildOptionalVerifier(optionalInfo: Option[String], key: String): Seq[Verifier] =
     optionalInfo
-      .map(
-        info => Verifier(key, info)
-      )
+      .map(info => Verifier(key, info))
       .toSeq
 
 }
@@ -59,7 +58,11 @@ case class SubscriptionInfo(safeID: String,
 object SubscriptionInfo {
   implicit val format: OFormat[SubscriptionInfo] = Json.format[SubscriptionInfo]
 
-  def createSubscriptionInfo(safeId: SafeId, userAnswers: UserAnswers, subscriptionId: SubscriptionID): Either[ApiError, SubscriptionInfo] =
+  def createSubscriptionInfo(
+    safeId: SafeId,
+    userAnswers: UserAnswers,
+    subscriptionId: SubscriptionID
+  ): Either[ApiError, SubscriptionInfo] =
     Right(
       SubscriptionInfo(
         safeID = safeId.value,
@@ -79,13 +82,15 @@ object SubscriptionInfo {
 
   private def getSaUtrIfProvided(userAnswers: UserAnswers): Option[String] =
     userAnswers.get(ReporterTypePage) match {
-      case Some(Partnership) | Some(Sole) | Some(LimitedPartnership) => userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
+      case Some(Partnership) | Some(Sole) | Some(LimitedPartnership) =>
+        userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
       case _                                                         => None
     }
 
   private def getCtUtrIfProvided(userAnswers: UserAnswers): Option[String] =
     userAnswers.get(ReporterTypePage) match {
-      case Some(LimitedCompany) | Some(UnincorporatedAssociation) => userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
+      case Some(LimitedCompany) | Some(UnincorporatedAssociation) =>
+        userAnswers.get(UTRPage).map(_.uniqueTaxPayerReference)
       case _                                                      => None
     }
 

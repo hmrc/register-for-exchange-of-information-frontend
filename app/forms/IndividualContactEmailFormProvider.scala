@@ -27,11 +27,12 @@ class IndividualContactEmailFormProvider @Inject() extends Mappings with RegexCo
   private val maxLength = 132
 
   def apply(): Form[String] = Form(
-    "email" -> validatedText("contactEmail.error.required.individual",
-                             "contactEmail.error.invalid.individual",
-                             "contactEmail.error.length",
-                             emailRegex,
-                             maxLength
+    "email" -> validatedText(
+      "contactEmail.error.required.individual",
+      "contactEmail.error.invalid.individual",
+      "contactEmail.error.length",
+      emailRegex,
+      maxLength
     )
   )
 }

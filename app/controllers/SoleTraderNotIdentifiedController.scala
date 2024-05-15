@@ -38,15 +38,14 @@ class SoleTraderNotIdentifiedController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() {
-    implicit request =>
-      val startUrl = routes.IndexController.onPageLoad().url
+  def onPageLoad(): Action[AnyContent] = standardActionSets.identifiedUserWithData() { implicit request =>
+    val startUrl = routes.IndexController.onPageLoad().url
 
-      request.userAnswers.get(ReporterTypePage) match {
-        case Some(Sole) => Ok(view(startUrl))
-        case reporterType =>
-          logger.error(s"$reporterType reporter type is not eligible to view SoleTraderNotIdentifiedPage")
-          Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())
-      }
+    request.userAnswers.get(ReporterTypePage) match {
+      case Some(Sole)   => Ok(view(startUrl))
+      case reporterType =>
+        logger.error(s"$reporterType reporter type is not eligible to view SoleTraderNotIdentifiedPage")
+        Redirect(controllers.routes.ThereIsAProblemController.onPageLoad())
+    }
   }
 }

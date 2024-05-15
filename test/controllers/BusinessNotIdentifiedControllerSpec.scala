@@ -38,26 +38,28 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
       ReporterType.organisationReporterTypes: _*
     )
 
-    forAll(organisationReporterTypes) {
-      reporterType =>
-        s"return OK and the correct view with link to find and update company info for a GET as a $reporterType reporterType" in {
+    forAll(organisationReporterTypes) { reporterType =>
+      s"return OK and the correct view with link to find and update company info for a GET as a $reporterType reporterType" in {
 
-          val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
-          retrieveUserAnswersData(userAnswers)
-          val application = guiceApplicationBuilder().build()
+        val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
+        retrieveUserAnswersData(userAnswers)
+        val application = guiceApplicationBuilder().build()
 
-          running(application) {
-            val request = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
+        running(application) {
+          val request = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
 
-            val result = route(application, request).value
+          val result = route(application, request).value
 
-            val view = application.injector.instanceOf[BusinessNotIdentifiedView]
+          val view = application.injector.instanceOf[BusinessNotIdentifiedView]
 
-            status(result) mustEqual OK
-            contentAsString(result) mustEqual view(findAndUpdateCompanyInfoLink, indexUrl, reporterType)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(findAndUpdateCompanyInfoLink, indexUrl, reporterType)(
+            request,
+            messages(application)
+          ).toString
 
-          }
         }
+      }
     }
 
     val disallowedReporterTypes = Table(
@@ -66,24 +68,23 @@ class BusinessNotIdentifiedControllerSpec extends SpecBase with ControllerMockFi
       Individual
     )
 
-    forAll(disallowedReporterTypes) {
-      reporterType =>
-        s"redirect to ThereIsAProblemPage for a GET as a $reporterType reporterType" in {
+    forAll(disallowedReporterTypes) { reporterType =>
+      s"redirect to ThereIsAProblemPage for a GET as a $reporterType reporterType" in {
 
-          val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
-          retrieveUserAnswersData(userAnswers)
-          val application = guiceApplicationBuilder().build()
+        val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
+        retrieveUserAnswersData(userAnswers)
+        val application = guiceApplicationBuilder().build()
 
-          running(application) {
-            val request = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
+        running(application) {
+          val request = FakeRequest(GET, routes.BusinessNotIdentifiedController.onPageLoad().url)
 
-            val result = route(application, request).value
+          val result = route(application, request).value
 
-            status(result) mustEqual SEE_OTHER
-            redirectLocation(result) mustBe Some(routes.ThereIsAProblemController.onPageLoad().url)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(routes.ThereIsAProblemController.onPageLoad().url)
 
-          }
         }
+      }
     }
   }
 }

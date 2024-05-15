@@ -47,7 +47,9 @@ object RegisterWithID {
       )
     )
 
-  def apply(registrationRequest: AutoMatchedRegistrationRequest)(implicit uuidGenerator: UUIDGen, clock: Clock): RegisterWithID =
+  def apply(
+    registrationRequest: AutoMatchedRegistrationRequest
+  )(implicit uuidGenerator: UUIDGen, clock: Clock): RegisterWithID =
     RegisterWithID(
       RegisterWithIDRequest(
         RequestCommon(MDR.toString),

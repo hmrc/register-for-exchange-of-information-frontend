@@ -17,7 +17,7 @@
 package viewmodels
 
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{__, OWrites}
+import play.api.libs.json.{OWrites, __}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 
 final case class Section(sectionName: String, rows: Seq[SummaryListRow])

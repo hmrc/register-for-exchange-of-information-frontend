@@ -39,7 +39,7 @@ This service runs on port 10015 and is named REGISTER_FOR_EXCHANGE_OF_INFORMATIO
 
 Run the following command to start services locally:
 
-    sm --start MDR_ALL -r
+    sm2 --start MDR_ALL -r
 
 #### *Auth login details*: 
 

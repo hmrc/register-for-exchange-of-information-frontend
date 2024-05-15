@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.RetrievalOps._
 
@@ -43,8 +43,8 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 
   class Harness(authAction: AuthAction) {
 
-    def onPageLoad() = authAction {
-      _ => Results.Ok
+    def onPageLoad() = authAction { _ =>
+      Results.Ok
     }
   }
 
@@ -63,7 +63,11 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
     "when the user hasn't logged in" - {
 
       "must redirect the user to log in " in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers).apply()
+        val authAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector(new MissingBearerToken),
+          appConfig,
+          bodyParsers
+        ).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -76,7 +80,11 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 
       "must redirect the user to log in " in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers).apply()
+        val authAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector(new BearerTokenExpired),
+          appConfig,
+          bodyParsers
+        ).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -89,7 +97,11 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers).apply()
+        val authAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector(new InsufficientEnrolments),
+          appConfig,
+          bodyParsers
+        ).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -103,7 +115,11 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
       "must redirect the user to the unauthorised page" in {
 
         val authAction =
-          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers).apply()
+          new AuthenticatedIdentifierAction(
+            new FakeFailingAuthConnector(new InsufficientConfidenceLevel),
+            appConfig,
+            bodyParsers
+          ).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -116,7 +132,11 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers).apply()
+        val authAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector(new UnsupportedAuthProvider),
+          appConfig,
+          bodyParsers
+        ).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -129,7 +149,11 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers).apply()
+        val authAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector(new UnsupportedAffinityGroup),
+          appConfig,
+          bodyParsers
+        ).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -143,7 +167,9 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
         val emptyEnrolments: Enrolments      = Enrolments(Set.empty)
 
         val retrieval: AuthRetrievals = None ~ emptyEnrolments ~ Some(Agent) ~ None
-        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+        when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(
+          retrieval
+        )
 
         val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
         val controller = new Harness(authAction)
@@ -158,7 +184,11 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 
       "must redirect the user to the unauthorised page" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers).apply()
+        val authAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector(new UnsupportedCredentialRole),
+          appConfig,
+          bodyParsers
+        ).apply()
         val controller = new Harness(authAction)
         val result     = controller.onPageLoad()(FakeRequest())
 
@@ -172,7 +202,9 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
       val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
 
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ None ~ Some(Assistant)
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(
+        retrieval
+      )
 
       val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
       val controller = new Harness(authAction)
@@ -189,7 +221,9 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
       val emptyEnrolments: Enrolment       = Enrolment(key = "")
 
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(emptyEnrolments)) ~ None ~ Some(Assistant)
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(
+        retrieval
+      )
 
       val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
       val controller = new Harness(authAction)
@@ -204,7 +238,9 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
       val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
 
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ Some(Individual) ~ None
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(
+        retrieval
+      )
 
       val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
       val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply()
@@ -222,7 +258,9 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
       val mdrEnrolment                     = Enrolment(key = "HMRC-MDR-ORG")
 
       val retrieval: AuthRetrievals = Some("internalID") ~ Enrolments(Set(mdrEnrolment)) ~ Some(Organisation) ~ None
-      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(retrieval)
+      when(mockAuthConnector.authorise[AuthRetrievals](any(), any())(any(), any())) thenReturn Future.successful(
+        retrieval
+      )
 
       val authAction     = new AuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers).apply()
       val enrolledAction = new CheckEnrolledToServiceActionProvider(appConfig).apply()
@@ -240,6 +278,9 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
   val serviceUrl: String = ""
 
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[A] =
     Future.failed(exceptionToReturn)
 }

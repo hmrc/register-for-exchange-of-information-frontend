@@ -47,30 +47,29 @@ class ContactEmailController @Inject() (
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData() {
-      implicit request =>
-        val preparedForm = request.userAnswers.get(ContactEmailPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
+    standardActionSets.identifiedUserWithData() { implicit request =>
+      val preparedForm = request.userAnswers.get(ContactEmailPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
 
-        Ok(view(preparedForm, mode, getFirstContactName(request.userAnswers)))
+      Ok(view(preparedForm, mode, getFirstContactName(request.userAnswers)))
 
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, getFirstContactName(request.userAnswers)))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(ContactEmailPage, mode, updatedAnswers))
-          )
+    standardActionSets.identifiedUserWithData().async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, mode, getFirstContactName(request.userAnswers)))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactEmailPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(ContactEmailPage, mode, updatedAnswers))
+        )
     }
 
 }

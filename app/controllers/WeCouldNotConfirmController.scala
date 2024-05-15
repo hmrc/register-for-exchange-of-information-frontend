@@ -42,23 +42,22 @@ class WeCouldNotConfirmController @Inject() (
     with Logging {
 
   def onPageLoad(key: String): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData().async {
-      implicit request =>
-        val continueUrl = routes.IndexController.onPageLoad().url
+    standardActionSets.identifiedUserWithData().async { implicit request =>
+      val continueUrl = routes.IndexController.onPageLoad().url
 
-        cleanPages match {
-          case Success(cleaned) =>
-            cleaned map (
-              _ => Ok(view(continueUrl, key))
-            )
-          case _ =>
-            logger.warn("WeCouldNotConfirmController: Could not clean pages")
-            throw new Exception("WeCouldNotConfirmController: Cannot clean UserAnswers pages")
-        }
+      cleanPages match {
+        case Success(cleaned) =>
+          cleaned map (_ => Ok(view(continueUrl, key)))
+        case _                =>
+          logger.warn("WeCouldNotConfirmController: Could not clean pages")
+          throw new Exception("WeCouldNotConfirmController: Cannot clean UserAnswers pages")
+      }
 
     }
 
   private def cleanPages(implicit request: DataRequest[AnyContent]): Try[Future[Boolean]] = for {
-    cleaned <- (PageLists.individualWithIDPages ++ PageLists.businessWithIDPages).foldLeft(Try(request.userAnswers))(PageLists.removePage)
+    cleaned <- (PageLists.individualWithIDPages ++ PageLists.businessWithIDPages).foldLeft(Try(request.userAnswers))(
+                 PageLists.removePage
+               )
   } yield sessionRepository.set(cleaned)
 }

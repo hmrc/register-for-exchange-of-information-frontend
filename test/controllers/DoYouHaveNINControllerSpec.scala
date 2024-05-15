@@ -80,7 +80,7 @@ class DoYouHaveNINControllerSpec extends ControllerSpecBase {
       val request =
         FakeRequest(POST, submitRoute)
           .withFormUrlEncodedBody(("value", "true"))
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url

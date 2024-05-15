@@ -37,7 +37,7 @@ class WeCouldNotConfirmControllerSpec extends SpecBase with ControllerMockFixtur
 
       val result = route(app, request).value
 
-      val view = app.injector.instanceOf[WeCouldNotConfirmView]
+      val view                = app.injector.instanceOf[WeCouldNotConfirmView]
       status(result) mustEqual OK
       val continueUrl: String = routes.IndexController.onPageLoad().url
 

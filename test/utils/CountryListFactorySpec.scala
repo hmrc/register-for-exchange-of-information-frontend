@@ -67,8 +67,9 @@ class CountryListFactorySpec extends SpecBase {
       val conf: FrontendAppConfig = mock[FrontendAppConfig]
       val env                     = mock[Environment]
 
-      val countries = Json.arr(Json.obj("state" -> "valid", "code" -> "ZW", "description" -> "Zimbabwe"),
-                               Json.obj("state" -> "valid", "code" -> "GB", "description" -> "Great Britain")
+      val countries = Json.arr(
+        Json.obj("state" -> "valid", "code" -> "ZW", "description" -> "Zimbabwe"),
+        Json.obj("state" -> "valid", "code" -> "GB", "description" -> "Great Britain")
       )
 
       when(conf.countryCodeJson).thenReturn("countries.json")

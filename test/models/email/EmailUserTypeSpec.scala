@@ -57,11 +57,9 @@ class EmailUserTypeSpec extends SpecBase {
       "must return Organisation when UserAnswers has ReporterTypePage containing something other than Sole or Individual" in {
         val reporterType = Gen
           .oneOf(ReporterType.values)
-          .filterNot(
-            reporter => reporter == Sole || reporter == ReporterType.Individual
-          )
+          .filterNot(reporter => reporter == Sole || reporter == ReporterType.Individual)
           .pureApply(Gen.Parameters.default, Seed.random())
-        val userAnswers = emptyUserAnswers
+        val userAnswers  = emptyUserAnswers
           .set(DoYouHaveUniqueTaxPayerReferencePage, true)
           .success
           .value

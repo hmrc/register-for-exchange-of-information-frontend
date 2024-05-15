@@ -34,7 +34,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class TaxEnrolmentsConnectorSpec
+    extends SpecBase
+    with WireMockServerHandler
+    with Generators
+    with ScalaCheckPropertyChecks {
 
   lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -49,36 +53,33 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
     "createEnrolment" - {
 
       "must return status as 204 for successful Tax Enrolment call" in {
-        forAll(validSafeID, validSubscriptionID, validUtr) {
-          (safeID, subID, utr) =>
-            val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
+        forAll(validSafeID, validSubscriptionID, validUtr) { (safeID, subID, utr) =>
+          val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
 
-            stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", NO_CONTENT)
+          stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", NO_CONTENT)
 
-            val result: EitherT[Future, ApiError, Int] = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Right(NO_CONTENT)
+          val result: EitherT[Future, ApiError, Int] = connector.createEnrolment(enrolmentInfo)
+          result.value.futureValue mustBe Right(NO_CONTENT)
         }
       }
 
       "must return status as 400 and BadRequest error" in {
-        forAll(validSafeID, validSubscriptionID, validUtr) {
-          (safeID, subID, utr) =>
-            val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
-            stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", BAD_REQUEST)
+        forAll(validSafeID, validSubscriptionID, validUtr) { (safeID, subID, utr) =>
+          val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
+          stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", BAD_REQUEST)
 
-            val result = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Left(UnableToCreateEnrolmentError)
+          val result = connector.createEnrolment(enrolmentInfo)
+          result.value.futureValue mustBe Left(UnableToCreateEnrolmentError)
         }
       }
 
       "must return status ServiceUnavailable Error" in {
-        forAll(validSafeID, validSubscriptionID, validUtr) {
-          (safeID, subID, utr) =>
-            val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
-            stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", INTERNAL_SERVER_ERROR)
+        forAll(validSafeID, validSubscriptionID, validUtr) { (safeID, subID, utr) =>
+          val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
+          stubResponseForPutRequest("/tax-enrolments/service/HMRC-MDR-ORG/enrolment", INTERNAL_SERVER_ERROR)
 
-            val result = connector.createEnrolment(enrolmentInfo)
-            result.value.futureValue mustBe Left(ServiceUnavailableError)
+          val result = connector.createEnrolment(enrolmentInfo)
+          result.value.futureValue mustBe Left(ServiceUnavailableError)
         }
       }
     }
@@ -86,37 +87,34 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler wit
     "createEnrolmentRequest" - {
 
       "must return correct EnrolmentRequest nino provided" in {
-        forAll(validSafeID, validSubscriptionID, validNino) {
-          (safeID, subID, nino) =>
-            val enrolmentInfo = SubscriptionInfo(safeID = safeID, nino = Some(nino), mdrId = subID)
+        forAll(validSafeID, validSubscriptionID, validNino) { (safeID, subID, nino) =>
+          val enrolmentInfo = SubscriptionInfo(safeID = safeID, nino = Some(nino), mdrId = subID)
 
-            val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(NINO, enrolmentInfo.nino.get))
+          val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(NINO, enrolmentInfo.nino.get))
 
-            enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
+          enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
 
         }
       }
       "must return correct EnrolmentRequest when saUtr provided as verifier" in {
 
-        forAll(validSafeID, validSubscriptionID, validUtr) {
-          (safeID, subID, utr) =>
-            val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
+        forAll(validSafeID, validSubscriptionID, validUtr) { (safeID, subID, utr) =>
+          val enrolmentInfo = SubscriptionInfo(safeID = safeID, saUtr = Some(utr), mdrId = subID)
 
-            val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(SAUTR, enrolmentInfo.saUtr.get))
+          val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(SAUTR, enrolmentInfo.saUtr.get))
 
-            enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
+          enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
         }
       }
 
       "must return correct EnrolmentRequest when ctUtr provided as verifier" in {
 
-        forAll(validSafeID, validSubscriptionID, validUtr) {
-          (safeID, subID, utr) =>
-            val enrolmentInfo = SubscriptionInfo(safeID = safeID, ctUtr = Some(utr), mdrId = subID)
+        forAll(validSafeID, validSubscriptionID, validUtr) { (safeID, subID, utr) =>
+          val enrolmentInfo = SubscriptionInfo(safeID = safeID, ctUtr = Some(utr), mdrId = subID)
 
-            val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(CTUTR, enrolmentInfo.ctUtr.get))
+          val expectedVerifiers = Seq(Verifier(SAFEID, enrolmentInfo.safeID), Verifier(CTUTR, enrolmentInfo.ctUtr.get))
 
-            enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
+          enrolmentInfo.convertToEnrolmentRequest.verifiers mustBe expectedVerifiers
         }
       }
     }

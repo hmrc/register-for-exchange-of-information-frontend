@@ -63,7 +63,7 @@ class WhatIsTradingNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(WhatIsTradingNamePage, tradingName).success.value
+      val userAnswers      = emptyUserAnswers.set(WhatIsTradingNamePage, tradingName).success.value
       retrieveUserAnswersData(userAnswers)
       implicit val request = FakeRequest(GET, loadRoute)
 

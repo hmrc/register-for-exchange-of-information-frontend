@@ -53,7 +53,7 @@ class ReporterTypeControllerSpec extends SpecBase with ControllerMockFixtures {
       val userAnswers =
         emptyUserAnswers.set(ReporterTypePage, ReporterType.values.last).success.value
       retrieveUserAnswersData(userAnswers)
-      val request = FakeRequest(GET, loadRoute)
+      val request     = FakeRequest(GET, loadRoute)
 
       val filledForm = form.bind(Map("value" -> ReporterType.values.last.toString))
 

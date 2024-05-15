@@ -37,7 +37,7 @@ class SoleNameFormProvider @Inject() extends Mappings with RegexConstants {
         individualNameRegex,
         maxLength
       ),
-      "lastName" -> validatedText(
+      "lastName"  -> validatedText(
         "soleName.error.lastName.required",
         "soleName.error.lastName.invalid",
         "soleName.error.lastName.length",

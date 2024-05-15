@@ -42,7 +42,10 @@ class CtUtrRetrievalActionProvider @Inject() (
     extends ActionFunction[IdentifierRequest, IdentifierRequest]
     with Logging {
 
-  override def invokeBlock[A](request: IdentifierRequest[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](
+    request: IdentifierRequest[A],
+    block: IdentifierRequest[A] => Future[Result]
+  ): Future[Result] = {
 
     val ctUtr = request.enrolments
       .find(_.key == config.ctEnrolmentKey)
@@ -53,10 +56,10 @@ class CtUtrRetrievalActionProvider @Inject() (
     (request.affinityGroup, ctUtr) match {
       case (AffinityGroup.Organisation, Some(_)) =>
         block(request.copy(utr = ctUtr))
-      case (_, Some(_)) =>
+      case (_, Some(_))                          =>
         logger.warn("IR-CT UTR found for affinity group other than Organisation")
         Future.successful(Redirect(controllers.routes.ReporterTypeController.onPageLoad(NormalMode)))
-      case _ =>
+      case _                                     =>
         block(request)
     }
   }

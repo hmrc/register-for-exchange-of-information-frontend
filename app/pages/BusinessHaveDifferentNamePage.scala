@@ -31,7 +31,7 @@ case object BusinessHaveDifferentNamePage extends QuestionPage[Boolean] {
     value match {
       case Some(false) =>
         userAnswers.remove(WhatIsTradingNamePage)
-      case _ =>
+      case _           =>
         super.cleanup(value, userAnswers)
     }
 }

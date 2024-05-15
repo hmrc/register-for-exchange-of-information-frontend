@@ -31,17 +31,16 @@ class BusinessHaveDifferentNamePageSpec extends PageBehaviours {
     beRemovable[Boolean](BusinessHaveDifferentNamePage)
 
     "must remove business trading name when user changes answer from 'Yes' to 'No'" in {
-      forAll(arbitrary[UserAnswers]) {
-        answers =>
-          val result = answers
-            .set(WhatIsTradingNamePage, "differentName")
-            .success
-            .value
-            .set(BusinessHaveDifferentNamePage, false)
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { answers =>
+        val result = answers
+          .set(WhatIsTradingNamePage, "differentName")
+          .success
+          .value
+          .set(BusinessHaveDifferentNamePage, false)
+          .success
+          .value
 
-          result.get(WhatIsTradingNamePage) must not be defined
+        result.get(WhatIsTradingNamePage) must not be defined
       }
     }
   }

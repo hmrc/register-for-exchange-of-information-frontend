@@ -33,9 +33,7 @@ class CtUtrRetrievalActionSpec extends SpecBase with TableDrivenPropertyChecks {
 
   private val fakeRequest = FakeRequest("", "")
 
-  private def block[A]: IdentifierRequest[A] => Future[Result] = (_: IdentifierRequest[A]) => {
-    Future.successful(Ok)
-  }
+  private def block[A]: IdentifierRequest[A] => Future[Result] = (_: IdentifierRequest[A]) => Future.successful(Ok)
 
   private val applicationBuilder       = new GuiceApplicationBuilder()
   private val action                   = applicationBuilder.injector.instanceOf[CtUtrRetrievalActionProvider]
@@ -50,7 +48,8 @@ class CtUtrRetrievalActionSpec extends SpecBase with TableDrivenPropertyChecks {
 
       "must execute request block when CT-UTR enrolment exists" in {
         val ctUtrEnrolment    = Enrolment(config.ctEnrolmentKey, Seq(ctUtrEnrolmentIdentifier), state = "")
-        val identifierRequest = IdentifierRequest(fakeRequest, UserAnswersId, affinityGroup, enrolments = Set(ctUtrEnrolment))
+        val identifierRequest =
+          IdentifierRequest(fakeRequest, UserAnswersId, affinityGroup, enrolments = Set(ctUtrEnrolment))
 
         val result = action.invokeBlock(identifierRequest, block)
 
@@ -72,27 +71,27 @@ class CtUtrRetrievalActionSpec extends SpecBase with TableDrivenPropertyChecks {
       AffinityGroup.Agent
     )
 
-    forAll(nonOrganisationAffinityGroups) {
-      affinityGroup =>
-        s"when the affinity group is $affinityGroup" - {
+    forAll(nonOrganisationAffinityGroups) { affinityGroup =>
+      s"when the affinity group is $affinityGroup" - {
 
-          "must redirect to ReporterTypePage when CT-UTR enrolment exists" in {
-            val ctUtrEnrolment    = Enrolment(config.ctEnrolmentKey, Seq(ctUtrEnrolmentIdentifier), state = "")
-            val identifierRequest = IdentifierRequest(fakeRequest, UserAnswersId, affinityGroup, enrolments = Set(ctUtrEnrolment))
+        "must redirect to ReporterTypePage when CT-UTR enrolment exists" in {
+          val ctUtrEnrolment    = Enrolment(config.ctEnrolmentKey, Seq(ctUtrEnrolmentIdentifier), state = "")
+          val identifierRequest =
+            IdentifierRequest(fakeRequest, UserAnswersId, affinityGroup, enrolments = Set(ctUtrEnrolment))
 
-            val result = action.invokeBlock(identifierRequest, block)
+          val result = action.invokeBlock(identifierRequest, block)
 
-            result.futureValue mustBe Redirect(controllers.routes.ReporterTypeController.onPageLoad(NormalMode))
-          }
-
-          "must execute request block when CT-UTR enrolment does not exists" in {
-            val identifierRequest = IdentifierRequest(fakeRequest, UserAnswersId, affinityGroup, enrolments = Set.empty)
-
-            val result = action.invokeBlock(identifierRequest, block)
-
-            result.futureValue mustBe Ok
-          }
+          result.futureValue mustBe Redirect(controllers.routes.ReporterTypeController.onPageLoad(NormalMode))
         }
+
+        "must execute request block when CT-UTR enrolment does not exists" in {
+          val identifierRequest = IdentifierRequest(fakeRequest, UserAnswersId, affinityGroup, enrolments = Set.empty)
+
+          val result = action.invokeBlock(identifierRequest, block)
+
+          result.futureValue mustBe Ok
+        }
+      }
     }
 
   }

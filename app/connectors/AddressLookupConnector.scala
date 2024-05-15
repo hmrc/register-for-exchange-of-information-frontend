@@ -31,7 +31,9 @@ import scala.util.Try
 
 class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppConfig) extends Logging {
 
-  def addressLookupByPostcode(postCode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
+  def addressLookupByPostcode(
+    postCode: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AddressLookup]] = {
 
     val addressLookupUrl: String = s"${config.addressLookUpUrl}/lookup"
 
@@ -39,49 +41,48 @@ class AddressLookupConnector @Inject() (http: HttpClient, config: FrontendAppCon
 
     val lookupAddressByPostcode = LookupAddressByPostcode(postCode, None)
 
-    http.POST[LookupAddressByPostcode, HttpResponse](addressLookupUrl, lookupAddressByPostcode, headers = Seq("X-Hmrc-Origin" -> MDR.toString)) flatMap {
+    http.POST[LookupAddressByPostcode, HttpResponse](
+      addressLookupUrl,
+      lookupAddressByPostcode,
+      headers = Seq("X-Hmrc-Origin" -> MDR.toString)
+    ) flatMap {
       case response if response.status equals OK =>
         Future.successful(
           sortAddresses(
             response.json
               .as[Seq[AddressLookup]]
-              .filterNot(
-                address => address.addressLine1.isEmpty && address.addressLine2.isEmpty
-              )
+              .filterNot(address => address.addressLine1.isEmpty && address.addressLine2.isEmpty)
           )
         )
-      case response =>
+      case response                              =>
         val message = s"Address Lookup failed with status ${response.status} Response body: ${response.body}"
         Future.failed(new HttpException(message, response.status))
-    } recover {
-      case e: Exception =>
-        logger.error("Exception in Address Lookup", e)
-        throw e
+    } recover { case e: Exception =>
+      logger.error("Exception in Address Lookup", e)
+      throw e
     }
   }
 
-  def mkString(p: AddressLookup) = List[Option[String]](p.addressLine1, p.addressLine2, p.addressLine3, p.addressLine4).flatten.mkString(" ")
+  def mkString(p: AddressLookup) =
+    List[Option[String]](p.addressLine1, p.addressLine2, p.addressLine3, p.addressLine4).flatten.mkString(" ")
 
   def numbersOnly(adr: AddressLookup): Seq[Option[Int]] =
     "([0-9]+)".r
       .findAllIn(mkString(adr))
-      .map(
-        n => Try(n.toInt).toOption
-      )
+      .map(n => Try(n.toInt).toOption)
       .toSeq
       .reverse :+ None
 
   def sortAddresses(items: Seq[AddressLookup]): Seq[AddressLookup] =
-    items.sortWith {
-      (a, b) =>
-        def sort(zipped: Seq[(Option[Int], Option[Int])]): Boolean = zipped match {
-          case (Some(nA), Some(nB)) :: tail =>
-            if (nA == nB) sort(tail) else nA < nB
-          case (Some(_), None) :: _ => true
-          case (None, Some(_)) :: _ => false
-          case _                    => mkString(a) < mkString(b)
-        }
+    items.sortWith { (a, b) =>
+      def sort(zipped: Seq[(Option[Int], Option[Int])]): Boolean = zipped match {
+        case (Some(nA), Some(nB)) :: tail =>
+          if (nA == nB) sort(tail) else nA < nB
+        case (Some(_), None) :: _         => true
+        case (None, Some(_)) :: _         => false
+        case _                            => mkString(a) < mkString(b)
+      }
 
-        sort(numbersOnly(a).zipAll(numbersOnly(b), None, None).toList)
+      sort(numbersOnly(a).zipAll(numbersOnly(b), None, None).toList)
     }
 }

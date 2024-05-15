@@ -46,27 +46,27 @@ class SndContactPhoneController @Inject() (
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async { implicit request =>
       val preparedForm = request.userAnswers.get(SndContactPhonePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
       Future.successful(Ok(view(preparedForm, getSecondContactName(request.userAnswers), mode)))
-  }
+    }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async {
-      implicit request =>
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, getSecondContactName(request.userAnswers), mode))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactPhonePage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(SndContactPhonePage, mode, updatedAnswers))
-          )
+    standardActionSets.identifiedUserWithDependantAnswer(SndContactNamePage).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, getSecondContactName(request.userAnswers), mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SndContactPhonePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(SndContactPhonePage, mode, updatedAnswers))
+        )
     }
 }

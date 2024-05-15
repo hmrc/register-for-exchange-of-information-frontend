@@ -41,7 +41,14 @@ class AddressUKControllerSpec extends ControllerSpecBase {
   val testCountryList: Seq[Country]       = Seq(Country("valid", "GB", "United Kingdom"))
   val formProvider: AddressUKFormProvider = new AddressUKFormProvider()
   val form: Form[Address]                 = formProvider(testCountryList)
-  val address: Address                    = Address("value 1", Some("value 2"), "value 3", Some("value 4"), Some("XX9 9XX"), Country("valid", "GB", "United Kingdom"))
+  val address: Address                    = Address(
+    "value 1",
+    Some("value 2"),
+    "value 3",
+    Some("value 4"),
+    Some("XX9 9XX"),
+    Country("valid", "GB", "United Kingdom")
+  )
 
   val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
@@ -144,12 +151,13 @@ class AddressUKControllerSpec extends ControllerSpecBase {
       running(application) {
         val request =
           FakeRequest(POST, loadRoute)
-            .withFormUrlEncodedBody(("addressLine1", "value 1"),
-                                    ("addressLine2", "value 2"),
-                                    ("addressLine3", "value 3"),
-                                    ("addressLine4", "value 4"),
-                                    ("postCode", "XX9 9XX"),
-                                    ("country", "GB")
+            .withFormUrlEncodedBody(
+              ("addressLine1", "value 1"),
+              ("addressLine2", "value 2"),
+              ("addressLine3", "value 3"),
+              ("addressLine4", "value 4"),
+              ("postCode", "XX9 9XX"),
+              ("country", "GB")
             )
 
         val result = route(application, request).value
@@ -171,12 +179,13 @@ class AddressUKControllerSpec extends ControllerSpecBase {
 
       running(application) {
         val request = FakeRequest(POST, loadRoute)
-          .withFormUrlEncodedBody(("addressLine1", "value 1"),
-                                  ("addressLine2", "value 2"),
-                                  ("addressLine3", "value 3"),
-                                  ("addressLine4", "value 4"),
-                                  ("postCode", "XX9 9XX"),
-                                  ("country", "GB")
+          .withFormUrlEncodedBody(
+            ("addressLine1", "value 1"),
+            ("addressLine2", "value 2"),
+            ("addressLine3", "value 3"),
+            ("addressLine4", "value 4"),
+            ("postCode", "XX9 9XX"),
+            ("country", "GB")
           )
 
         val result = route(application, request).value

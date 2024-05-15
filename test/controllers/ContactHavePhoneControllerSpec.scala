@@ -61,7 +61,7 @@ class ContactHavePhoneControllerSpec extends ControllerSpecBase {
         .success
         .value
       retrieveUserAnswersData(userAnswers2)
-      val request = FakeRequest(GET, loadRoute)
+      val request      = FakeRequest(GET, loadRoute)
 
       val view       = app.injector.instanceOf[ContactHavePhoneView]
       val filledForm = form.bind(Map("value" -> "true"))

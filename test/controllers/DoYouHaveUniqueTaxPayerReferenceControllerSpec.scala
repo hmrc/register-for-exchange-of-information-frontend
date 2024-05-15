@@ -52,8 +52,8 @@ class DoYouHaveUniqueTaxPayerReferenceControllerSpec extends SpecBase with Contr
 
       val userAnswers = emptyUserAnswers.set(DoYouHaveUniqueTaxPayerReferencePage, true).success.value
       retrieveUserAnswersData(userAnswers)
-      val request    = FakeRequest(GET, loadRoute)
-      val filledForm = form.bind(Map("value" -> "true"))
+      val request     = FakeRequest(GET, loadRoute)
+      val filledForm  = form.bind(Map("value" -> "true"))
 
       val view = app.injector.instanceOf[DoYouHaveUTRView]
 

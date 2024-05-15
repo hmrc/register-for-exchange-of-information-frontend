@@ -21,11 +21,12 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class RegistrationRequest(identifierType: String,
-                               identifier: String,
-                               name: String,
-                               businessType: Option[ReporterType] = None,
-                               dob: Option[LocalDate] = None
+case class RegistrationRequest(
+  identifierType: String,
+  identifier: String,
+  name: String,
+  businessType: Option[ReporterType] = None,
+  dob: Option[LocalDate] = None
 )
 
 object RegistrationRequest {

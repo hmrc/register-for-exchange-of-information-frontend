@@ -31,12 +31,18 @@ class RegisterWithIDRequestSpec extends SpecBase {
 
   val registrationWithIDPayload: RegisterWithID = RegisterWithID(
     RegisterWithIDRequest(
-      RequestCommon("2016-08-16T15:55:30Z", MDR.toString, "ec031b045855445e96f98a569ds56cd2", Some(Seq(Parameters("REGIME", MDR.toString)))),
-      RequestWithIDDetails(NINO,
-                           TestNiNumber,
-                           requiresNameMatch = true,
-                           isAnAgent = false,
-                           Option(WithIDIndividual(name.firstName, Some(MiddleName), name.lastName, Some(TestDate)))
+      RequestCommon(
+        "2016-08-16T15:55:30Z",
+        MDR.toString,
+        "ec031b045855445e96f98a569ds56cd2",
+        Some(Seq(Parameters("REGIME", MDR.toString)))
+      ),
+      RequestWithIDDetails(
+        NINO,
+        TestNiNumber,
+        requiresNameMatch = true,
+        isAnAgent = false,
+        Option(WithIDIndividual(name.firstName, Some(MiddleName), name.lastName, Some(TestDate)))
       )
     )
   )

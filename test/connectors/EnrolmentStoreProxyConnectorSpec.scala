@@ -32,7 +32,11 @@ import play.api.libs.json.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandler with Generators with ScalaCheckPropertyChecks {
+class EnrolmentStoreProxyConnectorSpec
+    extends SpecBase
+    with WireMockServerHandler
+    with Generators
+    with ScalaCheckPropertyChecks {
 
   lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -42,8 +46,10 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
 
   lazy val connector: EnrolmentStoreProxyConnector = app.injector.instanceOf[EnrolmentStoreProxyConnector]
   val enrolmentStoreProxyUrl                       = "/enrolment-store-proxy/enrolment-store/enrolments"
-  val enrolmentStoreProxyMDR200Url                 = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-MDR-ORG~MDRID~xxx200/groups"
-  val enrolmentStoreProxyMDR204Url                 = "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-MDR-ORG~MDRID~xxx204/groups"
+  val enrolmentStoreProxyMDR200Url                 =
+    "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-MDR-ORG~MDRID~xxx200/groups"
+  val enrolmentStoreProxyMDR204Url                 =
+    "/enrolment-store-proxy/enrolment-store/enrolments/HMRC-MDR-ORG~MDRID~xxx204/groups"
 
   val enrolmentStoreProxyResponseJson: String =
     """{
@@ -69,7 +75,7 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
         val subscriptionID = SubscriptionID("xxx200")
         val groupIds       = Json.parse(enrolmentStoreProxyResponseJson).as[GroupIds]
         stubResponse(enrolmentStoreProxyMDR200Url, OK, enrolmentStoreProxyResponseJson)
-        val result = connector.enrolmentStatus(subscriptionID)
+        val result         = connector.enrolmentStatus(subscriptionID)
         result.value.futureValue mustBe Left(EnrolmentExistsError(groupIds))
       }
 
@@ -84,7 +90,7 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
       "return 204 enrolmentStatus response when principalGroupId is empty seq" in {
         val subscriptionID = SubscriptionID("xxx204")
         stubResponse(enrolmentStoreProxyMDR204Url, OK, enrolmentStoreProxyResponseNoPrincipalIdJson)
-        val result = connector.enrolmentStatus(subscriptionID)
+        val result         = connector.enrolmentStatus(subscriptionID)
         result.value.futureValue mustBe Right(())
       }
 

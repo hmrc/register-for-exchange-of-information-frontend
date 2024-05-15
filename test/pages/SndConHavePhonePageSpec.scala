@@ -34,33 +34,31 @@ class SndConHavePhonePageSpec extends PageBehaviours {
 
       "must remove SndContactPhonePage when there is a change of the answer from 'Yes' to 'No'" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          userAnswers =>
-            val result = userAnswers
-              .set(SndContactPhonePage, "112233445566")
-              .success
-              .value
-              .set(SndConHavePhonePage, false)
-              .success
-              .value
+        forAll(arbitrary[UserAnswers]) { userAnswers =>
+          val result = userAnswers
+            .set(SndContactPhonePage, "112233445566")
+            .success
+            .value
+            .set(SndConHavePhonePage, false)
+            .success
+            .value
 
-            result.get(SndContactPhonePage) must not be defined
+          result.get(SndContactPhonePage) must not be defined
         }
       }
 
       "must retain SndContactPhonePage when there is a change of the answer to 'Yes'" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          userAnswers =>
-            val result = userAnswers
-              .set(SndContactPhonePage, "112233445566")
-              .success
-              .value
-              .set(SndConHavePhonePage, true)
-              .success
-              .value
+        forAll(arbitrary[UserAnswers]) { userAnswers =>
+          val result = userAnswers
+            .set(SndContactPhonePage, "112233445566")
+            .success
+            .value
+            .set(SndConHavePhonePage, true)
+            .success
+            .value
 
-            result.get(SndContactPhonePage) mustBe defined
+          result.get(SndContactPhonePage) mustBe defined
         }
       }
     }

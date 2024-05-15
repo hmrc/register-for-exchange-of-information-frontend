@@ -51,7 +51,7 @@ class SndContactNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(SndContactNamePage, name.fullName).success.value
+      val userAnswers      = emptyUserAnswers.set(SndContactNamePage, name.fullName).success.value
       retrieveUserAnswersData(userAnswers)
       implicit val request = FakeRequest(GET, loadRoute)
 

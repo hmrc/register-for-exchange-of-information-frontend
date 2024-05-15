@@ -25,7 +25,7 @@ trait CheckboxFieldBehaviours extends FormSpec {
     for {
       (value, i) <- validValues.zipWithIndex
     } yield s"binds `$value` successfully" in {
-      val data = Map(
+      val data   = Map(
         s"$fieldName[$i]" -> value.toString
       )
       val result = form.bind(data)

@@ -58,44 +58,50 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (standardActionSets.identifiedUserWithData() andThen checkForSubmission) {
     implicit request =>
       val viewModel: Seq[Section] =
-        CheckYourAnswersViewModel.buildPages(request.userAnswers, countryFactory, isRegisteringAsBusiness(request.userAnswers))
+        CheckYourAnswersViewModel.buildPages(
+          request.userAnswers,
+          countryFactory,
+          isRegisteringAsBusiness(request.userAnswers)
+        )
       Ok(view(viewModel))
   }
 
-  private def getSafeIdFromRegistration()(implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Either[ApiError, SafeId]] =
+  private def getSafeIdFromRegistration()(implicit
+    request: DataRequest[AnyContent],
+    hc: HeaderCarrier
+  ): Future[Either[ApiError, SafeId]] =
     request.userAnswers.get(RegistrationInfoPage) match {
       case Some(registration) =>
         val safeId = registration match {
           case OrgRegistrationInfo(safeId, _, _) =>
             safeId
-          case IndRegistrationInfo(safeId) =>
+          case IndRegistrationInfo(safeId)       =>
             safeId
         }
         Future.successful(Right(safeId))
-      case _ =>
+      case _                  =>
         registrationService.registerWithoutId()
     }
 
-  def onSubmit(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async {
-    implicit request =>
-      (for {
-        safeId         <- EitherT(getSafeIdFromRegistration())
-        subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(safeId, request.userAnswers))
-        result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID))
-      } yield result)
-        .valueOrF {
-          case MandatoryInformationMissingError(_) =>
-            logger.warn(s"CheckYourAnswersController: Mandatory information is missing")
-            Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad()))
-          case error =>
-            logger.warn(s"Error received from API: $error")
-            error match {
-              case ServiceUnavailableError =>
-                Future.successful(ServiceUnavailable(errorView()))
-              case _ =>
-                Future.successful(InternalServerError(errorView()))
-            }
-        }
+  def onSubmit(): Action[AnyContent] = standardActionSets.identifiedUserWithData().async { implicit request =>
+    (for {
+      safeId         <- EitherT(getSafeIdFromRegistration())
+      subscriptionID <- EitherT(subscriptionService.checkAndCreateSubscription(safeId, request.userAnswers))
+      result         <- EitherT.right[ApiError](controllerHelper.updateSubscriptionIdAndCreateEnrolment(safeId, subscriptionID))
+    } yield result)
+      .valueOrF {
+        case MandatoryInformationMissingError(_) =>
+          logger.warn(s"CheckYourAnswersController: Mandatory information is missing")
+          Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad()))
+        case error                               =>
+          logger.warn(s"Error received from API: $error")
+          error match {
+            case ServiceUnavailableError =>
+              Future.successful(ServiceUnavailable(errorView()))
+            case _                       =>
+              Future.successful(InternalServerError(errorView()))
+          }
+      }
 
   }
 }

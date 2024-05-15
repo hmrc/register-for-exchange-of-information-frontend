@@ -36,14 +36,17 @@ case class SubscriptionAudit(
 
 object SubscriptionAudit {
 
-  def apply(userAnswers: UserAnswers, requestDetail: CreateRequestDetail, auditResponse: AuditResponse): SubscriptionAudit = {
-    val (utr, saUtr) = {
+  def apply(
+    userAnswers: UserAnswers,
+    requestDetail: CreateRequestDetail,
+    auditResponse: AuditResponse
+  ): SubscriptionAudit = {
+    val (utr, saUtr) =
       userAnswers.get(ReporterTypePage) match {
         case Some(ReporterType.Sole) => (None, userAnswers.get(UTRPage))
         case Some(x: ReporterType)   => (userAnswers.get(UTRPage), None)
         case None                    => (None, None)
       }
-    }
 
     SubscriptionAudit(
       SAFEID = requestDetail.IDNumber,

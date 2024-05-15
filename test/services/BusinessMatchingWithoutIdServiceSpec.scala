@@ -114,7 +114,8 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
           .success
           .value
 
-        val request: DataRequest[AnyContent]         = DataRequest(FakeRequest(), emptyUserAnswers.id, Organisation, userAnswers)
+        val request: DataRequest[AnyContent]         =
+          DataRequest(FakeRequest(), emptyUserAnswers.id, Organisation, userAnswers)
         val result: Future[Either[ApiError, SafeId]] = service.registerWithoutId()(request, hc)
 
         result.futureValue mustBe Right(safeId)
@@ -129,7 +130,8 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(nonUkName.toName, dob, address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] =
+          service.sendIndividualRegistration(nonUkName.toName, dob, address, contactDetails)
 
         result.futureValue mustBe Right(safeId)
       }
@@ -140,7 +142,8 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withIndividualNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendIndividualRegistration(nonUkName.toName, dob, address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] =
+          service.sendIndividualRegistration(nonUkName.toName, dob, address, contactDetails)
 
         result.futureValue mustBe Left(NotFoundError)
       }
@@ -154,7 +157,8 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(OrgName, address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] =
+          service.sendBusinessRegistration(OrgName, address, contactDetails)
 
         result.futureValue mustBe Right(safeId)
       }
@@ -165,7 +169,8 @@ class BusinessMatchingWithoutIdServiceSpec extends SpecBase with MockServiceApp 
 
         when(mockRegistrationConnector.withOrganisationNoId(any())(any(), any())).thenReturn(response)
 
-        val result: Future[Either[ApiError, SafeId]] = service.sendBusinessRegistration(OrgName, address, contactDetails)
+        val result: Future[Either[ApiError, SafeId]] =
+          service.sendBusinessRegistration(OrgName, address, contactDetails)
 
         result.futureValue mustBe Left(NotFoundError)
       }

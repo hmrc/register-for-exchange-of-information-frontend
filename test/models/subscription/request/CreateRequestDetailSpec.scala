@@ -40,8 +40,20 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         "AB123456Z",
         Some("Tools for Traders Limited"),
         true,
-        ContactInformation(IndividualDetails("John", None, "Smith"), "john@toolsfortraders.com", Some(TestPhoneNumber), Some(TestMobilePhoneNumber)),
-        Some(ContactInformation(OrganisationDetails("Tools for Traders"), "contact@toolsfortraders.com", Some(TestPhoneNumber), None))
+        ContactInformation(
+          IndividualDetails("John", None, "Smith"),
+          "john@toolsfortraders.com",
+          Some(TestPhoneNumber),
+          Some(TestMobilePhoneNumber)
+        ),
+        Some(
+          ContactInformation(
+            OrganisationDetails("Tools for Traders"),
+            "contact@toolsfortraders.com",
+            Some(TestPhoneNumber),
+            None
+          )
+        )
       )
 
       val json: String =
@@ -109,7 +121,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to true by UTR" in {
-      val userAnswers = emptyUserAnswers
+      val userAnswers        = emptyUserAnswers
       val updatedUserAnswers = userAnswers
         .set(DoYouHaveUniqueTaxPayerReferencePage, true)
         .success
@@ -133,7 +145,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to true by Individual and has a NINO" in {
-      val userAnswers = emptyUserAnswers
+      val userAnswers        = emptyUserAnswers
       val updatedUserAnswers = userAnswers
         .set(ReporterTypePage, ReporterType.Individual)
         .success
@@ -160,7 +172,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to false by business without UTR not based in the UK" in {
-      val businessAddress = Address("", None, "", None, None, Country("valid", "DE", "Germany"))
+      val businessAddress    = Address("", None, "", None, None, Country("valid", "DE", "Germany"))
       val updatedUserAnswers = emptyUserAnswers
         .set(ReporterTypePage, ReporterType.LimitedCompany)
         .success
@@ -196,8 +208,8 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to true by Individual without NINO if address is UK" in {
-      val userAnswers = emptyUserAnswers
-      val address     = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
+      val userAnswers        = emptyUserAnswers
+      val address            = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
       val updatedUserAnswers = userAnswers
         .set(ReporterTypePage, ReporterType.Individual)
         .success
@@ -230,8 +242,8 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
     }
 
     "must create a request with the isGBUser flag set to false by Individual without NINO if address is non UK" in {
-      val userAnswers = emptyUserAnswers
-      val address     = Address("", None, "", None, None, Country("valid", "FR", "France"))
+      val userAnswers        = emptyUserAnswers
+      val address            = Address("", None, "", None, None, Country("valid", "FR", "France"))
       val updatedUserAnswers = userAnswers
         .set(ReporterTypePage, ReporterType.Individual)
         .success
@@ -254,7 +266,7 @@ class CreateRequestDetailSpec extends SpecBase with ScalaCheckPropertyChecks wit
         .set(SecondContactPage, false)
         .success
         .value
-      val request = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
+      val request            = CreateRequestDetail.convertTo(safeId, updatedUserAnswers).value
 
       request.isGBUser mustBe false
     }

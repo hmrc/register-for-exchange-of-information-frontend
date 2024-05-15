@@ -27,9 +27,10 @@ class BusinessWithoutIDNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "businessWithoutIDName" -> maxLengthText("businessWithoutIDName.error.businessName.required",
-                                               "businessWithoutIDName.error.businessName.length",
-                                               maxLength
+      "businessWithoutIDName" -> maxLengthText(
+        "businessWithoutIDName.error.businessName.required",
+        "businessWithoutIDName.error.businessName.length",
+        maxLength
       )
     )
 }

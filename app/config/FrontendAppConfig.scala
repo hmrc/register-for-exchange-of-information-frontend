@@ -32,8 +32,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
 
-  val taxEnrolmentsUrl1: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
-    .get[String]("microservice.services.tax-enrolments.url1")}"
+  val taxEnrolmentsUrl1: String =
+    s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
+        .get[String]("microservice.services.tax-enrolments.url1")}"
   val taxEnrolmentsUrl2: String = s"${configuration.get[String]("microservice.services.tax-enrolments.url2")}"
 
   val loginUrl: String         = configuration.get[String]("urls.login")
@@ -64,5 +65,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val countryCodeJson: String                     = configuration.get[String]("json.countries")
   val enrolmentKey: String                             = configuration.get[String](s"keys.enrolmentKey.mdr")
   val ctEnrolmentKey: String                           = configuration.get[String]("keys.enrolmentKey.ct")
-  lazy val mandatoryDisclosureRulesFrontendUrl: String = configuration.get[String]("urls.mandatory-disclosure-rules-frontend")
+  lazy val mandatoryDisclosureRulesFrontendUrl: String =
+    configuration.get[String]("urls.mandatory-disclosure-rules-frontend")
 }

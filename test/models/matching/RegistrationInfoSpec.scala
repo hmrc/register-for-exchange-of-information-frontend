@@ -39,7 +39,8 @@ class RegistrationInfoSpec extends SpecBase with Generators with ScalaCheckPrope
     }
 
     "must serialise and de-serialise IndRegistrationInfo" in {
-      val json: JsValue = Json.parse(s"""{"safeId":"${safeId.value}","_type":"models.matching.IndRegistrationInfo"}""".stripMargin)
+      val json: JsValue =
+        Json.parse(s"""{"safeId":"${safeId.value}","_type":"models.matching.IndRegistrationInfo"}""".stripMargin)
 
       val registrationInfo: RegistrationInfo = IndRegistrationInfo(safeId)
       Json.toJson(registrationInfo) mustBe json

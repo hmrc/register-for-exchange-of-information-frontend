@@ -43,7 +43,9 @@ class ApiErrorSpec extends SpecBase {
         convertToErrorCode(DuplicateSubmissionError) mustBe INTERNAL_SERVER_ERROR
         convertToErrorCode(UnableToCreateEMTPSubscriptionError) mustBe INTERNAL_SERVER_ERROR
         convertToErrorCode(UnableToCreateEnrolmentError) mustBe INTERNAL_SERVER_ERROR
-        convertToErrorCode(EnrolmentExistsError(GroupIds(Seq("groupId1"), Seq("groupId2")))) mustBe INTERNAL_SERVER_ERROR
+        convertToErrorCode(
+          EnrolmentExistsError(GroupIds(Seq("groupId1"), Seq("groupId2")))
+        ) mustBe INTERNAL_SERVER_ERROR
         convertToErrorCode(MalformedError(500)) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -66,12 +68,14 @@ class ApiErrorSpec extends SpecBase {
       }
 
       "must return Left(InternalServerError) for 5xx status" in {
-        val result: Either[ApiError, String] = readEitherOf[String].read("", "", HttpResponse(INTERNAL_SERVER_ERROR, ""))
+        val result: Either[ApiError, String] =
+          readEitherOf[String].read("", "", HttpResponse(INTERNAL_SERVER_ERROR, ""))
         result mustBe Left(InternalServerError)
       }
 
       "must return Right(data) for a successful response" in {
-        val result: Either[ApiError, String] = readEitherOf[String].read("", "", HttpResponse(OK, JsString("data"), Map.empty))
+        val result: Either[ApiError, String] =
+          readEitherOf[String].read("", "", HttpResponse(OK, JsString("data"), Map.empty))
         result mustBe Right("data")
       }
     }

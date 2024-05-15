@@ -23,13 +23,14 @@ import queries.Gettable
 
 import javax.inject.Inject
 
-class StandardActionSets @Inject() (identify: IdentifierAction,
-                                    getData: DataRetrievalAction,
-                                    requireData: DataRequiredAction,
-                                    initializeData: DataInitializeAction,
-                                    retrieveCtUTR: CtUtrRetrievalAction,
-                                    checkEnrolment: CheckEnrolledToServiceActionProvider,
-                                    dependantAnswer: DependantAnswerProvider
+class StandardActionSets @Inject() (
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  initializeData: DataInitializeAction,
+  retrieveCtUTR: CtUtrRetrievalAction,
+  checkEnrolment: CheckEnrolledToServiceActionProvider,
+  dependantAnswer: DependantAnswerProvider
 ) {
 
   def identifiedUserWithEnrolmentCheckAndCtUtrRetrieval(): ActionBuilder[IdentifierRequest, AnyContent] =
@@ -47,7 +48,9 @@ class StandardActionSets @Inject() (identify: IdentifierAction,
   def identifiedUserWithData(): ActionBuilder[DataRequest, AnyContent] =
     identifiedUserWithEnrolmentCheck() andThen getData() andThen requireData()
 
-  def identifiedUserWithDependantAnswer[T](answer: Gettable[T])(implicit reads: Reads[T]): ActionBuilder[DataRequest, AnyContent] =
+  def identifiedUserWithDependantAnswer[T](answer: Gettable[T])(implicit
+    reads: Reads[T]
+  ): ActionBuilder[DataRequest, AnyContent] =
     identifiedUserWithData() andThen dependantAnswer(answer)
 
 }

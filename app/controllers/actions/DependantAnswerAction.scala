@@ -26,12 +26,14 @@ import queries.Gettable
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DependantAnswerAction[T] @Inject() (answer: Gettable[T])(implicit val executionContext: ExecutionContext, val reads: Reads[T])
-    extends ActionFilter[DataRequest] {
+class DependantAnswerAction[T] @Inject() (answer: Gettable[T])(implicit
+  val executionContext: ExecutionContext,
+  val reads: Reads[T]
+) extends ActionFilter[DataRequest] {
 
   override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] =
     request.userAnswers.get(answer) match {
-      case None =>
+      case None    =>
         Future.successful(Some(Redirect(routes.SomeInformationIsMissingController.onPageLoad())))
       case Some(_) =>
         Future.successful(None)

@@ -50,28 +50,28 @@ class ControllerHelper @Inject() (
     request: DataRequest[AnyContent]
   ): Future[Result] =
     taxEnrolmentService.checkAndCreateEnrolment(safeId, userAnswers, subscriptionId) flatMap {
-      case Right(_) =>
+      case Right(_)                                                                                  =>
         emailService.sendAnLogEmail(request.userAnswers, subscriptionId)
         Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad()))
       case Left(EnrolmentExistsError(groupIds)) if request.affinityGroup == AffinityGroup.Individual =>
         logger.info(s"ControllerHelper: EnrolmentExistsError for the the groupIds $groupIds")
         Future.successful(Redirect(routes.IndividualAlreadyRegisteredController.onPageLoad()))
-      case Left(EnrolmentExistsError(groupIds)) =>
+      case Left(EnrolmentExistsError(groupIds))                                                      =>
         logger.info(s"ControllerHelper: EnrolmentExistsError for the the groupIds $groupIds")
         if (request.userAnswers.get(RegistrationInfoPage).isDefined) {
           Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithId()))
         } else {
           Future.successful(Redirect(routes.BusinessAlreadyRegisteredController.onPageLoadWithoutId()))
         }
-      case Left(MandatoryInformationMissingError(_)) =>
+      case Left(MandatoryInformationMissingError(_))                                                 =>
         logger.warn(s"ControllerHelper: Mandatory information is missing")
         Future.successful(Redirect(routes.SomeInformationIsMissingController.onPageLoad()))
-      case Left(error) =>
+      case Left(error)                                                                               =>
         logger.warn(s"Error received from API: $error")
         error match {
           case ServiceUnavailableError =>
             Future.successful(ServiceUnavailable(errorView()))
-          case _ =>
+          case _                       =>
             Future.successful(InternalServerError(errorView()))
         }
     }

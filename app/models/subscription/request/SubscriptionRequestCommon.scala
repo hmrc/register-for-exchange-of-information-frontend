@@ -23,12 +23,13 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-case class SubscriptionRequestCommon(regime: String,
-                                     receiptDate: String,
-                                     acknowledgementReference: String,
-                                     originatingSystem: String,
-                                     requestParameters: Option[Seq[RequestParameter]],
-                                     conversationID: Option[String] = None
+case class SubscriptionRequestCommon(
+  regime: String,
+  receiptDate: String,
+  acknowledgementReference: String,
+  originatingSystem: String,
+  requestParameters: Option[Seq[RequestParameter]],
+  conversationID: Option[String] = None
 )
 
 object SubscriptionRequestCommon {
@@ -39,7 +40,7 @@ object SubscriptionRequestCommon {
   def createSubscriptionRequestCommon(): SubscriptionRequestCommon = {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-    //Generate a 32 chars UUID without hyphens
+    // Generate a 32 chars UUID without hyphens
     val acknowledgementReference = UUID.randomUUID().toString.replace("-", "")
 
     SubscriptionRequestCommon(

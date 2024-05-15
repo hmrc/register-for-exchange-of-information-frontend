@@ -44,6 +44,6 @@ case object IndividualContactEmailPage extends QuestionPage[String] {
     value match {
       case Some(_) =>
         businessContactPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-      case _ => super.cleanup(value, userAnswers)
+      case _       => super.cleanup(value, userAnswers)
     }
 }

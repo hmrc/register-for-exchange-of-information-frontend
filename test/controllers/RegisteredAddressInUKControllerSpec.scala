@@ -54,9 +54,9 @@ class RegisteredAddressInUKControllerSpec extends ControllerSpecBase {
 
       val userAnswers = emptyUserAnswers.set(RegisteredAddressInUKPage, true).success.value
       retrieveUserAnswersData(userAnswers)
-      val request    = FakeRequest(GET, loadRoute)
-      val filledForm = form.bind(Map("value" -> "true"))
-      val result     = route(app, request).value
+      val request     = FakeRequest(GET, loadRoute)
+      val filledForm  = form.bind(Map("value" -> "true"))
+      val result      = route(app, request).value
 
       val view = app.injector.instanceOf[RegisteredAddressInUKView]
 

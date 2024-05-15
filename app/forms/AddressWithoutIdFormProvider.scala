@@ -37,10 +37,11 @@ class AddressWithoutIdFormProvider @Inject() extends Mappings with RegexConstant
         apiAddressRegex,
         addressLineLength
       ),
-      "addressLine2" -> validatedOptionalText("addressWithoutId.error.addressLine2.invalid",
-                                              "addressWithoutId.error.addressLine2.length",
-                                              apiAddressRegex,
-                                              addressLineLength
+      "addressLine2" -> validatedOptionalText(
+        "addressWithoutId.error.addressLine2.invalid",
+        "addressWithoutId.error.addressLine2.length",
+        apiAddressRegex,
+        addressLineLength
       ),
       "addressLine3" -> validatedText(
         "addressWithoutId.error.addressLine3.required",
@@ -49,19 +50,20 @@ class AddressWithoutIdFormProvider @Inject() extends Mappings with RegexConstant
         apiAddressRegex,
         addressLineLength
       ),
-      "addressLine4" -> validatedOptionalText("addressWithoutId.error.addressLine4.invalid",
-                                              "addressWithoutId.error.addressLine4.length",
-                                              apiAddressRegex,
-                                              addressLineLength
+      "addressLine4" -> validatedOptionalText(
+        "addressWithoutId.error.addressLine4.invalid",
+        "addressWithoutId.error.addressLine4.length",
+        apiAddressRegex,
+        addressLineLength
       ),
-      "postCode" -> optionalPostcode(
+      "postCode"     -> optionalPostcode(
         "addressWithoutId.error.postcode.required",
         "addressWithoutId.error.postcode.length",
         "addressWithoutId.error.postcode.invalid",
         regexPostcode,
         "country"
       ),
-      "country" -> text("addressWithoutId.error.country.required")
+      "country"      -> text("addressWithoutId.error.country.required")
         .verifying("addressWithoutId.error.country.required", value => countryList.exists(_.code == value))
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
     )(Address.apply)(Address.unapply)

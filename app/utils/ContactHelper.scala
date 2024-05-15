@@ -25,15 +25,11 @@ trait ContactHelper {
   def getFirstContactName(userAnswers: UserAnswers)(implicit messages: Messages): String =
     userAnswers
       .get(ContactNamePage)
-      .fold(messages("default.firstContact.name"))(
-        contactName => contactName
-      )
+      .fold(messages("default.firstContact.name"))(contactName => contactName)
 
   def getSecondContactName(userAnswers: UserAnswers)(implicit messages: Messages): String =
     userAnswers
       .get(SndContactNamePage)
-      .fold(messages("default.secondContact.name"))(
-        contactName => contactName
-      )
+      .fold(messages("default.secondContact.name"))(contactName => contactName)
 
 }

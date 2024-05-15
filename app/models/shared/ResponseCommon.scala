@@ -18,7 +18,12 @@ package models.shared
 
 import play.api.libs.json.{Format, Json}
 
-case class ResponseCommon(status: String, statusText: Option[String], processingDate: String, returnParameters: Option[Seq[Parameters]])
+case class ResponseCommon(
+  status: String,
+  statusText: Option[String],
+  processingDate: String,
+  returnParameters: Option[Seq[Parameters]]
+)
 
 object ResponseCommon {
   implicit val format: Format[ResponseCommon] = Json.format[ResponseCommon]

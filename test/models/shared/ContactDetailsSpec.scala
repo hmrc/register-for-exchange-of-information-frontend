@@ -29,13 +29,19 @@ class ContactDetailsSpec extends SpecBase {
             |{"phoneNumber":"$TestPhoneNumber","mobileNumber":"$TestMobilePhoneNumber","faxNumber": "$TestFaxNumber","emailAddress":"$TestEmail"}""".stripMargin
         )
 
-      val contactDetails: ContactDetails = ContactDetails(Some(TestPhoneNumber), Some(TestMobilePhoneNumber), Some(TestFaxNumber), Some(TestEmail))
+      val contactDetails: ContactDetails =
+        ContactDetails(Some(TestPhoneNumber), Some(TestMobilePhoneNumber), Some(TestFaxNumber), Some(TestEmail))
       Json.toJson(contactDetails) mustBe json
       json.as[ContactDetails] mustBe contactDetails
     }
 
     "apply method must create a ContactDetails from a phoneNumber and emailAddress" in {
-      ContactDetails(Some(TestPhoneNumber), Some(TestEmail)) mustBe ContactDetails(Some(TestPhoneNumber), None, None, Some(TestEmail))
+      ContactDetails(Some(TestPhoneNumber), Some(TestEmail)) mustBe ContactDetails(
+        Some(TestPhoneNumber),
+        None,
+        None,
+        Some(TestEmail)
+      )
     }
   }
 }

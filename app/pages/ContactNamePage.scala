@@ -38,7 +38,7 @@ case object ContactNamePage extends QuestionPage[String] {
     value match {
       case Some(_) =>
         individualContactPages.foldLeft(Try(userAnswers))(PageLists.removePage)
-      case _ =>
+      case _       =>
         super.cleanup(value, userAnswers)
     }
 }

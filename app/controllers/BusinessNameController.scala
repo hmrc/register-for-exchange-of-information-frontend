@@ -53,37 +53,35 @@ class BusinessNameController @Inject() (
     }
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
-      implicit request =>
-        selectedReporterTypeText(request.userAnswers.get(ReporterTypePage).get) match {
-          case Some(businessTypeText) =>
-            val form = formProvider(businessTypeText)
-            val preparedForm = request.userAnswers.get(BusinessNamePage) match {
-              case None        => form
-              case Some(value) => form.fill(value)
-            }
-            Future.successful(Ok(view(preparedForm, mode, businessTypeText)))
-          case _ => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
-        }
+    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async { implicit request =>
+      selectedReporterTypeText(request.userAnswers.get(ReporterTypePage).get) match {
+        case Some(businessTypeText) =>
+          val form         = formProvider(businessTypeText)
+          val preparedForm = request.userAnswers.get(BusinessNamePage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+          Future.successful(Ok(view(preparedForm, mode, businessTypeText)))
+        case _                      => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async {
-      implicit request =>
-        selectedReporterTypeText(request.userAnswers.get(ReporterTypePage).get) match {
-          case Some(businessTypeText) =>
-            formProvider(businessTypeText)
-              .bindFromRequest()
-              .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessTypeText))),
-                value =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
-                    _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
-              )
-          case None => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
-        }
+    standardActionSets.identifiedUserWithDependantAnswer(ReporterTypePage).async { implicit request =>
+      selectedReporterTypeText(request.userAnswers.get(ReporterTypePage).get) match {
+        case Some(businessTypeText) =>
+          formProvider(businessTypeText)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, businessTypeText))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(BusinessNamePage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(BusinessNamePage, mode, updatedAnswers))
+            )
+        case None                   => Future.successful(Redirect(routes.ThereIsAProblemController.onPageLoad()))
+      }
 
     }
 

@@ -33,14 +33,13 @@ class AddressUKPageSpec extends PageBehaviours {
 
   "must remove selectAddressPage when a manual UK address is entered" in {
 
-    forAll(arbitrary[UserAnswers]) {
-      userAnswers =>
-        val result = userAnswers
-          .set(AddressUKPage, Address("", None, "", None, None, Country("", "", "")))
-          .success
-          .value
+    forAll(arbitrary[UserAnswers]) { userAnswers =>
+      val result = userAnswers
+        .set(AddressUKPage, Address("", None, "", None, None, Country("", "", "")))
+        .success
+        .value
 
-        result.get(SelectAddressPage) must not be defined
+      result.get(SelectAddressPage) must not be defined
     }
   }
 }

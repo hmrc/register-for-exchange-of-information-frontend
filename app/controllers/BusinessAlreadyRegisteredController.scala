@@ -32,13 +32,11 @@ class BusinessAlreadyRegisteredController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoadWithoutId(withId: Boolean = false): Action[AnyContent] = identifierAction() {
-    implicit request =>
-      Ok(view(withId))
+  def onPageLoadWithoutId(withId: Boolean = false): Action[AnyContent] = identifierAction() { implicit request =>
+    Ok(view(withId))
   }
 
-  def onPageLoadWithId(withId: Boolean = true): Action[AnyContent] = identifierAction() {
-    implicit request =>
-      Ok(view(withId))
+  def onPageLoadWithId(withId: Boolean = true): Action[AnyContent] = identifierAction() { implicit request =>
+    Ok(view(withId))
   }
 }

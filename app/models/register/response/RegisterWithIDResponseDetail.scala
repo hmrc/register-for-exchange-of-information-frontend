@@ -19,7 +19,7 @@ package models.register.response
 import models.matching.SafeId
 import models.register.response.details.{AddressResponse, IndividualResponse, OrganisationResponse, PartnerDetailsResponse}
 import models.shared.ContactDetails
-import play.api.libs.json.{__, Json, Reads, Writes}
+import play.api.libs.json.{Json, Reads, Writes, __}
 
 case class RegisterWithIDResponseDetail(
   SAFEID: SafeId,
@@ -36,15 +36,16 @@ case class RegisterWithIDResponseDetail(
 object RegisterWithIDResponseDetail {
 
   implicit lazy val responseDetailsWrites: Writes[RegisterWithIDResponseDetail] = Writes[RegisterWithIDResponseDetail] {
-    case RegisterWithIDResponseDetail(safeid,
-                                      arn,
-                                      isEditable,
-                                      isAnAgent,
-                                      isAnASAgent,
-                                      isAnIndividual,
-                                      individual @ IndividualResponse(_, _, _, _),
-                                      address,
-                                      contactDetails
+    case RegisterWithIDResponseDetail(
+          safeid,
+          arn,
+          isEditable,
+          isAnAgent,
+          isAnASAgent,
+          isAnIndividual,
+          individual @ IndividualResponse(_, _, _, _),
+          address,
+          contactDetails
         ) =>
       Json.obj(
         "SAFEID"         -> safeid.value,
@@ -58,15 +59,16 @@ object RegisterWithIDResponseDetail {
         "contactDetails" -> contactDetails
       )
 
-    case RegisterWithIDResponseDetail(safeid,
-                                      arn,
-                                      isEditable,
-                                      isAnAgent,
-                                      isAnASAgent,
-                                      isAnIndividual,
-                                      organisation @ OrganisationResponse(_, _, _, _),
-                                      address,
-                                      contactDetails
+    case RegisterWithIDResponseDetail(
+          safeid,
+          arn,
+          isEditable,
+          isAnAgent,
+          isAnASAgent,
+          isAnIndividual,
+          organisation @ OrganisationResponse(_, _, _, _),
+          address,
+          contactDetails
         ) =>
       Json.obj(
         "SAFEID"         -> safeid.value,
@@ -95,12 +97,47 @@ object RegisterWithIDResponseDetail {
         (__ \ "address").read[AddressResponse] and
         (__ \ "contactDetails").read[ContactDetails]
     )(
-      (safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, individual, organisation, address, contactDetails) =>
+      (
+        safeid,
+        arn,
+        isEditable,
+        isAnAgent,
+        isAnASAgent,
+        isAnIndividual,
+        individual,
+        organisation,
+        address,
+        contactDetails
+      ) =>
         (individual, organisation) match {
-          case (Some(_), Some(_)) => throw new Exception("Response details cannot have both and organisation or individual element")
-          case (Some(ind), _)     => RegisterWithIDResponseDetail(safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, ind, address, contactDetails)
-          case (_, Some(org))     => RegisterWithIDResponseDetail(safeid, arn, isEditable, isAnAgent, isAnASAgent, isAnIndividual, org, address, contactDetails)
-          case (None, None)       => throw new Exception("Response Details must have either an organisation or individual element")
+          case (Some(_), Some(_)) =>
+            throw new Exception("Response details cannot have both and organisation or individual element")
+          case (Some(ind), _)     =>
+            RegisterWithIDResponseDetail(
+              safeid,
+              arn,
+              isEditable,
+              isAnAgent,
+              isAnASAgent,
+              isAnIndividual,
+              ind,
+              address,
+              contactDetails
+            )
+          case (_, Some(org))     =>
+            RegisterWithIDResponseDetail(
+              safeid,
+              arn,
+              isEditable,
+              isAnAgent,
+              isAnASAgent,
+              isAnIndividual,
+              org,
+              address,
+              contactDetails
+            )
+          case (None, None)       =>
+            throw new Exception("Response Details must have either an organisation or individual element")
         }
     )
   }

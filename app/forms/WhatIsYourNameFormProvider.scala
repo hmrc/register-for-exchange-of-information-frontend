@@ -37,7 +37,7 @@ class WhatIsYourNameFormProvider @Inject() extends Mappings with RegexConstants 
         individualNameRegex,
         maxLength
       ),
-      "lastName" -> validatedText(
+      "lastName"  -> validatedText(
         "whatIsYourName.error.lastName.required",
         "whatIsYourName.error.lastName.invalid",
         "whatIsYourName.error.lastName.length",

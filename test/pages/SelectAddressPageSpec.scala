@@ -31,17 +31,16 @@ class SelectAddressPageSpec extends PageBehaviours {
     beRemovable[String](SelectAddressPage)
 
     "must remove manual UK address when user selects a UK address from lookup" in {
-      forAll(arbitrary[UserAnswers]) {
-        answers =>
-          val result = answers
-            .set(AddressUKPage, Address("", None, "", None, None, Country("", "", "")))
-            .success
-            .value
-            .set(SelectAddressPage, "Some UK address")
-            .success
-            .value
+      forAll(arbitrary[UserAnswers]) { answers =>
+        val result = answers
+          .set(AddressUKPage, Address("", None, "", None, None, Country("", "", "")))
+          .success
+          .value
+          .set(SelectAddressPage, "Some UK address")
+          .success
+          .value
 
-          result.get(AddressUKPage) must not be defined
+        result.get(AddressUKPage) must not be defined
       }
     }
   }

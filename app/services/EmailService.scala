@@ -28,11 +28,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: EmailTemplate, userType: EmailUserType)(implicit
-  executionContext: ExecutionContext
+class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: EmailTemplate, userType: EmailUserType)(
+  implicit executionContext: ExecutionContext
 ) extends Logging {
 
-  def sendAnLogEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Int] =
+  def sendAnLogEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit
+    hc: HeaderCarrier
+  ): Future[Int] =
     sendEmail(userAnswers, subscriptionID) map {
       case Some(resp) =>
         resp.status match {
@@ -42,76 +44,76 @@ class EmailService @Inject() (emailConnector: EmailConnector, emailTemplate: Ema
           case _           => logger.warn(s"Unhandled status received from email service ${resp.status}")
         }
         resp.status
-      case _ =>
+      case _          =>
         logger.warn("The email could not be sent to the EMAIL service")
         INTERNAL_SERVER_ERROR
     }
 
-  private def getContactName(userAnswers: UserAnswers) = (userAnswers.get(ContactNamePage).isDefined,
-                                                          userAnswers.get(WhatIsYourNamePage).isDefined,
-                                                          userAnswers.get(NonUkNamePage).isDefined,
-                                                          userAnswers.get(SoleNamePage).isDefined
+  private def getContactName(userAnswers: UserAnswers) = (
+    userAnswers.get(ContactNamePage).isDefined,
+    userAnswers.get(WhatIsYourNamePage).isDefined,
+    userAnswers.get(NonUkNamePage).isDefined,
+    userAnswers.get(SoleNamePage).isDefined
   ) match {
     case (true, false, false, false) =>
       userAnswers
         .get(ContactNamePage)
-        .map(
-          n => n
-        )
+        .map(n => n)
     case (false, true, false, false) =>
       userAnswers
         .get(WhatIsYourNamePage)
-        .map(
-          n => s"${n.firstName} ${n.lastName}"
-        )
+        .map(n => s"${n.firstName} ${n.lastName}")
     case (false, false, true, false) =>
       userAnswers
         .get(NonUkNamePage)
-        .map(
-          n => s"${n.givenName} ${n.familyName}"
-        )
+        .map(n => s"${n.givenName} ${n.familyName}")
     case (false, false, false, true) =>
       userAnswers
         .get(SoleNamePage)
-        .map(
-          n => s"${n.firstName} ${n.lastName}"
-        )
-    case _ => None
+        .map(n => s"${n.firstName} ${n.lastName}")
+    case _                           => None
   }
 
-  private def getEmail(userAnswers: UserAnswers) = userAnswers.get(ContactEmailPage).orElse(userAnswers.get(IndividualContactEmailPage))
+  private def getEmail(userAnswers: UserAnswers) =
+    userAnswers.get(ContactEmailPage).orElse(userAnswers.get(IndividualContactEmailPage))
 
-  def sendEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit hc: HeaderCarrier): Future[Option[HttpResponse]] =
+  def sendEmail(userAnswers: UserAnswers, subscriptionID: SubscriptionID)(implicit
+    hc: HeaderCarrier
+  ): Future[Option[HttpResponse]] =
     for {
 
       primaryResponse <- getEmail(userAnswers)
-        .filter(EmailAddress.isValid)
-        .fold(Future.successful(Option.empty[HttpResponse])) {
-          email =>
-            emailConnector
-              .sendEmail(
-                EmailRequest
-                  .mdrRegistration(email, getContactName(userAnswers), emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)), subscriptionID.value)
-              )
-              .map(Some.apply)
-        }
+                           .filter(EmailAddress.isValid)
+                           .fold(Future.successful(Option.empty[HttpResponse])) { email =>
+                             emailConnector
+                               .sendEmail(
+                                 EmailRequest
+                                   .mdrRegistration(
+                                     email,
+                                     getContactName(userAnswers),
+                                     emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)),
+                                     subscriptionID.value
+                                   )
+                               )
+                               .map(Some.apply)
+                           }
 
       _ <- userAnswers
-        .get(SndContactEmailPage)
-        .filter(EmailAddress.isValid)
-        .fold(Future.successful(Option.empty[HttpResponse])) {
-          secondaryEmailAddress =>
-            emailConnector
-              .sendEmail(
-                EmailRequest
-                  .mdrRegistration(secondaryEmailAddress,
-                                   userAnswers.get(SndContactNamePage),
-                                   emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)),
-                                   subscriptionID.value
-                  )
-              )
-              .map(Some.apply)
-        }
+             .get(SndContactEmailPage)
+             .filter(EmailAddress.isValid)
+             .fold(Future.successful(Option.empty[HttpResponse])) { secondaryEmailAddress =>
+               emailConnector
+                 .sendEmail(
+                   EmailRequest
+                     .mdrRegistration(
+                       secondaryEmailAddress,
+                       userAnswers.get(SndContactNamePage),
+                       emailTemplate.getTempate(userType.getUserTypeFromUa(userAnswers)),
+                       subscriptionID.value
+                     )
+                 )
+                 .map(Some.apply)
+             }
     } yield primaryResponse
 
 }

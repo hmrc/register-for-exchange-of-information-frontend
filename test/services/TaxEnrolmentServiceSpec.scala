@@ -59,11 +59,12 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Right(NO_CONTENT))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
-      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(())))
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any()))
+        .thenReturn(EitherT.fromEither[Future](Right(())))
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
-      val userAnswers = UserAnswers("")
+      val userAnswers    = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
@@ -93,11 +94,12 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
       val response: EitherT[Future, ApiError, Int] = EitherT.fromEither[Future](Left(UnableToCreateEnrolmentError))
 
       when(mockTaxEnrolmentsConnector.createEnrolment(any())(any(), any())).thenReturn(response)
-      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any())).thenReturn(EitherT.fromEither[Future](Right(())))
+      when(mockEnrolmentStoreProxyConnector.enrolmentStatus(any())(any(), any()))
+        .thenReturn(EitherT.fromEither[Future](Right(())))
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
-      val userAnswers = UserAnswers("")
+      val userAnswers    = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value
@@ -133,7 +135,7 @@ class TaxEnrolmentServiceSpec extends SpecBase with ControllerMockFixtures with 
 
       val subscriptionID = SubscriptionID("id")
       val address        = Address("", None, "", None, None, Country("valid", "GB", "United Kingdom"))
-      val userAnswers = UserAnswers("")
+      val userAnswers    = UserAnswers("")
         .set(DoYouHaveUniqueTaxPayerReferencePage, false)
         .success
         .value

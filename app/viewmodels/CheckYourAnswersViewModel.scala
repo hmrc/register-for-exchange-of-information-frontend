@@ -28,11 +28,13 @@ object CheckYourAnswersViewModel {
   ): Seq[Section] = {
 
     val helper            = new CheckYourAnswersHelper(userAnswers, countryListFactory = countryFactory)
-    val (contact, header) = if (isBusiness) ("firstContact", "businessDetails") else ("contactDetails", "individualDetails")
+    val (contact, header) =
+      if (isBusiness) ("firstContact", "businessDetails") else ("contactDetails", "individualDetails")
 
     val regDetails     = messages(s"checkYourAnswers.$header.h2")
     val contactHeading = messages(s"checkYourAnswers.$contact.h2")
-    val secContact     = if (isBusiness) Seq(Section(messages("checkYourAnswers.secondContact.h2"), buildSecondContact(helper))) else Nil
+    val secContact     =
+      if (isBusiness) Seq(Section(messages("checkYourAnswers.secondContact.h2"), buildSecondContact(helper))) else Nil
 
     Seq(
       Section(regDetails, buildDetails(userAnswers, helper, isBusiness)),
@@ -40,7 +42,11 @@ object CheckYourAnswersViewModel {
     ) ++: secContact
   }
 
-  private def buildDetails(userAnswers: UserAnswers, helper: CheckYourAnswersHelper, isBusiness: Boolean): Seq[SummaryListRow] =
+  private def buildDetails(
+    userAnswers: UserAnswers,
+    helper: CheckYourAnswersHelper,
+    isBusiness: Boolean
+  ): Seq[SummaryListRow] =
     if (userAnswers.get(pages.UTRPage).isDefined) {
       Seq(
         helper.confirmBusiness

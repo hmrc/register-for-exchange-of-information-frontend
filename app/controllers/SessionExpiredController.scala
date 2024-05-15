@@ -30,8 +30,7 @@ class SessionExpiredController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = Action.async {
-    implicit request =>
-      Future.successful(Ok(view(routes.IndexController.onPageLoad().url)))
+  def onPageLoad(): Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(view(routes.IndexController.onPageLoad().url)))
   }
 }

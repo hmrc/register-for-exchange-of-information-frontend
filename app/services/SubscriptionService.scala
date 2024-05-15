@@ -35,9 +35,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConnector, val auditService: AuditService) {
 
-  private def auditCreateSubscriptionEvent(userAnswers: UserAnswers,
-                                           subscriptionRequest: SubscriptionRequest,
-                                           response: Future[Either[ApiError, SubscriptionID]]
+  private def auditCreateSubscriptionEvent(
+    userAnswers: UserAnswers,
+    subscriptionRequest: SubscriptionRequest,
+    response: Future[Either[ApiError, SubscriptionID]]
   )(implicit
     hc: HeaderCarrier,
     ec: ExecutionContext
@@ -45,19 +46,25 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
 
     val auditResponse: Future[AuditResponse] = response map {
       case Right(subscriptionId) =>
-        AuditResponse("Success", Status.OK, Some(subscriptionId.value), Some(" ")) //Set FailureReason as empty as it was a requirement from txm team
-      case Left(value) =>
-        AuditResponse("Failure",
-                      ApiError.convertToErrorCode(value),
-                      Some(" "),
-                      Some(value.toString)
-        ) //Set SubscriptionIs as empty as it was a requirement from txm team
+        AuditResponse(
+          "Success",
+          Status.OK,
+          Some(subscriptionId.value),
+          Some(" ")
+        ) // Set FailureReason as empty as it was a requirement from txm team
+      case Left(value)           =>
+        AuditResponse(
+          "Failure",
+          ApiError.convertToErrorCode(value),
+          Some(" "),
+          Some(value.toString)
+        ) // Set SubscriptionIs as empty as it was a requirement from txm team
     }
 
     for {
       response <- auditResponse
-      details = Json.toJson(SubscriptionAudit.apply(userAnswers, subscriptionRequest.requestDetail, response))
-      result <- auditService.sendAuditEvent("MandatoryDisclosureRulesSubscription", details)
+      details   = Json.toJson(SubscriptionAudit.apply(userAnswers, subscriptionRequest.requestDetail, response))
+      result   <- auditService.sendAuditEvent("MandatoryDisclosureRulesSubscription", details)
     } yield result
 
   }
@@ -69,15 +76,16 @@ class SubscriptionService @Inject() (val subscriptionConnector: SubscriptionConn
     getDisplaySubscriptionId(safeID) flatMap {
       case Some(subscriptionID) =>
         EitherT.rightT(subscriptionID).value
-      case _ =>
+      case _                    =>
         (SubscriptionRequest.convertTo(safeID, userAnswers) match {
           case Some(subscriptionRequest) =>
-            val response = subscriptionConnector.createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
+            val response =
+              subscriptionConnector.createSubscription(CreateSubscriptionForMDRRequest(subscriptionRequest))
 
             auditCreateSubscriptionEvent(userAnswers, subscriptionRequest, response.value)
 
             response
-          case _ =>
+          case _                         =>
             EitherT.leftT(MandatoryInformationMissingError())
         }).value
     }

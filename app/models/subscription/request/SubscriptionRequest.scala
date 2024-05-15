@@ -26,8 +26,7 @@ object SubscriptionRequest {
   implicit val format: OFormat[SubscriptionRequest] = Json.format[SubscriptionRequest]
 
   def convertTo(safeID: SafeId, userAnswers: UserAnswers): Option[SubscriptionRequest] =
-    CreateRequestDetail.convertTo(safeID, userAnswers) map {
-      requestDetails =>
-        SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon(), requestDetails)
+    CreateRequestDetail.convertTo(safeID, userAnswers) map { requestDetails =>
+      SubscriptionRequest(SubscriptionRequestCommon.createSubscriptionRequestCommon(), requestDetails)
     }
 }

@@ -28,7 +28,5 @@ case object AddressUKPage extends QuestionPage[Address] {
   override def toString: String = "addressUK"
 
   override def cleanup(value: Option[Address], userAnswers: UserAnswers): Try[UserAnswers] =
-    value.fold(Try(userAnswers))(
-      _ => userAnswers.remove(SelectAddressPage)
-    )
+    value.fold(Try(userAnswers))(_ => userAnswers.remove(SelectAddressPage))
 }

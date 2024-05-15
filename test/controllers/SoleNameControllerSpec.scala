@@ -58,7 +58,7 @@ class SoleNameControllerSpec extends ControllerSpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(SoleNamePage, validAnswer).success.value
+      val userAnswers      = emptyUserAnswers.set(SoleNamePage, validAnswer).success.value
       retrieveUserAnswersData(userAnswers)
       implicit val request = FakeRequest(GET, loadRoute)
 

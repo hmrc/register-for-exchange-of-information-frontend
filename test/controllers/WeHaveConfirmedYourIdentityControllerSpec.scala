@@ -93,8 +93,10 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
-      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Right(OK)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any()))
+        .thenReturn(Future.successful(Some(SubscriptionID("id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(OK)))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -111,8 +113,10 @@ class WeHaveConfirmedYourIdentityControllerSpec extends SpecBase with Controller
 
       when(mockMatchingService.sendIndividualRegistrationInformation(any())(any(), any()))
         .thenReturn(Future.successful(Right(registrationInfo)))
-      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any())).thenReturn(Future.successful(Some(SubscriptionID("id"))))
-      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any())).thenReturn(Future.successful(Left(BadRequestError)))
+      when(mockSubscriptionService.getDisplaySubscriptionId(any())(any(), any()))
+        .thenReturn(Future.successful(Some(SubscriptionID("id"))))
+      when(mockTaxEnrolmentService.checkAndCreateEnrolment(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Left(BadRequestError)))
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 

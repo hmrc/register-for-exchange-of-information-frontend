@@ -71,11 +71,14 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
 
       val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
 
-      service.confirmBusiness mustBe Some(createSummaryListRow("/register-for-mdr/register/problem/unable-to-change-business"))
+      service.confirmBusiness mustBe Some(
+        createSummaryListRow("/register-for-mdr/register/problem/unable-to-change-business")
+      )
     }
 
     "confirmBusiness must return Non when the business details don't exist" in {
-      val service = new CheckYourAnswersHelper(emptyUserAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+      val service =
+        new CheckYourAnswersHelper(emptyUserAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
 
       service.confirmBusiness mustBe None
     }

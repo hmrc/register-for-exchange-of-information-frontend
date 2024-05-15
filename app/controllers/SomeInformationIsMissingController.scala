@@ -33,9 +33,8 @@ class SomeInformationIsMissingController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    standardActionSets.identifiedUserWithData() {
-      implicit request =>
-        val continueUrl = routes.IndexController.onPageLoad().url
-        Ok(view(continueUrl))
+    standardActionSets.identifiedUserWithData() { implicit request =>
+      val continueUrl = routes.IndexController.onPageLoad().url
+      Ok(view(continueUrl))
     }
 }

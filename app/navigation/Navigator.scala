@@ -42,13 +42,13 @@ trait Navigator {
       }
   }
 
-  def checkNextPageForValueThenRoute[A](mode: Mode, ua: UserAnswers, page: QuestionPage[A], call: Call)(implicit rds: Reads[A]): Option[Call] =
+  def checkNextPageForValueThenRoute[A](mode: Mode, ua: UserAnswers, page: QuestionPage[A], call: Call)(implicit
+    rds: Reads[A]
+  ): Option[Call] =
     if (
       mode.equals(CheckMode) && ua
         .get(page)
-        .fold(false)(
-          _ => true
-        )
+        .fold(false)(_ => true)
     ) {
       Some(routes.CheckYourAnswersController.onPageLoad())
     } else {

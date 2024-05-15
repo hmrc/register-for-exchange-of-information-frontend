@@ -32,9 +32,8 @@ class RegimeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks
 
       val gen = Gen.oneOf(Regime.values)
 
-      forAll(gen) {
-        regime =>
-          JsString(regime.toString).validate[Regime].asOpt.value mustEqual regime
+      forAll(gen) { regime =>
+        JsString(regime.toString).validate[Regime].asOpt.value mustEqual regime
       }
     }
 
@@ -42,9 +41,8 @@ class RegimeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks
 
       val gen = arbitrary[String] suchThat (!Regime.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-          JsString(invalidValue).validate[Regime] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[Regime] mustEqual JsError("error.invalid")
       }
     }
 
@@ -52,9 +50,8 @@ class RegimeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks
 
       val gen = Gen.oneOf(Regime.values)
 
-      forAll(gen) {
-        regime =>
-          Json.toJson(regime) mustEqual JsString(regime.toString)
+      forAll(gen) { regime =>
+        Json.toJson(regime) mustEqual JsString(regime.toString)
       }
     }
   }

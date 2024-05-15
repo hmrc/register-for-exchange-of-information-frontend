@@ -34,33 +34,31 @@ class ContactHavePhonePageSpec extends PageBehaviours {
 
       "must remove ContactPhonePage when there is a change of the answer from 'Yes' to 'No'" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          userAnswers =>
-            val result = userAnswers
-              .set(ContactPhonePage, "112233445566")
-              .success
-              .value
-              .set(ContactHavePhonePage, false)
-              .success
-              .value
+        forAll(arbitrary[UserAnswers]) { userAnswers =>
+          val result = userAnswers
+            .set(ContactPhonePage, "112233445566")
+            .success
+            .value
+            .set(ContactHavePhonePage, false)
+            .success
+            .value
 
-            result.get(ContactPhonePage) must not be defined
+          result.get(ContactPhonePage) must not be defined
         }
       }
 
       "must retain ContactPhonePage when there is a change of the answer to 'Yes'" in {
 
-        forAll(arbitrary[UserAnswers]) {
-          userAnswers =>
-            val result = userAnswers
-              .set(ContactPhonePage, "112233445566")
-              .success
-              .value
-              .set(ContactHavePhonePage, true)
-              .success
-              .value
+        forAll(arbitrary[UserAnswers]) { userAnswers =>
+          val result = userAnswers
+            .set(ContactPhonePage, "112233445566")
+            .success
+            .value
+            .set(ContactHavePhonePage, true)
+            .success
+            .value
 
-            result.get(ContactPhonePage) mustBe defined
+          result.get(ContactPhonePage) mustBe defined
         }
       }
     }

@@ -35,23 +35,19 @@ class AuthController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def signOut(): Action[AnyContent] = identify().async {
-    implicit request =>
-      sessionRepository
-        .clear(request.userId)
-        .map {
-          _ =>
-            Redirect(config.signOutUrl).withNewSession
-        }
+  def signOut(): Action[AnyContent] = identify().async { implicit request =>
+    sessionRepository
+      .clear(request.userId)
+      .map { _ =>
+        Redirect(config.signOutUrl).withNewSession
+      }
   }
 
-  def signOutNoSurvey(): Action[AnyContent] = identify().async {
-    implicit request =>
-      sessionRepository
-        .clear(request.userId)
-        .map {
-          _ =>
-            Redirect(routes.SignedOutController.onPageLoad().url).withNewSession
-        }
+  def signOutNoSurvey(): Action[AnyContent] = identify().async { implicit request =>
+    sessionRepository
+      .clear(request.userId)
+      .map { _ =>
+        Redirect(routes.SignedOutController.onPageLoad().url).withNewSession
+      }
   }
 }

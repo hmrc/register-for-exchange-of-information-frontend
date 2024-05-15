@@ -25,7 +25,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.SoleTraderNotIdentifiedView
 
-class SoleTraderNotIdentifiedControllerSpec extends SpecBase with ControllerMockFixtures with TableDrivenPropertyChecks {
+class SoleTraderNotIdentifiedControllerSpec
+    extends SpecBase
+    with ControllerMockFixtures
+    with TableDrivenPropertyChecks {
 
   "SoleTraderNotIdentified Controller" - {
 
@@ -56,23 +59,22 @@ class SoleTraderNotIdentifiedControllerSpec extends SpecBase with ControllerMock
     ReporterType.values.filter(_ != Sole): _*
   )
 
-  forAll(disallowedReporterTypes) {
-    reporterType =>
-      s"redirect to ThereIsAProblemPage for a GET as a $reporterType reporterType" in {
+  forAll(disallowedReporterTypes) { reporterType =>
+    s"redirect to ThereIsAProblemPage for a GET as a $reporterType reporterType" in {
 
-        val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
-        retrieveUserAnswersData(userAnswers)
-        val application = guiceApplicationBuilder().build()
+      val userAnswers = emptyUserAnswers.set(ReporterTypePage, reporterType).success.value
+      retrieveUserAnswersData(userAnswers)
+      val application = guiceApplicationBuilder().build()
 
-        running(application) {
-          val request = FakeRequest(GET, routes.SoleTraderNotIdentifiedController.onPageLoad().url)
+      running(application) {
+        val request = FakeRequest(GET, routes.SoleTraderNotIdentifiedController.onPageLoad().url)
 
-          val result = route(application, request).value
+        val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.ThereIsAProblemController.onPageLoad().url)
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.ThereIsAProblemController.onPageLoad().url)
 
-        }
       }
+    }
   }
 }

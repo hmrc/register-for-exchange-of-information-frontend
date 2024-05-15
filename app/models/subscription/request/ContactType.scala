@@ -88,12 +88,18 @@ object IndividualDetails {
     (userAnswers.get(WhatIsYourNamePage), userAnswers.get(NonUkNamePage), userAnswers.get(SoleNamePage)) match {
       case (Some(name), _, _)           => Some(IndividualDetails(name.firstName, None, name.lastName))
       case (_, Some(nonUKName), _)      => Some(IndividualDetails(nonUKName.givenName, None, nonUKName.familyName))
-      case (_, _, Some(soleTraderName)) => Some(IndividualDetails(soleTraderName.firstName, None, soleTraderName.lastName))
+      case (_, _, Some(soleTraderName)) =>
+        Some(IndividualDetails(soleTraderName.firstName, None, soleTraderName.lastName))
       case _                            => None
     }
 }
 
-case class ContactInformation(contactInformation: ContactType, email: String, phone: Option[String], mobile: Option[String])
+case class ContactInformation(
+  contactInformation: ContactType,
+  email: String,
+  phone: Option[String],
+  mobile: Option[String]
+)
 
 object ContactInformation extends UserAnswersHelper {
 
@@ -124,7 +130,12 @@ object ContactInformation extends UserAnswersHelper {
         businessEmail       <- userAnswers.get(ContactEmailPage)
         businessContactInfo <- OrganisationDetails.convertTo(userAnswers.get(ContactNamePage))
       } yield Some(
-        ContactInformation(contactInformation = businessContactInfo, email = businessEmail, phone = userAnswers.get(ContactPhonePage), mobile = None)
+        ContactInformation(
+          contactInformation = businessContactInfo,
+          email = businessEmail,
+          phone = userAnswers.get(ContactPhonePage),
+          mobile = None
+        )
       )).flatten
 
     lazy val buildIndividualContact =
@@ -132,10 +143,11 @@ object ContactInformation extends UserAnswersHelper {
         individualEmail       <- userAnswers.get(IndividualContactEmailPage)
         individualContactInfo <- IndividualDetails.convertTo(userAnswers)
       } yield Some(
-        ContactInformation(contactInformation = individualContactInfo,
-                           email = individualEmail,
-                           phone = userAnswers.get(IndividualContactPhonePage),
-                           mobile = None
+        ContactInformation(
+          contactInformation = individualContactInfo,
+          email = individualEmail,
+          phone = userAnswers.get(IndividualContactPhonePage),
+          mobile = None
         )
       )).flatten
 
@@ -151,7 +163,12 @@ object ContactInformation extends UserAnswersHelper {
       for {
         orgDetails     <- OrganisationDetails.convertTo(userAnswers.get(SndContactNamePage))
         secondaryEmail <- userAnswers.get(SndContactEmailPage)
-      } yield ContactInformation(contactInformation = orgDetails, email = secondaryEmail, phone = userAnswers.get(SndContactPhonePage), mobile = None)
+      } yield ContactInformation(
+        contactInformation = orgDetails,
+        email = secondaryEmail,
+        phone = userAnswers.get(SndContactPhonePage),
+        mobile = None
+      )
 
     if (isRegisteringAsBusiness(userAnswers)) {
       val sndConHavePhonePage = userAnswers.get(SndConHavePhonePage)

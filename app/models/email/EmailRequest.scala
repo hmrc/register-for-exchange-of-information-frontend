@@ -25,9 +25,7 @@ object EmailRequest {
 
   def mdrRegistration(email: String, name: Option[String], emailTemplate: String, mdrID: String): EmailRequest = {
 
-    val contactName = name.fold("Registrant")(
-      name => name
-    )
+    val contactName = name.fold("Registrant")(name => name)
 
     EmailRequest(
       List(email),
