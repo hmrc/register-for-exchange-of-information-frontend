@@ -16,10 +16,10 @@
 
 package models.audit
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class AuditResponse(status: String, statusCode: Int, subscriptionId: Option[String], failureReason: Option[String])
 
 object AuditResponse {
-  implicit val json = Json.format[AuditResponse]
+  implicit val json: OFormat[AuditResponse] = Json.format[AuditResponse]
 }

@@ -24,5 +24,5 @@ case class NonUkName(givenName: String, familyName: String) {
 }
 
 object NonUkName {
-  implicit val format = Json.format[NonUkName]
+  implicit val format: OFormat[NonUkName] = Json.format[NonUkName]
 }

@@ -1,7 +1,7 @@
-$govuk-assets-path: "/register-for-mdr/assets/lib/govuk-frontend/govuk/assets/";
-$hmrc-assets-path: "/register-for-mdr/assets/lib/hmrc-frontend/hmrc/assets";
+$govuk-assets-path: "/register-for-mdr/hmrc-frontend/assets/govuk/";
+$hmrc-assets-path: "/register-for-mdr/hmrc-frontend/assets/assets";
 
-@import "lib/govuk-frontend/govuk/all";
+@import "lib/govuk-frontend/dist/govuk/all";
 @import "lib/hmrc-frontend/hmrc/components/header/header";
 @import "partials/header";
 @import "partials/summary";

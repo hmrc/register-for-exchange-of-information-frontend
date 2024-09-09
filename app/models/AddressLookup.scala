@@ -49,7 +49,7 @@ object LookupAddressByPostcode {
 
 object AddressLookup {
 
-  implicit val addressLookupWrite = new Writes[AddressLookup] {
+  implicit val addressLookupWrite: Writes[AddressLookup] = new Writes[AddressLookup] {
 
     def writes(addressLookup: AddressLookup) = {
       def lines: List[String] = List(

@@ -25,10 +25,10 @@
     hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     autocompleteCss: HmrcAccessibleAutocompleteCss,
-    autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
+    autocompleteJavascript: HmrcAccessibleAutocompleteJavascript,
+    hmrcScripts: HmrcScripts
+
 )
-
-
 
 @(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
@@ -44,6 +44,10 @@
         title               = Some(messages("timeout.title")),
         message             = Some(messages("timeout.message"))
     )
+}
+
+@scripts = {
+    @hmrcScripts()
 }
 
 @additionalScripts = {
