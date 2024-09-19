@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcAccessibleAutocompleteCss, HmrcAccessibleAutocompleteJavascript, HmrcStandardPage}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import views.html.helper.CSPNonce
 
@@ -25,8 +25,7 @@
     hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     autocompleteCss: HmrcAccessibleAutocompleteCss,
-    autocompleteJavascript: HmrcAccessibleAutocompleteJavascript,
-    hmrcScripts: HmrcScripts
+    autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
 
 )
 
@@ -44,10 +43,6 @@
         title               = Some(messages("timeout.title")),
         message             = Some(messages("timeout.message"))
     )
-}
-
-@scripts = {
-    @hmrcScripts()
 }
 
 @additionalScripts = {

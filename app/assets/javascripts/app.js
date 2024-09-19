@@ -1,9 +1,3 @@
-// initialise GovUK lib
-GOVUKFrontend.initAll();
-
-// =====================================================
-// Back link mimics browser back functionality
-// =====================================================
 // store referrer value to cater for IE - https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10474810/  */
 var docReferrer = document.referrer
 // prevent resubmit warning
