@@ -43,5 +43,5 @@ case class Address(
 object Address {
   val GBCountryCode = "GB"
 
-  implicit val format = Json.format[Address]
+  implicit val format: OFormat[Address] = Json.format[Address]
 }

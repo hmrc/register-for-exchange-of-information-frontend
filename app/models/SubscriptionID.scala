@@ -17,7 +17,7 @@
 package models
 
 import models.subscription.response.SubscriptionIDResponse
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class SubscriptionID(value: String)
 
@@ -25,5 +25,5 @@ object SubscriptionID {
 
   def apply(response: SubscriptionIDResponse): SubscriptionID = new SubscriptionID(response.subscriptionID)
 
-  implicit val format = Json.format[SubscriptionID]
+  implicit val format: OFormat[SubscriptionID] = Json.format[SubscriptionID]
 }

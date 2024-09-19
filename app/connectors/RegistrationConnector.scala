@@ -25,8 +25,8 @@ import models.register.request.{RegisterWithID, RegisterWithoutID}
 import models.register.response.{RegistrationWithIDResponse, RegistrationWithoutIDResponse}
 import play.api.Logging
 import play.api.http.Status._
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject

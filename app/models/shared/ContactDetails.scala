@@ -17,6 +17,7 @@
 package models.shared
 
 import play.api.libs.json.Json
+import play.api.libs.json.OFormat
 
 case class ContactDetails(
   phoneNumber: Option[String],
@@ -30,5 +31,5 @@ object ContactDetails {
   def apply(phoneNumber: Option[String], emailAddress: Option[String]): ContactDetails =
     ContactDetails(phoneNumber, None, None, emailAddress)
 
-  implicit val formats = Json.format[ContactDetails]
+  implicit val formats: OFormat[ContactDetails] = Json.format[ContactDetails]
 }
