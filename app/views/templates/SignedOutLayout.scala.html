@@ -15,13 +15,13 @@
  *@
 
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import views.html.helper.CSPNonce
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteCss
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteJavascript
 
 @this(
     appConfig: FrontendAppConfig,
-    hmrcLayout: HmrcLayout,
+    hmrcStandardPage: HmrcStandardPage,
     hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     autocompleteCss: HmrcAccessibleAutocompleteCss,
@@ -55,12 +55,21 @@
     @contentBlock
 }
 
-@hmrcLayout(
-    pageTitle = Some(pageTitle),
-    additionalHeadBlock = if(timeout) Some(timeOutDialog) else None,
-    serviceUrl = Some(routes.IndexController.onPageLoad.url),
-    signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
-    phaseBanner = None,
-    additionalScriptsBlock = Some(additionalScripts),
-    backLink = if(showBackLink) Some(BackLinkViewModel(href = "#").withCssClass("js-enabled govuk-!-display-none-print")) else None
+@hmrcStandardPage(
+    HmrcStandardPageParams(
+        serviceURLs = ServiceURLs(
+            serviceUrl = Some(routes.IndexController.onPageLoad.url),
+            signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None
+        ),
+        pageTitle = Some(pageTitle),
+        templateOverrides = TemplateOverrides(
+            additionalHeadBlock = if(timeout) Some(timeOutDialog) else None,
+            additionalScriptsBlock = Some(additionalScripts)
+        ),
+        backLink = if(showBackLink) Some(BackLinkViewModel(href = "#").withCssClass("js-enabled govuk-!-display-none-print")) else None,
+        banners = Banners(
+            phaseBanner = None
+        )
+    )
 )(content)
+
