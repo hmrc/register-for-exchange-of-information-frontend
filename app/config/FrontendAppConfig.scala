@@ -42,7 +42,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val timeoutSeconds: Int   = configuration.get[Int]("session.timeoutSeconds")
   val countdownSeconds: Int = configuration.get[Int]("session.countdownSeconds")
 
-  val cacheTtl: Int = configuration.get[Int]("mongodb.timeToLiveInSeconds")
+  val cacheTtl: Long = configuration.get[Long]("mongodb.timeToLiveInSeconds")
 
   lazy val businessMatchingUrl: String =
     s"${configuration.get[Service]("microservice.services.business-matching").baseUrl}${configuration.get[String]("microservice.services.business-matching.startUrl")}"

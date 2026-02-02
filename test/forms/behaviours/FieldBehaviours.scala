@@ -32,10 +32,11 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
   def fieldThatBindsValidData(form: Form[_], fieldName: String, validDataGenerator: Gen[String]): Unit =
     "must bind valid data" in {
 
-      forAll(validDataGenerator -> "validDataItem") { dataItem: String =>
-        val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-        result.value.value mustBe dataItem
-        result.errors mustBe empty
+      forAll(validDataGenerator -> "validDataItem") {
+        dataItem: String =>
+          val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
+          result.value.value mustBe dataItem
+          result.errors mustBe empty
       }
     }
 
@@ -47,10 +48,11 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
   ): Unit =
     "must bind valid data" in {
 
-      forAll(validDataGenerator -> "validDataItem") { dataItem: String =>
-        val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
-        result.value.value mustBe dataItem
-        result.errors.filter(_.messages.contains(invalidErrorKey)) mustBe empty
+      forAll(validDataGenerator -> "validDataItem") {
+        dataItem: String =>
+          val result = form.bind(Map(fieldName -> dataItem)).apply(fieldName)
+          result.value.value mustBe dataItem
+          result.errors.filter(_.messages.contains(invalidErrorKey)) mustBe empty
       }
     }
 

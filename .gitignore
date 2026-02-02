@@ -35,3 +35,7 @@ bin
 *.iws
 /.bsp/
 /project/metals.sbt
+/.bloop
+/.metals
+/.vscode
+/project/.bloop

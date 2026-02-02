@@ -44,6 +44,6 @@ class WhatIsYourNameFormProvider @Inject() extends Mappings with RegexConstants 
         individualNameRegex,
         maxLength
       )
-    )(Name.apply)(Name.unapply)
+    )(Name.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 }

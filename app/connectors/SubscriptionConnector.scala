@@ -28,11 +28,17 @@ import play.api.http.Status.{BAD_REQUEST, CONFLICT, NOT_FOUND, SERVICE_UNAVAILAB
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+
+import play.api.libs.json.Json
+import play.api.libs.json._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import java.net.URL
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   def readSubscription(
     displaySubscriptionRequest: DisplaySubscriptionRequest
@@ -41,7 +47,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/read-subscription"
 
     http
-      .POST[DisplaySubscriptionRequest, HttpResponse](submissionUrl, displaySubscriptionRequest)
+      .post(new URL(submissionUrl))
+      .withBody(Json.toJson(displaySubscriptionRequest))
+      .execute[HttpResponse]
       .map {
         case responseMessage if is2xx(responseMessage.status) =>
           responseMessage.json
@@ -64,10 +72,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     val submissionUrl = s"${config.businessMatchingUrl}/subscription/create-subscription"
     EitherT {
       http
-        .POST[CreateSubscriptionForMDRRequest, HttpResponse](
-          submissionUrl,
-          createSubscriptionForMDRRequest
-        )(wts = CreateSubscriptionForMDRRequest.writes, rds = readRaw, hc = hc, ec = ec)
+        .post(url = new URL(submissionUrl))
+        .withBody(Json.toJson(createSubscriptionForMDRRequest)(CreateSubscriptionForMDRRequest.writes))
+        .execute[HttpResponse](readRaw, ec)
         .map {
           case response if is2xx(response.status)          =>
             response.json

@@ -47,7 +47,7 @@ class AuditService @Inject() (
         detail = detail,
         tags = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()
       )
-    ) map { auditResult: AuditResult =>
+    ) map { (auditResult: AuditResult) =>
       auditResult match {
         case Failure(msg, _) =>
           logger.warn(

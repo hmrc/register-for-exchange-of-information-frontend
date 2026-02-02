@@ -28,6 +28,6 @@ object Section {
     (
       (__ \ "sectionName").write[String] and
         (__ \ "rows").write[Seq[SummaryListRow]]
-    )(unlift(Section.unapply))
+    )(o => Tuple.fromProductTyped(o))
 
 }

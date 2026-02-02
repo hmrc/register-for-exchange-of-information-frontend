@@ -21,7 +21,8 @@ import controllers.actions._
 import matchers.JsonMatchers
 import models.UserAnswers
 import navigation.{ContactDetailsFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
-import org.mockito.{Mockito, MockitoSugar}
+import org.mockito.Mockito
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

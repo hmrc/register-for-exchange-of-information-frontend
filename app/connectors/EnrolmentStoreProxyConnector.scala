@@ -27,11 +27,16 @@ import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.libs.json.Json
+import play.api.libs.json._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import java.net.URL
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   def enrolmentStatus(subscriptionID: SubscriptionID)(implicit
     hc: HeaderCarrier,
@@ -41,9 +46,8 @@ class EnrolmentStoreProxyConnector @Inject() (val config: FrontendAppConfig, val
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     EitherT {
       http
-        .GET[HttpResponse](
-          submissionUrl
-        )(rds = readRaw, hc = hc, ec = ec)
+        .get(new URL(submissionUrl))
+        .execute[HttpResponse](readRaw, ec)
         .map {
           case response if response.status == NO_CONTENT => Right(())
           case response if is2xx(response.status)        =>

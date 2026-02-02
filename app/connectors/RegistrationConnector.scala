@@ -28,11 +28,16 @@ import play.api.http.Status._
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-
+import uk.gov.hmrc.http.client.HttpClientV2
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+import play.api.libs.json.Json
+import play.api.libs.json._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import java.net.URL
+
+class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   val submissionUrl = s"${config.businessMatchingUrl}/registration"
 
@@ -51,7 +56,10 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
     endpoint: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): EitherT[Future, ApiError, RegistrationWithIDResponse] =
     EitherT {
-      http.POST[RegisterWithID, HttpResponse](s"$submissionUrl$endpoint", registration) map {
+      http
+        .post(new URL(s"$submissionUrl$endpoint"))
+        .withBody(Json.toJson(registration))
+        .execute[HttpResponse] map {
         case responseMessage if is2xx(responseMessage.status) =>
           Right(responseMessage.json.as[RegistrationWithIDResponse])
         case responseMessage                                  => handleError(responseMessage, endpoint)
@@ -72,7 +80,10 @@ class RegistrationConnector @Inject() (val config: FrontendAppConfig, val http: 
     registration: RegisterWithoutID,
     endpoint: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, SafeId]] =
-    http.POST[RegisterWithoutID, HttpResponse](s"$submissionUrl$endpoint", registration) map {
+    http
+      .post(new URL(s"$submissionUrl$endpoint"))
+      .withBody(Json.toJson(registration))
+      .execute[HttpResponse] map {
       case responseMessage if is2xx(responseMessage.status) =>
         responseMessage.json.as[RegistrationWithoutIDResponse].registerWithoutIDResponse.safeId match {
           case Some(safeId) => Right(safeId)

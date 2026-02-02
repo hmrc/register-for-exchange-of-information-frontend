@@ -26,13 +26,16 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpErrorFunctions.{is2xx, is4xx}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import java.net.URL
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxEnrolmentsConnector @Inject() (
   val config: FrontendAppConfig,
-  val http: HttpClient
+  val http: HttpClientV2
 ) extends Logging {
 
   def createEnrolment(
@@ -44,7 +47,10 @@ class TaxEnrolmentsConnector @Inject() (
     val json = Json.toJson(enrolmentInfo.convertToEnrolmentRequest)
 
     EitherT {
-      http.PUT[JsValue, HttpResponse](url, json) map {
+      http
+        .put(new URL(url))
+        .withBody(json)
+        .execute[HttpResponse] map {
         case responseMessage if is2xx(responseMessage.status) =>
           Right(responseMessage.status)
         case responseMessage if is4xx(responseMessage.status) =>

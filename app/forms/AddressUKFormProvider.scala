@@ -64,6 +64,6 @@ class AddressUKFormProvider @Inject() extends Mappings with RegexConstants {
       "country"      -> text("addressUK.error.country.required")
         .verifying("addressUK.error.country.required", value => countryList.exists(_.code == value))
         .transform[Country](value => countryList.find(_.code == value).get, _.code)
-    )(Address.apply)(Address.unapply)
+    )(Address.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 }
