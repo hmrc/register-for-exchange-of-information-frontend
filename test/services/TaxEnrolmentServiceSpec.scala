@@ -26,7 +26,7 @@ import models.error.ApiError.{EnrolmentExistsError, UnableToCreateEnrolmentError
 import models.matching.IndRegistrationInfo
 import models.{Address, Country, SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages._
 import play.api.http.Status.NO_CONTENT

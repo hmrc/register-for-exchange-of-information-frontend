@@ -19,7 +19,7 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import models.Country
 import play.api.data.FormError
-import io.github.wolfendale.scalacheck.regexp.RegexpGen
+import wolfendale.scalacheck.regexp.RegexpGen
 
 class AddressUKFormProviderSpec extends StringFieldBehaviours {
 
