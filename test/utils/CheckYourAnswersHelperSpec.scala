@@ -20,7 +20,7 @@ import base.SpecBase
 import models.matching.OrgRegistrationInfo
 import models.register.response.details.AddressResponse
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import pages.{AutoMatchedUTRPage, IsThisYourBusinessPage, RegistrationInfoPage}
 import play.api.test.Helpers

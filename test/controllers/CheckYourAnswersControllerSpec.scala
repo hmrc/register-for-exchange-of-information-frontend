@@ -25,7 +25,7 @@ import models.matching.IndRegistrationInfo
 import models.{Address, Country, SubscriptionID, UserAnswers}
 import navigation.MDRNavigator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import pages._
 import play.api.Application

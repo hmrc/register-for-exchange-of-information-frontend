@@ -27,7 +27,7 @@ import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

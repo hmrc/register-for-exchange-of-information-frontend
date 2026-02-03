@@ -19,7 +19,7 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import matchers.JsonMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, times, verify, when}
+import org.mockito.Mockito.{never, times, verify, when}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 

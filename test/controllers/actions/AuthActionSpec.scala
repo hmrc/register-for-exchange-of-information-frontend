@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import matchers.JsonMatchers
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._

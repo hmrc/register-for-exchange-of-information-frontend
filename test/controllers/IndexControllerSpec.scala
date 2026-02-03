@@ -21,7 +21,7 @@ import controllers.actions.{CtUtrRetrievalAction, FakeCtUtrRetrievalAction}
 import matchers.JsonMatchers
 import models.NormalMode
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.{reset, when}
 import pages.AutoMatchedUTRPage
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

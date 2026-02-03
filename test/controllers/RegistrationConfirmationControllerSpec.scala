@@ -19,7 +19,7 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import models.SubscriptionID
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import pages.SubscriptionIDPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

@@ -25,7 +25,7 @@ import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpErrorFunctions.{is2xx, is4xx}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 import java.net.URL
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue

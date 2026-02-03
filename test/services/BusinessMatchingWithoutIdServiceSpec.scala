@@ -25,7 +25,7 @@ import models.matching.SafeId
 import models.requests.DataRequest
 import models.{Address, Country}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import org.mockito.Mockito
 import org.scalatestplus.mockito.MockitoSugar
 import pages._

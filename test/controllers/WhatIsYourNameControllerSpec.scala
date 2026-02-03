@@ -19,7 +19,7 @@ package controllers
 import base.ControllerSpecBase
 import models.{Name, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import pages.WhatIsYourNamePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

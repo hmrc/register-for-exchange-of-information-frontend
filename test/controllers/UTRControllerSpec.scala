@@ -19,7 +19,7 @@ package controllers
 import base.ControllerSpecBase
 import models.{NormalMode, ReporterType}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import pages.{ReporterTypePage, UTRPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

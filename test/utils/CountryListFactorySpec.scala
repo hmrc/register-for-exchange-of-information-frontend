@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import models.Country
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import play.api.Environment
 import play.api.libs.json.Json
 

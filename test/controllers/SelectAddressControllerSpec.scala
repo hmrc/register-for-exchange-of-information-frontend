@@ -20,7 +20,7 @@ import base.{ControllerMockFixtures, SpecBase}
 import forms.SelectAddressFormProvider
 import models.{AddressLookup, NormalMode}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import pages.AddressLookupPage
 import play.api.data.Form
 import play.api.mvc.Call

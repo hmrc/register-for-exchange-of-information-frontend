@@ -20,7 +20,6 @@ import models.UserAnswers
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
 import pages.{SecondContactPage, SndConHavePhonePage, _}
-import play.api.libs.functional.syntax.unlift
 import play.api.libs.json._
 import utils.UserAnswersHelper
 
