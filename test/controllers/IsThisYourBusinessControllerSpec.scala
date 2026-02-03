@@ -25,6 +25,7 @@ import models.register.request.RegisterWithID
 import models.register.response.details.AddressResponse
 import models.{CheckMode, NormalMode, SubscriptionID, UUIDGen, UniqueTaxpayerReference, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq => mockitoEq}
+import org.mockito.Mockito.{reset, times, verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -88,7 +89,7 @@ class IsThisYourBusinessControllerSpec extends SpecBase with ControllerMockFixtu
 
   override def beforeEach(): Unit = {
     reset(mockMatchingService, mockSubscriptionService, mockTaxEnrolmentService, mockDataRetrievalAction)
-    super.beforeEach
+    super.beforeEach()
   }
 
   "IsThisYourBusiness Controller" - {

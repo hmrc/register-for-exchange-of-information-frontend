@@ -31,6 +31,7 @@ import models.register.response.RegistrationWithIDResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 

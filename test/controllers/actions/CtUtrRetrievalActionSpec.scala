@@ -36,8 +36,8 @@ class CtUtrRetrievalActionSpec extends SpecBase with TableDrivenPropertyChecks {
   private def block[A]: IdentifierRequest[A] => Future[Result] = (_: IdentifierRequest[A]) => Future.successful(Ok)
 
   private val applicationBuilder       = new GuiceApplicationBuilder()
-  private val action                   = applicationBuilder.injector.instanceOf[CtUtrRetrievalActionProvider]
-  private val config                   = applicationBuilder.injector.instanceOf[FrontendAppConfig]
+  private val action                   = applicationBuilder.injector().instanceOf[CtUtrRetrievalActionProvider]
+  private val config                   = applicationBuilder.injector().instanceOf[FrontendAppConfig]
   private val ctUtrEnrolmentIdentifier = EnrolmentIdentifier(IdentifierType.UTR, utr.uniqueTaxPayerReference)
 
   "CT UTR Retrieval Action" - {

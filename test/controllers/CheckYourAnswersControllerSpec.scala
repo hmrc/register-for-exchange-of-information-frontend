@@ -25,6 +25,7 @@ import models.matching.IndRegistrationInfo
 import models.{Address, Country, SubscriptionID, UserAnswers}
 import navigation.MDRNavigator
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import pages._
 import play.api.Application
@@ -73,7 +74,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with ControllerMockFixture
 
   override def beforeEach(): Unit = {
     reset(mockSubscriptionService, mockRegistrationService, mockTaxEnrolmentsService)
-    super.beforeEach
+    super.beforeEach()
   }
 
   val address: Address = Address("line 1", Some("line 2"), "line 3", Some("line 4"), Some(""), Country.GB)

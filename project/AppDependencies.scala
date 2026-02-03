@@ -18,6 +18,7 @@ object AppDependencies {
     "uk.gov.hmrc"       %% "bootstrap-test-play-30" % bootstrapVersion,
     "org.scalatestplus" %% "scalacheck-1-15"        % "3.2.11.0",
     "org.scalatestplus" %% "mockito-4-11"           % "3.2.17.0",
+    "io.github.wolfendale"        %% "scalacheck-gen-regexp"   % "1.1.0",
   ).map(_ % "test")
 
   def apply(): Seq[ModuleID] = compile ++ test

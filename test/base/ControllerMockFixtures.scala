@@ -22,6 +22,7 @@ import matchers.JsonMatchers
 import models.UserAnswers
 import navigation.{ContactDetailsFakeNavigator, ContactDetailsNavigator, MDRFakeNavigator, MDRNavigator}
 import org.mockito.Mockito
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers

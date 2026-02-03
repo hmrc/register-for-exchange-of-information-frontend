@@ -19,6 +19,7 @@ package controllers
 import base.ControllerSpecBase
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{times, verify, when}
 import pages.DateOfBirthWithoutIdPage
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
@@ -91,7 +92,7 @@ class DateOfBirthWithoutIdControllerSpec extends ControllerSpecBase {
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       retrieveUserAnswersData(emptyUserAnswers)
-      val result = route(app, postRequest).value
+      val result = route(app, postRequest()).value
 
       status(result) mustEqual SEE_OTHER
 
