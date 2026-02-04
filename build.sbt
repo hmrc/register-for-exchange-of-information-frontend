@@ -8,6 +8,7 @@ lazy val appName: String = "register-for-exchange-of-information-frontend"
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.7"
+ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s"
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
@@ -37,10 +38,10 @@ lazy val microservice = (project in file("."))
     ScoverageKeys.coverageHighlighting     := true,
     scalacOptions ++= Seq("-feature"),
     scalacOptions ++= Seq(
-      "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
+      "-Wconf:msg=unused import&site=.*views\\.html.*:s",
       "-Wconf:src=.+.\\scala\\.html/.+:s",
       "-Wconf:cat=deprecation&msg=\\.*()\\.*:s",
-      "-Wconf:cat=unused-imports&site=<empty>:s",
+      "-Wconf:msg=unused import&site=<empty>:s",
       "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
       "-Wconf:cat=unused&src=.*Routes\\.scala:s",
       "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s",
