@@ -21,6 +21,7 @@ import models.ReporterTypeText.LimitedLiabilityPartnership
 import models.ReporterType.LimitedCompany
 import models.{NormalMode, ReporterType, UserAnswers}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{BusinessNamePage, ReporterTypePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

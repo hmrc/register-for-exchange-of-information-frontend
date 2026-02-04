@@ -25,8 +25,9 @@ import models.register.response.details.AddressResponse
 import models.requests.DataRequest
 import models.{SubscriptionID, UserAnswers}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import pages._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

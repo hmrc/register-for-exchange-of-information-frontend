@@ -24,7 +24,7 @@ class EmailAddressSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
 
   "EmailAddress isValid" - {
     "must return true for valid email" in {
-      forAll(validEmailAddressService -> "validEmail") { email: String =>
+      forAll(validEmailAddressService -> "validEmail") { (email: String) =>
         EmailAddress.isValid(email) mustBe true
       }
     }

@@ -20,12 +20,14 @@ import base.SpecBase
 import models.matching.OrgRegistrationInfo
 import models.register.response.details.AddressResponse
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import pages.{AutoMatchedUTRPage, IsThisYourBusinessPage, RegistrationInfoPage}
+import pages.{AutoMatchedUTRPage, BusinessNamePage, DateOfBirthWithoutIdPage, DoYouLiveInTheUKPage, IsThisYourBusinessPage, RegistrationInfoPage, SelectAddressPage}
 import play.api.test.Helpers
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Key, SummaryListRow, Value}
+import java.time.LocalDate
 
 class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
 
@@ -81,6 +83,89 @@ class CheckYourAnswersHelperSpec extends SpecBase with GuiceOneAppPerSuite {
         new CheckYourAnswersHelper(emptyUserAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
 
       service.confirmBusiness mustBe None
+    }
+
+    "selectAddress must return a SummaryListRow when SelectAddressPage has an answer" in {
+      val userAnswers = emptyUserAnswers
+        .set(SelectAddressPage, "123 Some Street, London, SW1A 1AA")
+        .success
+        .value
+
+      val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.selectAddress mustBe defined
+    }
+
+    "doYouLiveInTheUK must return a SummaryListRow when DoYouLiveInTheUKPage has an answer" in {
+      val userAnswers = emptyUserAnswers
+        .set(DoYouLiveInTheUKPage, true)
+        .success
+        .value
+
+      val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.doYouLiveInTheUK() mustBe defined
+    }
+
+    "doYouLiveInTheUK must return None when DoYouLiveInTheUKPage has no answer" in {
+      val service =
+        new CheckYourAnswersHelper(emptyUserAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.doYouLiveInTheUK() mustBe None
+    }
+
+    "dateOfBirthWithoutId must return a SummaryListRow when DateOfBirthWithoutIdPage has an answer" in {
+      val userAnswers = emptyUserAnswers
+        .set(DateOfBirthWithoutIdPage, LocalDate.of(1990, 1, 1))
+        .success
+        .value
+
+      val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.dateOfBirthWithoutId mustBe defined
+    }
+
+    "dateOfBirthWithoutId must return None when DateOfBirthWithoutIdPage has no answer" in {
+      val service =
+        new CheckYourAnswersHelper(emptyUserAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.dateOfBirthWithoutId mustBe None
+    }
+
+    "isThisYourBusiness must return a SummaryListRow when IsThisYourBusinessPage has an answer" in {
+      val userAnswers = emptyUserAnswers
+        .set(IsThisYourBusinessPage, true)
+        .success
+        .value
+
+      val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.isThisYourBusiness mustBe defined
+    }
+
+    "isThisYourBusiness must return None when IsThisYourBusinessPage has no answer" in {
+      val service =
+        new CheckYourAnswersHelper(emptyUserAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.isThisYourBusiness mustBe None
+    }
+
+    "businessName must return a SummaryListRow when BusinessNamePage has an answer" in {
+      val userAnswers = emptyUserAnswers
+        .set(BusinessNamePage, "Some Business")
+        .success
+        .value
+
+      val service = new CheckYourAnswersHelper(userAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.businessName mustBe defined
+    }
+
+    "businessName must return None when BusinessNamePage has no answer" in {
+      val service =
+        new CheckYourAnswersHelper(emptyUserAnswers, maxChars, mockCountryListFactory)(Helpers.stubMessages())
+
+      service.businessName mustBe None
     }
   }
 

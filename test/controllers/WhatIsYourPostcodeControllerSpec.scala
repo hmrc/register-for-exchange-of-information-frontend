@@ -19,6 +19,7 @@ package controllers
 import base.ControllerSpecBase
 import models.{AddressLookup, NormalMode}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{times, verify, when}
 import pages.WhatIsYourPostcodePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

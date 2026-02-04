@@ -25,7 +25,9 @@ import models.matching.SafeId
 import models.requests.DataRequest
 import models.{Address, Country}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.{Mockito, MockitoSugar}
+import org.mockito.Mockito.when
+import org.mockito.Mockito
+import org.scalatestplus.mockito.MockitoSugar
 import pages._
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

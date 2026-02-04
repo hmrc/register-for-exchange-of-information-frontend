@@ -20,6 +20,7 @@ import base.ControllerSpecBase
 import forms.SoleNameFormProvider
 import models.{Name, NormalMode}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.SoleNamePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

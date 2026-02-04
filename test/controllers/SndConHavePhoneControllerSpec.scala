@@ -19,6 +19,7 @@ package controllers
 import base.ControllerSpecBase
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{SndConHavePhonePage, SndContactNamePage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

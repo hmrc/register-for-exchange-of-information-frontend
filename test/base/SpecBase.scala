@@ -17,7 +17,7 @@
 package base
 
 import models.{UUIDGen, UUIDGenImpl, UserAnswers}
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec

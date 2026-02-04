@@ -19,6 +19,7 @@ package controllers
 import base.{ControllerMockFixtures, SpecBase}
 import models.{NormalMode, ReporterType}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.ReporterTypePage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

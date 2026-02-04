@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import matchers.JsonMatchers
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
@@ -43,7 +44,7 @@ class AuthActionSpec extends SpecBase with ControllerMockFixtures with JsonMatch
 
   class Harness(authAction: AuthAction) {
 
-    def onPageLoad() = authAction { _ =>
+    def onPageLoad() = authAction { (_: IdentifierRequest[AnyContent]) =>
       Results.Ok
     }
   }

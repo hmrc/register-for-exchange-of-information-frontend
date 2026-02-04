@@ -20,7 +20,6 @@ import models.UserAnswers
 import models.error.ApiError
 import models.error.ApiError.MandatoryInformationMissingError
 import pages.{SecondContactPage, SndConHavePhonePage, _}
-import play.api.libs.functional.syntax.unlift
 import play.api.libs.json._
 import utils.UserAnswersHelper
 
@@ -60,7 +59,7 @@ object OrganisationDetails {
   }
 
   implicit val writes: Writes[OrganisationDetails] =
-    (__ \ "organisation" \ "organisationName").write[String] contramap unlift(OrganisationDetails.unapply)
+    (__ \ "organisation" \ "organisationName").write[String] contramap (_.organisationName)
 
   def convertTo(contactName: Option[String]): Option[OrganisationDetails] =
     contactName.map(OrganisationDetails(_))
@@ -82,7 +81,7 @@ object IndividualDetails {
   implicit val writes: OWrites[IndividualDetails] =
     ((__ \ "individual" \ "firstName").write[String] and
       (__ \ "individual" \ "middleName").writeNullable[String] and
-      (__ \ "individual" \ "lastName").write[String])(unlift(IndividualDetails.unapply))
+      (__ \ "individual" \ "lastName").write[String])(o => Tuple.fromProductTyped(o))
 
   def convertTo(userAnswers: UserAnswers): Option[IndividualDetails] =
     (userAnswers.get(WhatIsYourNamePage), userAnswers.get(NonUkNamePage), userAnswers.get(SoleNamePage)) match {
@@ -120,7 +119,7 @@ object ContactInformation extends UserAnswersHelper {
         (__ \ "email").write[String] and
         (__ \ "phone").writeNullable[String] and
         (__ \ "mobile").writeNullable[String]
-    )(unlift(ContactInformation.unapply))
+    )(o => Tuple.fromProductTyped(o))
   }
 
   def convertToPrimary(userAnswers: UserAnswers): Option[ContactInformation] = {

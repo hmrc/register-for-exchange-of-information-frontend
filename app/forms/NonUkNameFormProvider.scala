@@ -44,6 +44,6 @@ class NonUkNameFormProvider @Inject() extends Mappings with RegexConstants {
         individualNameRegex,
         maxLength
       )
-    )(NonUkName.apply)(NonUkName.unapply)
+    )(NonUkName.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 }

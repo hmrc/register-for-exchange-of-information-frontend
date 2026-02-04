@@ -21,8 +21,8 @@ import play.api.test.{FakeRequest, Helpers}
 
 trait ControllerSpecBase extends SpecBase with ControllerMockFixtures {
 
-  val loadRoute: String
-  val submitRoute: String
+  lazy val loadRoute: String
+  lazy val submitRoute: String
 
   "must redirect for a POST if no existing data is found" in {
 

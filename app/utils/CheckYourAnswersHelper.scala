@@ -50,8 +50,11 @@ class CheckYourAnswersHelper(
                         |${address.addressLine3.fold("")(address => s"<p class=$paragraphClass>$address</p>")}
                         |${address.addressLine4.fold("")(address => s"<p class=$paragraphClass>$address</p>")}
                         |<p class=$paragraphClass>${address.postCodeFormatter(address.postalCode).getOrElse("")}</p>
-                        |${if (address.countryCode.toUpperCase != GBCountryCode) s"<p $paragraphClass>$countryName</p>"
-                                else ""}
+                        |${
+                                  if (address.countryCode.toUpperCase != GBCountryCode)
+                                    s"<p $paragraphClass>$countryName</p>"
+                                  else ""
+                                }
                         |""".stripMargin),
           href = if (userAnswers.get(AutoMatchedUTRPage).isEmpty) {
             routes.ReporterTypeController.onPageLoad(CheckMode).url

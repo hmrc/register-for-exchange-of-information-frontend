@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import utils.CountryListFactory
 import views.html.AddressWithoutIdView
+import org.mockito.Mockito.when
 
 import scala.concurrent.Future
 
