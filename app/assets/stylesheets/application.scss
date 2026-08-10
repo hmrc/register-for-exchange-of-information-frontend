@@ -2,7 +2,7 @@ $govuk-assets-path: "/register-for-mdr/hmrc-frontend/assets/govuk/";
 $hmrc-assets-path: "/register-for-mdr/hmrc-frontend/assets/assets";
 $govuk-new-organisation-colours: true;
 
-@import "lib/govuk-frontend/dist/govuk/all";
+@import "lib/govuk-frontend/dist/govuk/index";
 @import "lib/hmrc-frontend/hmrc/components/header/header";
 @import "partials/header";
 @import "partials/summary";
