@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
+import play.api.i18n.Messages
 
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
@@ -29,6 +30,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val contactFormServiceIdentifier = "MDR"
 
   lazy val addressLookUpUrl: String = configuration.get[Service]("microservice.services.address-lookup").baseUrl
+
+  lazy val userResearchBannerEnabled: Boolean =
+    configuration.getOptional[Boolean]("features.user-research-banner").getOrElse(false)
+
+  def userResearchBannerUrl(implicit messages: Messages): String =
+    configuration.get[String](s"urls.user-research-banner-${messages.lang.code}")
 
   val taxEnrolmentsUrl1: String =
     s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration

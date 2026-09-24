@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import views.html.helper.CSPNonce
 
 @this(
@@ -29,7 +30,7 @@
 
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, displayUserResearchBanner: Boolean = false)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @timeOutDialog = {
     @hmrcTimeoutDialogHelper(
@@ -66,6 +67,10 @@
             serviceUrl = Some(routes.IndexController.onPageLoad().url),
             signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut().url) else None,
         ),
+        banners = Banners(userResearchBanner = Option.when(displayUserResearchBanner && appConfig.userResearchBannerEnabled)(UserResearchBanner(
+            url = appConfig.userResearchBannerUrl,
+            hideCloseButton = true
+        ))),
         pageTitle = Some(pageTitle),
         templateOverrides = TemplateOverrides(
             additionalHeadBlock = if(timeout) Some(timeOutDialog) else None,

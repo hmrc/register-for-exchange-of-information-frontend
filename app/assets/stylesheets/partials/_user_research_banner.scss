@@ -1,0 +1,15 @@
+@import "lib/govuk-frontend/dist/govuk/settings/index";
+@import "lib/govuk-frontend/dist/govuk/tools/index";
+@import "lib/govuk-frontend/dist/govuk/helpers/index";
+
+
+.hmrc-user-research-banner .govuk-heading-s{
+    color: #fff;
+}
+
+.hmrc-user-research-banner__title{
+    color: #fff !important;
+}
+.hmrc-user-research-banner__link{
+    color: #fff !important;
+}
