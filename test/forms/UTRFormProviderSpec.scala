@@ -60,7 +60,7 @@ class UTRFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithInvalidData(
       form,
       fieldName,
-      "jjdjdj£%^&kfkf",
+      "jjdjdj£%^&kfk",
       FormError(fieldName, invalidKey)
     )
   }
