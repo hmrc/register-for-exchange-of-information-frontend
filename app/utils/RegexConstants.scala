@@ -25,7 +25,7 @@ trait RegexConstants {
   final val individualPlaceOfBirthRegex = """^[A-Za-z0-9 \-,.&']*$"""
   final val nonApiNameRegex             = """^[a-zA-Z0-9 "'&,\-\\\/]*$"""
   final val orgNameRegex                = """^[a-zA-Z0-9 &`\-\'\\\^]*$"""
-  final val utrRegex                    = "^(?:[0-9]{10}|[0-9]{13}|[kK][0-9]{9}|[kK][0-9]{12}|[0-9]{9}[kK]|[0-9]{12}[kK])$"
+  final val utrRegex                    = "^[0-9]*$"
 
   final val emailRegex              = "^(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)" +
     "@(?:[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&*+\\/=?^_`{|}~-]+)*)$"

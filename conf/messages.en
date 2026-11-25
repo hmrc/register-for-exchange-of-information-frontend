@@ -386,13 +386,13 @@ utr.label = What is your {0} UTR?
 
 utr.p1.link = Get more help to find your UTR (opens in new tab)
 utr.p1.link-Corporation = Ask for a copy of your Corporation Tax UTR (opens in new tab)
-utr.hint = Your UTR can be 10 or 13 digits long.
+utr.hint = Your UTR is 10 digits, for example 1234567890
 utr.checkYourAnswersLabel = What is your Corporation Tax Unique Taxpayer Reference?
 utr.error.selfAssessment = Self Assessment
 utr.error.corporationTax = Corporation Tax
 utr.error.partnership = Partnership
 utr.error.required = Enter your {0} Unique Taxpayer Reference
-utr.error.length = {0} Unique Taxpayer Reference must be 10 or 13 digits long
+utr.error.length = {0} Unique Taxpayer Reference must be 10 numbers
 utr.error.invalid = Enter {0} Unique Taxpayer Reference in the correct format
 
 businessName.title.llp = What is the registered name of your business?
