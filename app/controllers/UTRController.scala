@@ -78,6 +78,7 @@ class UTRController @Inject() (
   private def getTaxType(userAnswers: UserAnswers)(implicit messages: Messages): String =
     userAnswers.get(ReporterTypePage) match {
       case Some(LimitedCompany) | Some(UnincorporatedAssociation) => messages("utr.error.corporationTax")
+      case Some(Partnership) | Some(LimitedPartnership)           => messages("utr.error.partnership")
       case _                                                      => messages("utr.error.selfAssessment")
     }
 

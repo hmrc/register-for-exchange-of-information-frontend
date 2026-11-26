@@ -39,21 +39,38 @@
         }
 
 
-        <h1 class="govuk-heading-l">@messages("utr.heading", taxType)</h1>
-        <p class="govuk-body">@Html(messages("utr.p1" , link(appConfig.lostUTRUrl, "utr.p1.link")))</p>
-        @govukInput(
-            InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("utr.heading", taxType)).withCssClass("govuk-visually-hidden")
+        <h1 class="govuk-heading-l">
+            @messages("utr.heading", taxType)
+        </h1>
+
+        <p class="govuk-body">
+            @messages(s"utr.find-p1-${taxType.replace(" ", "")}", messages("utr.find-p2"))
+        </p>
+
+       @defining(
+            if (taxType == "Corporation Tax") {
+                link(appConfig.lostUTRCorporationUrl, "utr.p1.link-Corporation")
+            } else {
+                link(appConfig.lostUTRUrl, "utr.p1.link")
+            }
+        ) { lostUTRLink =>
+            <p class="govuk-body">
+                @Html(lostUTRLink.toString)
+            </p>
+        }
+
+        @govukInput(InputViewModel(
+            field = form("value"),
+            label = LabelViewModel(messages("utr.label", taxType)).withCssClass("govuk-label--m")
             )
-                    .withWidth(Fixed10)
-                    .withHint(
-                HintViewModel(
+                .withWidth(Fixed10)
+                .withHint(
+                 HintViewModel(
                     HtmlContent(
                         Html(messages("utr.hint", taxType))
                     )
                 )
-            )
+                )
         )
 
         @govukButton(

@@ -63,6 +63,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val emailIndividualTemplate: String = configuration.get[String]("emailtemplates.individual")
   lazy val emailSoleTraderTemplate: String = configuration.get[String]("emailtemplates.individual")
   lazy val lostUTRUrl: String              = configuration.get[String]("urls.lostUTR")
+  lazy val lostUTRCorporationUrl: String   = configuration.get[String]("urls.lostUTR-Corporation")
 
   lazy val businessTaxAccountLink: String              = configuration.get[String]("urls.businessTaxAccount")
   lazy val findAndUpdateCompanyInfoLink: String        = configuration.get[String]("urls.findAndUpdateCompanyInfo")
